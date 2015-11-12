@@ -49,6 +49,7 @@
     "minifyRelease": "gulp minifyRelease",
     "release": "gulp release",
     "generateStubs": "gulp generateStubs",
-    "sortRequires": "gulp sortRequires"
+    "sortRequires": "gulp sortRequires",
+	"sortRequiresV2": "gulp sortRequires"
   }
 }
