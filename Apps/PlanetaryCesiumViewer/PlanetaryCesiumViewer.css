@@ -1,0 +1,158 @@
+@import url(../../Source/Widgets/widgets.css);
+@import url(../../Source/Widgets/lighter.css);
+@import url(../Sandcastle/templates/bucket.css);
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    background: #000;
+}
+
+.fullWindow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.loadingIndicator {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -33px;
+    margin-left: -33px;
+    width: 66px;
+    height: 66px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(Images/ajax-loader.gif);
+}
+
+    #toolbar {
+        background: rgba(42, 42, 42, 0.8);
+        padding: 4px;
+        border-radius: 4px;
+	color: white;
+	font-family: sans-serif;
+	/*font-size: 70%;
+	position: absolute;
+	left: 100px;*/
+    }
+    #toolbar input {
+        vertical-align: middle;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+    #toolbar table tr {
+        transform: translateY(0);
+        transition: transform 0.4s ease-out;
+    }
+    #toolbar table tr.up {
+        transform: translateY(33px);
+        transition: none;
+    }
+    #toolbar table tr.down {
+        transform: translateY(-33px);
+        transition: none;
+    }
+
+    #vtoolbar {
+        background: rgba(42, 42, 42, 0.8);
+        padding: 4px;
+        border-radius: 4px;
+        color: white;
+        font-family: sans-serif;
+        /*font-size: 70%;*/
+	position: absolute;
+	bottom: 110px;
+	right: 100px;
+    }
+    #vtoolbar input {
+        vertical-align: middle;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+    #vtoolbar table tr {
+        transform: translateY(0);
+        transition: transform 0.4s ease-out;
+    }
+    #vtoolbar table tr.up {
+        transform: translateY(33px);
+        transition: none;
+    }
+    #vtoolbar table tr.down {
+        transform: translateY(-33px);
+        transition: none;
+    }
+
+    #coordinates {
+        background: rgba(42, 42, 42, 0.8);
+        padding: 4px;
+        border-radius: 4px;
+	color: white;
+	font-family: sans-serif;
+	/*font-size: 70%;*/
+	position : absolute;
+	top : 50px;
+	right : 70px;   
+    }
+	
+	
+    #coordinates.table {
+        border: 1px solid white;
+		    opacity: 1;
+    transition: opacity 1.0s linear;
+    }
+
+.cesium-rlayer-menu-button {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+}
+
+.cesium-rlayer-menu {
+    visibility: hidden;
+    position: absolute;
+    top: 40px;
+    left: 10px;
+    width: 450px;
+    max-height: 80%;
+    overflow-y: scroll;
+    border-radius: 10px;
+    -webkit-transform: scale(0.01);
+    -moz-transform: scale(0.01);
+    transform: scale(0.01);
+    -webkit-transform-origin: 234px -10px;
+    -moz-transform-origin: 234px -10px;
+    transform-origin: 234px -10px;
+    -webkit-transition: visibility 0s 0.25s, -webkit-transform 0.25s ease-in;
+    -moz-transition: visibility 0s 0.25s, -moz-transform 0.25s ease-in;
+    transition: visibility 0s 0.25s, transform 0.25s ease-in;
+}
+
+.cesium-rlayer-menu-visible {
+    visibility: visible;
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    transform: scale(1);
+    -webkit-transition: -webkit-transform 0.25s ease-out;
+    -moz-transition: -moz-transform 0.25s ease-out;
+    transition: transform 0.25s ease-out;
+}
+
