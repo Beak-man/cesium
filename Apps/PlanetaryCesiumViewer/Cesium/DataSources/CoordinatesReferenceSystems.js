@@ -35,37 +35,54 @@ define(['../Core/Cartesian3',
 		
  var CoordinatesReferenceSystems = function(crsNames, crsFunctionType){
 
-		/* Si on utilise l'ellispoide standard ou bien si la requete ne contient pas d'ellipsoide particulier alors on applique
-		   le cas par defaut */
-
-		if(ellipsoidUsed === "WGS84" || typeof ellipsoidUsed ==='undefined'){
+		if(ellipsoidUsed === 'WGS84' || typeof ellipsoidUsed ==='undefined'){
 			crsNames['urn:ogc:def:crs:OGC:1.3:CRS84'] = defaultCrsFunction;
 			crsNames['EPSG:4326'] = defaultCrsFunction;
 			crsFunctionType.used  = defaultCrsFunction;
-			crsFunctionType.crs   = {"type" : "name", "properties": {"name": 'EPSG:4326'}};
-		}; 
-		
-		/* Si on utilise l'ellispoide de Mars alors on applique le cas par specifique */
-		
-		if (ellipsoidUsed === "MARSIAU2000" || ellipsoidUsed === "MARSSPHE"){
+			crsFunctionType.crs   = {'type': 'name', 'properties': {'name':'EPSG:4326'}};
+
+		} else if (ellipsoidUsed === 'MARSIAU2000' || ellipsoidUsed === 'MARSSPHE'){
+			
 			crsNames['IAU2000:49900'] = CustomizedCrsFunction;
 			crsFunctionType.used      = CustomizedCrsFunction;
-			crsFunctionType.crs       = {"type": "name", "properties": {"name": 'IAU2000:49900'}};
-		};
-		
-		/* Si on utilise l'ellispoide de Venus alors on applique le cas par specifique */
-		
-		if (ellipsoidUsed === "VENUS"){
+			crsFunctionType.crs       = {'type': 'name', 'properties': {'name': 'IAU2000:49900'}};
+
+		} else if (ellipsoidUsed === 'VENUS'){
+
 			crsNames['IAU2000:29900'] =  CustomizedCrsFunction;		
 			crsFunctionType.used      =  CustomizedCrsFunction;	
-			crsFunctionType.crs       = {"type": "name", "properties": {"name": 'IAU2000:29900'}};
-		};	
-		
-		if (ellipsoidUsed === "MERCURE"){
+			crsFunctionType.crs       = {'type': 'name', 'properties': {'name': 'IAU2000:29900'}};
+		} else if (ellipsoidUsed === 'MERCURE'){
+
 			crsNames['IAU2000:19900'] =  CustomizedCrsFunction;		
 			crsFunctionType.used      =  CustomizedCrsFunction;	
-			crsFunctionType.crs       = {"type": "name", "properties": {"name": 'IAU2000:19900'}};
-		};
+			crsFunctionType.crs       = {'type': 'name', 'properties': {'name': 'IAU2000:19900'}};
+		} else {
+
+            var naifCodesStrings = endUserOptions.NAIFCodes.toString();
+			var naifCodesTab = naifCodesStrings.split(',');
+            var naifCode         = {
+                planet     : parseInt(naifCodesTab[0]),
+                satellite  : parseInt(naifCodesTab[1]),
+            }
+
+            if (naifCode.satellite === 0){
+                  var codeIAU = (naifCode.planet * 100 + 99)*100;
+                  var SRS     = 'IAU2000:'+codeIAU;
+            } else if (naifCode.satellite !== 0){
+                  var codeIAU = (naifCode.planet * 100 + naifCode.satellite)*100;
+                  var SRS     = 'IAU2000:'+codeIAU;
+            }
+
+            crsNames[SRS] =  CustomizedCrsFunction;		
+            crsFunctionType.used      =  CustomizedCrsFunction;	
+            crsFunctionType.crs       = {'type': 'name', 'properties': {'name':SRS}};
+        }
+		
+		console.log("******************** crs ***************************")
+		console.log(crsFunctionType.crs);
+		console.log("****************************************************")
+			
 	}	
 	return CoordinatesReferenceSystems;
 	

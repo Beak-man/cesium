@@ -55,7 +55,7 @@ define([ './freezeObject','./Math'], function(freezeObject, CesiumMath) {
 
             var ellipsoidName = endUserOptions.ellipsoidType.toString();
 
-            if (ellipsoidName !== "WGS84" && ellipsoidName !== "MOON" && ellipsoidName !== "MARSSPHE" && ellipsoidName !== "MARSIAU2000" && ellipsoidName !== "UNIT_SPHERE" &&){
+            if (ellipsoidName !== "WGS84" && ellipsoidName !== "MOON" && ellipsoidName !== "MARSSPHE" && ellipsoidName !== "MARSIAU2000" && ellipsoidName !== "UNIT_SPHERE"){
 
                 var ellipsoidSizeString =  endUserOptions.ellipsoidSize.toString();
                 var dimensionSizeTab    =  ellipsoidSizeString.split(",");

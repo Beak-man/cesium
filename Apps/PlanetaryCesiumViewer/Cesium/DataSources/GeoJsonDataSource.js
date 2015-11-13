@@ -65,6 +65,17 @@ define([
 	   *************************************************************************************************************************************
 	   ************************************************************************************************************************************* */
 
+	/*function defaultCrsFunction(coordinates) {
+        return Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2]);
+    }
+	
+	
+	var crsNames = {
+	        'urn:ogc:def:crs:OGC:1.3:CRS84' : defaultCrsFunction,
+			'EPSG:4326'                      : defaultCrsFunction
+			};*/
+
+
 		var crsNames = {};
 		var crsFunctionType = {}
 		
@@ -826,15 +837,16 @@ define([
 	       * created in the "CoordinatesReferenceSystems" class in the same time that the crsNames object. 
 	       * */
          
-          var crsFunction = crsFunctionType.used; 
-		  
-		  /* Here, we manage the case where the crs proprety is not defined in the json file. The crs proprety introduced in the geoJson
-		   * object is created in the "CoordinatesReferenceSystems" class and integrated in the "crsFunctionType" object.
-		   * */
+           var crsFunction = crsFunctionType.used; 
+        //   var crsFunction = defaultCrsFunction;
+          /* Here, we manage the case where the crs proprety is not defined in the json file. The crs proprety introduced in the geoJson
+           * object is created in the "CoordinatesReferenceSystems" class and integrated in the "crsFunctionType" object.
+           * */
           
-          if(!geoJson.crs){
+          if(typeof geoJson.crs === 'undefined'){
           	geoJson.crs = crsFunctionType.crs;
           }
+           //console.log(geoJson.crs);
        
         /* *****************************************************************************************************************************
            *****************************************************************************************************************************

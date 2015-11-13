@@ -99,6 +99,13 @@ define([ //  Definition des dépendances
 	 http://localhost:8080/Apps/CesiumMarsViewer/index.html?map=themis ==> request with one parameter. Hence : endUserOptions = { map : "themis"}.
 	 */
 	
+		/** Query  parameters: 
+	 * 
+	 * ellipsoidType = name.  Type of ellipsoid to use (predefined or customized. See here after)) 
+	 * ellipsoidSize = x,y,z. (Dimensions of the ellipsoid)
+	 * NAIFCodes     = a,b. Naif codes for planet ("a" parameter) and satellite ("b" parameter). for a planet (Mars for example), use a=4, b=0;
+	 *                      This parameter must be used with a customized ellipsoid (so with the ellipsoidType and ellipsoidSize parameters)                         
+	 */
     var endUserOptions = queryToObject(window.location.search.substring(1)); 
 		
 	/* *************************************************************************************************************************************** */
@@ -142,7 +149,7 @@ define([ //  Definition des dépendances
             console.log(Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()]);
             console.log("**********************************************************");
 			
-            Ellipsoid.used = endUserOptions.ellipsoidType.toString();
+            Ellipsoid.used = endUserOptions.ellipsoidType.toString().toUpperCase();
 		
             globeParam            = new Globe(Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()]);   
             mapProjectionParam    = new GeographicProjection(Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()]);
@@ -157,8 +164,8 @@ define([ //  Definition des dépendances
             mapProjectionParam     = new GeographicProjection(Ellipsoid.WGS84);
             terrainProviderParam   = new EllipsoidTerrainProvider({ellipsoid: Ellipsoid.WGS84});
             ellipsoidImageryParam  = Ellipsoid.WGS84;
-		 };
-	
+        };
+
     /* *************************************************************************************************************************************** */
     /* *********************************************************** END NEW ******************************************************************* */
     /* *************************************************************************************************************************************** */
@@ -166,11 +173,11 @@ define([ //  Definition des dépendances
     var imageryProvider; // Provides imagery to be displayed on the surface of an ellipsoid
 
     if (endUserOptions.tmsImageryUrl) {
-		imageryProvider = new TileMapServiceImageryProvider({
-			url: endUserOptions.tmsImageryUrl
-		});
-	}
-	else {
+        imageryProvider = new TileMapServiceImageryProvider({
+            url: endUserOptions.tmsImageryUrl
+        });
+    }
+    else {
 	
 		// Paramètres de la requete
 		
@@ -185,12 +192,12 @@ define([ //  Definition des dépendances
 		// HEIGHT  : Height of the image.
 		
 		
-		imageryProvider = new WebMapServiceImageryProvider({
-					url       : 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map&SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000',
-				//	url       : 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map&SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=MOLA_bw&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000',
-					layers    : 'themis',
-					credit    : 'USGS @ planetarymaps.usgs.gov',
-					ellipsoid : ellipsoidImageryParam
+        imageryProvider = new WebMapServiceImageryProvider({
+                    url       : 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map&SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000',
+                    //url       : 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map&SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=MOLA_bw&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000',
+                    layers    : 'themis',
+                    credit    : 'USGS @ planetarymaps.usgs.gov',
+                    ellipsoid : ellipsoidImageryParam
 		});
 	};
   
@@ -238,9 +245,94 @@ define([ //  Definition des dépendances
         showLoadError(name, error);
     });
 
+
+/* *************************************************************************************************************************************** */
+	/* *************************************************************** NEW *************************************************************** */
+	/* *************************************************************************************************************************************** */
+	
+
+
+var wyoming = viewer.entities.add({
+  name : 'Wyoming',
+  polygon : {
+    hierarchy : Cartesian3.fromDegreesArray([
+                              -109.080842,45.002073,
+                              -105.91517,45.002073,
+                              -104.058488,44.996596,
+                              -104.053011,43.002989,
+                              -104.053011,41.003906,
+                              -105.728954,40.998429,
+                              -107.919731,41.003906,
+                              -109.04798,40.998429,
+                              -111.047063,40.998429,
+                              -111.047063,42.000709,
+                              -111.047063,44.476286,
+                              -111.05254,45.002073]),
+    material : Color.RED.withAlpha(0.5),
+    outline : true,
+    outlineColor : Color.BLACK
+  }
+});
+
+ var scene = viewer.scene;
+ 
+ var  handler = new ScreenSpaceEventHandler(scene.canvas);
+   handler.setInputAction(function(click) {
+     var entity   =  scene.pick(click.position);
+	 var IdEntity = entity.id.id;
+	 
+	 var coordinatesEntity = entity.primitive.position;
+	 var colorEntity       = entity.primitive.color;
+	 
+	 entity.primitive.color = { 
+					 red: 1, 
+					 green: 0.5, 
+					 blue: 0, 
+					 alpha: 1 
+	 };
+	 
+	 
+	 
+	 
+	  entity.primitive.scale = 2;
+	   entity.primitive.translate = {
+	   	x: 10 + coordinatesEntity.x,
+		y: 100
+		}
+	 
+	 
+	 entity.ready;
+	 
+	 console.log(entity.bill);
+	 
+    }, ScreenSpaceEventType.LEFT_CLICK);
+ 
+ /*
+    // If the mouse is over the billboard, change its scale and color
+  var  handler = new ScreenSpaceEventHandler(scene.canvas);
+    handler.setInputAction(function(movement) {
+        var pickedObject = scene.pick(movement.endPosition);
+        if (defined(pickedObject) && (pickedObject.id === entity)) {
+            entity.billboard.scale = 2.0;
+            entity.billboard.color = Color.YELLOW;
+        } else {
+            entity.billboard.scale = 1.0;
+            entity.billboard.color = Color.WHITE;
+        }
+    }, ScreenSpaceEventType.MOUSE_MOVE);
+
+*/
+
+/* *************************************************************************************************************************************** */
+	/* *************************************************************** NEW *************************************************************** */
+	/* *************************************************************************************************************************************** */
+	
+
+
+
     var scene = viewer.scene;
     var context = scene.context;
-    
+
     if (endUserOptions.debug) {
         context.validateShaderProgram = true;
         context.validateFramebuffer = true;

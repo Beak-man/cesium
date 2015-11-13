@@ -188,6 +188,7 @@ define([
      * });
      */
     var CesiumWidget = function(container, options) {
+		
         //>>includeStart('debug', pragmas.debug);
         if (!defined(container)) {
             throw new DeveloperError('container is required.');
@@ -241,7 +242,8 @@ define([
                 contextOptions : options.contextOptions,
                 creditContainer : creditContainer,
                 mapProjection : options.mapProjection,
-                orderIndependentTranslucency : options.orderIndependentTranslucency,
+              //  orderIndependentTranslucency : options.orderIndependentTranslucency,
+				orderIndependentTranslucency : false,
                 scene3DOnly : defaultValue(options.scene3DOnly, false)
             });
             this._scene = scene;

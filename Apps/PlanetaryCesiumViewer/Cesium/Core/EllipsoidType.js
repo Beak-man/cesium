@@ -41,9 +41,9 @@ define([ './freezeObject','./Math'], function(freezeObject, CesiumMath) {
              Ellipsoid.UNIT_SPHERE = freezeObject(new Ellipsoid(1.0, 1.0, 1.0));		
         }  else {	
 		
-            if (typeof endUserOptions.ellipsoidType !== 'undefined' && endUserOptions.ellipsoidSize !== 'undefined'){
+            if (typeof endUserOptions.ellipsoidType !== 'undefined' && typeof endUserOptions.ellipsoidSize !== 'undefined'){
 
-                var ellipsoidName = endUserOptions.ellipsoidType.toString();
+                var ellipsoidName = endUserOptions.ellipsoidType.toString().toUpperCase();
 
                 if (ellipsoidName !== "WGS84" && ellipsoidName !== "MOON" && ellipsoidName !== "MARSSPHE" && ellipsoidName !== "MARSIAU2000" && ellipsoidName !== "UNIT_SPHERE"){
 

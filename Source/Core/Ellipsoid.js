@@ -7,7 +7,8 @@ define([
         './defineProperties',
         './DeveloperError',
         './freezeObject',
-        './Math'
+        './Math',
+        './EllipsoidType'
     ], function(
         Cartesian3,
         Cartographic,
@@ -16,7 +17,8 @@ define([
         defineProperties,
         DeveloperError,
         freezeObject,
-        CesiumMath) {
+        CesiumMath,
+        EllipsoidType) {
     "use strict";
 
     function initialize(ellipsoid, x, y, z) {
@@ -226,7 +228,7 @@ define([
     // ***************************************************************************** NEW **************************************************************************
     // ************************************************************************************************************************************************************
 	
-        var ellipsoidType = new EllipsoidType(Ellipsoid); // build some predefined ellispoids for the inital run of Cesium
+     /*   var ellipsoidType = new EllipsoidType(Ellipsoid); // build some predefined ellispoids for the inital run of Cesium
     /**
      * Duplicates an Ellipsoid instance.
      *
@@ -235,14 +237,52 @@ define([
      * @param {endUserOptions} The object onto which is stored the request parameters.
      * @param {dimensions} The object onto which is stored the dimesions of the Ellipsoid.
      * @returns {Ellipsoid} The customized Ellipsoid.
-     */
+     *\
         Ellipsoid.modify = function(Ellipsoid, endUserOptions){ // In the case where the user would like to build a customized ellipsoid
             var ellipsoidType = new EllipsoidType(Ellipsoid, endUserOptions);	
-        };
+        };*/
 	
     // ************************************************************************************************************************************************************
     // ************************************************************************************************************************************************************
     // ************************************************************************************************************************************************************
+
+            /**
+             * An Ellipsoid instance initialized with the WGS84 standard.
+             *
+             * @type {Ellipsoid}
+             * @constant
+             */
+             Ellipsoid.WGS84 = freezeObject(new Ellipsoid(6378137.0, 6378137.0, 6356752.3142451793));
+
+            /**
+             * An Ellipsoid instance initialized to a sphere with the lunar radius.
+             *
+             * @type {Ellipsoid}
+             * @constant
+             */
+             Ellipsoid.MOON = freezeObject(new Ellipsoid(CesiumMath.LUNAR_RADIUS, CesiumMath.LUNAR_RADIUS, CesiumMath.LUNAR_RADIUS));
+  
+            /**
+             * An Ellipsoid instance initialized to the Mars IAU 2000 ellipsoid standard.
+             * @memberof Ellipsoid
+             */
+             Ellipsoid.MARSIAU2000 = freezeObject(new Ellipsoid(3396190.0, 3396190.0, 3376200.0));
+	  
+            /**
+             * An Ellipsoid instance initialized to the standard Mars Sphere.
+             * @member of Ellipsoid 
+             */
+             Ellipsoid.MARSSPHE = freezeObject(new Ellipsoid(3396000.0, 3396000.0, 3396000.0));
+	  
+            /**
+             * An Ellipsoid instance initialized to radii of (1.0, 1.0, 1.0).
+             *
+             * @type {Ellipsoid}
+             * @constant
+             */
+             Ellipsoid.UNIT_SPHERE = freezeObject(new Ellipsoid(1.0, 1.0, 1.0));		
+
+
 
     /**
      * Duplicates an Ellipsoid instance.
