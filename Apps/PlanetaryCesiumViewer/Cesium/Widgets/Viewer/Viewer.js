@@ -40,6 +40,7 @@ define([
         '../subscribeAndEvaluate',
         '../Timeline/Timeline',
         '../LongitudeLatitdude/LngLat',
+        '../MarkerMove/MarkerMove'
     ], function(
         BoundingSphere,
         Cartesian3,
@@ -80,7 +81,8 @@ define([
         SelectionIndicator,
         subscribeAndEvaluate,
         Timeline,
-        LngLat) {
+        LngLat,
+        MarkerMove) {
     "use strict";
 
     var boundingSphereScratch = new BoundingSphere();
@@ -429,8 +431,20 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             eventHelper.add(homeButton.viewModel.command.beforeExecute, Viewer.prototype._clearTrackedObject, this);
         }
 
-        var lngLat;
-        lngLat = new LngLat(toolbar, container, cesiumWidget.scene);
+
+         /* *******************************************************************************************************************************
+          * *******************************************************************************************************************************
+          * ******************************************************************************************************************************* */
+
+          var lngLat;
+          lngLat = new LngLat(toolbar, container, cesiumWidget.scene);
+
+          var markerMove;
+          markerMove = new MarkerMove(toolbar, container, cesiumWidget.scene);
+		 
+		 /* *******************************************************************************************************************************
+          * *******************************************************************************************************************************
+          * ******************************************************************************************************************************* */
 
         // SceneModePicker
         // By default, we silently disable the scene mode picker if scene3DOnly is true,
@@ -608,26 +622,6 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
                 }
             }
         }
-		
-		/* ************************************************************************************************************************************
-		 * ************************************************************************************************************************************
-		 * ************************************************************************************************************************************ */
-		
-	/*	 var that = this;
-        // Subscribe to left clicks and zoom to the picked object.
-        function pickObject(e) {
-            var entity = pickEntity(that, e);
-		      console.log(entity);
-            }*/
-			
-			
-			
-		
-		/* ************************************************************************************************************************************
-		 * ************************************************************************************************************************************
-		 * ************************************************************************************************************************************ */
-		
-		
 
         function pickAndSelectObject(e) {
             that.selectedEntity = pickEntity(that, e);

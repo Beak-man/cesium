@@ -246,85 +246,53 @@ define([ //  Definition des dépendances
     });
 
 
-/* *************************************************************************************************************************************** */
-	/* *************************************************************** NEW *************************************************************** */
+    /* *************************************************************************************************************************************** */
+	/* ******************************************************************* NEW *************************************************************** */
 	/* *************************************************************************************************************************************** */
-	
-
-
-var wyoming = viewer.entities.add({
-  name : 'Wyoming',
-  polygon : {
-    hierarchy : Cartesian3.fromDegreesArray([
-                              -109.080842,45.002073,
-                              -105.91517,45.002073,
-                              -104.058488,44.996596,
-                              -104.053011,43.002989,
-                              -104.053011,41.003906,
-                              -105.728954,40.998429,
-                              -107.919731,41.003906,
-                              -109.04798,40.998429,
-                              -111.047063,40.998429,
-                              -111.047063,42.000709,
-                              -111.047063,44.476286,
-                              -111.05254,45.002073]),
-    material : Color.RED.withAlpha(0.5),
-    outline : true,
-    outlineColor : Color.BLACK
-  }
-});
-
- var scene = viewer.scene;
+/*
  
+ var scene = viewer.scene;
+ var lastEntity;
  var  handler = new ScreenSpaceEventHandler(scene.canvas);
    handler.setInputAction(function(click) {
-     var entity   =  scene.pick(click.position);
-	 var IdEntity = entity.id.id;
+     var pickedObject  =  scene.pick(click.position);
+	  
+	 var pickedObjectId = pickedObject.id.id;
+	 var pickedObjectCoordinates = pickedObject.primitive.position;
+	 var pickedObjectColor       = pickedObject.primitive.color;
+
+	 var primitive = pickedObject.primitive;
+	 var entity = primitive.id;
+	
+	
+	/* ********** changement de position ************* *\
+
+	entity.position = {	
+		x:0,
+		y:0,
+		z:0
+	}*\
+	
+	// ********** changement de couleur ****************** *\
+	  
+	 entity._billboard.color = new Color(1.0, 1.0, 0.0, 1.0);
 	 
-	 var coordinatesEntity = entity.primitive.position;
-	 var colorEntity       = entity.primitive.color;
 	 
-	 entity.primitive.color = { 
-					 red: 1, 
-					 green: 0.5, 
-					 blue: 0, 
-					 alpha: 1 
-	 };
-	 
-	 
-	 
-	 
-	  entity.primitive.scale = 2;
-	   entity.primitive.translate = {
-	   	x: 10 + coordinatesEntity.x,
-		y: 100
-		}
-	 
-	 
-	 entity.ready;
-	 
-	 console.log(entity.bill);
-	 
+	 if (lastEntity && lastEntity!=entity){
+		lastEntity._billboard.color = new Color(1.0, 1.0, 1.0, 1.0);
+		lastEntity = entity;
+	 } else if(!lastEntity){
+	 	lastEntity = entity;
+	 } else if(lastEntity && lastEntity==entity){
+	 	lastEntity._billboard.color = new Color(1.0, 1.0, 0.0, 1.0);
+		lastEntity = entity;
+	 }
+	  
+
     }, ScreenSpaceEventType.LEFT_CLICK);
- 
- /*
-    // If the mouse is over the billboard, change its scale and color
-  var  handler = new ScreenSpaceEventHandler(scene.canvas);
-    handler.setInputAction(function(movement) {
-        var pickedObject = scene.pick(movement.endPosition);
-        if (defined(pickedObject) && (pickedObject.id === entity)) {
-            entity.billboard.scale = 2.0;
-            entity.billboard.color = Color.YELLOW;
-        } else {
-            entity.billboard.scale = 1.0;
-            entity.billboard.color = Color.WHITE;
-        }
-    }, ScreenSpaceEventType.MOUSE_MOVE);
-
-*/
-
-/* *************************************************************************************************************************************** */
-	/* *************************************************************** NEW *************************************************************** */
+ */
+    /* *************************************************************************************************************************************** */
+	/* *************************************************************************************************************************************** */
 	/* *************************************************************************************************************************************** */
 	
 
