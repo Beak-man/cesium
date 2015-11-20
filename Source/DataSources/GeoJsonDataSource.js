@@ -132,6 +132,9 @@ define([
     //But since "multi" geometries create multiple entity,
     //we can't use it for them either.
     function createObject(geoJson, entityCollection, describe) {
+		
+		console.log(geoJson);
+		
         var id = geoJson.id;
         if (!definedNotNull(id) || geoJson.type !== 'Feature') {
             id = createGuid();

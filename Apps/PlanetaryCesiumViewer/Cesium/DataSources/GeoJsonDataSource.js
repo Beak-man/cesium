@@ -154,8 +154,14 @@ define([
     //GeoJSON specifies only the Feature object has a usable id property
     //But since "multi" geometries create multiple entity,
     //we can't use it for them either.
-    function createObject(geoJson, entityCollection, describe) {
+	
+	var geoJsonObject=null;
+    function createObject(geoJson, entityCollection, describe) {	
+	
         var id = geoJson.id;
+		
+		geoJsonObject = geoJson;
+		
         if (!definedNotNull(id) || geoJson.type !== 'Feature') {
             id = createGuid();
         } else {
@@ -526,6 +532,7 @@ define([
         this._entityCollection = new EntityCollection(this);
         this._promises = [];
         this._pinBuilder = new PinBuilder();
+		this._geoJson    = geoJsonObject;
     };
 
     /**
@@ -544,6 +551,11 @@ define([
      * @returns {Promise.<GeoJsonDataSource>} A promise that will resolve when the data is loaded.
      */
     GeoJsonDataSource.load = function(data, options) {
+		
+	/*	console.log("******************* Depuis GeoJsonDataSource **************************");
+		console.log(options.view);
+		console.log("***********************************************************************");
+	*/	
         return new GeoJsonDataSource().load(data, options);
     };
 
@@ -648,6 +660,13 @@ define([
         crsNames : {
             get : function() {
                 return crsNames;
+            }
+        },
+		
+		
+		geoJson : {
+            get : function() {
+                return geoJson;
             }
         },
 
@@ -780,11 +799,20 @@ define([
         DataSource.setLoading(this, true);
 
         var promise = data;
+		
+		console.log("******************* Depuis GeoJsonDataSource **************************");
+		console.log(options.view);
+		console.log("***********************************************************************");
+		options.view.geoJsonData = data;
+		console.log(data);
+		
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         var sourceUri = options.sourceUri;
         if (typeof data === 'string') {
             if (!defined(sourceUri)) {
                 sourceUri = data;
+				
+				console.log(data);
             }
             promise = loadJson(data);
         }

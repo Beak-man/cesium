@@ -439,10 +439,11 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
           var lngLat;
           lngLat = new LngLat(toolbar, container, cesiumWidget.scene);
 
+
           var markerMove;
           markerMove = new MarkerMove(toolbar, container, cesiumWidget.scene, this);
 		 
-		 
+		 console.log(DataSourceCollection);
 		 
 		 /* *******************************************************************************************************************************
           * *******************************************************************************************************************************

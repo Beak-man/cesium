@@ -73,6 +73,7 @@ define([
         //>>includeEnd('debug');
 
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
+		
 
         //Local variables to be closed over by defineProperties.
         var dropEnabled = true;
@@ -248,8 +249,10 @@ define([
                     });
                 } else if (/\.geojson$/i.test(fileName) || /\.json$/i.test(fileName) || /\.topojson$/i.test(fileName)) {
                     loadPromise = GeoJsonDataSource.load(JSON.parse(evt.target.result), {
-                        sourceUri : fileName
+                        sourceUri : fileName, 
+						view      : viewer						
                     });
+					
                 } else if (/\.(kml|kmz)$/i.test(fileName)) {
                     loadPromise = KmlDataSource.load(file, {
                         sourceUri : fileName,

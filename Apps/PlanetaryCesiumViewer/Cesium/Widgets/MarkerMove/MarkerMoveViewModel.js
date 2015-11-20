@@ -5,6 +5,7 @@ define([
     '../../Core/Math',
     '../../Core/Color',
     '../createCommand', 
+	'../../DataSources/DataSourceCollection',
 	'../../DataSources/EntityCollection',
 	'../../DataSources/GeoJsonDataSource',
     '../../ThirdParty/knockout', 
@@ -15,6 +16,7 @@ define([
 	    CesiumMath,
         Color,
         createCommand,
+		DataSourceCollection,
 		EntityCollection,
 		GeoJsonDataSource,
         knockout,
@@ -42,14 +44,17 @@ var _isActive = false;
                     handler.setInputAction(function(click){
 
                         var pickedObject = scene.pick(click.position);
-
+                       // console.log(viewer.selectedEntity); 
+						//console.log(viewer.dataSources._dataSources[0].load);
                         if (pickedObject) {
 							
                            var entity = pickedObject.primitive.id;
-                            entity._billboard.color = new Color(1.0, 1.0, 0.0, 1.0);
+                            entity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
 							
 							console.log(pickedObject);
-							
+
+							var dataSource = new GeoJsonDataSource();
+							var entities = dataSource.entities.values;
 							
                             if (lastEntity && lastEntity != entity) { // deuxieme coups et plus
                                 lastEntity._billboard.color = new Color(1.0, 1.0, 1.0, 1.0);
@@ -69,12 +74,12 @@ var _isActive = false;
                             
                             var handler = new ScreenSpaceEventHandler(scene.canvas);
                             handler.setInputAction(function(click){
-                            
+                           
+							
                                 var cartesian    = scene.camera.pickEllipsoid(click.position, ellipsoid);
 								var cartographic = ellipsoid.cartesianToCartographic(cartesian);
                                 
                                 if (lastEntity) {
-									
 									
 									if (!lastEntity.properties.modifed_lat) lastEntity.addProperty("modifed_lat");
 									if (!lastEntity.properties.modifed_lon) lastEntity.addProperty("modifed_lon");
@@ -83,10 +88,16 @@ var _isActive = false;
                                     lastEntity.position._value = cartesian;
 									
 									
-									lastEntity.properties.modifed_lat = CesiumMath.toDegrees(cartographic.latitude); 
-									lastEntity.properties.modifed_lon = CesiumMath.toDegrees(cartographic.longitude); ; 
+									lastEntity.properties.old_lat    = lastEntity.properties.center_lat; 
+									lastEntity.properties.old_lon    = lastEntity.properties.center_lon; 
 									
-									console.log(lastEntity.features);
+									
+									 var longitudeRad = cartographic.longitude;
+		                             if (longitudeRad < 0){
+		                                  longitudeRad = longitudeRad + 2.0*Math.PI;
+		                             }	
+									lastEntity.properties.center_lat = CesiumMath.toDegrees(cartographic.latitude); 
+									lastEntity.properties.center_lon = CesiumMath.toDegrees(longitudeRad); 
 									
                                     lastEntity._billboard.color      = new Color(0.0, 1.0, 0.0, 1.0);
 									lastEntityMoved._billboard.color = new Color(0.0, 1.0, 0.0, 1.0);
@@ -106,39 +117,47 @@ var _isActive = false;
 			
 			  _isActive = true;
 			  
-			  console.log(document.getElementById('xxPrimeSave'));
+			 // console.log(document.getElementById('xxPrimeSave'));
+			  
+			  
 			  
 			  document.getElementById('xxPrimeSave').innerHTML = "S";
 			  
 			  
 			} else if (_isActive == true){
 				
-				//console.log(viewer.dataSources );
 				
-				console.log(GeoJsonDataSource);
-				
+				var geoJson = viewer.geoJsonData;
 				 document.getElementById('xxPrimeSave').innerHTML = "x x'"
-		      // _isActive = false;
-			  
-			  
+		        //_isActive = false;
 			  
 			var dimArray =   viewer.dataSources._dataSources[0]._entityCollection._entities._array.length;
-			console.log(dimArray);
+			//console.log(dimArray);
 			  
-			  var StringObj = "";
+			  var StringObj = "[";
 			  for(var i=0; i<dimArray; i++){
-			  	StringObj += JSON.stringify(viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties)+",\r\n"
+			  	//StringObj += JSON.stringify(viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties)+",\r\n"
+				
+				geoJson.features[i].properties = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties;
+				
+				console.log(geoJson.features[i].properties);
+				
 			  }
 			  
 			  
-			   document.location = 'data:json/octet-stream,' +StringObj;
-				
+			  console.log(geoJson);
+			  
+			  // document.location = 'data:json/octet-stream;charset=utf-8,' +StringObj+"]";
+			   
+			  // saveAs(StringObj, "test.json");
+			   
 			}
-			
-			
         }
 
         var MarkerMoveViewModel = function(toolbar, container, scene, viewer) {
+
+
+				console.log(viewer.DataSourceCollection);
 
                this._scene  = scene;
 			   this._toolbar = toolbar;
