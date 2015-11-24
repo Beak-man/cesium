@@ -802,6 +802,7 @@ define([
 		
 		console.log("******************* Depuis GeoJsonDataSource **************************");
 		console.log(options.view);
+		console.log(defaultDescribeProperty);
 		console.log("***********************************************************************");
 		options.view.geoJsonData = data;
 		console.log(data);

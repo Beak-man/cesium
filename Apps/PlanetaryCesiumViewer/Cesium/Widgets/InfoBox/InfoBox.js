@@ -62,6 +62,16 @@ click: function () { cameraClicked.raiseEvent(this); },\
 enable: enableCamera,\
 cesiumSvgPath: { path: cameraIconPath, width: 32, height: 32 }');
         infoElement.appendChild(cameraElement);
+		
+		
+		var modifyElement = document.createElement('button');
+        modifyElement.type = 'button';
+        modifyElement.className = 'cesium-button cesium-infoBox-camera';
+		modifyElement.style.cssText = 'position:absolute;top:5px;left:40px;width:50px;';
+		modifyElement.innerHTML = "Edit"
+        modifyElement.setAttribute('data-bind', 'attr: { title: "Edit fields" },click: function () {}');
+        infoElement.appendChild(modifyElement);
+		
 
         var closeElement = document.createElement('button');
         closeElement.type = 'button';
