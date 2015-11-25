@@ -800,10 +800,11 @@ define([
 
         var promise = data;
 		
-		console.log("******************* Depuis GeoJsonDataSource **************************");
+		/*console.log("******************* Depuis GeoJsonDataSource **************************");
 		console.log(options.view);
 		console.log(defaultDescribeProperty);
-		console.log("***********************************************************************");
+		console.log("***********************************************************************");*/
+		
 		options.view.geoJsonData = data;
 		console.log(data);
 		

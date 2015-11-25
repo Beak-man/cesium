@@ -29,6 +29,7 @@ define([
     "use strict";
 
  var _isActive = false;
+ var activeLink = false;
 
         function markerMoveView(toolbar, scene, viewer, that){
 			
@@ -51,11 +52,15 @@ define([
 						entity = pickedObject.primitive.id;
 						entity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
 						
-						//entity.description = "test";
 						
 						
 						
-						console.log(viewer.infoBox.frame.contentDocument.body);
+						
+						
+						
+						//console.log(viewer.infoBox.frame.contentDocument.body);
+						
+						console.log(viewer.dataSources);
 						
 						if (!lastEntity) { // premier coups
 							lastEntity = entity;
@@ -85,15 +90,12 @@ define([
 					
 						entity.position._value = cartesian;
 						
-						entity.properties.old_lat = entity.properties.center_lat;
-						entity.properties.old_lon = entity.properties.center_lon;
-						
 						var longitudeRad = cartographic.longitude;
 						if (longitudeRad < 0) {
 							longitudeRad = longitudeRad + 2.0 * Math.PI;
 						}
-						entity.properties.center_lat = CesiumMath.toDegrees(cartographic.latitude);
-						entity.properties.center_lon = CesiumMath.toDegrees(longitudeRad);
+					//	entity.properties.center_lat = CesiumMath.toDegrees(cartographic.latitude);
+					//	entity.properties.center_lon = CesiumMath.toDegrees(longitudeRad);
 						
 						entity._billboard.color = new Color(0.0, 1.0, 0.0, 1.0);
 						
@@ -102,42 +104,125 @@ define([
 				}, ScreenSpaceEventType.RIGHT_CLICK);
 				
 				_isActive = true;
+			} else {
+				
+				var lastEntity = null;
+				var entity = null;
+				
 			}
 			
 		} 
-			
-			
-			
-			function markerMoveSave(toolbar, scene, viewer, that){
+		
+		/*	function markerMoveSave(toolbar, scene, viewer, that){
 				
+				
+				var ellipsoid = scene.globe.ellipsoid;
 				 var geoJson = viewer.geoJsonData;
 		         _isActive = false;
 			  
 			     var dimArray =   viewer.dataSources._dataSources[0]._entityCollection._entities._array.length;
 			  
 			  for(var i=0; i<dimArray; i++){
-				var modifiedPreperties = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties;
-				geoJson.features[i].properties = modifiedPreperties;
-				geoJson.features[i].geometry.coordinates = [modifiedPreperties.center_lon, modifiedPreperties.center_lat];
+				var modifiedProperties = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties;
+				var modifiedPosition = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._position._value;
+				var cartographic = ellipsoid.cartesianToCartographic(modifiedPosition);
+				
+				var longitudeRad = cartographic.longitude;
+				var latitudeRad  = cartographic.latitude;
+				
+				var latitudeDeg  = CesiumMath.toDegrees(latitudeRad);
+				var longitudeDeg = CesiumMath.toDegrees(longitudeRad);
+				
+				
+				geoJson.features[i].properties = modifiedProperties;
+				geoJson.features[i].geometry.coordinates = [longitudeDeg, latitudeDeg];
 			  }
-
-			/*	var json = JSON.stringify(geoJson);
-				var blob = new Blob([json], {type: "application/json"});
-				var url  = URL.createObjectURL(blob);*/
 			
-		    document.location = 'data:json/octet-stream;charset=utf-8,' +JSON.stringify(geoJson, null, '\t');  
+		        document.location = 'data:application/octet-stream;charset=utf-8,' +JSON.stringify(geoJson, null, '\t');  
+			}*/
+			
+			
+			function markerMoveSaveLink(toolbar, scene, viewer, that){
+				
+			 if (activeLink == false) {
+			 
+			    var ellipsoid = scene.globe.ellipsoid;
+			 	var geoJson = viewer.geoJsonData;
+			 	_isActive = false;
+			 	
+			 	var dimArray = viewer.dataSources._dataSources[0]._entityCollection._entities._array.length;
+			 	
+			 	for (var i = 0; i < dimArray; i++) {
+				var modifiedProperties = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties;
+				var modifiedPosition = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._position._value;
+				var cartographic = ellipsoid.cartesianToCartographic(modifiedPosition);
+				
+				var longitudeRad = cartographic.longitude;
+				var latitudeRad  = cartographic.latitude;
+				
+				var latitudeDeg  = CesiumMath.toDegrees(latitudeRad);
+				var longitudeDeg = CesiumMath.toDegrees(longitudeRad);
+				
+				
+				geoJson.features[i].properties = modifiedProperties;
+				geoJson.features[i].geometry.coordinates = [longitudeDeg, latitudeDeg];
+			 	}
+			 	
+			 	console.log(geoJson);
+			 	
+			 	var jsonData = JSON.stringify(geoJson);
+			 	var blob     = new Blob([jsonData], {type: "application/octet-stream"}); // pass a useful mime type here
+			    var url      = URL.createObjectURL(blob);
+					
+					var fileName = "jsonFile.json";
+					
+					var save = document.getElementById('saveLink');
+					save.href = url;
+					save.target = '_blank';
+					save.download = fileName || 'unknown';
+					
+					
+					
+					
+					console.log(save);
+					activeLink = true;
+				}
+				
+				else 
+					if (activeLink == true) {
+					
+					    activeLink = false;
+					}
+					
+			
+			/*  if (!window.ActiveXObject) {
+			        var save = document.getElementById('saveLink');
+			        save.href = url;
+			        save.target = '_blank';
+			        save.download = fileName || 'unknown';
+
+			        var event = document.createEvent('Event');
+			        event.initEvent('click', true, true);
+			        save.dispatchEvent(event);
+			        (window.URL || window.webkitURL).revokeObjectURL(save.href);
+  			  }
+
+    		  // for IE
+		      else if ( !! window.ActiveXObject && document.execCommand)     {
+				        var _window = window.open(url, '_blank');
+				        _window.document.close();
+				        _window.document.execCommand('SaveAs', true, fileName || url)
+				        _window.close();
+				    }
+			
+		    */
 			   
 			}
 			
 			
-			function destroyClickedElement(event)
-{
-// remove the link from the DOM
-    document.body.removeChild(event.target);
-}
 			
-			
-        var MarkerMoveViewModel = function(toolbar, container, scene, viewer) {
+
+   var MarkerMoveViewModel = function(toolbar, container, scene, viewer) {
 
                this._scene  = scene;
 			   this._toolbar = toolbar;
@@ -164,6 +249,12 @@ define([
 				  	markerMoveSave(that._toolbar, that._scene, that._viewer, that);
 					//that.dropDownVisible = !that.dropDownVisible;
 				  });
+				  
+				  this._saveCommandLink = createCommand(function() {
+				  	markerMoveSaveLink(that._toolbar, that._scene, that._viewer, that);
+					//that.dropDownVisible = !that.dropDownVisible;
+				  });
+				  
 				  
 
                /** Gets or sets the tooltip.  This property is observable.
@@ -195,6 +286,12 @@ define([
 			   saveCommand : {
                get : function() {
                    return this._saveCommand;
+                   }
+               },
+			   
+			   saveCommandLink : {
+               get : function() {
+                   return this._saveCommandLink;
                    }
                },
 			   

@@ -64,6 +64,10 @@ cesiumSvgPath: { path: cameraIconPath, width: 32, height: 32 }');
         infoElement.appendChild(cameraElement);
 		
 		
+		/* ************************************************************************************************************
+		 * ************************************************************************************************************
+		 * ************************************************************************************************************ */
+		
 		var modifyElement = document.createElement('button');
         modifyElement.type = 'button';
         modifyElement.className = 'cesium-button cesium-infoBox-camera';
@@ -71,6 +75,11 @@ cesiumSvgPath: { path: cameraIconPath, width: 32, height: 32 }');
 		modifyElement.innerHTML = "Edit"
         modifyElement.setAttribute('data-bind', 'attr: { title: "Edit fields" },click: function () {}');
         infoElement.appendChild(modifyElement);
+		
+		
+		/* ************************************************************************************************************
+		 * ************************************************************************************************************
+		 * ************************************************************************************************************ */
 		
 
         var closeElement = document.createElement('button');

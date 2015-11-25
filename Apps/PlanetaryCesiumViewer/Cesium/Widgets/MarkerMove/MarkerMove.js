@@ -20,7 +20,7 @@ define([
 
             var MarkerMove = function(toolbar, container, scene, viewer){
 				
-			if(!window.sessionStorage.getItem("geoJsonData"))	window.sessionStorage.setItem("geoJsonData", {});
+			//if(!window.sessionStorage.getItem("geoJsonData"))	window.sessionStorage.setItem("geoJsonData", {});
 			
 			    var viewModel   = new MarkerMoveViewModel(toolbar, container, scene, viewer);	
                 this._viewModel = viewModel;
@@ -40,7 +40,7 @@ define([
 				wrapper.appendChild(button);*/
 
 
-                var modifbutton       = document.createElement('div');                              
+               var modifbutton       = document.createElement('div');                              
                 modifbutton.className     = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';   
                 modifbutton.innerHTML     = "M";                                                      
                 modifbutton.style.cssText = 'text-align : center; font-family : Arial';                 
@@ -51,7 +51,7 @@ define([
 				modifbutton.setAttribute('id', 'xxPrimeSave'); 
 				wrapper.appendChild(modifbutton); 
 
-				var saveButton         = document.createElement('div');                              
+			/*	var saveButton         = document.createElement('div');                              
                 saveButton.className     =  'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
                 saveButton.innerHTML     = "S";                                                      
                 saveButton.style.cssText = 'text-align : center; font-family : Arial';                 
@@ -61,7 +61,20 @@ define([
 						attr: { title: tooltip2 },\
 						click: saveCommand');
 				saveButton.setAttribute('id', 'saveBtn');
-                wrapper.appendChild(saveButton); 
+                wrapper.appendChild(saveButton); */
+				
+				
+				var saveLink        = document.createElement('a');                              
+                saveLink.className     =  'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
+                saveLink.innerHTML     = "Link";                                                      
+                saveLink.style.cssText = 'text-align : center; font-family : Arial';                 
+				saveLink.setAttribute('data-bind', '\
+						css: { "cesium-sceneModePicker-visible" : dropDownVisible,\
+						       "cesium-sceneModePicker-hidden" : !dropDownVisible },\
+						attr: { title: tooltip2 },\
+						click: saveCommandLink');
+				saveLink.setAttribute('id', 'saveLink');
+                wrapper.appendChild(saveLink); 
 
 
                 knockout.applyBindings(viewModel, wrapper);

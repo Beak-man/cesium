@@ -145,9 +145,9 @@ define([ //  Definition des dépendances
                 Ellipsoid.modify(Ellipsoid, endUserOptions);
             };
 			
-            console.log("********** Ellipsoid ins PlanetaryCesiumViewer ***********");
+          /*  console.log("********** Ellipsoid ins PlanetaryCesiumViewer ***********");
             console.log(Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()]);
-            console.log("**********************************************************");
+            console.log("**********************************************************");*/
 			
             Ellipsoid.used = endUserOptions.ellipsoidType.toString().toUpperCase();
 		

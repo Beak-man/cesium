@@ -47,12 +47,12 @@ define(['../Core/Cartesian3',
 			crsFunctionType.used      = CustomizedCrsFunction;
 			crsFunctionType.crs       = {'type': 'name', 'properties': {'name': 'IAU2000:49900'}};
 
-		} else if (ellipsoidUsed === 'VENUS'){
+		} else if (ellipsoidUsed === 'VENUS' || ellipsoidUsed === "VENUSIAU2000"){ 
 
 			crsNames['IAU2000:29900'] =  CustomizedCrsFunction;		
 			crsFunctionType.used      =  CustomizedCrsFunction;	
 			crsFunctionType.crs       = {'type': 'name', 'properties': {'name': 'IAU2000:29900'}};
-		} else if (ellipsoidUsed === 'MERCURE'){
+		} else if (ellipsoidUsed === 'MERCURY'){ // faire aussi avec MERCURYIAU2000
 
 			crsNames['IAU2000:19900'] =  CustomizedCrsFunction;		
 			crsFunctionType.used      =  CustomizedCrsFunction;	
