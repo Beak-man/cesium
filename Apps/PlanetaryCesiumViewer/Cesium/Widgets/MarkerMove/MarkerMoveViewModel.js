@@ -29,17 +29,20 @@ define([
     "use strict";
 
  var _isActive = false;
- var activeLink = false;
+ var handler, handler2;
 
         function markerMoveView(toolbar, scene, viewer, that){
 			
+			var ellipsoid = scene.globe.ellipsoid;
+			
 			if (_isActive == false) {
+			
+			    handler  = new ScreenSpaceEventHandler(scene.canvas);
+			    handler2 = new ScreenSpaceEventHandler(scene.canvas);
 			
 				var lastEntity;
 				var entity = null;
-				var ellipsoid = scene.globe.ellipsoid;
 				
-				var handler = new ScreenSpaceEventHandler(scene.canvas);
 				handler.setInputAction(function(click){
 				
 					entity = null;
@@ -51,12 +54,6 @@ define([
 					
 						entity = pickedObject.primitive.id;
 						entity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
-						
-						
-						
-						
-						
-						
 						
 						//console.log(viewer.infoBox.frame.contentDocument.body);
 						
@@ -79,8 +76,6 @@ define([
 					}
 				}, ScreenSpaceEventType.LEFT_CLICK);
 				
-				
-				var handler2 = new ScreenSpaceEventHandler(scene.canvas);
 				handler2.setInputAction(function(click){
 				
 					var cartesian = scene.camera.pickEllipsoid(click.position, ellipsoid);
@@ -94,9 +89,6 @@ define([
 						if (longitudeRad < 0) {
 							longitudeRad = longitudeRad + 2.0 * Math.PI;
 						}
-					//	entity.properties.center_lat = CesiumMath.toDegrees(cartographic.latitude);
-					//	entity.properties.center_lon = CesiumMath.toDegrees(longitudeRad);
-						
 						entity._billboard.color = new Color(0.0, 1.0, 0.0, 1.0);
 						
 						lastEntity = null;
@@ -104,123 +96,90 @@ define([
 				}, ScreenSpaceEventType.RIGHT_CLICK);
 				
 				_isActive = true;
-			} else {
 				
-				var lastEntity = null;
-				var entity = null;
+			} else {
+
+                handler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+				handler2.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+				_isActive = false;
+				
+				var link = document.getElementById("saveFile");
+				var wrapper = document.getElementById("wrapper");
+				
+				console.log(link);
+				
+				if (link){
+					wrapper.removeChild(link)
+				}
+				
+				
 				
 			}
+		} 	
 			
-		} 
-		
-		/*	function markerMoveSave(toolbar, scene, viewer, that){
+			function createFile(toolbar, scene, viewer, that){
 				
-				
-				var ellipsoid = scene.globe.ellipsoid;
-				 var geoJson = viewer.geoJsonData;
-		         _isActive = false;
-			  
-			     var dimArray =   viewer.dataSources._dataSources[0]._entityCollection._entities._array.length;
-			  
-			  for(var i=0; i<dimArray; i++){
-				var modifiedProperties = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties;
-				var modifiedPosition = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._position._value;
-				var cartographic = ellipsoid.cartesianToCartographic(modifiedPosition);
-				
-				var longitudeRad = cartographic.longitude;
-				var latitudeRad  = cartographic.latitude;
-				
-				var latitudeDeg  = CesiumMath.toDegrees(latitudeRad);
-				var longitudeDeg = CesiumMath.toDegrees(longitudeRad);
-				
-				
-				geoJson.features[i].properties = modifiedProperties;
-				geoJson.features[i].geometry.coordinates = [longitudeDeg, latitudeDeg];
-			  }
-			
-		        document.location = 'data:application/octet-stream;charset=utf-8,' +JSON.stringify(geoJson, null, '\t');  
-			}*/
-			
-			
-			function markerMoveSaveLink(toolbar, scene, viewer, that){
-				
-			 if (activeLink == false) {
 			 
-			    var ellipsoid = scene.globe.ellipsoid;
+			 if (viewer.dataSources._dataSources[0]) {
+			 
+			 	var ellipsoid = scene.globe.ellipsoid;
 			 	var geoJson = viewer.geoJsonData;
-			 	_isActive = false;
 			 	
 			 	var dimArray = viewer.dataSources._dataSources[0]._entityCollection._entities._array.length;
 			 	
 			 	for (var i = 0; i < dimArray; i++) {
-				var modifiedProperties = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties;
-				var modifiedPosition = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._position._value;
-				var cartographic = ellipsoid.cartesianToCartographic(modifiedPosition);
-				
-				var longitudeRad = cartographic.longitude;
-				var latitudeRad  = cartographic.latitude;
-				
-				var latitudeDeg  = CesiumMath.toDegrees(latitudeRad);
-				var longitudeDeg = CesiumMath.toDegrees(longitudeRad);
-				
-				
-				geoJson.features[i].properties = modifiedProperties;
-				geoJson.features[i].geometry.coordinates = [longitudeDeg, latitudeDeg];
+			 		var modifiedProperties = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties;
+			 		var modifiedPosition = viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._position._value;
+			 		var cartographic = ellipsoid.cartesianToCartographic(modifiedPosition);
+			 		
+			 		var longitudeRad = cartographic.longitude;
+			 		var latitudeRad = cartographic.latitude;
+			 		
+			 		var latitudeDeg = CesiumMath.toDegrees(latitudeRad);
+			 		var longitudeDeg = CesiumMath.toDegrees(longitudeRad);
+			 		
+			 		
+			 		geoJson.features[i].properties = modifiedProperties;
+			 		geoJson.features[i].geometry.coordinates = [longitudeDeg, latitudeDeg];
 			 	}
 			 	
 			 	console.log(geoJson);
 			 	
 			 	var jsonData = JSON.stringify(geoJson);
-			 	var blob     = new Blob([jsonData], {type: "application/octet-stream"}); // pass a useful mime type here
-			    var url      = URL.createObjectURL(blob);
-					
-					var fileName = "jsonFile.json";
-					
-					var save = document.getElementById('saveLink');
-					save.href = url;
-					save.target = '_blank';
-					save.download = fileName || 'unknown';
-					
-					
-					
-					
-					console.log(save);
-					activeLink = true;
-				}
+			 	var blob = new Blob([jsonData], {
+			 		type: "application/octet-stream"
+			 	});
+			 	var url = URL.createObjectURL(blob);
+			 	
+			 	var fileName = "jsonFile.json";
+			 	
+			 	var wrapper = document.getElementById("wrapper");
+			 	var saveLink = document.createElement('a');
+			 	saveLink.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
+			 	saveLink.innerHTML = '<svg width="25px" height="25px" viewBox="-10 0 100 100">\
+												<g>\
+													<path d="M84.514,49.615H67.009c-2.133,0-4.025,1.374-4.679,3.406c-1.734,5.375-6.691,8.983-12.329,8.983\
+														c-5.64,0-10.595-3.608-12.329-8.983c-0.656-2.032-2.546-3.406-4.681-3.406H15.486c-2.716,0-4.919,2.2-4.919,4.919v28.054\
+														c0,2.714,2.203,4.917,4.919,4.917h69.028c2.719,0,4.919-2.203,4.919-4.917V54.534C89.433,51.815,87.233,49.615,84.514,49.615z"/>\
+													<path d="M48.968,52.237c0.247,0.346,0.651,0.553,1.076,0.553h0.003c0.428,0,0.826-0.207,1.076-0.558l13.604-19.133\
+														c0.286-0.404,0.321-0.932,0.096-1.374c-0.225-0.442-0.682-0.716-1.177-0.716h-6.399V13.821c0-0.735-0.593-1.326-1.323-1.326H44.078\
+														c-0.732,0-1.323,0.591-1.323,1.326v17.188h-6.404c-0.495,0-0.949,0.279-1.174,0.716c-0.229,0.442-0.19,0.97,0.098,1.374\
+														L48.968,52.237z"/>\
+												</g>\
+												</svg>'
+			 	saveLink.href = url;
+			 	saveLink.target = '_blank';
+			 	saveLink.download = fileName || 'unknown';
+			 	saveLink.setAttribute('id', 'saveFile');
+			 	saveLink.onclick = function(){this.parentElement.removeChild(this);};
+			 	wrapper.appendChild(saveLink);
+			 	
+			 } else {
+			 	
+				alert("Load file in first");
 				
-				else 
-					if (activeLink == true) {
-					
-					    activeLink = false;
-					}
-					
-			
-			/*  if (!window.ActiveXObject) {
-			        var save = document.getElementById('saveLink');
-			        save.href = url;
-			        save.target = '_blank';
-			        save.download = fileName || 'unknown';
-
-			        var event = document.createEvent('Event');
-			        event.initEvent('click', true, true);
-			        save.dispatchEvent(event);
-			        (window.URL || window.webkitURL).revokeObjectURL(save.href);
-  			  }
-
-    		  // for IE
-		      else if ( !! window.ActiveXObject && document.execCommand)     {
-				        var _window = window.open(url, '_blank');
-				        _window.document.close();
-				        _window.document.execCommand('SaveAs', true, fileName || url)
-				        _window.close();
-				    }
-			
-		    */
-			   
-			}
-			
-			
-			
+			 }
+			}	
 
    var MarkerMoveViewModel = function(toolbar, container, scene, viewer) {
 
@@ -247,12 +206,14 @@ define([
 				  
 				this._saveCommand = createCommand(function() {
 				  	markerMoveSave(that._toolbar, that._scene, that._viewer, that);
-					//that.dropDownVisible = !that.dropDownVisible;
 				  });
 				  
-				  this._saveCommandLink = createCommand(function() {
-				  	markerMoveSaveLink(that._toolbar, that._scene, that._viewer, that);
-					//that.dropDownVisible = !that.dropDownVisible;
+				this._saveCommandLink = createCommand(function() {
+				  	createFile(that._toolbar, that._scene, that._viewer, that);
+				  });
+				  
+				this._destroyCommandLink = createCommand(function() {
+				  	destroyLink(that._toolbar, that._scene, that._viewer, that);
 				  });
 				  
 				  
@@ -261,11 +222,11 @@ define([
                *
                * @type {String}
                */
-               this.tooltip         = 'Marker move';
-			   this.tooltip2        = 'Marker save';
-			   this.selectedTooltip = 'Marker move';
+               this.tooltip         = 'Marker edit';
+			   this.tooltip2        = 'Create file';
+			   this.selectedTooltip = 'Marker edit';
 			   
-               knockout.track(this, ['tooltip', 'tooltip2', 'selectedTooltip', 'dropDownVisible']);
+               knockout.track(this, ['tooltip', 'tooltip2', 'selectedTooltip', 'dropDownVisible', 'destroyLink']);
            }; 
 
 
@@ -292,6 +253,12 @@ define([
 			   saveCommandLink : {
                get : function() {
                    return this._saveCommandLink;
+                   }
+               },
+			   
+			   destroyCommandLink : {
+               get : function() {
+                   return this._destroyCommandLink;
                    }
                },
 			   

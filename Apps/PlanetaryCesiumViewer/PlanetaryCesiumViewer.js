@@ -368,4 +368,5 @@ define([ //  Definition des dépendances
         }
     }
     loadingIndicator.style.display = 'none';
+	
 });

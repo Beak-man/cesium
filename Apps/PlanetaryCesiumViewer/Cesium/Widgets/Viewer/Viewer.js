@@ -39,8 +39,9 @@ define([
         '../SelectionIndicator/SelectionIndicator',
         '../subscribeAndEvaluate',
         '../Timeline/Timeline',
-        '../LongitudeLatitdude/LngLat',
-        '../MarkerMove/MarkerMove'
+        '../LongitudeLatitdude/LngLat', /* *** NEW *** */
+        '../MarkerMove/MarkerMove',     /* *** NEW *** */
+		'../ShowSystems/ShowSystems'     /* *** NEW *** */
     ], function(
         BoundingSphere,
         Cartesian3,
@@ -81,8 +82,9 @@ define([
         SelectionIndicator,
         subscribeAndEvaluate,
         Timeline,
-        LngLat,
-        MarkerMove) {
+        LngLat,      /* *** NEW *** */
+        MarkerMove,  /* *** NEW *** */
+		ShowSystems  /* *** NEW *** */) {
     "use strict";
 
     var boundingSphereScratch = new BoundingSphere();
@@ -399,6 +401,19 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         var toolbar = document.createElement('div');
         toolbar.className = 'cesium-viewer-toolbar';
         viewerContainer.appendChild(toolbar);
+		
+		 /* *******************************************************************************************************************************
+          * ************************************************ NEW PLANETS TOOLBAR **********************************************************
+          * ******************************************************************************************************************************* */
+		
+		// Main Planets Toolbar
+        var planetsToolbar = document.createElement('div');
+        planetsToolbar.className = 'cesium-viewer-planetsToolbar';
+        viewerContainer.appendChild(planetsToolbar);
+		
+		 /* *******************************************************************************************************************************
+          * *********************************************** END PLANETS TOOLBAR ***********************************************************
+          * ******************************************************************************************************************************* */
 
         // Geocoder
         var geocoder;
@@ -433,17 +448,21 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
 
          /* *******************************************************************************************************************************
-          * *******************************************************************************************************************************
+          * ******************************************************** NEW WIDGETS **********************************************************
           * ******************************************************************************************************************************* */
-
+         
+		  // longitude and latitude 
           var lngLat;
           lngLat = new LngLat(toolbar, container, cesiumWidget.scene);
 
-
+          // Markers move
           var markerMove;
           markerMove = new MarkerMove(toolbar, container, cesiumWidget.scene, this);
 		 
-		 console.log(DataSourceCollection);
+		 // show planets
+		 var showSystems;
+		 showSystems = new ShowSystems (planetsToolbar, cesiumWidget.scene, this);
+		 
 		 
 		 /* *******************************************************************************************************************************
           * *******************************************************************************************************************************

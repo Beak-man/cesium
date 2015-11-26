@@ -156,3 +156,96 @@ body {
     transition: transform 0.25s ease-out;
 }
 
+.cesium-viewer-planetsToolbar {
+    display: block;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+
+
+/* ======================================================================================= 
+   =============================== Planet toolbar buttons ================================ 
+   ======================================================================================= */
+ 
+
+.cesium-button-planet {
+    display: inline-block;
+    position: relative;
+    background: #303336;
+    border: 1px solid #444;
+    color: #edffff; /* For text buttons */
+    fill: #edffff; /* For SVG buttons */
+    border-radius: 4px;
+    padding: 5px 12px;
+    margin: 2px 3px;
+	font-size : 0.9em;
+	vertical-align: middle;
+    cursor: pointer;
+    overflow: hidden;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+	text-align:center;
+}
+
+.cesium-button-planet:focus {
+    color: #fff; /* For text buttons */
+    fill: #fff; /* For SVG buttons */
+    border-color: #ea4;
+    outline: none;
+	background: #48b;
+}
+
+.cesium-button-planet:hover {
+    color: #fff; /* For text buttons */
+    fill: #fff; /* For SVG buttons */
+    background: #48b;
+    border-color: #aef;
+    box-shadow: 0 0 8px #fff;
+}
+
+.cesium-button-planet:active {
+    color: #000; /* For text buttons */
+    fill: #000; /* For SVG buttons */
+    background: #adf;
+    border-color: #fff;
+    box-shadow: 0 0 8px #fff;
+}
+
+.cesium-button-planet option {
+    background-color: #000;
+    color: #eee;
+}
+
+.cesium-button-planet option:disabled {
+    color: #777;
+}
+
+
+.cesium-button-planet:disabled,
+.cesium-button-planet-disabled,
+.cesium-button-planet-disabled:focus,
+.cesium-button-planet-disabled:hover,
+.cesium-button-planet-disabled:active {
+    background: #303336;
+    border-color: #444;
+    color: #646464; /* For text buttons */
+    fill: #646464; /* For SVG buttons */
+    box-shadow: none;
+    cursor: default;
+}
+
+.cesium-planetsToolbar-button {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 60px;
+    height: 25px;
+    border-radius: 14%;
+    padding: 0;
+    vertical-align: middle;
+    z-index: 0; /* Workaround for rounded raster image corners in Chrome */
+}
