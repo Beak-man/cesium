@@ -106,7 +106,7 @@ define([
 				var link = document.getElementById("saveFile");
 				var wrapper = document.getElementById("wrapper");
 				
-				console.log(link);
+				// console.log(link);
 				
 				if (link){
 					wrapper.removeChild(link)
@@ -143,7 +143,7 @@ define([
 			 		geoJson.features[i].geometry.coordinates = [longitudeDeg, latitudeDeg];
 			 	}
 			 	
-			 	console.log(geoJson);
+			 //	console.log(geoJson);
 			 	
 			 	var jsonData = JSON.stringify(geoJson);
 			 	var blob = new Blob([jsonData], {
@@ -200,7 +200,7 @@ define([
                this._command = createCommand(function() {
 				  	markerMoveView(that._toolbar, that._scene, that._viewer, that);
 					that.dropDownVisible = !that.dropDownVisible;
-				  }, !that.dropDownVisible);
+				  });
 				  
 				  
 				  

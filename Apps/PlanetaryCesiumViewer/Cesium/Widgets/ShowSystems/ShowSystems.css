@@ -1,6 +1,57 @@
-.cesium-viewer-planetsToolbar {
-    display: block;
-    position: absolute;
-    top: 5px;
+.cesium-showSystems-visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.25s linear;
+    -webkit-transition: opacity 0.25s linear;
+    -moz-transition: opacity 0.25s linear;
+}
+
+.cesium-showSystems-hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.25s, opacity 0.25s linear;
+    -webkit-transition: visibility 0s 0.25s, opacity 0.25s linear;
+    -moz-transition: visibility 0s 0.25s, opacity 0.25s linear;
+}
+
+.cesium-showSystems-configContainer {
+	visibility: hidden;
+    position: relative;
+	opacity = 1;
+	margin : 0px;
+    top: 10px;
+    left: -270px;
+	width :  255px;
+	height : 300px;
+	background: #303336; 
+    border: 1px solid #444;
+    color: #edffff; /* For text buttons */
+
+     transition-property: left;
+	 transition:  1s;
+	}
+	
+	
+.cesium-showSystems-configContainer-button {
+ position : relative;
+ top : 270px;
+ left : 185px;
+}
+
+.cesium-showSystems-configContainer-transition {
+	visibility: visible;
+    position: relative;
+	opacity = 1;
+	margin : 0px;
+    top: 10px;
     left: 5px;
+	width :  255px;
+	height : 300px;
+	background: #303336; 
+    border: 1px solid #444;
+    color: #edffff; /* For text buttons */
+
+     transition-property: left;
+	 transition:  1s;
+
 }

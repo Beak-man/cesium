@@ -461,7 +461,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 		 
 		 // show planets
 		 var showSystems;
-		 showSystems = new ShowSystems (planetsToolbar, cesiumWidget.scene, this);
+		 showSystems = new ShowSystems(viewerContainer, planetsToolbar, cesiumWidget.scene, this);
 		 
 		 
 		 /* *******************************************************************************************************************************
