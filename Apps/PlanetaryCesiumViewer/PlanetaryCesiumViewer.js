@@ -1,5 +1,5 @@
 /*global define*/
-define([ //  Definition des dépendances
+define([ //  Definition des dï¿½pendances
         'Cesium/Core/Cartesian3',
         'Cesium/Core/defined',
         'Cesium/Core/formatError',
@@ -41,7 +41,7 @@ define([ //  Definition des dépendances
 	//'RLayerMenu/RLayerMenuViewModel',
 	'Cesium/ThirdParty/knockout',
 	'Cesium/ThirdParty/when',
-    ], function( // Début de la fonction
+    ], function( 
         Cartesian3,
         defined,
         formatError,
@@ -93,26 +93,24 @@ define([ //  Definition des dépendances
 	
 	// Here, we use the request to create the "endUserOptions" object.
 	
-	/* exemple : 
+	/* example : 
 	 
 	 http://localhost:8080/Apps/CesiumMarsViewer/index.html            ==> request without parameters. Hence : endUserOptions = {} 
 	 http://localhost:8080/Apps/CesiumMarsViewer/index.html?map=themis ==> request with one parameter. Hence : endUserOptions = { map : "themis"}.
 	 */
 	
-		/** Query  parameters: 
+	/** Query  parameters: 
 	 * 
-	 * ellipsoidType = name.  Type of ellipsoid to use (predefined or customized. See here after)) 
-	 * ellipsoidSize = x,y,z. (Dimensions of the ellipsoid)
-	 * NAIFCodes     = a,b. Naif codes for planet ("a" parameter) and satellite ("b" parameter). for a planet (Mars for example), use a=4, b=0;
-	 *                      This parameter must be used with a customized ellipsoid (so with the ellipsoidType and ellipsoidSize parameters)                         
+	 * ellipsoidType         = name.  Type of ellipsoid to use (predefined or customized. See here after)) 
+	 * ellipsoidSize         = x,y,z. (Dimensions of the ellipsoid)
+	 * NAIFCodes             = a,b. Naif codes for planet ("a" parameter) and satellite ("b" parameter). for a planet (Mars for example), use a=4, b=0;                        
+	 * imageryProviderParams = params for the imagery provider. 
+	 *                         Example : SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000'    
+	 * onlineResUrl          = url of the online ressource.
+	 *                         Example : http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map                                                                                 
 	 */
     var endUserOptions = queryToObject(window.location.search.substring(1)); 
 		
-	/* *************************************************************************************************************************************** */
-	/* *************************************************************** NEW *************************************************************** */
-	/* *************************************************************************************************************************************** */
-	
-	
 	/* 
 	 - Implementation of the selection of the predefined ellipsoid from the request. 1 parameter must be used : ellipsoidType. 
 	   example of use : http://localhost:8080/Apps/PlanetaryCesiumViewer/index.html?ellipsoidType=MARSIAU2000. 
@@ -140,14 +138,11 @@ define([ //  Definition des dépendances
 	
         if (typeof endUserOptions.ellipsoidType !== 'undefined') { 
 		 	
-            if (typeof endUserOptions.ellipsoidSize !== 'undefined'){ 
-				
+          /*  if (typeof endUserOptions.ellipsoidSize !== 'undefined'){ 
                 Ellipsoid.modify(Ellipsoid, endUserOptions);
-            };
+            }; */
 			
-          /*  console.log("********** Ellipsoid ins PlanetaryCesiumViewer ***********");
-            console.log(Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()]);
-            console.log("**********************************************************");*/
+			Ellipsoid.modify(Ellipsoid, endUserOptions);
 			
             Ellipsoid.used = endUserOptions.ellipsoidType.toString().toUpperCase();
 		
@@ -166,36 +161,48 @@ define([ //  Definition des dépendances
             ellipsoidImageryParam  = Ellipsoid.WGS84;
         };
 
-    /* *************************************************************************************************************************************** */
-    /* *********************************************************** END NEW ******************************************************************* */
-    /* *************************************************************************************************************************************** */
-   
     var imageryProvider; // Provides imagery to be displayed on the surface of an ellipsoid
-
+    var paramObject = {};
+	
     if (endUserOptions.tmsImageryUrl) {
         imageryProvider = new TileMapServiceImageryProvider({
             url: endUserOptions.tmsImageryUrl
         });
-    }
-    else {
-	
-		// Paramètres de la requete
 		
-		// SERVICE :Name of the OGC services.
+    } else if (endUserOptions.imageryProviderParams && endUserOptions.onlineResUrl){
+		
+		// request parameters to get a Map : 
+		
+		// SERVICE : Name of the OGC services.
 		// VERSION : Number of the WMS protocol versions.
 		// STYLES  : Styles lit used for each LAYERS
-		// REQUEST : Three possible opérations : GetCapabilities, GetMap, GetFeatureInfo.
+		// REQUEST : Three possible operations : GetCapabilities, GetMap, GetFeatureInfo.
 		// FORMAT  : type of the returned image ???
 		// LAYERS  : Liste des desired layers.
 		// BBOX    : the map size (longitude min,latitude min, longitude max, latitude max 
 		// WIDTH   : Width of the image.
 		// HEIGHT  : Height of the image.
+
+	    var urlParams        = endUserOptions.imageryProviderParams;
+		var onlineResUrl     = endUserOptions.onlineResUrl;
+	    var tabParams        = urlParams.split(';');
+		var propretiesObject = ['SERVICE', 'VERSION', 'SRS', 'STYLES', 'REQUEST', 'FORMAT', 'LAYERS', 'BBOX', 'WIDTH', 'HEIGHT'];
+		var urlParam         = "";
 		
+		for (var i = 0; i < tabParams.length; i++) {
+			if (i < tabParams.length - 1) {
+				paramObject[propretiesObject[i]] = tabParams[i];
+			    urlParam += propretiesObject[i] + "=" + tabParams[i] + '&';
+		    } else if (i == tabParams.length-1) {
+				 urlParam += propretiesObject[i]+"="+tabParams[i]
+				 };
+          };
+		 var urlMap = onlineResUrl.replace('--', '=') + '&' +  urlParam;
 		
         imageryProvider = new WebMapServiceImageryProvider({
-                    url       : 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map&SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000',
-                    //url       : 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map&SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=MOLA_bw&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000',
-                    layers    : 'themis',
+                   // url     : 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map&SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000',
+                    url       : urlMap,
+                    layers    : paramObject.LAYERS,
                     credit    : 'USGS @ planetarymaps.usgs.gov',
                     ellipsoid : ellipsoidImageryParam
 		});
@@ -210,11 +217,11 @@ define([ //  Definition des dépendances
 	    mapProjection      : mapProjectionParam,         // The map projection to use in 2D and Columbus View modes (class : GeographicProjection).		
 	    globe              : globeParam,                 //  The globe to use in the scene. (class : Globe)
 	    baseLayerPicker    : false,                      
-	    imageryProvider    : imageryProvider,            // Fournit l'image à afficher sur le globe.
+	    imageryProvider    : imageryProvider,            // Fournit l'image a afficher sur le globe.
 	    terrainProvider    : terrainProviderParam,	      
 	    scene3DOnly        : endUserOptions.scene3DOnly, // show 3D scene directly.
 	    skyAtmosphere      : false,                      // atm visualisation.
-	    skyBox             : new SkyBox({show: false}),  // stars visualisation (calculés).
+	    skyBox             : new SkyBox({show: false}),  // stars visualisation (calculï¿½s).
 	    selectionIndicator : false, 
 	    timeline           : false,                      // for files which contains the temporal dimension
 	    animation          : false,                      // for animation which displayed with the time 
@@ -245,61 +252,14 @@ define([ //  Definition des dépendances
         showLoadError(name, error);
     });
 
-
-    /* *************************************************************************************************************************************** */
-	/* ******************************************************************* NEW *************************************************************** */
-	/* *************************************************************************************************************************************** */
-/*
- 
- var scene = viewer.scene;
- var lastEntity;
- var  handler = new ScreenSpaceEventHandler(scene.canvas);
-   handler.setInputAction(function(click) {
-     var pickedObject  =  scene.pick(click.position);
-	  
-	 var pickedObjectId = pickedObject.id.id;
-	 var pickedObjectCoordinates = pickedObject.primitive.position;
-	 var pickedObjectColor       = pickedObject.primitive.color;
-
-	 var primitive = pickedObject.primitive;
-	 var entity = primitive.id;
-	
-	
-	/* ********** changement de position ************* *\
-
-	entity.position = {	
-		x:0,
-		y:0,
-		z:0
-	}*\
-	
-	// ********** changement de couleur ****************** *\
-	  
-	 entity._billboard.color = new Color(1.0, 1.0, 0.0, 1.0);
-	 
-	 
-	 if (lastEntity && lastEntity!=entity){
-		lastEntity._billboard.color = new Color(1.0, 1.0, 1.0, 1.0);
-		lastEntity = entity;
-	 } else if(!lastEntity){
-	 	lastEntity = entity;
-	 } else if(lastEntity && lastEntity==entity){
-	 	lastEntity._billboard.color = new Color(1.0, 1.0, 0.0, 1.0);
-		lastEntity = entity;
-	 }
-	  
-
-    }, ScreenSpaceEventType.LEFT_CLICK);
- */
-    /* *************************************************************************************************************************************** */
-	/* *************************************************************************************************************************************** */
-	/* *************************************************************************************************************************************** */
-	
-
-
-
     var scene = viewer.scene;
     var context = scene.context;
+	
+	scene.globe.baseColor = Color.BLACK;
+
+    scene.fog.enabled = false;
+	scene.moon.show = false;
+	scene.sun.show = false;
 
     if (endUserOptions.debug) {
         context.validateShaderProgram = true;
@@ -307,7 +267,6 @@ define([ //  Definition des dépendances
         context.logShaderCompilation = true;
         context.throwOnWebGLError = true;
     }
-
 
     if (endUserOptions.source) { 
         var source = endUserOptions.source; 

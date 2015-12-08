@@ -1,3 +1,18 @@
+span.cesium-showSystems-wrapper {
+    display: inline-block;
+    position: relative;
+	top : 0px;
+	left : 0px;
+    margin: 0 3px;
+}
+
+
+
+
+.cesium-showSystems-dropDown-icon{
+	visibility:hidden;
+}
+
 .cesium-showSystems-visible {
     visibility: visible;
     opacity: 1;
@@ -17,41 +32,122 @@
 .cesium-showSystems-configContainer {
 	visibility: hidden;
     position: relative;
-	opacity = 1;
+	opacity : 1;
 	margin : 0px;
     top: 10px;
-    left: -270px;
-	width :  255px;
-	height : 300px;
+    left: -470px;
+	width :  420px;
+	height : 500px;
 	background: #303336; 
     border: 1px solid #444;
     color: #edffff; /* For text buttons */
+	overflow : scroll;
 
      transition-property: left;
 	 transition:  1s;
+	 
+	 transition-property: opacity;
+	 transition:  1s;
 	}
 	
-	
-.cesium-showSystems-configContainer-button {
- position : relative;
- top : 270px;
- left : 185px;
-}
 
 .cesium-showSystems-configContainer-transition {
 	visibility: visible;
     position: relative;
-	opacity = 1;
+	opacity : 0;
 	margin : 0px;
     top: 10px;
     left: 5px;
-	width :  255px;
-	height : 300px;
+	width :  420px;
+	height : 500px;
 	background: #303336; 
     border: 1px solid #444;
     color: #edffff; /* For text buttons */
-
+    overflow : scroll;
+	
      transition-property: left;
 	 transition:  1s;
+	 
+	 transition-property: opacity;
+	 transition:  1s;
 
+}	
+	
+	
+.cesium-showSystems-listContainer {
+	visibility: visible;
+    position: relative;
+	opacity : 1;
+	margin : 0px;
+    top: 0px;
+	width :  150%;
+	height : 93%;
+	}
+	
+.cesium-showSystems-btnContainer{
+	visibility: visible;
+    position: relative;
+	opacity : 1;
+	margin : 0px;
+	width :  100%;
+	height : 6%;
+}	
+	
+	
+.cesium-showSystems-configContainer-button {
+ display : inline-block;	
+ position : relative;
+ top : 0px;
+ left : 0px;
+ padding-right: 3px;
+ margin-right: 3px;
 }
+
+
+.cesium-showSystems-configContainer-button-send{
+ display : inline-block;	
+ position : relative;
+ top : 0px;
+ text-align: right;
+ margin-right : 5px;
+height : 10px;
+/*border : white solid 1px;*/
+}
+
+.cesium-showSystems-configContainer-button-send button{
+	border-radius : 30px 30px 30px 30px;
+	 border: white solid 1px;;
+	 background: white;
+	 color : white;
+	 height : 15px;
+	 width : 15px;
+	position : relative;
+	top : -5px;
+	 
+	}
+	
+	.cesium-showSystems-configContainer-button-send button:hover{
+	 border-radius : 40px 40px 40px 40px;
+	 border: white solid 1px;;
+	 color: #000; /* For text buttons */
+     background: #a6d2ff;
+     border-color: #aef;
+     box-shadow: 0 0 8px #777;
+	 cursor : pointer;
+	}
+	
+	
+	.cesium-showSystems-configContainer-button-send button:active {
+    color: #fff; /* For text buttons */
+    fill: #fff; /* For SVG buttons */
+    background: #48b;
+    border-color: #ea0;
+}
+
+	
+.cesium-showSystems-configContainer-button-send a{
+	 vertical-align : top;
+	 height : 100%;
+	 text-decoration : none;
+	 
+	}
