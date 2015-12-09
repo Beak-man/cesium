@@ -27,8 +27,7 @@ define([
         './DataSource',
         './EntityCollection',
         './PolygonGraphics',
-        './PolylineGraphics',
-		'../Core/queryToObject'
+        './PolylineGraphics'
     ], function(
         Cartesian3,
         Color,
@@ -57,8 +56,8 @@ define([
         DataSource,
         EntityCollection,
         PolygonGraphics,
-        PolylineGraphics,
-		queryToObject) {
+        PolylineGraphics
+		) {
     "use strict";
 
 	/* *************************************************************************************************************************************
@@ -68,7 +67,17 @@ define([
 		var crsNames = {};
 		var crsFunctionType = {}
 		
+		// if the request is used
+		
 	    var coordinatesReferenceSystems = new CoordinatesReferenceSystems(crsNames, crsFunctionType);
+		
+		// for dynamical change
+		
+		function crsChange(naifCodes){
+			crsNames = {};
+			crsFunctionType = {};
+			var coordinatesReferenceSystems = new CoordinatesReferenceSystems(crsNames, crsFunctionType, naifCodes);
+		}
 	
 	/* *************************************************************************************************************************************
 	   *************************************************************************************************************************************
@@ -537,12 +546,13 @@ define([
      *
      * @returns {Promise.<GeoJsonDataSource>} A promise that will resolve when the data is loaded.
      */
+
     GeoJsonDataSource.load = function(data, options) {
 		
-	/*	console.log("******************* Depuis GeoJsonDataSource **************************");
-		console.log(options.view);
-		console.log("***********************************************************************");
-	*/	
+		//console.log("******************* Depuis GeoJsonDataSource **************************");
+		//console.log(options.view);
+		//console.log("***********************************************************************");
+		
         return new GeoJsonDataSource().load(data, options);
     };
 
@@ -648,6 +658,12 @@ define([
             get : function() {
                 return crsNames;
             }
+        },
+		
+		crsModification : {
+            set: function(value){
+				crsChange(value);
+			}
         },
 		
 		
@@ -793,7 +809,7 @@ define([
 		console.log("***********************************************************************");*/
 		
 		options.view.geoJsonData = data;
-		console.log(data);
+		//console.log(data);
 		
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         var sourceUri = options.sourceUri;

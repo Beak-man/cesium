@@ -589,6 +589,9 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         this._clockViewModel = clockViewModel;
         this._toolbar = toolbar;
         this._homeButton = homeButton;
+		this._lngLat = lngLat;           /* *** NEW *** */
+		this._markerMove = markerMove;   /* *** NEW *** */
+		this._showSystems = showSystems; /* *** NEW *** */
         this._sceneModePicker = sceneModePicker;
         this._baseLayerPicker = baseLayerPicker;
         this._navigationHelpButton = navigationHelpButton;
@@ -717,6 +720,24 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         infoBox : {
             get : function() {
                 return this._infoBox;
+            }
+        },
+		
+		lngLat : {
+            get : function() {
+                return this._lngLat;
+            }
+        },
+		
+		markerMove : {
+            get : function() {
+                return this._markerMove;
+            }
+        },
+		
+		showSystems : {
+            get : function() {
+                return this._showSystems;
             }
         },
 

@@ -2,12 +2,14 @@
 define([
         '../../Core/Math',
         '../../Core/Color', 
+		'../../Core/defineProperties', 
         '../getElement',
         '../../ThirdParty/knockout',
 		'./ShowSystemsViewModel',
 		],function(
             CesiumMath,
             Color,
+			defineProperties,
             getElement,
             knockout,
 			ShowSystemsViewModel) { 
@@ -20,7 +22,7 @@ define([
 				mars    : ['mars', 'deimos', 'phobos'],
 				jupiter : ['jupiter', 'ganymede', 'callisto', 'io', 'europa'],
 				saturn  : ['saturn', 'titan', 'rhea', 'lapetus', 'dione', 'tethys', 'enceladus', 'mimas'],
-				uranus  : ['uranus', 'titania', 'oberon', 'umbriel', 'ariel', 'miranda'],
+				uranus  : ['uranus', 'titania', 'oberon', 'umbriel', 'Ariel', 'miranda'],
 				neptune : ['neptune', 'triton']
 			}	
 				
@@ -65,18 +67,21 @@ define([
 						window[planetarySystem[0] + 'Wrapper'].appendChild(window[name + 'Button']);
 						
 						} else {
+
+							var name       = planetarySystem[j]; 
+				            var astreName = name.replace(name.charAt(0), name.charAt(0).toUpperCase());
 							
-						var name       = planetarySystem[j]; 
-			            var astreName = name.replace(name.charAt(0), name.charAt(0).toUpperCase());
+							if (name !== ''){
 						
-						window[name + 'Button'] = document.createElement('div');
-		                window[name + 'Button'].className = 'cesium-button-planet cesium-planetsToolbar-button cesium-showSystems-dropDown-icon';
-						window[name + 'Button'].innerHTML = astreName;
-						window[name + 'Button'].style.cssText = 'font-family : Arial; position:relative; left:-3px;';
-						window[name + 'Button'].setAttribute('data-bind', 'attr: { title: tooltip3}, click: commandSatellite.bind($data, "'+planetarySystem[0]+'","'+astreName+'", "'+(count+1)+'", "'+j+'"), \
-						                                                               css: { "cesium-showSystems-visible" :  buttonVisible_'+count+',\
-								                                                              "cesium-showSystems-hidden"  : !buttonVisible_'+count+'}');
-						window[planetarySystem[0] + 'Wrapper'].appendChild(window[name + 'Button']);
+								window[name + 'Button'] = document.createElement('div');
+				                window[name + 'Button'].className = 'cesium-button-planet cesium-planetsToolbar-button cesium-showSystems-dropDown-icon';
+								window[name + 'Button'].innerHTML = astreName;
+								window[name + 'Button'].style.cssText = 'font-family : Arial; position:relative; left:-3px;';
+								window[name + 'Button'].setAttribute('data-bind', 'attr: { title: tooltip3}, click: commandSatellite.bind($data, "'+planetarySystem[0]+'","'+astreName+'", "'+(count+1)+'", "'+j+'"), \
+								                                                               css: { "cesium-showSystems-visible" :  buttonVisible_'+count+',\
+										                                                              "cesium-showSystems-hidden"  : !buttonVisible_'+count+'}');
+								window[planetarySystem[0] + 'Wrapper'].appendChild(window[name + 'Button']);
+						    }
 						}
 					};
 					
@@ -128,16 +133,21 @@ define([
 				btnCancel.setAttribute('data-bind', 'click: cancelCommand');
 				btnContainer.appendChild(btnCancel);
 				
-				/*var btnValidate =  document.createElement('BUTTON');
-				btnValidate.className = 'cesium-showSystems-configContainer-button';
-				btnValidate.innerHTML = 'Select'; 
-				btnValidate.setAttribute('data-bind', 'click: validateCommand');
-				btnContainer.appendChild(btnValidate); */
-				
-				var viewModel   = new ShowSystemsViewModel(scene, configContainer, inputTag, listContainer, btnContainer, solarSystem);	
+				var viewModel   = new ShowSystemsViewModel(viewer, scene, configContainer, inputTag, listContainer, btnContainer, solarSystem);	
                 this._viewModel = viewModel;
 				
                 knockout.applyBindings(viewModel, PlanetsToolbar);
             }
-         return ShowSystems;
+			
+			
+	  defineProperties(ShowSystems.prototype, {
+				
+	  viewModel : {
+            get : function() {
+                return this._viewModel;
+            }
+        },		
+	});
+				
+    return ShowSystems;
 });

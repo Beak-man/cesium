@@ -111,9 +111,6 @@ define([
 				if (link){
 					wrapper.removeChild(link)
 				}
-				
-				
-				
 			}
 		} 	
 			
@@ -176,7 +173,7 @@ define([
 			 	
 			 } else {
 			 	
-				alert("Load file in first");
+				alert("Load a file in first");
 				
 			 }
 			}	

@@ -72,23 +72,13 @@ var previousImageryProvidersTab;
 
 
         var ListViewModel = function(viewer, dimLayers, layerName, imageryProvidersTab) {
-				 
-               /* if (typeof previousImageryProvidersTab === 'undefined'){
-					previousImageryProvidersTab = imageryProvidersTab;
-					
-				} else {
-					
-					cleanLayers(viewer, previousImageryProvidersTab);
-					previousImageryProvidersTab = imageryProvidersTab;
-				}*/
-				
+
+               //  console.log(viewer.imageryLayers);
+
 				 viewer.imageryLayers.removeAll(true);
-				// viewer.scene.globe.baseColor = Color.BLACK;
-                
-
-
-                console.log(viewer.scene);
-
+				 
+				 
+				 
                  var that = this;
 				 
                   for (var i = 0; i < dimLayers; i++) {

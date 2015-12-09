@@ -161,7 +161,7 @@ define([ //  Definition des d�pendances
             ellipsoidImageryParam  = Ellipsoid.WGS84;
         };
 
-    var imageryProvider; // Provides imagery to be displayed on the surface of an ellipsoid
+    var imageryProvider;
     var paramObject = {};
 	
     if (endUserOptions.tmsImageryUrl) {
@@ -255,7 +255,11 @@ define([ //  Definition des d�pendances
     var scene = viewer.scene;
     var context = scene.context;
 	
+	// =================== default color of the globe ======================
+	
 	scene.globe.baseColor = Color.BLACK;
+	
+	// =====================================================================
 
     scene.fog.enabled = false;
 	scene.moon.show = false;

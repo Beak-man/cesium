@@ -20,7 +20,8 @@ define([
         CzmlDataSource,
         GeoJsonDataSource,
         KmlDataSource,
-        getElement) {
+        getElement
+		) {
     "use strict";
 
     /**
@@ -238,6 +239,7 @@ define([
     }
 
     function createOnLoadCallback(viewer, file, proxy) {
+		
         return function(evt) {
             var fileName = file.name;
             try {
@@ -252,7 +254,7 @@ define([
                         sourceUri : fileName, 
 						view      : viewer						
                     });
-					
+
                 } else if (/\.(kml|kmz)$/i.test(fileName)) {
                     loadPromise = KmlDataSource.load(file, {
                         sourceUri : fileName,
