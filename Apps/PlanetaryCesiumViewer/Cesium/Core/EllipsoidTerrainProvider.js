@@ -99,8 +99,13 @@ define([
         tilingScheme : {
             get : function() {
                 return this._tilingScheme;
+            },
+			
+			set : function(ellipsoid){
+				this._tilingScheme = new GeographicTilingScheme({ ellipsoid : ellipsoid});
             }
-        },
+		  },
+			
 
         /**
          * Gets a value indicating whether or not the provider is ready for use.

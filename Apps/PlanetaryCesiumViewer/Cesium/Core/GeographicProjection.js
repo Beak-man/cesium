@@ -32,9 +32,9 @@ define([
      */
     var GeographicProjection = function(ellipsoid) {
 		
-	/*	console.log("************* Ellipsoid depuis GeographicProjection *********************");
+		console.log("************* Ellipsoid depuis GeographicProjection *********************");
 		console.log(ellipsoid);
-		console.log("*************************************************************************");*/
+		console.log("*************************************************************************");
 		
 		
         this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84);
@@ -54,7 +54,15 @@ define([
         ellipsoid : {
             get : function() {
                 return this._ellipsoid;
-            }
+            },
+			
+			/* ************************************************* NEW ***************************************************** */
+			
+			set : function(ellipsoid){
+                       this._ellipsoid = ellipsoid;
+			},
+			
+			/* *********************************************************************************************************** */
         }
     });
 

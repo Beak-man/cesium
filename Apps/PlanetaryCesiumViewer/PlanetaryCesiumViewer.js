@@ -259,11 +259,13 @@ define([ //  Definition des d�pendances
 	
 	scene.globe.baseColor = Color.BLACK;
 	
-	// =====================================================================
+	// ==================== unable fog, moon and sun =======================
 
     scene.fog.enabled = false;
 	scene.moon.show = false;
 	scene.sun.show = false;
+	
+	// =====================================================================
 
     if (endUserOptions.debug) {
         context.validateShaderProgram = true;

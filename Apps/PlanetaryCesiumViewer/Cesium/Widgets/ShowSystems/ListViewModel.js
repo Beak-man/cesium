@@ -73,12 +73,8 @@ var previousImageryProvidersTab;
 
         var ListViewModel = function(viewer, dimLayers, layerName, imageryProvidersTab) {
 
-               //  console.log(viewer.imageryLayers);
-
 				 viewer.imageryLayers.removeAll(true);
-				 
-				 
-				 
+
                  var that = this;
 				 
                   for (var i = 0; i < dimLayers; i++) {

@@ -133,7 +133,7 @@ define([
 				btnCancel.setAttribute('data-bind', 'click: cancelCommand');
 				btnContainer.appendChild(btnCancel);
 				
-				var viewModel   = new ShowSystemsViewModel(viewer, scene, configContainer, inputTag, listContainer, btnContainer, solarSystem);	
+				var viewModel   = new ShowSystemsViewModel(viewer, scene, configContainer, listContainer, btnContainer, solarSystem);	
                 this._viewModel = viewModel;
 				
                 knockout.applyBindings(viewModel, PlanetsToolbar);
