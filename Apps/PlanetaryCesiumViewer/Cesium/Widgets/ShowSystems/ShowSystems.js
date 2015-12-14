@@ -15,7 +15,7 @@ define([
 			ShowSystemsViewModel) { 
                 "use strict";
 	
-			var solarSystem = {
+		/*	var solarSystem = {
 				mercury : ['mercury'],
 				venus   : ['venus'],
 				earth   : ['earth', 'moon'],
@@ -24,15 +24,34 @@ define([
 				saturn  : ['saturn', 'titan', 'rhea', 'lapetus', 'dione', 'tethys', 'enceladus', 'mimas'],
 				uranus  : ['uranus', 'titania', 'oberon', 'umbriel', 'Ariel', 'miranda'],
 				neptune : ['neptune', 'triton']
-			}	
+			}	*/
 				
+				
+		   function getXMLHttpRequest() {
+	        if (window.XMLHttpRequest ){// code for IE7+, Firefox, Chrome, Opera, Safari
+	           var xhr = new XMLHttpRequest();
+	         } else if(typeof ActiveXObject !== " undefined" ){
+	           var xhr = new ActiveXObject( "Microsoft.XMLHTTP") ; // activeX pour IE
+	        } else {
+	            console.log("AJAX don't available on this browser");
+	           var xhr = null;
+	        }
+	        return xhr ;
+        }	
+		
+		
+		   function createUI(viewerContainer, PlanetsToolbar, scene, viewer, solarSystem, systemsDimensions, that){
 			
-            var ShowSystems = function(viewerContainer, PlanetsToolbar, scene, viewer){
-     	    var count = 0;
+			var count = 0;
 			var i;
 			for (i in solarSystem) {
 				
 			   var planetarySystem = solarSystem[i];
+			   var systemsDimensionsProperty = i+"System";
+			   var objectDimensions = systemsDimensions[systemsDimensionsProperty];
+			   
+			   
+			 //  console.log(systemsDimensions[systemsDimensionsProperty]);
 			    
 			   var name       = planetarySystem[0]; 
 			   var planetName = planetarySystem[0].replace(planetarySystem[0].charAt(0), planetarySystem[0].charAt(0).toUpperCase());
@@ -55,13 +74,17 @@ define([
 						if (j == 0){
 						
 						var name       = planetarySystem[j]; 
+						var dimensions = [objectDimensions[name].x, objectDimensions[name].y, objectDimensions[name].z];
+						
+						//console.log(objectDimensions[name]);
+						
 			            var planetName = name.replace(name.charAt(0), name.charAt(0).toUpperCase());
 						
 						window[name + 'Button'] = document.createElement('div');
 		                window[name + 'Button'].className = 'cesium-button-planet cesium-planetsToolbar-button cesium-showSystems-dropDown-icon';
 						window[name + 'Button'].innerHTML = planetName;
 						window[name + 'Button'].style.cssText = 'font-family : Arial; position:relative; left:-3px;';
-						window[name + 'Button'].setAttribute('data-bind', 'attr: { title: tooltip2}, click: command.bind($data, "'+planetName+'", "'+(count+1)+'", "'+j+'"), \
+						window[name + 'Button'].setAttribute('data-bind', 'attr: { title: tooltip2}, click: command.bind($data, "'+planetName+'", "'+(count+1)+'", "'+j+'", "'+dimensions+'"), \
 						                                                               css: { "cesium-showSystems-visible" : buttonVisible_'+count+',\
 								                                                              "cesium-showSystems-hidden"  : !buttonVisible_'+count+'}');
 						window[planetarySystem[0] + 'Wrapper'].appendChild(window[name + 'Button']);
@@ -70,6 +93,7 @@ define([
 
 							var name       = planetarySystem[j]; 
 				            var astreName = name.replace(name.charAt(0), name.charAt(0).toUpperCase());
+							var dimensions = [objectDimensions[name].x, objectDimensions[name].y, objectDimensions[name].z];
 							
 							if (name !== ''){
 						
@@ -77,7 +101,7 @@ define([
 				                window[name + 'Button'].className = 'cesium-button-planet cesium-planetsToolbar-button cesium-showSystems-dropDown-icon';
 								window[name + 'Button'].innerHTML = astreName;
 								window[name + 'Button'].style.cssText = 'font-family : Arial; position:relative; left:-3px;';
-								window[name + 'Button'].setAttribute('data-bind', 'attr: { title: tooltip3}, click: commandSatellite.bind($data, "'+planetarySystem[0]+'","'+astreName+'", "'+(count+1)+'", "'+j+'"), \
+								window[name + 'Button'].setAttribute('data-bind', 'attr: { title: tooltip3}, click: commandSatellite.bind($data, "'+planetarySystem[0]+'","'+astreName+'", "'+(count+1)+'", "'+j+'","'+dimensions+'"), \
 								                                                               css: { "cesium-showSystems-visible" :  buttonVisible_'+count+',\
 										                                                              "cesium-showSystems-hidden"  : !buttonVisible_'+count+'}');
 								window[planetarySystem[0] + 'Wrapper'].appendChild(window[name + 'Button']);
@@ -90,15 +114,21 @@ define([
                    var name       = planetarySystem[0]; 
 			       var planetName = name.replace(name.charAt(0), name.charAt(0).toUpperCase());
 
+                   var dimensions = [objectDimensions[name].x, objectDimensions[name].y, objectDimensions[name].z];
+				   
+                  //  console.log(dimensions);
+
+				 /*  var x = objectDimensions[name].x;
+				   var y = objectDimensions[name].y;
+				   var z = objectDimensions[name].z;*/
+
 	               window[name+ 'Button'] = document.createElement('div');
 	               window[name+ 'Button'].className = 'cesium-button-planet cesium-planetsToolbar-button';
 				   window[name+ 'Button'].innerHTML = planetName;
-				   window[name+ 'Button'].setAttribute('data-bind', 'attr: { title: tooltip}, click: command.bind($data, "'+planetName+'","'+(count+1)+'", "'+0+'")');
+				   window[name+ 'Button'].setAttribute('data-bind', 'attr: { title: tooltip}, click: command.bind($data, "'+planetName+'","'+(count+1)+'", "'+0+'", "'+dimensions+'")');             // +'", "'+x+'", "'+y+'", "'+z+'")');
 	               PlanetsToolbar.appendChild(window[name+ 'Button']);
 			   }
-			   
 			   count++;
-
             }
 
 				var customButton = document.createElement('div');
@@ -116,12 +146,6 @@ define([
 			    listContainer.className = 'cesium-showSystems-listContainer';
 				listContainer.setAttribute('id', 'listId');
 			    configContainer.appendChild(listContainer);
-				
-				var inputTag   =  document.createElement('INPUT');
-                inputTag.type = 'radio';
-			    inputTag.className = 'cesium-showSystems-configContainer-button';
-				inputTag.setAttribute('data-bind', 'click: testCommand');
-			  //  listContainer.appendChild(inputTag);
 
 				var btnContainer =  document.createElement('div');
 				btnContainer.className = 'cesium-showSystems-btnContainer';
@@ -134,9 +158,40 @@ define([
 				btnContainer.appendChild(btnCancel);
 				
 				var viewModel   = new ShowSystemsViewModel(viewer, scene, configContainer, listContainer, btnContainer, solarSystem);	
-                this._viewModel = viewModel;
+                that._viewModel = viewModel;
 				
                 knockout.applyBindings(viewModel, PlanetsToolbar);
+		}		
+
+	
+	       function getDataSolarSystem(xhr, method, url, async, viewerContainer, PlanetsToolbar, scene, viewer, that){
+	       	
+	       	xhr.open(method, url, async);
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			xhr.send();
+			xhr.onreadystatechange = function(){
+
+				
+				if(xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0){
+					
+					 var data =xhr.responseText;
+					 var jsonData = JSON.parse(data);
+					 var solarSystem = jsonData.solarSystem;
+					 var systemsDimensions = jsonData.systemsDimensions;
+					 
+					 createUI(viewerContainer, PlanetsToolbar, scene, viewer, solarSystem, systemsDimensions, that);
+	            }
+	         }
+	      }
+
+           var ShowSystems = function(viewerContainer, PlanetsToolbar, scene, viewer){
+  
+             var that = this;
+
+             var xhr = getXMLHttpRequest(); 
+             var url = 'Cesium/Widgets/ShowSystems/SolarSystemConfig.json';
+              
+             getDataSolarSystem(xhr, 'GET', url, true, viewerContainer, PlanetsToolbar, scene, viewer, that);
             }
 			
 			

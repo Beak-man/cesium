@@ -73,11 +73,18 @@ define([
 		
 		// for dynamical change
 		
-		function crsChange(naifCodes){
+		function crsChange(obj){
+			
+			GeoJsonDataSource._ellipsoid =  obj.ellipsoid;
+			var naifCodes = obj.naifCodes;
+			
 			crsNames = {};
 			crsFunctionType = {};
+			
 			var coordinatesReferenceSystems = new CoordinatesReferenceSystems(crsNames, crsFunctionType, naifCodes);
 		}
+	
+	console.log(crsFunctionType);
 	
 	/* *************************************************************************************************************************************
 	   *************************************************************************************************************************************
@@ -228,9 +235,19 @@ define([
 
     function coordinatesArrayToCartesianArray(coordinates, crsFunction) {
         var positions = new Array(coordinates.length);
-        for (var i = 0; i < coordinates.length; i++) {
-            positions[i] = crsFunction(coordinates[i]);
-        }
+		
+		console.log("================ ligne 245 ========================");
+		console.log(GeoJsonDataSource._ellipsoid);
+		
+		if (!this._ellipsoid) {
+			for (var i = 0; i < coordinates.length; i++) {
+				positions[i] = crsFunction(coordinates[i]);
+			}
+		} else if (this._ellipsoid){
+			for (var i = 0; i < coordinates.length; i++) {
+				positions[i] = crsFunction(coordinates[i], GeoJsonDataSource._ellipsoid);
+			}
+		} 
         return positions;
     }
 
@@ -315,13 +332,33 @@ define([
 
             var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
             entity.billboard = billboard;
-            entity.position = new ConstantPositionProperty(crsFunction(coordinates));
+			
+			
+				console.log("================ ligne 343 ========================");
+				
+			if (!GeoJsonDataSource._ellipsoid) {
+				
+				   console.log("dans if");
+				
+				 entity.position = new ConstantPositionProperty(crsFunction(coordinates));
+				 
+				 console.log(crsFunction(coordinates));
+				 
+			} else if (GeoJsonDataSource._ellipsoid){
+				
+				console.log("dans else");
+				
+				 entity.position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
+				 //console.log(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
+				 // console.log(GeoJsonDataSource._ellipsoid);
+			} 
         }));
     }
 
     function processPoint(dataSource, geoJson, geometry, crsFunction, options) {
         createPoint(dataSource, geoJson, crsFunction, geometry.coordinates, options);
     }
+	
 
     function processMultiPoint(dataSource, geoJson, geometry, crsFunction, options) {
         var coordinates = geometry.coordinates;
@@ -361,11 +398,13 @@ define([
         var polyline = new PolylineGraphics();
         polyline.material = material;
         polyline.width = widthProperty;
+		
         polyline.positions = new ConstantProperty(coordinatesArrayToCartesianArray(coordinates, crsFunction));
 
         var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
         entity.polyline = polyline;
     }
+	
 
     function processLineString(dataSource, geoJson, geometry, crsFunction, options) {
         createLineString(dataSource, geoJson, crsFunction, geometry.coordinates, options);
@@ -434,18 +473,17 @@ define([
         polygon.outlineColor = outlineColorProperty;
         polygon.outlineWidth = widthProperty;
         polygon.material = material;
-
         var holes = [];
         for (var i = 1, len = coordinates.length; i < len; i++) {
             holes.push(new PolygonHierarchy(coordinatesArrayToCartesianArray(coordinates[i], crsFunction)));
         }
-
+		
         var positions = coordinates[0];
+		
         polygon.hierarchy = new ConstantProperty(new PolygonHierarchy(coordinatesArrayToCartesianArray(positions, crsFunction), holes));
         if (positions[0].length > 2) {
             polygon.perPositionHeight = new ConstantProperty(true);
         }
-
         var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
         entity.polygon = polygon;
     }
@@ -528,7 +566,7 @@ define([
         this._entityCollection = new EntityCollection(this);
         this._promises = [];
         this._pinBuilder = new PinBuilder();
-		this._geoJson    = geoJsonObject;
+		this._ellipsoid = null;
     };
 
     /**
@@ -548,10 +586,6 @@ define([
      */
 
     GeoJsonDataSource.load = function(data, options) {
-		
-		//console.log("******************* Depuis GeoJsonDataSource **************************");
-		//console.log(options.view);
-		//console.log("***********************************************************************");
 		
         return new GeoJsonDataSource().load(data, options);
     };
@@ -871,6 +905,8 @@ define([
 	       * */
          
            var crsFunction = crsFunctionType.used; 
+		   console.log(crsFunction);
+		   
         //   var crsFunction = defaultCrsFunction;
           /* Here, we manage the case where the crs proprety is not defined in the json file. The crs proprety introduced in the geoJson
            * object is created in the "CoordinatesReferenceSystems" class and integrated in the "crsFunctionType" object.

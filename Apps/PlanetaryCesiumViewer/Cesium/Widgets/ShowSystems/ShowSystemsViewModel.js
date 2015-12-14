@@ -2,6 +2,9 @@
 
 /*global define*/
 define([
+    '../../Core/CesiumTerrainProvider',
+    '../../Scene/Camera',
+	'../../Core/Cartesian3',
     '../../Core/Math',
     '../../Core/Color',
     '../createCommand', 
@@ -16,8 +19,12 @@ define([
     '../../ThirdParty/knockout', 
     '../../Core/defineProperties', 
 	'./ListViewModel',
+	'../../Core/Matrix4',
 	'../../Scene/WebMapServiceImageryProvider'
     ], function(
+	    CesiumTerrainProvider,
+	    Camera,
+		Cartesian3,
 	    CesiumMath,
         Color,
         createCommand,
@@ -32,6 +39,7 @@ define([
         knockout,
         defineProperties,
         ListViewModel,
+		Matrix4,
 		WebMapServiceImageryProvider
         ) { 
     "use strict";
@@ -100,9 +108,6 @@ define([
 	
 				var ajaxDataRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/'+pn+'/'+pn+'_simp_cyl.map&service=WMS&request=GetCapabilities';
 				getXmlPlanetData(that, viewer, xhr, 'post', ajaxDataRequest,  true, listContainer, pn, naifCode);
-				
-				//var ajaxNomRequest = 'http://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/'+pn+'/'+pn+'_nomen_wms.map&service=WMS&request=GetCapabilities';
-				//getXmlPlanetNommen(that, viewer, xhrNommen, 'post', ajaxNomRequest, true, listContainer, pn, naifCode);
 		}
 		
 		function moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, naifCode){
@@ -239,6 +244,7 @@ define([
 		                        });
 						};
 				   
+	                    
 				   
 						var listViewModel = new ListViewModel(viewer, dimLayers, layerName, imageryProvidersTab);
 						knockout.applyBindings(listViewModel, listContainer2);
@@ -249,67 +255,6 @@ define([
 				}
 			}
 		}
-		
-		/* function getXmlPlanetNommen(that, viewer, xhrNommen, method, url, async, listContainer){
-		
-			xhrNommen.open(method, url, async);
-			xhrNommen.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			xhrNommen.send();
-			
-			xhrNommen.onreadystatechange = function(){
-			  if (xhrNommen.readyState == 4 && xhrNommen.status == 200 || xhrNommen.status == 0) {
-			  	var data = xhrNommen.responseXML;
-			  	try {
-			  		var capability = data.getElementsByTagName("Capability");
-			  		var layers = capability[0].getElementsByTagName("Layer");
-			  		var onlineRessource = layers[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
-					
-					var title = layers[0].getElementsByTagName("Title")[0].textContent;
-					var name  = layers[0].getElementsByTagName("Name")[0].textContent;
-
-					var container = document.getElementById('listId');
-					var listShow   =  document.createElement('div');
-			        container.appendChild(listShow);
-					
-					var tableList = document.createElement('TABLE');
-                    listShow.appendChild(tableList);  
-					
-					var tableLine = document.createElement('TR');
-                    tableList.appendChild(tableLine);
-					
-					var colomn1 = document.createElement('TD');
-                    tableLine.appendChild(colomn1); 
-					
-					var btnShowLayer  =  document.createElement('INPUT');
-					btnShowLayer.type = 'checkbox'; 
-				    btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-					btnShowLayer.setAttribute('data-bind',  'checked : show_Nommen');
-					colomn1.appendChild(btnShowLayer);
-					 	  
-					var colomn2 = document.createElement('TD');
-                    tableLine.appendChild(colomn2);
-						  
-                    colomn2.appendChild(document.createTextNode(title));
-					
-					var layerName = name;
-					var	imageryProvidersTab =  new WebMapServiceImageryProvider({
-			                    url       : onlineRessource,
-			                    layers    : name,
-			                    credit    : 'USGS @ planetarymaps.usgs.gov',
-		                        });
-				   
-				  var dimLayers = 1;
-				   
-						//var listViewModel = new ListViewModel(viewer, dimLayers, layerName, imageryProvidersTab);
-						//knockout.applyBindings(listViewModel, listContainer2);
-					
-					
-			  	} 
-			  	catch (e) {
-			  	}
-			  }
-			}
-		}*/
 		
 		function getXmlDataSatellite(that, viewer, xhr, method, url, async, listContainer, pn, sn, naifCode){
 
@@ -426,6 +371,7 @@ define([
 			                    url       : finalUrl,
 			                    layers    : layer[i],
 			                    credit    : 'USGS @ planetarymaps.usgs.gov',
+								ellipsoid :  that._ellipsoid
 		                        });
 						};
 
@@ -435,6 +381,60 @@ define([
 			}
 		}
 		
+		/**
+		 * function used to show or hide buttons of the planet and it's satellites for a given planetary system
+		 * 
+		 * @param {Object} that
+		 * @param {num} index
+		 */
+		function showSystemButtons(that, index){
+			
+			if (that.isShowSystemActive && that.previousIndex == index) {
+					
+						for (var i = 0; i < that._solarSystemSize; i++) {
+							that["buttonVisible_" + i] = false;
+						};
+						cancelFunction(that);
+						that.isShowSystemActive = false;
+						
+					}else if (!that.isShowSystemActive && that.previousIndex != index) {
+						
+						for (var i = 0; i < that._solarSystemSize; i++) {
+							that["buttonVisible_" + i] = false;
+						};
+							
+						that['buttonVisible_' + index] = !that['buttonVisible_' + index];
+						cancelFunction(that);
+						that.isShowSystemActive = true;
+						that.previousIndex = index;
+							
+					}else if (!that.isShowSystemActive && that.previousIndex == index) {
+						
+						for (var i = 0; i < that._solarSystemSize; i++) {
+							that["buttonVisible_" + i] = false;
+						};
+								
+						that['buttonVisible_' + index] = !that['buttonVisible_' + index];
+						cancelFunction(that);
+						that.isShowSystemActive = true;
+						that.previousIndex = index;
+						
+					}else if (that.isShowSystemActive && that.previousIndex != index) {
+						
+						for (var i = 0; i < that._solarSystemSize; i++) {
+							that["buttonVisible_" + i] = false;
+						};
+						that['buttonVisible_' + index] = !that['buttonVisible_' + index];
+						cancelFunction(that);
+						that.isShowSystemActive = false;
+						that.previousIndex = index;
+					}
+		}
+		
+		
+		/**
+		 * function to get the XMLHttpRequest for AJAX requests
+		 */
 		function getRequest() {
 	        if (window.XMLHttpRequest ){// code for IE7+, Firefox, Chrome, Opera, Safari
 	           var xhr = new XMLHttpRequest();
@@ -447,6 +447,11 @@ define([
 	        return xhr ;
         }
 		
+		/**
+		 * function to hide panel which contains the layers to display for a given celestial body 
+		 * 
+		 * @param {Object} that
+		 */
 	    function cancelFunction(that){
 			var configContainer = document.getElementById("configId");
 			configContainer.className = "";
@@ -455,6 +460,19 @@ define([
 			configContainer.style.left = windowsMove;
 			that.isShowSystemActive = false;
 		}
+		
+		
+		/**
+		 * 
+		 * Main function of the modelView. 
+		 * 
+		 * @param {Object} viewer
+		 * @param {Object} scene
+		 * @param {Object} configContainer : HTML element
+		 * @param {Object} listContainer   : HTML element
+		 * @param {Object} btnContainer    : HTML element
+		 * @param {Object} solarSystem     : object which contains the stellar system to display
+		 */
 		
         var ShowSystemsViewModel = function(viewer, scene, configContainer, listContainer, btnContainer, solarSystem) {
 
@@ -465,95 +483,110 @@ define([
 			   this._btnContainer      = btnContainer;
 			   this.isShowSystemActive = false;
 			   this.previousIndex      = null;
-			   this._ellipsoid         =  freezeObject(new Ellipsoid(6356752.0, 6356752.0, 6378137.0));
 			   
-			   var dim = getObjectSize(solarSystem);
+			   this._solarSystemSize = getObjectSize(solarSystem);
 			     
-			   for (var i=0; i < dim; i++) {
+			   for (var i=0; i < this._solarSystemSize; i++) {
 			   	this["buttonVisible_"+i] = false;
 			   };
 			   
                var that = this;
                var xhr = getRequest();
-			 //  var xhrNommen = getRequest(); // not used
 
-                this._command = createCommand(function(planetName,  planetIndex, satelliteIndex) {
+               this._command = createCommand(function(planetName,  planetIndex, satelliteIndex, vectorDimensionsString) {
+                     
+                     var stringVectorTab = vectorDimensionsString.split(',');
+					 
+                     var objectDimensions = {	
+						x : parseFloat(stringVectorTab[0]),
+						y : parseFloat(stringVectorTab[1]),
+						z : parseFloat(stringVectorTab[2]),
+					 }
+
+                    that._ellipsoid =  freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
 
 				    var newTerrainProvider      = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
-					var newGeographicProjection = new GeographicProjection( that._ellipsoid);
-					var newGlobe                = new Globe( that._ellipsoid); 
+					var newGeographicProjection = new GeographicProjection(that._ellipsoid);
+					var newGlobe                = new Globe(that._ellipsoid); 
 					
-					that._viewer.scene.globe = newGlobe;
-					that._viewer.scene.globe.baseColor = Color.BLACK;
-					//that._viewer.scene.mapProjection = newGeographicProjection;
-					that._viewer.terrainProvider =  newTerrainProvider;
-					
-					var naifCode = [planetIndex, satelliteIndex];
-					GeoJsonDataSource.crsModification = naifCode;
 					that._viewer.dataSources.removeAll(true);
+                    that._viewer.scene.globe           = newGlobe;
+					that._viewer.scene.mapProjection   = newGeographicProjection;
+					that._viewer.terrainProvider       = newTerrainProvider;
+					that._viewer.scene.globe.baseColor = Color.BLACK;
+
+					/*if (planetName == 'Earth'){
+						var terrainProvider = new CesiumTerrainProvider({
+							     url : '//assets.agi.com/stk-terrain/world',
+								 requestWaterMask : false
+						});
+						that._viewer.terrainProvider = terrainProvider;
+						
+					} else {
+						that._viewer.terrainProvider       = newTerrainProvider;
+					}*/
+
+                    homeView(that._scene);
+
+					var naifCode = [planetIndex, satelliteIndex];
+					
+					var obj = {
+						naifCodes  : naifCode,
+						ellipsoid :  that._ellipsoid
+					}
+					
+					GeoJsonDataSource.crsModification = obj;
 					
 				  	showPlanetView(that, that._viewer,  planetName, that._configContainer, that._listContainer, that._btnContainer, xhr,  naifCode);
-				  	for (var i=0; i < dim; i++) {
-			        	that["buttonVisible_"+i] = false;
-			        };	
-					that.isShowSystemActive = false;
+					
+					if (planetName == 'venus'){
+						
+						var esri = new ArcGisMapServerImageryProvider({
+                                url: '//elevation.arcgisonline.com/ArcGIS/rest/services/WorldElevation/DTMEllipsoidal/ImageServer'
+                        });
+						
+					}
+					
+				  	removeButtons(that);
 				});
 				
-				this._commandSatellite = createCommand(function(planetName, satelliteName, planetIndex, satelliteIndex) {	
+				this._commandSatellite = createCommand(function(planetName, satelliteName, planetIndex, satelliteIndex, vectorDimensionsString) {	
+				
+				     var stringVectorTab = vectorDimensionsString.split(',');
+					 
+                     var objectDimensions = {	
+						x : parseFloat(stringVectorTab[0]),
+						y : parseFloat(stringVectorTab[1]),
+						z : parseFloat(stringVectorTab[2]),
+					 }
+
+                    that._ellipsoid =  freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
+
+				    var newTerrainProvider      = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
+					var newGeographicProjection = new GeographicProjection(that._ellipsoid);
+					var newGlobe                = new Globe(that._ellipsoid); 
+					
+					that._viewer.dataSources.removeAll(true);
+                    that._viewer.scene.globe           = newGlobe;
+					that._viewer.scene.mapProjection   = newGeographicProjection;
+					that._viewer.terrainProvider       = newTerrainProvider;
+					that._viewer.scene.globe.baseColor = Color.BLACK;
 				
 				    var naifCode = [planetIndex, satelliteIndex];
-					GeoJsonDataSource.crsModification = naifCode;
-					that._viewer.dataSources.removeAll(true);
+					
+					var obj = {
+						naifCodes  : naifCode,
+						ellipsoid :  that._ellipsoid
+					}
+					
+					GeoJsonDataSource.crsModification = obj;
 					
 				  	showSatelliteView(that, that._viewer, planetName, satelliteName, that._configContainer, that._listContainer, that._btnContainer, xhr, naifCode);
-						for (var i=0; i < dim; i++) {
-			        	that["buttonVisible_"+i] = false;
-			        };	
-					that.isShowSystemActive = false;
+					removeButtons(that);
 				});
 				
 				this._showSystem = createCommand(function(index) {
-					
-					if (that.isShowSystemActive && that.previousIndex == index) {
-					
-						for (var i = 0; i < dim; i++) {
-							that["buttonVisible_" + i] = false;
-						};
-						cancelFunction(that);
-						that.isShowSystemActive = false;
-						
-					}else if (!that.isShowSystemActive && that.previousIndex != index) {
-						
-						for (var i = 0; i < dim; i++) {
-							that["buttonVisible_" + i] = false;
-						};
-							
-						that['buttonVisible_' + index] = !that['buttonVisible_' + index];
-						cancelFunction(that);
-						that.isShowSystemActive = true;
-						that.previousIndex = index;
-							
-					}else if (!that.isShowSystemActive && that.previousIndex == index) {
-						
-						for (var i = 0; i < dim; i++) {
-							that["buttonVisible_" + i] = false;
-						};
-								
-						that['buttonVisible_' + index] = !that['buttonVisible_' + index];
-						cancelFunction(that);
-						that.isShowSystemActive = true;
-						that.previousIndex = index;
-						
-					}else if (that.isShowSystemActive && that.previousIndex != index) {
-						
-						for (var i = 0; i < dim; i++) {
-							that["buttonVisible_" + i] = false;
-						};
-						that['buttonVisible_' + index] = !that['buttonVisible_' + index];
-						cancelFunction(that);
-						that.isShowSystemActive = false;
-						that.previousIndex = index;
-					}					
+					    showSystemButtons(that, index);		
 				});
 
 				this._cancelCommand = createCommand(function() {	
@@ -574,7 +607,6 @@ define([
 		   defineProperties(ShowSystemsViewModel.prototype, {		
            /**
             * Gets the Command that is executed when the button is clicked.
-            * @memberof HomeButtonViewModel.prototype
             *
             * @type {Command}
             */
@@ -604,6 +636,30 @@ define([
                }, 
 			   	   	   
            });
+		   
+	 	   
+	 function homeView(scene){
+	 	var destination = scene.camera.getRectangleCameraCoordinates(Camera.DEFAULT_VIEW_RECTANGLE);
+					
+		var mag = Cartesian3.magnitude(destination);
+		mag += mag * Camera.DEFAULT_VIEW_FACTOR;
+		Cartesian3.normalize(destination, destination);
+		Cartesian3.multiplyByScalar(destination, mag, destination);
+					
+		scene.camera.flyTo({
+					destination : destination,
+					duration : 2,
+					endTransform : Matrix4.IDENTITY
+				});
+	 }	   
+		 
+     function removeButtons(that){
+	 	for (var i=0; i < that._solarSystemSize; i++) {
+			 that["buttonVisible_"+i] = false;
+		 };	
+		 that.isShowSystemActive = false;
+	 }		 
+		   
 
      function getObjectSize(obj){	
      	var count = 0;

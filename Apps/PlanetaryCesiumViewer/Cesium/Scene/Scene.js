@@ -703,7 +703,12 @@ define([
         mapProjection : {
             get: function() {
                 return this._mapProjection;
-            }
+            },
+			
+			set : function(mapProj){
+				// this._mapProjection = this._mapProjection && this._mapProjection.destroy();
+				this._mapProjection = mapProj;
+			}
         },
 
         /**
