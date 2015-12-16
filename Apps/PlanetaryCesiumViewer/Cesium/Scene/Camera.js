@@ -290,6 +290,9 @@ define([
         var ellipsoid = projection.ellipsoid;
 
         var origin = Matrix4.getColumn(camera._transform, 3, scratchCartesian4Origin);
+
+	//	console.log(ellipsoid);
+		
         var cartographic = ellipsoid.cartesianToCartographic(origin, scratchCartographic);
 
         var projectedPosition = projection.project(cartographic, scratchCartesian3Projection);
@@ -563,6 +566,14 @@ define([
                 return this._transform;
             }
         },
+
+
+       projection : {
+	   	
+		set : function(mapProjection){
+			this._projection = mapProjection;
+		}
+	   },
 
         /**
          * Gets the inverse camera transform.

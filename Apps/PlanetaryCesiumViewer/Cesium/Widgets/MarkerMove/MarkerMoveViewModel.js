@@ -25,98 +25,85 @@ define([
         defineProperties,
 		ScreenSpaceEventHandler,
         ScreenSpaceEventType
-        ) { // ATTENTION : il faut respecter l'ordre de déclaration coté define et coté function 
+        ) { 
     "use strict";
 
- var _isActive = false;
- var handler, handler2;
-
         function markerMoveView(toolbar, scene, viewer, that){
-			
-			var ellipsoid = scene.globe.ellipsoid;
-			
-			if (_isActive == false) {
-			
-			    handler  = new ScreenSpaceEventHandler(scene.canvas);
-			    handler2 = new ScreenSpaceEventHandler(scene.canvas);
-			
-				var lastEntity;
-				var entity = null;
 				
-				handler.setInputAction(function(click){
+				if (that._isActive == true) {
 				
-					entity = null;
-					var pickedObject = null;
+					that._handlerLeft  = new ScreenSpaceEventHandler(scene.canvas);
+					that._handlerRight = new ScreenSpaceEventHandler(scene.canvas);
 					
-					pickedObject = scene.pick(click.position);
+					var lastEntity;
+					var entity = null;
 					
-					if (pickedObject) {
-					
-						entity = pickedObject.primitive.id;
-						entity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
+					that._handlerLeft.setInputAction(function(click){
+					    var ellipsoid = viewer.scene.globe.ellipsoid;
 						
-						//console.log(viewer.infoBox.frame.contentDocument.body);
+						entity = null;
+						var pickedObject = null;
 						
-						console.log(viewer.dataSources);
-						
-						if (!lastEntity) { // premier coups
-							lastEntity = entity;
-						}
-						else 
-							if (lastEntity && lastEntity != entity) {
-								lastEntity._billboard.color = new Color(1.0, 1.0, 1.0, 1.0);
-								lastEntity = entity;
-								
-							}
-							else 
-								if (lastEntity && lastEntity == entity) {
-									lastEntity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
-									lastEntity = entity;
-								}
-					}
-				}, ScreenSpaceEventType.LEFT_CLICK);
-				
-				handler2.setInputAction(function(click){
-				
-					var cartesian = scene.camera.pickEllipsoid(click.position, ellipsoid);
-					var cartographic = ellipsoid.cartesianToCartographic(cartesian);
-					
-					if (entity) {
-					
-						entity.position._value = cartesian;
-						
-						var longitudeRad = cartographic.longitude;
-						if (longitudeRad < 0) {
-							longitudeRad = longitudeRad + 2.0 * Math.PI;
-						}
-						entity._billboard.color = new Color(0.0, 1.0, 0.0, 1.0);
-						
-						lastEntity = null;
-					}
-				}, ScreenSpaceEventType.RIGHT_CLICK);
-				
-				_isActive = true;
-				
-			} else {
+						pickedObject = viewer.scene.pick(click.position);
 
-                handler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-				handler2.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-				_isActive = false;
-				
-				var link = document.getElementById("saveFile");
-				var wrapper = document.getElementById("wrapper");
-				
-				// console.log(link);
-				
-				if (link){
-					wrapper.removeChild(link)
-				}
-			}
+						if (pickedObject) {
+						
+							entity = pickedObject.primitive.id;
+							entity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
+							
+							//console.log(viewer.infoBox.frame.contentDocument.body);
+							//console.log(viewer.dataSources);
+							
+							if (!lastEntity) { // first time
+								lastEntity = entity;
+							} else if (lastEntity && lastEntity != entity) {
+									lastEntity._billboard.color = new Color(1.0, 1.0, 1.0, 1.0);
+									lastEntity = entity;
+									
+								} else if (lastEntity && lastEntity == entity) {
+										lastEntity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
+										lastEntity = entity;
+									}
+						}
+					}, ScreenSpaceEventType.LEFT_CLICK);
+					
+					that._handlerRight.setInputAction(function(click){
+						
+				    	var ellipsoid = viewer.scene.globe.ellipsoid;
+						var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
+						var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+						
+						if (entity) {
+						
+							entity.position._value = cartesian;
+							
+							var longitudeRad = cartographic.longitude;
+							if (longitudeRad < 0) {
+								longitudeRad = longitudeRad + 2.0 * Math.PI;
+							}
+							entity._billboard.color = new Color(0.0, 1.0, 0.0, 1.0);
+							
+							lastEntity = null;
+						}
+					}, ScreenSpaceEventType.RIGHT_CLICK);
+					
+					
+				} else if (that._isActive == false) {
+					
+						if (that._handlerLeft)  that._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+						if (that._handlerRight) that._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+						
+						var link = document.getElementById("saveFile");
+						var wrapper = document.getElementById("wrapper");
+						
+						if (link) {
+							wrapper.removeChild(link)
+						}
+					}
 		} 	
 			
 			function createFile(toolbar, scene, viewer, that){
 				
-			 
 			 if (viewer.dataSources._dataSources[0]) {
 			 
 			 	var ellipsoid = scene.globe.ellipsoid;
@@ -134,7 +121,6 @@ define([
 			 		
 			 		var latitudeDeg = CesiumMath.toDegrees(latitudeRad);
 			 		var longitudeDeg = CesiumMath.toDegrees(longitudeRad);
-			 		
 			 		
 			 		geoJson.features[i].properties = modifiedProperties;
 			 		geoJson.features[i].geometry.coordinates = [longitudeDeg, latitudeDeg];
@@ -172,9 +158,7 @@ define([
 			 	wrapper.appendChild(saveLink);
 			 	
 			 } else {
-			 	
 				alert("Load a file in first");
-				
 			 }
 			}	
 
@@ -191,16 +175,19 @@ define([
 		         * @default false
 		         */
 			   this.dropDownVisible = false;
+			   this._isActive = false;
+			   
+			   this._handlerLeft  = new ScreenSpaceEventHandler(scene.canvas);
+			   this._handlerRight = new ScreenSpaceEventHandler(scene.canvas);
 
                var that = this;
 
                this._command = createCommand(function() {
+                    that._isActive=!that._isActive;
 				  	markerMoveView(that._toolbar, that._scene, that._viewer, that);
 					that.dropDownVisible = !that.dropDownVisible;
 				  });
-				  
-				  
-				  
+
 				this._saveCommand = createCommand(function() {
 				  	markerMoveSave(that._toolbar, that._scene, that._viewer, that);
 				  });
@@ -212,8 +199,6 @@ define([
 				this._destroyCommandLink = createCommand(function() {
 				  	destroyLink(that._toolbar, that._scene, that._viewer, that);
 				  });
-				  
-				  
 
                /** Gets or sets the tooltip.  This property is observable.
                *
@@ -223,10 +208,8 @@ define([
 			   this.tooltip2        = 'Create file';
 			   this.selectedTooltip = 'Marker edit';
 			   
-               knockout.track(this, ['tooltip', 'tooltip2', 'selectedTooltip', 'dropDownVisible', 'destroyLink']);
+               knockout.track(this, ['tooltip', 'tooltip2', 'selectedTooltip', 'dropDownVisible', 'isActive','destroyLink']);
            }; 
-
-
 
 		   defineProperties(MarkerMoveViewModel.prototype, {		
            /**
@@ -235,11 +218,11 @@ define([
             *
             * @type {Command}
             */
-           command : {
-               get : function() {
-                   return this._command;
-                   }
-               },
+	           command : {
+	               get : function() {
+	                   return this._command;
+	                   }
+	           },
 			   
 			   saveCommand : {
                get : function() {
@@ -259,10 +242,44 @@ define([
                    }
                },
 			   
-		   toggleDropDown : {
-            get : function() {
-                return this._toggleDropDown;
-            }
+			   toggleDropDown : {
+	            get : function() {
+	                return this._toggleDropDown;
+	            },
+				
+			   isActive : {
+	               get : function() {
+	                   return this._isActive;
+	                   },
+					   
+				   set : function(value){
+				   	   this._isActive = value;
+					   console.log("valeur de _isActive = "+this._isActive);
+					   
+				       }    
+	            },
+				
+				handlerRight : {
+	               get : function() {
+	                       return this._handlerRight;
+	                   }, 
+	            },
+				
+				handlerLeft : {
+	               get : function() {
+	                       return this._handlerLeft;
+	                   },
+	            },
+				   
+			 dropDownVisible : {
+	               get : function() {
+	                   return this.dropDownVisible;
+	                   },
+					   
+				   set : function(bool){
+				   	   this.dropDownVisible = bool;
+				       }    
+	           }	
         },
 			   
            });

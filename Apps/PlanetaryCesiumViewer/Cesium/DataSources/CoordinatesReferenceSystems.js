@@ -24,8 +24,8 @@ define(['../Core/Cartesian3',
     	
     function CustomizedCrsFunction(coordinates, ellipsoid) {
 		
-		console.log(coordinates);
-		console.log(ellipsoid);
+		//console.log(coordinates);
+		//console.log(ellipsoid);
 		
         return Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2], ellipsoid);
     }

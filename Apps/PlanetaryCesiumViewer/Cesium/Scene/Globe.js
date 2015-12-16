@@ -113,13 +113,13 @@ define([
      */
     var Globe = function(ellipsoid) {
 		
-		
-		console.log(ellipsoid);
-		
         ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84);
         var terrainProvider = new EllipsoidTerrainProvider({
             ellipsoid : ellipsoid
         });
+		
+		//console.log(ellipsoid);
+		
         var imageryLayerCollection = new ImageryLayerCollection();
 
         this._ellipsoid = ellipsoid;

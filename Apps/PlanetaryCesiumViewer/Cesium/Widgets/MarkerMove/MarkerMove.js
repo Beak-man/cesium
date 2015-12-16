@@ -2,6 +2,7 @@
 define([
         '../../Core/Math',
         '../../Core/Color', 
+		'../../Core/defineProperties',
         '../getElement',
         '../../ThirdParty/knockout',
 		'./MarkerMoveViewModel',
@@ -10,6 +11,7 @@ define([
 		],function(
             CesiumMath,
             Color,
+			defineProperties,
             getElement,
             knockout,
 			MarkerMoveViewModel,
@@ -73,6 +75,23 @@ define([
                 wrapper.appendChild(createFile); 
 
                 knockout.applyBindings(viewModel, wrapper);
-            }
+            };
+			
+			
+			   defineProperties(MarkerMove.prototype, {
+			        /**
+			         * Gets the view model.
+			         * @memberof HomeButton.prototype
+			         *
+			         * @type {HomeButtonViewModel}
+			         */
+			        viewModel : {
+			            get : function() {
+			                return this._viewModel;
+			            }
+			        }
+			    });
+			
+			
          return MarkerMove;
 });

@@ -164,7 +164,7 @@ define([ //  Definition des d�pendances
     var imageryProvider;
     var paramObject = {};
 	
-    if (endUserOptions.tmsImageryUrl) {
+   /* if (endUserOptions.tmsImageryUrl) {
         imageryProvider = new TileMapServiceImageryProvider({
             url: endUserOptions.tmsImageryUrl
         });
@@ -206,7 +206,7 @@ define([ //  Definition des d�pendances
                     credit    : 'USGS @ planetarymaps.usgs.gov',
                     ellipsoid : ellipsoidImageryParam
 		});
-	};
+	};*/
   
     var loadingIndicator = document.getElementById('loadingIndicator');	
 	

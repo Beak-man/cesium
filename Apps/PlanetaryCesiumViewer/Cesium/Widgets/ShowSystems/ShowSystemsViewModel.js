@@ -20,6 +20,7 @@ define([
     '../../Core/defineProperties', 
 	'./ListViewModel',
 	'../../Core/Matrix4',
+	 '../../Core/ScreenSpaceEventType',
 	'../../Scene/WebMapServiceImageryProvider'
     ], function(
 	    CesiumTerrainProvider,
@@ -40,6 +41,7 @@ define([
         defineProperties,
         ListViewModel,
 		Matrix4,
+		ScreenSpaceEventType,
 		WebMapServiceImageryProvider
         ) { 
     "use strict";
@@ -503,40 +505,18 @@ define([
 						z : parseFloat(stringVectorTab[2]),
 					 }
 
-                    that._ellipsoid =  freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
-
-				    var newTerrainProvider      = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
-					var newGeographicProjection = new GeographicProjection(that._ellipsoid);
-					var newGlobe                = new Globe(that._ellipsoid); 
-					
-					that._viewer.dataSources.removeAll(true);
-                    that._viewer.scene.globe           = newGlobe;
-					that._viewer.scene.mapProjection   = newGeographicProjection;
-					that._viewer.terrainProvider       = newTerrainProvider;
-					that._viewer.scene.globe.baseColor = Color.BLACK;
-
-					/*if (planetName == 'Earth'){
-						var terrainProvider = new CesiumTerrainProvider({
-							     url : '//assets.agi.com/stk-terrain/world',
-								 requestWaterMask : false
-						});
-						that._viewer.terrainProvider = terrainProvider;
-						
-					} else {
-						that._viewer.terrainProvider       = newTerrainProvider;
-					}*/
-
+					initializeScene(that, objectDimensions);
+					initializeMarkerMoveWidget(that);
                     homeView(that._scene);
 
 					var naifCode = [planetIndex, satelliteIndex];
 					
 					var obj = {
-						naifCodes  : naifCode,
-						ellipsoid :  that._ellipsoid
+						naifCodes : naifCode,
+						ellipsoid : that._ellipsoid
 					}
 					
 					GeoJsonDataSource.crsModification = obj;
-					
 				  	showPlanetView(that, that._viewer,  planetName, that._configContainer, that._listContainer, that._btnContainer, xhr,  naifCode);
 					
 					if (planetName == 'venus'){
@@ -560,17 +540,9 @@ define([
 						z : parseFloat(stringVectorTab[2]),
 					 }
 
-                    that._ellipsoid =  freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
-
-				    var newTerrainProvider      = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
-					var newGeographicProjection = new GeographicProjection(that._ellipsoid);
-					var newGlobe                = new Globe(that._ellipsoid); 
-					
-					that._viewer.dataSources.removeAll(true);
-                    that._viewer.scene.globe           = newGlobe;
-					that._viewer.scene.mapProjection   = newGeographicProjection;
-					that._viewer.terrainProvider       = newTerrainProvider;
-					that._viewer.scene.globe.baseColor = Color.BLACK;
+                   initializeScene(that, objectDimensions);
+				   initializeMarkerMoveWidget(that);
+				   homeView(that._scene);
 				
 				    var naifCode = [planetIndex, satelliteIndex];
 					
@@ -601,7 +573,7 @@ define([
                this.tooltip         = 'Show this system';
                this.tooltip2        = 'Show this planet';
 			   this.tooltip3        = 'Show this satellite';
-              knockout.track(this, ['tooltip', 'tooltip2', 'tooltip3', 'cancelCommand2', 'buttonVisible', 'buttonVisible_0',  'buttonVisible_1',  'buttonVisible_2',  'buttonVisible_3',  'buttonVisible_4', 'buttonVisible_5', 'buttonVisible_6', 'buttonVisible_7']);
+              knockout.track(this, ['tooltip', 'tooltip2', 'tooltip3', 'isActive', 'initializeCommand', 'cancelCommand2', 'buttonVisible', 'buttonVisible_0',  'buttonVisible_1',  'buttonVisible_2',  'buttonVisible_3',  'buttonVisible_4', 'buttonVisible_5', 'buttonVisible_6', 'buttonVisible_7']);
            }; 
 
 		   defineProperties(ShowSystemsViewModel.prototype, {		
@@ -648,7 +620,7 @@ define([
 					
 		scene.camera.flyTo({
 					destination : destination,
-					duration : 2,
+					duration : 2.0,
 					endTransform : Matrix4.IDENTITY
 				});
 	 }	   
@@ -659,8 +631,39 @@ define([
 		 };	
 		 that.isShowSystemActive = false;
 	 }		 
-		   
+		
+	function initializeScene(that, objectDimensions){
+		that._ellipsoid =  freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
 
+		var newTerrainProvider      = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
+		var newGeographicProjection = new GeographicProjection(that._ellipsoid);
+		var newGlobe                = new Globe(that._ellipsoid); 
+					
+		that._viewer.dataSources.removeAll(true);
+        that._viewer.scene.globe              = newGlobe;
+		that._viewer.scene.mapProjection      = newGeographicProjection;
+		 that._viewer.scene.camera.projection = newGeographicProjection;
+		that._viewer.terrainProvider          = newTerrainProvider;
+		that._viewer.scene.globe.baseColor    = Color.BLACK;
+		
+		
+		
+		console.log(that._viewer.dataSourceDisplay.scene.globe.ellipsoid);
+		
+		
+	}	
+		   	   
+	function initializeMarkerMoveWidget(that){
+		that._viewer.markerMove.viewModel._isActive = false;
+		that._viewer.markerMove.viewModel.dropDownVisible = false;
+		
+		//console.log(that._viewer.markerMove.viewModel._handlerRight);
+		//console.log(that._viewer.markerMove.viewModel);
+		
+		if (that._viewer.markerMove.viewModel._handlerRight) that._viewer.markerMove.viewModel._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+		if( that._viewer.markerMove.viewModel._handlerLeft) that._viewer.markerMove.viewModel._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+	}	   
+		   
      function getObjectSize(obj){	
      	var count = 0;
 		var i;

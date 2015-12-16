@@ -366,6 +366,8 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             destroyDataSourceCollection = true;
         }
 
+      //  console.log(cesiumWidget.scene.globe.ellipsoid);
+
         var dataSourceDisplay = new DataSourceDisplay({
             scene : cesiumWidget.scene,
             dataSourceCollection : dataSourceCollection

@@ -84,7 +84,7 @@ define([
 			var coordinatesReferenceSystems = new CoordinatesReferenceSystems(crsNames, crsFunctionType, naifCodes);
 		}
 	
-	console.log(crsFunctionType);
+	//console.log(crsFunctionType);
 	
 	/* *************************************************************************************************************************************
 	   *************************************************************************************************************************************
@@ -237,7 +237,7 @@ define([
         var positions = new Array(coordinates.length);
 		
 		console.log("================ ligne 245 ========================");
-		console.log(GeoJsonDataSource._ellipsoid);
+		//console.log(GeoJsonDataSource._ellipsoid);
 		
 		if (!this._ellipsoid) {
 			for (var i = 0; i < coordinates.length; i++) {
@@ -262,7 +262,7 @@ define([
             createObject(feature, dataSource._entityCollection, options.describe);
         } else {
             var geometryType = feature.geometry.type;
-            var geometryHandler = geometryTypes[geometryType];
+            var geometryHandler = geometryTypes[geometryType]; // geometryHandler est un object qui contient plusieurs methodes selectionnables a partir de leur propriétés
             if (!definedNotNull(geometryHandler)) {
                 throw new RuntimeError('Unknown geometry type: ' + geometryType);
             }
@@ -279,10 +279,11 @@ define([
 
     function processGeometryCollection(dataSource, geoJson, geometryCollection, crsFunction, options) {
         var geometries = geometryCollection.geometries;
+		
         for (var i = 0, len = geometries.length; i < len; i++) {
             var geometry = geometries[i];
             var geometryType = geometry.type;
-            var geometryHandler = geometryTypes[geometryType];
+            var geometryHandler = geometryTypes[geometryType];			
             if (!definedNotNull(geometryHandler)) {
                 throw new RuntimeError('Unknown geometry type: ' + geometryType);
             }
@@ -332,25 +333,12 @@ define([
 
             var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
             entity.billboard = billboard;
-			
-			
-				console.log("================ ligne 343 ========================");
 				
 			if (!GeoJsonDataSource._ellipsoid) {
-				
-				   console.log("dans if");
-				
 				 entity.position = new ConstantPositionProperty(crsFunction(coordinates));
 				 
-				 console.log(crsFunction(coordinates));
-				 
 			} else if (GeoJsonDataSource._ellipsoid){
-				
-				console.log("dans else");
-				
 				 entity.position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
-				 //console.log(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
-				 // console.log(GeoJsonDataSource._ellipsoid);
 			} 
         }));
     }
@@ -850,8 +838,6 @@ define([
         if (typeof data === 'string') {
             if (!defined(sourceUri)) {
                 sourceUri = data;
-				
-				console.log(data);
             }
             promise = loadJson(data);
         }
@@ -905,7 +891,6 @@ define([
 	       * */
          
            var crsFunction = crsFunctionType.used; 
-		   console.log(crsFunction);
 		   
         //   var crsFunction = defaultCrsFunction;
           /* Here, we manage the case where the crs proprety is not defined in the json file. The crs proprety introduced in the geoJson
@@ -933,6 +918,7 @@ define([
             var properties = crs.properties;
             if (crs.type === 'name') {
                 crsFunction = crsNames[properties.name];
+				
                 if (!defined(crsFunction)) {
                     throw new RuntimeError('Unknown crs name: ' + properties.name);
                 }
