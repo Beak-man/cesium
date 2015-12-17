@@ -48,6 +48,7 @@ define([
         }
 
         var ellipsoid = parameters.ellipsoid;
+		
         var occluder = new EllipsoidalOccluder(ellipsoid);
         var occludeePointInScaledSpace = occluder.computeHorizonCullingPointFromVertices(parameters.relativeToCenter, vertices, numberOfAttributes, parameters.relativeToCenter);
 

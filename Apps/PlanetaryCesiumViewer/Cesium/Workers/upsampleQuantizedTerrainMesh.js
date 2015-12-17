@@ -245,6 +245,7 @@ define([
         var orientedBoundingBox = OrientedBoundingBox.fromRectangle(rectangle, minimumHeight, maximumHeight, ellipsoid, orientedBoundingBoxScratch);
 
         var occluder = new EllipsoidalOccluder(ellipsoid);
+		
         var horizonOcclusionPoint = occluder.computeHorizonCullingPointFromVertices(boundingSphere.center, cartesianVertices, 3, boundingSphere.center, horizonOcclusionPointScratch);
 
         var heightRange = maximumHeight - minimumHeight;

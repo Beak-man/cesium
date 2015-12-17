@@ -2,6 +2,7 @@
 
 /*global define*/
 define([
+    '../../Core/BoundingSphere',
     '../../Core/CesiumTerrainProvider',
     '../../Scene/Camera',
 	'../../Core/Cartesian3',
@@ -20,9 +21,11 @@ define([
     '../../Core/defineProperties', 
 	'./ListViewModel',
 	'../../Core/Matrix4',
+	'../../Core/Occluder',
 	 '../../Core/ScreenSpaceEventType',
 	'../../Scene/WebMapServiceImageryProvider'
     ], function(
+	    BoundingSphere,
 	    CesiumTerrainProvider,
 	    Camera,
 		Cartesian3,
@@ -41,6 +44,7 @@ define([
         defineProperties,
         ListViewModel,
 		Matrix4,
+		Occluder,
 		ScreenSpaceEventType,
 		WebMapServiceImageryProvider
         ) { 
@@ -638,27 +642,28 @@ define([
 		var newTerrainProvider      = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
 		var newGeographicProjection = new GeographicProjection(that._ellipsoid);
 		var newGlobe                = new Globe(that._ellipsoid); 
+
+	  /*  var newOccluder             = new Occluder(new BoundingSphere(Cartesian3.ZERO, that._ellipsoid.minimumRadius), Cartesian3.ZERO);    
+		
+		var cameraPosition          =  Cartesian3.ZERO;
+		var occluderBoundingSphere = new BoundingSphere(Cartesian3.ZERO, that._ellipsoid.minimumRadius);
+		Occluder.fromBoundingSphere(occluderBoundingSphere, cameraPosition, newOccluder);  */
 					
 		that._viewer.dataSources.removeAll(true);
         that._viewer.scene.globe              = newGlobe;
 		that._viewer.scene.mapProjection      = newGeographicProjection;
-		 that._viewer.scene.camera.projection = newGeographicProjection;
+		that._viewer.scene.camera.projection  = newGeographicProjection;
 		that._viewer.terrainProvider          = newTerrainProvider;
-		that._viewer.scene.globe.baseColor    = Color.BLACK;
+		that._viewer.scene.globe.baseColor    = Color.BLACK;	
 		
 		
-		
-		console.log(that._viewer.dataSourceDisplay.scene.globe.ellipsoid);
-		
+		//console.log(that._viewer.scene.globe);
 		
 	}	
 		   	   
 	function initializeMarkerMoveWidget(that){
 		that._viewer.markerMove.viewModel._isActive = false;
 		that._viewer.markerMove.viewModel.dropDownVisible = false;
-		
-		//console.log(that._viewer.markerMove.viewModel._handlerRight);
-		//console.log(that._viewer.markerMove.viewModel);
 		
 		if (that._viewer.markerMove.viewModel._handlerRight) that._viewer.markerMove.viewModel._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
 		if( that._viewer.markerMove.viewModel._handlerLeft) that._viewer.markerMove.viewModel._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);

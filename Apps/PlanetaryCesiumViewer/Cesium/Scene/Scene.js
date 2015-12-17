@@ -963,9 +963,12 @@ define([
         // TODO: The occluder is the top-level globe. When we add
         //       support for multiple central bodies, this should be the closest one.
         var globe = scene.globe;
+		
         if (scene._mode === SceneMode.SCENE3D && defined(globe)) {
             var ellipsoid = globe.ellipsoid;
+			
             scratchOccluderBoundingSphere.radius = ellipsoid.minimumRadius;
+			
             scratchOccluder = Occluder.fromBoundingSphere(scratchOccluderBoundingSphere, scene._camera.positionWC, scratchOccluder);
             return scratchOccluder;
         }
@@ -1121,6 +1124,7 @@ define([
                     }
 
                     distances = boundingVolume.computePlaneDistances(position, direction, distances);
+
                     near = Math.min(near, distances.start);
                     far = Math.max(far, distances.stop);
                 } else {
@@ -1337,6 +1341,7 @@ define([
         }
 
         var occluder = (frameState.mode === SceneMode.SCENE3D) ? frameState.occluder: undefined;
+		
         var cullingVolume = frameState.cullingVolume;
 
         // get user culling volume minus the far plane.

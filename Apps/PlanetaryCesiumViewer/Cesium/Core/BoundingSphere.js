@@ -57,6 +57,7 @@ define([
          * @default 0.0
          */
         this.radius = defaultValue(radius, 0.0);
+		
     };
 
     var fromPointsXMin = new Cartesian3();
@@ -112,7 +113,7 @@ define([
             var y = currentPos.y;
             var z = currentPos.z;
 
-            // Store points containing the the smallest and largest components
+            // Store points containing the smallest and largest components
             if (x < xMin.x) {
                 Cartesian3.clone(currentPos, xMin);
             }
@@ -223,7 +224,7 @@ define([
     var fromRectangle2DUpperRight = new Cartesian3();
     var fromRectangle2DSouthwest = new Cartographic();
     var fromRectangle2DNortheast = new Cartographic();
-
+	
     /**
      * Computes a bounding sphere from an rectangle projected in 2D.
      *
@@ -293,6 +294,7 @@ define([
      * @returns {BoundingSphere} The modified result parameter or a new BoundingSphere instance if none was provided.
      */
     BoundingSphere.fromRectangle3D = function(rectangle, ellipsoid, surfaceHeight, result) {
+		
         ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84);
         surfaceHeight = defaultValue(surfaceHeight, 0.0);
 

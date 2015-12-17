@@ -118,7 +118,7 @@ define([
             ellipsoid : ellipsoid
         });
 		
-		//console.log(ellipsoid);
+		console.log(ellipsoid);
 		
         var imageryLayerCollection = new ImageryLayerCollection();
 
@@ -143,7 +143,11 @@ define([
             })
         });
 
+
+        console.log("dans Globe : ligne   147");
         this._occluder = new Occluder(new BoundingSphere(Cartesian3.ZERO, ellipsoid.minimumRadius), Cartesian3.ZERO);
+		console.log(this._occluder);
+		console.log("**************");
 
         this._rsColor = undefined;
         this._rsColorWithoutDepthTest = undefined;
@@ -301,6 +305,12 @@ define([
         ellipsoid : {
             get : function() {
                 return this._ellipsoid;
+            }
+        },
+		
+		 occluder : {
+            set : function(occluder) {
+                return this._occluder;
             }
         },
         /**
@@ -564,7 +574,7 @@ define([
         var geometry;
         var rect;
         var occluder = globe._occluder;
-
+		
         // handle north pole
         if (terrainMaxRectangle.north < CesiumMath.PI_OVER_TWO) {
             rectangle = new Rectangle(-Math.PI, terrainMaxRectangle.north, Math.PI, CesiumMath.PI_OVER_TWO);
