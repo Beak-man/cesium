@@ -13,6 +13,7 @@ define([
 	'../../DataSources/DataSourceDisplay',
 	'../../Core/Ellipsoid',
 	'../../Core/EllipsoidTerrainProvider',
+	'./FooterViewModel',
 	'../../Core/freezeObject',
 	'../../Core/GeographicProjection',
 	'../../DataSources/GeoJsonDataSource',
@@ -36,6 +37,7 @@ define([
 		destroyObject,
 		Ellipsoid, 
 		EllipsoidTerrainProvider,
+		FooterViewModel,
 		freezeObject,
 		GeographicProjection,
 		GeoJsonDataSource,
@@ -50,9 +52,6 @@ define([
         ) { 
     "use strict";
 
- var windowsMove = '-470px';
- var _selected   = false;
-
         function showPlanetView(that, viewer, planetName, configContainer, listContainer, btnContainer, xhr, naifCode){
 			
 				for (var i = 0; i < that.dim; i++) {
@@ -62,11 +61,11 @@ define([
 				var sendBtn = document.getElementById('sendBtn');
 				if (sendBtn) btnContainer.removeChild(sendBtn);
 							
-				if (configContainer.style.left !== windowsMove && configContainer.style.left !== '') {
+				if (configContainer.style.left !==  that._windowsMove && configContainer.style.left !== '') {
 					configContainer.className = "";
 					configContainer.className = "cesium-showSystems-configContainer-transition";
 					configContainer.style.opacity = 0;
-					configContainer.style.left = windowsMove;
+					configContainer.style.left = that._windowsMove;
 					
 					 setTimeout(function(){
 					     moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, naifCode)
@@ -86,12 +85,12 @@ define([
 				var sendBtn = document.getElementById('sendBtn');
 				if (sendBtn) btnContainer.removeChild(sendBtn);
 							
-				if (configContainer.style.left !== windowsMove && configContainer.style.left !== '') {
+				if (configContainer.style.left !==  that._windowsMove && configContainer.style.left !== '') {
 				
 					configContainer.className = "";
 					configContainer.className = "cesium-showSystems-configContainer-transition";
 					configContainer.style.opacity = 0;
-					configContainer.style.left = windowsMove;
+					configContainer.style.left = that._windowsMove;
 					
 					 setTimeout(function(){
 					     moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, naifCode)
@@ -250,8 +249,6 @@ define([
 		                        });
 						};
 				   
-	                    
-				   
 						var listViewModel = new ListViewModel(viewer, dimLayers, layerName, imageryProvidersTab);
 						knockout.applyBindings(listViewModel, listContainer2);
 
@@ -274,6 +271,8 @@ define([
 				if(xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0){
 					var data = xhr.responseXML;
 					
+					/* ==== get informations from the XML file ==== */ 
+				
 					var service        = data.getElementsByTagName("Service");
 					var serviceName    = service[0].getElementsByTagName("Name")[0].textContent;
 					var widthMax       = service[0].getElementsByTagName("MaxWidth")[0].textContent;
@@ -282,6 +281,9 @@ define([
 	
 					var capability = data.getElementsByTagName("Capability");
 					var layers     = capability[0].getElementsByTagName("Layer");
+					
+					
+					/* ==== declaration of variables ==== */
 					
 					var names     = [];
 					var layerName = [];
@@ -292,6 +294,9 @@ define([
 					
 					var satelliteName = sn.replace(sn.charAt(0), sn.charAt(0).toUpperCase())
 
+
+                    /* === set some HTML containers for the vizualisation === */ 
+				   
 					var listContainer2   =  document.createElement('div');
 				    listContainer2.setAttribute('id', 'listId');
 			        listContainer.appendChild(listContainer2);
@@ -303,7 +308,10 @@ define([
 			        listContainer2.appendChild(listShow);
 
                     var tableList = document.createElement('TABLE');
-                        listShow.appendChild(tableList); 
+                    listShow.appendChild(tableList); 
+
+					
+					/* ==== get informations from tables previously built ==== */
 					
 					var dimLayers = layers.length;
 					for (var i=0; i < layers.length; i++) {
@@ -311,6 +319,8 @@ define([
 					  layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
 					  crs      = layers[0].getElementsByTagName("CRS")[0].textContent;
 					  bBox[i]  = layers[i].getElementsByTagName("BoundingBox")[0];
+					  
+					  /* === transform the first case to UpperCase (for the vizualiation only : not Important) === */ 
 					  
 					  var nameLowerCase    = names[i].toLowerCase();
 					  var nameLowerCaseTab =  nameLowerCase.split("_");
@@ -326,6 +336,8 @@ define([
 						}
 					  };
 
+                      /* ==== set the imagery request parameters (WMS) === */ 
+					  
 					  var bboxString = bBox[i].attributes[2].value+','+bBox[i].attributes[1].value +','+ bBox[i].attributes[4].value+','+bBox[i].attributes[3].value; 
 				      var imageryRequestParam = 'SERVICE='+serviceName+'&'+'VERSION=1.1.1'+'&'+'SRS='+crs+'&'+'STYLES='+''+'&'+'REQUEST=GetMap'+'&'+'FORMAT=image%2Fjpeg'+'&'+'LAYERS='+layer[i]+'&'+'BBOX='+bboxString+'&'+'WIDTH='+widthMax+'&'+'HEIGHT='+heightMax;
 
@@ -344,6 +356,8 @@ define([
 						  var onlineResUrl = objRequest.onlineResource;
 						  var finalUrl     =  onlineResUrl+'&'+imageryRequestParam;  
 
+                          /* ==== set HTML containers for the vizualition in table form ==== */  
+ 
 						  var tableLine = document.createElement('TR');
                           tableList.appendChild(tableLine);
 						  
@@ -364,6 +378,8 @@ define([
 						  var colomn3 = document.createElement('TD');
                           tableLine.appendChild(colomn3)
 						  
+						  /* ==== set the range type of the input HTML tag ==== */ 
+						  
 						  var inputRange  =  document.createElement('INPUT');
 						  inputRange.type = 'range'; 
 						  inputRange.min  = '0';
@@ -371,6 +387,8 @@ define([
 						  inputRange.step = '0.01';
 						  inputRange.setAttribute('data-bind', 'value: alpha_'+i+', valueUpdate: "input"');
 				          colomn3.appendChild(inputRange);
+						  
+						  /* ==== set the imageryProvider ==== */ 
 						  
 						  layerName[i] = finalLayerName;
 						  imageryProvidersTab[i] =  new WebMapServiceImageryProvider({
@@ -381,6 +399,8 @@ define([
 		                        });
 						};
 
+                        /* ==== call of the model ==== */ 
+					   
 						var listViewModel = new ListViewModel(viewer, dimLayers, layerName, imageryProvidersTab);
 						knockout.applyBindings(listViewModel, listContainer2);
 				}
@@ -403,7 +423,7 @@ define([
 						cancelFunction(that);
 						that.isShowSystemActive = false;
 						
-					}else if (!that.isShowSystemActive && that.previousIndex != index) {
+		   }else if (!that.isShowSystemActive && that.previousIndex != index) {
 						
 						for (var i = 0; i < that._solarSystemSize; i++) {
 							that["buttonVisible_" + i] = false;
@@ -414,7 +434,7 @@ define([
 						that.isShowSystemActive = true;
 						that.previousIndex = index;
 							
-					}else if (!that.isShowSystemActive && that.previousIndex == index) {
+		  }else if (!that.isShowSystemActive && that.previousIndex == index) {
 						
 						for (var i = 0; i < that._solarSystemSize; i++) {
 							that["buttonVisible_" + i] = false;
@@ -425,7 +445,7 @@ define([
 						that.isShowSystemActive = true;
 						that.previousIndex = index;
 						
-					}else if (that.isShowSystemActive && that.previousIndex != index) {
+		 }else if (that.isShowSystemActive && that.previousIndex != index) {
 						
 						for (var i = 0; i < that._solarSystemSize; i++) {
 							that["buttonVisible_" + i] = false;
@@ -434,7 +454,7 @@ define([
 						cancelFunction(that);
 						that.isShowSystemActive = false;
 						that.previousIndex = index;
-					}
+			}
 		}
 		
 		
@@ -454,7 +474,7 @@ define([
         }
 		
 		/**
-		 * function to hide panel which contains the layers to display for a given celestial body 
+		 * function to close the panel which contains the layers to display for a given celestial body 
 		 * 
 		 * @param {Object} that
 		 */
@@ -463,10 +483,42 @@ define([
 			configContainer.className = "";
 			configContainer.style.opacity = 0;
 			configContainer.className = "cesium-showSystems-configContainer-transition";
-			configContainer.style.left = windowsMove;
+			configContainer.style.left = that._windowsMove;
 			that.isShowSystemActive = false;
 		}
 		
+		/**
+		 * function to hide and show the panel which contains the layers to display for a given celestial body 
+		 * 
+		 * @param {Object} that
+		 */
+	    function hideFunction(that){
+			var configContainer = document.getElementById("configId");
+			configContainer.className = "";
+			configContainer.style.opacity = 0;
+			configContainer.className = "cesium-showSystems-configContainer-transition";
+			configContainer.style.left = that._windowsMove;
+			
+			var btnShowPanel       =  document.createElement('BUTTON');
+			btnShowPanel.className = 'cesium-footerToolbar-button cesium-footerToolbar-animation-show cesium-button-planet';
+			btnShowPanel.innerHTML = 'show panel'; 
+			btnShowPanel.setAttribute('data-bind',  'click: testCommand');
+			that._footerToolbar.appendChild(btnShowPanel);
+			that._btnShowPanel = btnShowPanel;
+			
+			var footerViewModel = new FooterViewModel(that._footerToolbar, configContainer, btnShowPanel);
+			knockout.applyBindings(footerViewModel, btnShowPanel);
+			
+		}
+		
+		function testFunction(){
+			console.log("test ok");
+			return true;
+		}
+
+	/* ================================================================================================================== */
+	/* ================================================ Main functions ================================================== */
+	/* ================================================================================================================== */
 		
 		/**
 		 * 
@@ -480,15 +532,18 @@ define([
 		 * @param {Object} solarSystem     : object which contains the stellar system to display
 		 */
 		
-        var ShowSystemsViewModel = function(viewer, scene, configContainer, listContainer, btnContainer, solarSystem) {
+        var ShowSystemsViewModel = function(viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, solarSystem) {
 
                this._viewer            = viewer;
 			   this._scene             = scene;
+			   this._viewerContainer   = viewerContainer;
+			   this._footerToolbar     = footerToolbar;
                this._configContainer   = configContainer;
 			   this._listContainer     = listContainer;
 			   this._btnContainer      = btnContainer;
 			   this.isShowSystemActive = false;
 			   this.previousIndex      = null;
+			   this._windowsMove       = '-470px';
 			   
 			   this._solarSystemSize = getObjectSize(solarSystem);
 			     
@@ -528,9 +583,9 @@ define([
 						var esri = new ArcGisMapServerImageryProvider({
                                 url: '//elevation.arcgisonline.com/ArcGIS/rest/services/WorldElevation/DTMEllipsoidal/ImageServer'
                         });
-						
 					}
 					
+					/* to remove all butons of the planetToolBar from the view*/
 				  	removeButtons(that);
 				});
 				
@@ -566,8 +621,11 @@ define([
 				});
 
 				this._cancelCommand = createCommand(function() {	
-				that.isShowSystemActive = false;
 				  	cancelFunction(that);
+				});
+				
+				this._hideCommand = createCommand(function() {	
+				  	hideFunction(that);
 				});
 				  
               /** Gets or sets the tooltip.  This property is observable.
@@ -610,9 +668,17 @@ define([
                    return this._cancelCommand;
                    }
                }, 
+			   hideCommand : {
+               get : function() {
+                   return this._hideCommand;
+                   }
+               }
 			   	   	   
            });
 		   
+	/* ================================================================================================================== */	   
+	/* ================================================= local functions ================================================ */
+	/* ================================================================================================================== */ 	   
 	 	   
 	 function homeView(scene){
 	 	var destination = scene.camera.getRectangleCameraCoordinates(Camera.DEFAULT_VIEW_RECTANGLE);
@@ -634,6 +700,14 @@ define([
 			 that["buttonVisible_"+i] = false;
 		 };	
 		 that.isShowSystemActive = false;
+		 
+		 
+		 try{
+		 	that._footerToolbar.removeChild(that._btnShowPanel);
+		 } catch(e){
+		 	
+		 }
+		 
 	 }		 
 		
 	function initializeScene(that, objectDimensions){

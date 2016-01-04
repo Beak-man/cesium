@@ -125,9 +125,25 @@ define([
                 var value = properties[key];
                 if (definedNotNull(value)) {
                     if (typeof value === 'object') {
+						
+						console.log(value);
+						
                         html += '<tr><th>' + key + '</th><td>' + defaultDescribe(value) + '</td></tr>';
                     } else {
-                        html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
+						
+						if (typeof value === 'string') {
+						
+							var beginString = value.slice(0, 7);
+							if (beginString === "http://" || beginString === "https://" || beginString === "www.") {
+								html += '<tr><th>' + key + '</th><td><a href=' + value + ' target="_blank">link</a></td></tr>';
+							}
+							else {
+								html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
+							}
+						} else {
+							html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
+						}	
+							
                     }
                 }
             }

@@ -69,8 +69,6 @@ var previousImageryProvidersTab;
 				};			
 		}
 
-
-
         var ListViewModel = function(viewer, dimLayers, layerName, imageryProvidersTab) {
 
 				 viewer.imageryLayers.removeAll(true);
@@ -89,6 +87,14 @@ var previousImageryProvidersTab;
 				  
 				 setupLayers(that, viewer, dimLayers, layerName, imageryProvidersTab);  
 				 updateLayerList(viewer);
+
+
+                this._testCommand = createCommand(function(){
+					
+					console.log("trdt");
+					
+				});
+
 
                /** Gets or sets the tooltip.  This property is observable.
                *

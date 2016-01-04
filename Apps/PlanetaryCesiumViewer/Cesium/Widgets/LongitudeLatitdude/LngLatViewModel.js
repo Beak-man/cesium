@@ -66,8 +66,8 @@ define([
                                              color: white;\
                                              font-family: sans-serif;\
                                              position : absolute; \
-                                             top : 50px;\
-                                             right : 70px; \
+                                             top : 40px;\
+                                             right : 45%; \
                                              opacity: 1; \
                                              transition: opacity 1.0s linear; \
                                              -webkit-transition: opacity 1.0s linear; \

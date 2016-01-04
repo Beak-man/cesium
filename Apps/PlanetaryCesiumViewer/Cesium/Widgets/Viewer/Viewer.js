@@ -415,6 +415,10 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         planetsToolbar.className = 'cesium-viewer-planetsToolbar';
         viewerContainer.appendChild(planetsToolbar);
 		
+		var footerToolbar = document.createElement('div');
+        footerToolbar.className = 'cesium-viewer-footerToolbar';
+        viewerContainer.appendChild(footerToolbar);
+		
 		 /* *******************************************************************************************************************************
           * *********************************************** END PLANETS TOOLBAR ***********************************************************
           * ******************************************************************************************************************************* */
@@ -468,7 +472,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 		 
 		 // show planets
 		 var showSystems;
-		 showSystems = new ShowSystems(viewerContainer, planetsToolbar, cesiumWidget.scene, this);
+		 showSystems = new ShowSystems(viewerContainer, planetsToolbar, footerToolbar, cesiumWidget.scene, this);
 		 
 		 
 		 /* *******************************************************************************************************************************

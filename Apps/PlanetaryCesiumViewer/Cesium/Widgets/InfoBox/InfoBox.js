@@ -44,24 +44,31 @@ define([
 
         var infoElement = document.createElement('div');
         infoElement.className = 'cesium-infoBox';
-        infoElement.setAttribute('data-bind', '\
-css: { "cesium-infoBox-visible" : showInfo, "cesium-infoBox-bodyless" : _bodyless }');
+        infoElement.setAttribute('data-bind', 'css: { "cesium-infoBox-visible" : showInfo, "cesium-infoBox-bodyless" : _bodyless }');
         container.appendChild(infoElement);
+		
+		 var titleTool = document.createElement('div');
+		 titleTool.className = 'cesium-infoBox-titleTool';
+         infoElement.appendChild(titleTool);
+		
+		var titleText = document.createElement('div');
+		 titleText.className = 'cesium-infoBox-titleText';
+         infoElement.appendChild(titleText);
+		
 
         var titleElement = document.createElement('div');
         titleElement.className = 'cesium-infoBox-title';
         titleElement.setAttribute('data-bind', 'text: titleText');
-        infoElement.appendChild(titleElement);
+        titleText.appendChild(titleElement);
 
         var cameraElement = document.createElement('button');
         cameraElement.type = 'button';
         cameraElement.className = 'cesium-button cesium-infoBox-camera';
-        cameraElement.setAttribute('data-bind', '\
-attr: { title: "Focus camera on object" },\
-click: function () { cameraClicked.raiseEvent(this); },\
-enable: enableCamera,\
-cesiumSvgPath: { path: cameraIconPath, width: 32, height: 32 }');
-        infoElement.appendChild(cameraElement);
+        cameraElement.setAttribute('data-bind', 'attr: { title: "Focus camera on object" },\
+                                                 click: function () { cameraClicked.raiseEvent(this); },\
+                                                 enable: enableCamera,\
+                                                 cesiumSvgPath: { path: cameraIconPath, width: 32, height: 32 }');
+        titleTool.appendChild(cameraElement);
 		
 		
 		/* ************************************************************************************************************
@@ -71,11 +78,10 @@ cesiumSvgPath: { path: cameraIconPath, width: 32, height: 32 }');
 		var modifyElement = document.createElement('button');
         modifyElement.type = 'button';
         modifyElement.className = 'cesium-button cesium-infoBox-camera';
-		modifyElement.style.cssText = 'position:absolute;top:5px;left:40px;width:50px;';
+		modifyElement.style.cssText = 'position:absolute;top:3px;left:30px;width:40px;';
 		modifyElement.innerHTML = "Edit"
-        modifyElement.setAttribute('data-bind', 'attr: { title: "Edit fields" },click: function () {}');
-        infoElement.appendChild(modifyElement);
-		
+        modifyElement.setAttribute('data-bind', 'attr: { title: "Edit fields" }');
+        titleTool.appendChild(modifyElement);
 		
 		/* ************************************************************************************************************
 		 * ************************************************************************************************************
@@ -85,8 +91,7 @@ cesiumSvgPath: { path: cameraIconPath, width: 32, height: 32 }');
         var closeElement = document.createElement('button');
         closeElement.type = 'button';
         closeElement.className = 'cesium-infoBox-close';
-        closeElement.setAttribute('data-bind', '\
-click: function () { closeClicked.raiseEvent(this); }');
+        closeElement.setAttribute('data-bind', 'click: function () { closeClicked.raiseEvent(this); }');
         closeElement.innerHTML = '&times;';
         infoElement.appendChild(closeElement);
 

@@ -51,8 +51,13 @@ define([
 							entity = pickedObject.primitive.id;
 							entity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
 							
-							//console.log(viewer.infoBox.frame.contentDocument.body);
-							//console.log(viewer.dataSources);
+							console.log(viewer.infoBox.frame.contentDocument.body.contentEditable);
+							
+							/* *************** COMMANDE A UTILISER POUR MODIFIER LE CONTENU DU INFOBOX *************** */ 
+							
+							// viewer.infoBox.frame.contentDocument.body.contentEditable = true;
+							
+							/* *************************************************************************************** */ 
 							
 							if (!lastEntity) { // first time
 								lastEntity = entity;
@@ -199,6 +204,10 @@ define([
 				this._destroyCommandLink = createCommand(function() {
 				  	destroyLink(that._toolbar, that._scene, that._viewer, that);
 				  });
+				  
+				  
+				  
+				  
 
                /** Gets or sets the tooltip.  This property is observable.
                *

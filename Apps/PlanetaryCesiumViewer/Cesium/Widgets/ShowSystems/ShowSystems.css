@@ -6,9 +6,6 @@ span.cesium-showSystems-wrapper {
     margin: 0 3px;
 }
 
-
-
-
 .cesium-showSystems-dropDown-icon{
 	visibility:hidden;
 }
@@ -43,14 +40,13 @@ span.cesium-showSystems-wrapper {
     color: #edffff; /* For text buttons */
 	overflow : scroll;
 
-     transition-property: left;
-	 transition:  1s;
+    transition-property: left;
+    transition:  1s;
 	 
-	 transition-property: opacity;
-	 transition:  1s;
-	}
+    transition-property: opacity;
+	transition:  1s;
+}
 	
-
 .cesium-showSystems-configContainer-transition {
 	visibility: visible;
     position: relative;
@@ -65,14 +61,12 @@ span.cesium-showSystems-wrapper {
     color: #edffff; /* For text buttons */
     overflow : scroll;
 	
-     transition-property: left;
-	 transition:  1s;
+    transition-property: left;
+	transition:  1s;
 	 
-	 transition-property: opacity;
-	 transition:  1s;
-
+	transition-property: opacity;
+	transition:  1s;
 }	
-	
 	
 .cesium-showSystems-listContainer {
 	visibility: visible;
@@ -82,18 +76,18 @@ span.cesium-showSystems-wrapper {
     top: 0px;
 	width :  150%;
 	height : 93%;
-	}
+}
 	
 .cesium-showSystems-btnContainer{
 	visibility: visible;
     position: relative;
+	top : -5px;
 	opacity : 1;
 	margin : 0px;
 	width :  100%;
 	height : 6%;
 }	
-	
-	
+		
 .cesium-showSystems-configContainer-button {
  display : inline-block;	
  position : relative;
@@ -109,23 +103,22 @@ span.cesium-showSystems-wrapper {
  top : 0px;
  text-align: right;
  margin-right : 5px;
-height : 10px;
+ height : 10px;
 /*border : white solid 1px;*/
 }
 
 .cesium-showSystems-configContainer-button-send button{
 	border-radius : 30px 30px 30px 30px;
-	 border: white solid 1px;;
-	 background: white;
-	 color : white;
-	 height : 15px;
-	 width : 15px;
+	border: white solid 1px;;
+	background: white;
+	color : white;
+	height : 15px;
+	width : 15px;
 	position : relative;
 	top : -5px;
-	 
-	}
+}
 	
-	.cesium-showSystems-configContainer-button-send button:hover{
+.cesium-showSystems-configContainer-button-send button:hover{
 	 border-radius : 40px 40px 40px 40px;
 	 border: white solid 1px;;
 	 color: #000; /* For text buttons */
@@ -134,19 +127,28 @@ height : 10px;
      box-shadow: 0 0 8px #777;
 	 cursor : pointer;
 	}
-	
-	
-	.cesium-showSystems-configContainer-button-send button:active {
+		
+.cesium-showSystems-configContainer-button-send button:active {
     color: #fff; /* For text buttons */
     fill: #fff; /* For SVG buttons */
     background: #48b;
     border-color: #ea0;
 }
-
 	
 .cesium-showSystems-configContainer-button-send a{
 	 vertical-align : top;
 	 height : 100%;
 	 text-decoration : none;
-	 
-	}
+}
+
+/* =========================== FOOTER ============================= */ 
+	
+.cesium-footerToolbar-button{
+	opacity : 0;
+}
+
+.cesium-footerToolbar-animation-show{
+	opacity : 1;
+	transition-property: opacity;
+    transition:  1s;
+}	

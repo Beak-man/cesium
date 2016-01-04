@@ -2,6 +2,7 @@
 @import url(../../Source/Widgets/lighter.css);
 @import url(../Sandcastle/templates/bucket.css);
 @import url(./Cesium/Widgets/ShowSystems/ShowSystems.css);
+@import url(./Cesium/Widgets/InfoBox/InfoBoxDescription.css);
 
 html {
     height: 100%;
@@ -177,7 +178,7 @@ body {
     color: #edffff; /* For text buttons */
    /* fill: #edffff; /* For SVG buttons */
     border-radius: 4px;
-    padding: 5px 12px;
+    padding: 5px 6px;
     margin: 2px 3px;
 	font-size : 0.9em;
 	vertical-align: middle;
@@ -247,4 +248,17 @@ body {
     padding: 0;
     vertical-align: middle;
     z-index: 0; /* Workaround for rounded raster image corners in Chrome */
+	}
+	
+   /* =================================================================================== 
+   =============================== footer toolbar buttons ================================ 
+   ======================================================================================= */
+  
+   .cesium-viewer-footerToolbar {
+ 	vertical-align:bottom;
+    display: block;
+    position: absolute;
+	top : 90%;
+    left: 5px;
+    height: 30px;
 }

@@ -23,6 +23,9 @@ define([
         this._cameraClicked = new Event();
         this._closeClicked = new Event();
 
+         
+
+
         /**
          * Gets or sets the maximum height of the info box in pixels.  This property is observable.
          * @type {Number}
