@@ -60,10 +60,6 @@ define([
 		) {
     "use strict";
 
-	/* *************************************************************************************************************************************
-	   *************************************************************************************************************************************
-	   ************************************************************************************************************************************* */
-
 		var crsNames = {};
 		var crsFunctionType = {}
 		
@@ -83,12 +79,6 @@ define([
 			
 			var coordinatesReferenceSystems = new CoordinatesReferenceSystems(crsNames, crsFunctionType, naifCodes);
 		}
-	
-	//console.log(crsFunctionType);
-	
-	/* *************************************************************************************************************************************
-	   *************************************************************************************************************************************
-	   ************************************************************************************************************************************* */
 
     var crsLinkHrefs = {};
     var crsLinkTypes = {};
@@ -116,6 +106,7 @@ define([
     var stringifyScratch = new Array(4);
 
     function defaultDescribe(properties, nameProperty) {
+		
         var html = '';
         for ( var key in properties) {
             if (properties.hasOwnProperty(key)) {
@@ -125,8 +116,6 @@ define([
                 var value = properties[key];
                 if (definedNotNull(value)) {
                     if (typeof value === 'object') {
-						
-						console.log(value);
 						
                         html += '<tr><th>' + key + '</th><td>' + defaultDescribe(value) + '</td></tr>';
                     } else {
@@ -251,9 +240,6 @@ define([
 
     function coordinatesArrayToCartesianArray(coordinates, crsFunction) {
         var positions = new Array(coordinates.length);
-		
-		console.log("================ ligne 245 ========================");
-		//console.log(GeoJsonDataSource._ellipsoid);
 		
 		if (!this._ellipsoid) {
 			for (var i = 0; i < coordinates.length; i++) {
@@ -847,7 +833,6 @@ define([
 		console.log("***********************************************************************");*/
 		
 		options.view.geoJsonData = data;
-		//console.log(data);
 		
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         var sourceUri = options.sourceUri;

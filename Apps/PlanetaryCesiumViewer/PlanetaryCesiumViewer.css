@@ -250,15 +250,31 @@ body {
     z-index: 0; /* Workaround for rounded raster image corners in Chrome */
 	}
 	
-   /* =================================================================================== 
+ /* ====================================================================================== 
    =============================== footer toolbar buttons ================================ 
    ======================================================================================= */
   
-   .cesium-viewer-footerToolbar {
- 	vertical-align:bottom;
+.cesium-viewer-footerToolbar {
+	 	vertical-align:bottom;
+	    display: block;
+	    position: absolute;
+		bottom : 30px;
+	    left: 10px;
+	    /*height: 30px;
+		width  : 30px;
+		border : #ffffff thin solid;*/
+	}
+	
+/* ======================================================================================= 
+   ============================ modifications toolbar buttons ============================ 
+   ======================================================================================= */
+  
+.cesium-viewer-modificationsToolbar {
+   	vertical-align:bottom;
     display: block;
     position: absolute;
-	top : 90%;
-    left: 5px;
+	bottom : 5px;
+    right: 45px;
     height: 30px;
+	/*border : #ffffff thin solid;*/
 }

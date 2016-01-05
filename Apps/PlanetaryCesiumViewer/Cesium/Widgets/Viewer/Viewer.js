@@ -42,7 +42,8 @@ define([
         '../Timeline/Timeline',
         '../LongitudeLatitdude/LngLat', /* *** NEW *** */
         '../MarkerMove/MarkerMove',     /* *** NEW *** */
-		'../ShowSystems/ShowSystems'     /* *** NEW *** */
+		'../ShowSystems/ShowSystems',   /* *** NEW *** */
+		'../Tools/Tools'                /* *** NEW *** */
     ], function(
         BoundingSphere,
         Cartesian3,
@@ -86,7 +87,8 @@ define([
         Timeline,
         LngLat,      /* *** NEW *** */
         MarkerMove,  /* *** NEW *** */
-		ShowSystems  /* *** NEW *** */) {
+		ShowSystems, /* *** NEW *** */
+		Tools        /* *** NEW *** */) {
     "use strict";
 
     var boundingSphereScratch = new BoundingSphere();
@@ -394,7 +396,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             var infoBoxContainer = document.createElement('div');
             infoBoxContainer.className = 'cesium-viewer-infoBoxContainer';
             viewerContainer.appendChild(infoBoxContainer);
-            infoBox = new InfoBox(infoBoxContainer);
+            infoBox = new InfoBox(infoBoxContainer, this);
 
             var infoBoxViewModel = infoBox.viewModel;
             eventHelper.add(infoBoxViewModel.cameraClicked, Viewer.prototype._onInfoBoxCameraClicked, this);
@@ -415,9 +417,16 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         planetsToolbar.className = 'cesium-viewer-planetsToolbar';
         viewerContainer.appendChild(planetsToolbar);
 		
+		// Left buttons
 		var footerToolbar = document.createElement('div');
         footerToolbar.className = 'cesium-viewer-footerToolbar';
         viewerContainer.appendChild(footerToolbar);
+		
+		// right buttons
+		var modificationsToolbar = document.createElement('div');
+        modificationsToolbar.className = 'cesium-viewer-modificationsToolbar';
+        viewerContainer.appendChild(modificationsToolbar);
+		
 		
 		 /* *******************************************************************************************************************************
           * *********************************************** END PLANETS TOOLBAR ***********************************************************
@@ -473,6 +482,10 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 		 // show planets
 		 var showSystems;
 		 showSystems = new ShowSystems(viewerContainer, planetsToolbar, footerToolbar, cesiumWidget.scene, this);
+		 
+		 // tools for modifications
+		 var tools;
+		 tools = new Tools(modificationsToolbar, this);
 		 
 		 
 		 /* *******************************************************************************************************************************

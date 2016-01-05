@@ -33,13 +33,13 @@ define([
      *
      * @exception {DeveloperError} Element with id "container" does not exist in the document.
      */
-    var InfoBox = function(container) {
+    var InfoBox = function(container, viewer) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(container)) {
             throw new DeveloperError('container is required.');
         }
         //>>includeEnd('debug')
-
+		
         container = getElement(container);
 
         var infoElement = document.createElement('div');
@@ -75,13 +75,18 @@ define([
 		 * ************************************************************************************************************
 		 * ************************************************************************************************************ */
 		
-		var modifyElement = document.createElement('button');
+	/*	var modifyElement = document.createElement('button');
         modifyElement.type = 'button';
         modifyElement.className = 'cesium-button cesium-infoBox-camera';
 		modifyElement.style.cssText = 'position:absolute;top:3px;left:30px;width:40px;';
 		modifyElement.innerHTML = "Edit"
-        modifyElement.setAttribute('data-bind', 'attr: { title: "Edit fields" }');
+        modifyElement.setAttribute('data-bind', 'attr: { title: "Edit fields" }, click : activateEditMode');
         titleTool.appendChild(modifyElement);
+		*/
+		
+		// l'idée consiste a recuperer l'element HTML dans viewer.infoBox.frame.contentDocument.all et de l'injecter dans 
+		// viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties ou bien directement dans 
+		// l'objet geoJson contenu dans l'objet viewer
 		
 		/* ************************************************************************************************************
 		 * ************************************************************************************************************
@@ -102,7 +107,7 @@ define([
         frame.setAttribute('allowfullscreen', true);
         infoElement.appendChild(frame);
 
-        var viewModel = new InfoBoxViewModel();
+        var viewModel = new InfoBoxViewModel(viewer);
         knockout.applyBindings(viewModel, infoElement);
 
         this._container = container;
@@ -115,7 +120,7 @@ define([
         //We can't actually add anything into the frame until the load event is fired
         frame.addEventListener('load', function() {
             var frameDocument = frame.contentDocument;
-
+				
             //We inject default css into the content iframe,
             //end users can remove it or add their own via the exposed frame property.
             var cssLink = frameDocument.createElement("link");

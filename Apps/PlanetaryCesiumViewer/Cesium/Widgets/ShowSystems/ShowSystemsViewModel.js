@@ -508,7 +508,6 @@ define([
 			
 			var footerViewModel = new FooterViewModel(that._footerToolbar, configContainer, btnShowPanel);
 			knockout.applyBindings(footerViewModel, btnShowPanel);
-			
 		}
 		
 		function testFunction(){

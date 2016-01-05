@@ -139,11 +139,11 @@ define([
 				btnContainer.className = 'cesium-showSystems-btnContainer';
 				configContainer.appendChild(btnContainer);
 				
-				var btnCancel =  document.createElement('BUTTON');
+			/*	var btnCancel =  document.createElement('BUTTON');
 				btnCancel.className = 'cesium-showSystems-configContainer-button cesium-button-planet';
 				btnCancel.innerHTML = 'Close'; 
 				btnCancel.setAttribute('data-bind', 'click: cancelCommand');
-				btnContainer.appendChild(btnCancel);
+				btnContainer.appendChild(btnCancel);*/
 				
 				var btnHide =  document.createElement('BUTTON');
 				btnHide.className = 'cesium-showSystems-configContainer-button cesium-button-planet';
