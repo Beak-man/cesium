@@ -3,6 +3,7 @@
 @import url(../Sandcastle/templates/bucket.css);
 @import url(./Cesium/Widgets/ShowSystems/ShowSystems.css);
 @import url(./Cesium/Widgets/InfoBox/InfoBoxDescription.css);
+@import url(./Cesium/Widgets/Tools/Tools.css);
 
 html {
     height: 100%;
@@ -255,11 +256,11 @@ body {
    ======================================================================================= */
   
 .cesium-viewer-footerToolbar {
-	 	vertical-align:bottom;
-	    display: block;
-	    position: absolute;
-		bottom : 30px;
-	    left: 10px;
+	 	vertical-align : bottom;
+	    display        : block;
+	    position       : absolute;
+		bottom         : 30px;
+	    left           : 10px;
 	    /*height: 30px;
 		width  : 30px;
 		border : #ffffff thin solid;*/
@@ -270,11 +271,10 @@ body {
    ======================================================================================= */
   
 .cesium-viewer-modificationsToolbar {
-   	vertical-align:bottom;
-    display: block;
-    position: absolute;
-	bottom : 5px;
-    right: 45px;
-    height: 30px;
+    display  : block;
+    position : absolute;
+	bottom   : 34px;
+    right    : 200px;
+    height   : 30px;
 	/*border : #ffffff thin solid;*/
 }

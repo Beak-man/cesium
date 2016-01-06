@@ -422,10 +422,18 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         footerToolbar.className = 'cesium-viewer-footerToolbar';
         viewerContainer.appendChild(footerToolbar);
 		
-		// right buttons
-		var modificationsToolbar = document.createElement('div');
+		// right bottom buttons for manipulations tools
+		var modificationsToolbar       = document.createElement('div');
         modificationsToolbar.className = 'cesium-viewer-modificationsToolbar';
         viewerContainer.appendChild(modificationsToolbar);
+		
+		var modificationsToolbarWrapper       = document.createElement('span');
+        modificationsToolbarWrapper.className = 'cesium-Tools-wrapper cesium-toolbar-button';
+        modificationsToolbar.appendChild(modificationsToolbarWrapper);
+		
+		var modificationsToolbarwrapperPanel       = document.createElement('div');                              
+        modificationsToolbarwrapperPanel.className = 'cesium-Tools-wrapperPanel'; 
+	    modificationsToolbarwrapperPanel.appendChild(wrapperPanel); 
 		
 		
 		 /* *******************************************************************************************************************************
@@ -485,7 +493,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 		 
 		 // tools for modifications
 		 var tools;
-		 tools = new Tools(modificationsToolbar, this);
+		 tools = new Tools(modificationsToolbar, this, cesiumWidget.scene);
 		 
 		 
 		 /* *******************************************************************************************************************************
