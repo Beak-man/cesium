@@ -43,7 +43,8 @@ define([
         '../LongitudeLatitdude/LngLat', /* *** NEW *** */
         '../MarkerMove/MarkerMove',     /* *** NEW *** */
 		'../ShowSystems/ShowSystems',   /* *** NEW *** */
-		'../Tools/Tools'                /* *** NEW *** */
+		'../Tools/Tools',               /* *** NEW *** */
+		'../DrawLines/DrawLines'        /* *** NEW *** */
     ], function(
         BoundingSphere,
         Cartesian3,
@@ -88,7 +89,8 @@ define([
         LngLat,      /* *** NEW *** */
         MarkerMove,  /* *** NEW *** */
 		ShowSystems, /* *** NEW *** */
-		Tools        /* *** NEW *** */) {
+		Tools,       /* *** NEW *** */
+		DrawLines    /* *** NEW *** */) {
     "use strict";
 
     var boundingSphereScratch = new BoundingSphere();
@@ -431,9 +433,9 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         modificationsToolbarWrapper.className = 'cesium-Tools-wrapper cesium-toolbar-button';
         modificationsToolbar.appendChild(modificationsToolbarWrapper);
 		
-		var modificationsToolbarwrapperPanel       = document.createElement('div');                              
-        modificationsToolbarwrapperPanel.className = 'cesium-Tools-wrapperPanel'; 
-	    modificationsToolbarwrapperPanel.appendChild(wrapperPanel); 
+		var modificationsToolbarWrapperPanel       = document.createElement('div');                              
+        modificationsToolbarWrapperPanel.className = 'cesium-Tools-wrapperPanel'; 
+	    modificationsToolbarWrapper.appendChild(modificationsToolbarWrapperPanel); 
 		
 		
 		 /* *******************************************************************************************************************************
@@ -493,7 +495,10 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 		 
 		 // tools for modifications
 		 var tools;
-		 tools = new Tools(modificationsToolbar, this, cesiumWidget.scene);
+		 tools = new Tools(modificationsToolbar, modificationsToolbarWrapper, this);
+		 
+		 var drawLines;
+		 drawLines = new DrawLines(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this)
 		 
 		 
 		 /* *******************************************************************************************************************************
@@ -619,6 +624,8 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 		this._lngLat = lngLat;           /* *** NEW *** */
 		this._markerMove = markerMove;   /* *** NEW *** */
 		this._showSystems = showSystems; /* *** NEW *** */
+		this._tools = tools;             /* *** NEW *** */
+		this._drawLines = drawLines;     /* *** NEW *** */
         this._sceneModePicker = sceneModePicker;
         this._baseLayerPicker = baseLayerPicker;
         this._navigationHelpButton = navigationHelpButton;
@@ -765,6 +772,18 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 		showSystems : {
             get : function() {
                 return this._showSystems;
+            }
+        },
+		
+		tools : {
+            get : function() {
+                return this._tools;
+            }
+        },
+		
+		drawLines : {
+            get : function() {
+                return this._drawLines;
             }
         },
 

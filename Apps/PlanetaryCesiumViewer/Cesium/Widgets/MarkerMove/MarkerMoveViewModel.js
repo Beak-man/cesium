@@ -174,7 +174,7 @@ define([
 			   this._toolbar = toolbar;
 			   this._container = container;
 			   this._viewer = viewer;
-			   
+			      
 			    /**
 		         * Gets or sets whether the button drop-down is currently visible.  This property is observable.
 		         * @type {Boolean}

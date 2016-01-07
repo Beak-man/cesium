@@ -16,7 +16,7 @@ define([
     "use strict";
 
 
-    function moveIcon(container, wrapper, viewer){
+    function moveIcon(container, wrapper){
 		
 		var handlerDownClick = new ScreenSpaceEventHandler();
 	    var handlerMove      = new ScreenSpaceEventHandler();
@@ -83,19 +83,22 @@ define([
 		 	that._wrapper.children[0].classeName = "";
 		 	that._wrapper.children[0].className = 'cesium-Tools-wrapperPanel-transition-show';
 			that._isPanelVisible = true;
+			that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
+			try{
+				that._viewer.drawLines.viewModel.destroyWrapperMenu;
+			} catch (e){}
 		 	
 		 } else if (that._isPanelVisible === true){
 		 	
 			that._wrapper.children[0].classeName = "";
 		 	that._wrapper.children[0].className = 'cesium-Tools-wrapperPanel-transition-hide';
 			that._isPanelVisible = false;
+			that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
 			
-			
+			try{
+				that._viewer.drawLines.viewModel.destroyWrapperMenu;
+			} catch (e){}
 		 }
-		
-		
-		
-		console.log('I show panel');
 		
 	};
 
@@ -108,7 +111,7 @@ define([
 	
           this._container = container;
           this._wrapper = wrapper;
-          this._viewer = viewer;
+		  this._viewer = viewer;
 		  this._isPanelVisible = false;
 		   
 		  var that = this;
@@ -116,9 +119,12 @@ define([
                  moveIcon(that._container, that._wrapper, that._viewer);
                });
 			   
-		 this._showToolPanel = createCommand(function() {
+		 this._showToolPanel = createCommand(function() {  
                  showPanel(that);
                });	   
+			   
+			   
+			    knockout.track(this, ["isPanelVisible"]);
 			   
 	
 	};
@@ -140,6 +146,12 @@ define([
 			showToolPanel : {
                get : function() {
                    return this._showToolPanel;
+                   }
+               },
+			   
+			isPanelVisible : {
+               set : function(value) {
+                   this._isPanelVisible = value;
                    }
                },
 			   

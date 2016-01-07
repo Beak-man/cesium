@@ -1,9 +1,6 @@
 /**
  * @author Omar Delaa
  */
-
-/*global define*/
-// ATTENTION : il faut respecter l'ordre de d�claration cot� define et cot� function 
  
 define([
     '../../Core/Math',

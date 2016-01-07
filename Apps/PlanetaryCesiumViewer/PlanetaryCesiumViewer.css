@@ -4,6 +4,7 @@
 @import url(./Cesium/Widgets/ShowSystems/ShowSystems.css);
 @import url(./Cesium/Widgets/InfoBox/InfoBoxDescription.css);
 @import url(./Cesium/Widgets/Tools/Tools.css);
+@import url(./Cesium/Widgets/DrawLines/DrawLines.css);
 
 html {
     height: 100%;
@@ -273,8 +274,8 @@ body {
 .cesium-viewer-modificationsToolbar {
     display  : block;
     position : absolute;
-	bottom   : 34px;
-    right    : 200px;
+	top   : 40px;
+    left    : 405px;
     height   : 30px;
 	/*border : #ffffff thin solid;*/
 }
