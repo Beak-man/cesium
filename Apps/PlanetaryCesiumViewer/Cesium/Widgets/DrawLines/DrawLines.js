@@ -50,6 +50,8 @@ define([
 		viewModel._icone = icone;
 		this._viewModel = viewModel;
 		
+		// For the icon inside the main menu panel
+		
 		var DrawLineButton           = document.createElement('div');                              
         DrawLineButton.className     = 'cesium-button cesium-toolbar-button cesium-modificationsToolbar-button';                                                       
         DrawLineButton.innerHTML = '<svg width="35" height="35" viewBox="-15 -11 210 210">'+icone+' </svg>';             

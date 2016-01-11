@@ -16,18 +16,18 @@ define([
     "use strict";
 
 
-    function moveIcon(container, wrapper){
+    function moveIcon(that, container, wrapper){
 		
-		var handlerDownClick = new ScreenSpaceEventHandler();
-	    var handlerMove      = new ScreenSpaceEventHandler();
-		var handlerUpClick   = new ScreenSpaceEventHandler();
+		that._handlerDownClick = new ScreenSpaceEventHandler();
+	    that._handlerMove      = new ScreenSpaceEventHandler();
+		that._handlerUpClick   = new ScreenSpaceEventHandler();
 		
 		var sizePageX = document.documentElement.clientWidth;
 		var sizePageY = document.documentElement.clientHeight;
 		
 		
-		handlerDownClick.setInputAction(function(){
-			handlerMove.setInputAction(function(mouvement){
+		that._handlerDownClick.setInputAction(function(){
+			that._handlerMove.setInputAction(function(mouvement){
 
 					var cursorPosition = mouvement.endPosition;
 					
@@ -35,9 +35,9 @@ define([
 					var offsetX = cursorPosition.x - (wrapper.children[1].offsetWidth/2)
 
 
-					if (cursorPosition.x > sizePageX - wrapper.children[1].offsetWidth / 2) {
+					if (cursorPosition.x > sizePageX - wrapper.children[1].offsetWidth / 2 - 3) {
 					
-						container.style.left = sizePageX - wrapper.children[1].offsetWidth + "px";
+						container.style.left = sizePageX - wrapper.children[1].offsetWidth - 3 + "px";
 						
 					} else if (cursorPosition.x < wrapper.children[1].offsetWidth/2 || cursorPosition.x < 0) {
 
@@ -65,16 +65,13 @@ define([
 			}, ScreenSpaceEventType.MOUSE_MOVE);
 		}, ScreenSpaceEventType.MIDDLE_DOWN);
 		
-		handlerUpClick.setInputAction(function(){
+		that._handlerUpClick.setInputAction(function(){
 			
-			 handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-		   	 handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+			 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+		   	 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 			 
 		}, ScreenSpaceEventType.MIDDLE_UP);	
   	 };
-
-
-
 
     function showPanel(that){
 		
@@ -84,8 +81,12 @@ define([
 		 	that._wrapper.children[0].className = 'cesium-Tools-wrapperPanel-transition-show';
 			that._isPanelVisible = true;
 			that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
+			
+			that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+		   	that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+			
 			try{
-				that._viewer.drawLines.viewModel.destroyWrapperMenu;
+				that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
 			} catch (e){}
 		 	
 		 } else if (that._isPanelVisible === true){
@@ -94,6 +95,9 @@ define([
 		 	that._wrapper.children[0].className = 'cesium-Tools-wrapperPanel-transition-hide';
 			that._isPanelVisible = false;
 			that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
+			
+			that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+		   	that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 			
 			try{
 				that._viewer.drawLines.viewModel.destroyWrapperMenu;
@@ -116,7 +120,7 @@ define([
 		   
 		  var that = this;
           this._moveIconCommand = createCommand(function() {
-                 moveIcon(that._container, that._wrapper, that._viewer);
+                 moveIcon(that, that._container, that._wrapper, that._viewer);
                });
 			   
 		 this._showToolPanel = createCommand(function() {  

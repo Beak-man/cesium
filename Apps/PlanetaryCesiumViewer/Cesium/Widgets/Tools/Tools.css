@@ -4,7 +4,7 @@
 	background : #303336; 
     border     : 1px solid #444;
     color      : #edffff; /* For text buttons */
-	height     : 0px;
+	height     : 44px;
 	width      : 0px;
 	
 	top        : 2px;
@@ -18,14 +18,14 @@
 	background : #303336; 
     border     : 1px solid #444;
     color      : #edffff; /* For text buttons */
-	height     : 100px;
+	height     : 44px;
 	width      : 150px;
 	
 	top        : 2px;
 	left       : 36px;
 	
-	transition-property: height;
-    transition:  0.5s;
+	/*transition-property: height;
+    transition:  0.0s;*/
 	
 	transition-property: width;
     transition:  0.5s;
@@ -41,11 +41,11 @@
 	top        : 2px;
 	left       : 36px;
 	
-	height     : 0px;
+	height     : 44px;
 	width      : 0px;
 	
-	transition-property: height;
-    transition:  0.5s;
+	/*transition-property: height;
+    transition:  0.0s;*/
 	
 	transition-property: width;
     transition:  0.5s;

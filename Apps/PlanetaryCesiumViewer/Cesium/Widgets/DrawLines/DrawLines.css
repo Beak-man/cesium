@@ -15,7 +15,7 @@
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 		
 	transition-property: opacity;
-    transition:  0.5s;
+    transition:  1.0s;
 }
 
 
@@ -38,10 +38,22 @@
 	width : 34px;
 	top : 37px;
 	left : 0px;
-	//border : #ffffff thin solid;
+	opacity : 1;
+	/*border : #ffffff thin solid;*/
 }
 
-.cesium-DrawLinesMenu-button{
+.cesium-DrawLinesMenu-show{
 	visibility : visible;
 	z-index : 5;
+	opacity : 1;
+
+	transition-property: opacity;
+    transition:  1.0s;
+}
+
+.cesium-DrawLinesMenu-show:focus{
+	visibility : visible;
+	z-index : 5;
+	opacity : 1;
+    border : #ffffff;
 }
