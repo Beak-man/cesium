@@ -32,68 +32,84 @@ define([
 		) {
     "use strict";
 
-     var arrayDegrees = [] ;
-
-    function drawLinesFunction(viewer, polyLines, ellipsoid){
+    function drawLinesFunction(that, viewer, polyLines, ellipsoid){
 
 
-    var handlerLeftClick = new ScreenSpaceEventHandler();
-	var handlerMove      = new ScreenSpaceEventHandler();
+    that._handlerLeftClick   = new ScreenSpaceEventHandler();
+	that._handlerMiddleClick = new ScreenSpaceEventHandler();
+	that._handlerRightClick  = new ScreenSpaceEventHandler();
+	that._handlerMove        = new ScreenSpaceEventHandler();
 	
-	var segment = []
-	 	
+	var arrayDegrees = [] ;
 		// var cursorPosition = mouvement.endPosition;
 		 
 		
-         handlerLeftClick.setInputAction(function(click){
+         that._handlerLeftClick.setInputAction(function(click){
 		 	
 			 var cursorClickPosition = click.position;
 			 var cartesian = viewer.scene.camera.pickEllipsoid(cursorClickPosition, ellipsoid); 
-                        if (cartesian) {
-							var cartographic = ellipsoid.cartesianToCartographic(cartesian);
-							var longitudeNumber =  CesiumMath.toDegrees(cartographic.longitude);
-							var latitudeNumber =  CesiumMath.toDegrees(cartographic.latitude);
-						}
-			
-			console.log(longitudeNumber +" "+latitudeNumber);
-			
-			
-			
-			arrayDegrees.push(longitudeNumber)
-			arrayDegrees.push(latitudeNumber)
-			
-			
-			/* handlerMove.setInputAction(function(mouvement){}, ScreenSpaceEventType.MOUSE_MOVE);	*/
+			 
+             if (cartesian) {
+			 	var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+			 //	var longitudeNumber = CesiumMath.toDegrees(cartographic.longitude);
+			 //	var latitudeNumber = CesiumMath.toDegrees(cartographic.latitude);
+			 	
+			 	
+			 	
+			 	arrayDegrees.push(cartographic.longitude);
+			 	arrayDegrees.push(cartographic.latitude);
 				
-			
-			if (arrayDegrees.length == 4) {
-			
-			
-			console.log(arrayDegrees.length);
-			
-				// Coordinates in (Long, lat)
-				var polyline = polyLines.add({
-					positions: PolylinePipeline.generateCartesianArc({
-						positions: Cartesian3.fromDegreesArray(arrayDegrees),
-						ellipsoid: ellipsoid
-					}),
-					material: Material.fromType('Color', {
-						color: Color.YELLOW
-					})
-				});
-				
-				arrayDegrees = [];
-				
-			}	
-			
-			
-			
-			
+				console.log(arrayDegrees);
+			 	
+			 	/* handlerMove.setInputAction(function(mouvement){}, ScreenSpaceEventType.MOUSE_MOVE);	*/
+					
+					if (arrayDegrees.length == 4) {
+
+						// Coordinates in (Long, lat)
+						   var polyline = polyLines.add({
+							positions: PolylinePipeline.generateCartesianArc({
+								// positions: Cartesian3.fromDegreesArray(arrayDegrees),
+								positions: Cartesian3.fromRadiansArray(arrayDegrees),
+								ellipsoid: ellipsoid
+							}),
+							material: Material.fromType('Color', {
+								color: Color.YELLOW
+							})
+						});
+						arrayDegrees = [];
+						arrayDegrees.push(cartographic.longitude);
+						arrayDegrees.push(cartographic.latitude);
+					}
+				}
 			
 		 }, ScreenSpaceEventType.LEFT_CLICK);
 
 
-	console.log(viewer.scene.primitives);
+          that._handlerMiddleClick.setInputAction(function(click){
+			    arrayDegrees = [] ;
+		  }, ScreenSpaceEventType.MIDDLE_CLICK);
+		  
+		  that._handlerRightClick.setInputAction(function(click){
+			   
+			   var dim = viewer.scene.primitives._primitives[0]._polylines.length;
+			   
+			   if (dim > 1) {
+			   	
+				   	var polyline = viewer.scene.primitives._primitives[0]._polylines[dim - 1];
+				   	polyLines.remove(polyline);
+					
+			   } else if (dim == 1) {
+			   	
+				   	var polyline = viewer.scene.primitives._primitives[0]._polylines[dim - 1];
+				    polyLines.remove(polyline);
+			   	    arrayDegrees = [] ;
+					
+			   } else if (dim == 0){
+			   	
+			   	    arrayDegrees = [] ;
+					
+			   }
+		  }, ScreenSpaceEventType.RIGHT_CLICK);
 	}
 
 
@@ -107,7 +123,29 @@ define([
 		
 		// A MODIFIER :  si on souhaite charger un fichier de polyLines il faut etre capable de recuperer la collection de polyLines chagree
 		
-		var polyLines = viewer.scene.primitives.add(new PolylineCollection());
+		var polyLines;
+		var primitives = viewer.scene.primitives._primitives;
+
+		if (primitives.length == 0) {
+
+			polyLines = viewer.scene.primitives.add(new PolylineCollection());
+			
+		}else if (primitives.length > 0) {
+		
+			for (var i = 0; i < primitives.length; i++) {
+			
+				if (primitives[i]._polylines) {
+				
+					polyLines = primitives[i];
+					break;
+					
+				} else {
+				
+					polyLines = viewer.scene.primitives.add(new PolylineCollection());
+				}
+			};
+		}
+
 		var ellipsoid = viewer.scene.globe.ellipsoid;
 		
 		this._viewer = viewer;
@@ -117,12 +155,14 @@ define([
 		var that = this;
 		
 		this._drawCommand = createCommand(function() {
-
-             drawLinesFunction(that._viewer, that._polyLines,  that._ellipsoid);
-
+             drawLinesFunction(that, that._viewer, that._polyLines,  that._ellipsoid);
 		});
 		
 		this._cutCommand = createCommand(function() {
+
+		});
+		
+		this._trashCommand = createCommand(function() {
 
 		});
 		
@@ -133,6 +173,7 @@ define([
 		this._closeSubMenu = createCommand(function() {
 			try{
 				that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+				that.removeAllCommands;
 			} catch (e){} 
 		});
 		  
@@ -159,6 +200,12 @@ define([
                 }
             },
 			
+			trashCommand : {
+              get : function() {
+                   return this._trashCommand;
+                }
+            },
+			
 			saveCommand : {
               get : function() {
                    return this._saveCommand;
@@ -170,6 +217,27 @@ define([
                    return this._closeSubMenu;
                    }
                }, 
+			   
+		   removeAllCommands  : {
+               get : function() {
+                   if (this._handlerLeftClick) this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+				   if (this._handlerMiddleClick) this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
+				   if (this._handlerRightClick) this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+				    }
+               },  
+			   
+			   
+		/*   handlerLeftClick : {
+               get : function() {
+                   return this._handlerLeftClick;
+				    }
+               },
+			   
+		   handlerMove : {
+               get : function() {
+                   return this._handlerMove;
+				    }
+               },*/
            });
 
     return SubMenuViewModel;

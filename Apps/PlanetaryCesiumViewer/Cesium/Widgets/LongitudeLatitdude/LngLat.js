@@ -4,10 +4,12 @@
 
 /*global define*/
 define([
+    '../../Core/defineProperties', 
     './LngLatViewModel',
     '../getElement',
     '../../ThirdParty/knockout'],
     function( 
+	    defineProperties,
         LngLatPanelViewModel,
         getElement,
         knockout) {
@@ -29,5 +31,34 @@ define([
 
                 knockout.applyBindings(viewModel, element);
             }
+			
+			defineProperties(LngLat.prototype, {
+        /**
+         * Gets the container.
+         * @memberof LngLat.prototype
+         *
+         * @type {Element}
+         */
+        container : {
+            get : function() {
+                return this._container;
+            }
+        },
+		
+        /**
+         * Gets the view model.
+         * @memberof LngLat.prototype
+         *
+         * @type {LngLatViewModel}
+         */
+        viewModel : {
+            get : function() {
+                return this._viewModel;
+            }
+        },
+    });
+			
+			
+			
             return LngLat;
 });

@@ -274,7 +274,7 @@ body {
 .cesium-viewer-modificationsToolbar {
     display  : block;
     position : absolute;
-	top   : 40px;
+	top   : 500px;
     left    : 405px;
     height   : 30px;
 	/*border : #ffffff thin solid;*/

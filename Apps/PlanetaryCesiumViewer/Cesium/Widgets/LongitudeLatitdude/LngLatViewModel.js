@@ -18,11 +18,9 @@ define([
         createCommand) {
             "use strict"
 
-            var coodDiv = null;
+           function lngLatView(that, mainContainer, scene){	
 
-           function lngLatView(mainContainer, scene){	
-
-                if (!coodDiv) {
+                if (!that._coodDiv) {
 
                     var coordViewModel = {
                         longitude: null,
@@ -32,8 +30,8 @@ define([
                     knockout.track(coordViewModel); 
                     var ellipsoid = scene.globe.ellipsoid;
 
-                    var handler = new ScreenSpaceEventHandler(scene.canvas); 
-                    handler.setInputAction(function(movement){
+                    that._handler = new ScreenSpaceEventHandler(scene.canvas); 
+                    that._handler.setInputAction(function(movement){
 
                         var cartesian = scene.camera.pickEllipsoid(movement.endPosition, ellipsoid); 
                         if (cartesian) { 
@@ -54,10 +52,10 @@ define([
                         }
                     }, ScreenSpaceEventType.MOUSE_MOVE);
                     
-                    coodDiv = document.createElement('div');
-                    coodDiv.setAttribute("id", "coordinates");
-                    coodDiv.className = 'coordinates';
-                    coodDiv.style.cssText = 'background: rgba(42, 42, 42, 0.8);\
+                    that._coodDiv = document.createElement('div');
+                    that._coodDiv.setAttribute("id", "coordinates");
+                    that._coodDiv.className = 'coordinates';
+                    that._coodDiv.style.cssText = 'background: rgba(42, 42, 42, 0.8);\
                                              padding: 4px; \
                                              border-radius: 4px; \
                                              color: white;\
@@ -70,20 +68,20 @@ define([
                                              -webkit-transition: opacity 1.0s linear; \
                                              -moz-transition: opacity 1.0s linear;';
 
-                    coodDiv.innerHTML = '<table><tr><th>Longitude</th><th>Latitude</th></tr>' +
+                    that._coodDiv.innerHTML = '<table><tr><th>Longitude</th><th>Latitude</th></tr>' +
                                                '<tr><td id="longitude"><span data-bind="text: longitude"></span></td>' +
                                                    '<td id="latitude"><span data-bind="text: latitude"></span></td>';
 
-                    mainContainer.appendChild(coodDiv);
+                    mainContainer.appendChild(that._coodDiv);
                     
                     var coordinates = document.getElementById('coordinates');
                     knockout.applyBindings(coordViewModel, coordinates);
 
-                } else if(coodDiv){
+                } else if(that._coodDiv){
 
-                    knockout.cleanNode(coodDiv);
-                    mainContainer.removeChild(coodDiv);
-                    coodDiv = null;
+                    knockout.cleanNode(that._coodDiv);
+                    mainContainer.removeChild(that._coodDiv);
+                    that._coodDiv = null;
                 };
            }
 
@@ -92,11 +90,12 @@ define([
                this._container = container;
                this._mainContainer = mainContainer;
                this._scene = scene;
+			   this._coord = null;
 
                var that = this;
                this._command = createCommand(function() {
-                   lngLatView(that._mainContainer, that._scene);
-               });
+                   lngLatView(that, that._mainContainer, that._scene);
+               }, true);
 
                /**
                * Gets or sets the tooltip.  This property is observable.
@@ -110,7 +109,7 @@ define([
            defineProperties(LngLatPanelViewModel.prototype, {		
            /**
             * Gets the Command that is executed when the button is clicked.
-            * @memberof HomeButtonViewModel.prototype
+            * @memberof LngLatPanelViewModel.prototype
             *
             * @type {Command}
             */
@@ -119,6 +118,19 @@ define([
                    return this._command;
                    }
                },
+			   
+		  removeCommand : {
+               get : function() {
+					if (this._handler) this._handler.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+					if (this._coodDiv) {
+						knockout.cleanNode(this._coodDiv);
+						this._mainContainer.removeChild(this._coodDiv);
+						this._coodDiv = null;
+					}
+                   }
+               },
+			   
+			   
            });
 
            return LngLatPanelViewModel;

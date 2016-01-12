@@ -74,7 +74,7 @@ span.cesium-showSystems-wrapper {
 	opacity : 1;
 	margin : 0px;
     top: 0px;
-	width :  150%;
+	width :  120%;
 	height : 93%;
 }
 	
@@ -141,13 +141,21 @@ span.cesium-showSystems-wrapper {
 	 text-decoration : none;
 }
 
+
+.cesium-showSystems-configContainer-colomn3{
+}
+
+input[type=range]{
+	width: 100px;
+} 
+
 /* =========================== FOOTER ============================= */ 
 	
 .cesium-footerToolbar-button{
 	opacity : 0;
 }
 
-.cesium-footerToolbar-animation-show{
+.cesium-footerToolbar-animation-show {
 	opacity : 1;
 	transition-property: opacity;
     transition:  1s;

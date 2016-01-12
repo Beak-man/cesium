@@ -57,6 +57,14 @@ var DrawIcon = '<g><path d="M12.587,67.807c6.95,0,12.588-5.635,12.588-12.587c0-2
 			c0,2.453,0.729,4.723,1.944,6.656l-20.062,24.734L38.697,22.515c2.176-2.263,3.527-5.323,3.527-8.709\
 			c0-6.952-5.635-12.587-12.587-12.587c-6.95,0-12.585,5.635-12.585,12.587c0,3.762,1.686,7.102,4.302,9.408l-8.423,19.455\
 			c-0.117-0.002-0.224-0.034-0.344-0.034C5.635,42.633,0,48.267,0,55.22C0,62.169,5.635,67.807,12.587,67.807z"/></g>';		
+			
+			
+var trashIcon = '<g><g><path d="M75.834,33.388h-51.67c-1.311,0-2.375,1.058-2.375,2.373v49.887c0,1.314,1.064,2.377,2.375,2.377h51.67\
+			c1.314,0,2.375-1.063,2.375-2.377V35.76C78.209,34.446,77.148,33.388,75.834,33.388z"/></g><g>\
+		    <path d="M79.004,17.352H59.402v-2.999c0-1.314-1.061-2.377-2.373-2.377H42.971c-1.312,0-2.375,1.063-2.375,2.377v2.999H20.996\
+			c-1.312,0-2.375,1.059-2.375,2.373v6.932c0,1.314,1.063,2.373,2.375,2.373h58.008c1.314,0,2.375-1.059,2.375-2.373v-6.932\
+			C81.379,18.41,80.318,17.352,79.004,17.352z"/></g></g>';
+			
 
     /**
      * A widget to show the subMenu of the draw polylines widget.
@@ -78,25 +86,31 @@ var DrawIcon = '<g><path d="M12.587,67.807c6.95,0,12.588-5.635,12.588-12.587c0-2
 		var drawButton       = document.createElement('div');                              
         drawButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       
         drawButton.innerHTML = '<svg width="35" height="35" viewBox="-15 -11 210 210">'+DrawIcon+' </svg>';   
-		drawButton.setAttribute('data-bind', 'event : {click : drawCommand}');             
+		drawButton.setAttribute('data-bind', 'attr  : { title: "Draw polylines" }, event : {click : drawCommand}');             
 	    wrapperMenu.appendChild(drawButton); 
 		
 		var cutButton       = document.createElement('div');                              
         cutButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       
         cutButton.innerHTML = '<svg width="25" height="25" viewBox="-50 -50 640 640">'+cutIcon+' </svg>';   
-		cutButton.setAttribute('data-bind', 'event : {click : cutCommand}');             
+		cutButton.setAttribute('data-bind', 'attr  : { title: "Cut line" }, event : {click : cutCommand}');             
 	    wrapperMenu.appendChild(cutButton); 
+		
+		var trashButton       = document.createElement('div');                              
+        trashButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       
+        trashButton.innerHTML = '<svg width="30" height="30" viewBox="0 0 100 100">'+trashIcon+' </svg>';   
+		trashButton.setAttribute('data-bind', 'attr  : { title: "Remove all polylines" }, event : {click : trashCommand}');             
+	    wrapperMenu.appendChild(trashButton); 
 		
 		var saveButton       = document.createElement('div');                              
         saveButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       
         saveButton.innerHTML = '<svg width="40" height="40" viewBox="-50 -50 640 640">'+saveIcon+' </svg>';   
-		saveButton.setAttribute('data-bind', 'event : {click : saveCommand}');             
+		saveButton.setAttribute('data-bind', 'attr  : { title: "Save polylines" }, event : {click : saveCommand}');             
 	    wrapperMenu.appendChild(saveButton); 
 		
 		var closeButton       = document.createElement('div');                              
         closeButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       
         closeButton.innerHTML = '<svg width="150" height="150" viewBox="-10 -10 640 640">'+closeIcon+' </svg>';
-		closeButton.setAttribute('data-bind', 'event : {click : closeSubMenu}');           
+		closeButton.setAttribute('data-bind', 'attr  : { title: "Close menu" }, event : {click : closeSubMenu}');           
 	    wrapperMenu.appendChild(closeButton); 
 		
 		var viewModel  = new SubMenuViewModel(viewer);	

@@ -66,9 +66,13 @@ define([
 		}, ScreenSpaceEventType.MIDDLE_DOWN);
 		
 		that._handlerUpClick.setInputAction(function(){
-			
-			 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-		   	 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+	
+			try {
+				that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+				that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+			} catch (e){
+				console.log(e);
+			}
 			 
 		}, ScreenSpaceEventType.MIDDLE_UP);	
   	 };
@@ -82,8 +86,8 @@ define([
 			that._isPanelVisible = true;
 			that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
 			
-			that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-		   	that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+			if (that._handlerDownClick) that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+		   	if (that._handlerMove) that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 			
 			try{
 				that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
@@ -96,8 +100,8 @@ define([
 			that._isPanelVisible = false;
 			that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
 			
-			that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-		   	that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+			if (that._handlerDownClick) that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+		   	if (that._handlerMove) that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 			
 			try{
 				that._viewer.drawLines.viewModel.destroyWrapperMenu;
@@ -117,14 +121,17 @@ define([
           this._wrapper = wrapper;
 		  this._viewer = viewer;
 		  this._isPanelVisible = false;
+		  this.removeAllCommands;
 		   
 		  var that = this;
-          this._moveIconCommand = createCommand(function() {
+          this._moveIconCommand = createCommand(function(data, event) {
                  moveIcon(that, that._container, that._wrapper, that._viewer);
+				 console.log(event);
                });
 			   
-		 this._showToolPanel = createCommand(function() {  
+		 this._showToolPanel = createCommand(function(data, event) {  
                  showPanel(that);
+				 moveIcon(that, that._container, that._wrapper, that._viewer);
                });	   
 			   
 			   
@@ -157,6 +164,16 @@ define([
                set : function(value) {
                    this._isPanelVisible = value;
                    }
+               },
+			   
+			   removeAllCommands  : {
+               get : function() {
+
+                   if (this._handlerDownClick) this._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+				   if (this._handlerUpClick) this._handlerUpClick.removeInputAction(ScreenSpaceEventType.MIDDLE_UP);
+				   if (this._handlerMove) this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+				   
+				    }
                },
 			   
            });

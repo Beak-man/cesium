@@ -89,7 +89,7 @@ var previousImageryProvidersTab;
 				 updateLayerList(viewer);
 
 
-                this._testCommand = createCommand(function(){
+                this._changeRangeValue = createCommand(function(){
 					
 					console.log("trdt");
 					
@@ -111,9 +111,9 @@ var previousImageryProvidersTab;
             *
             * @type {Command}
             */
-			 testCommand : {
+			 changeRangeValue : {
                get : function() {
-                   return this._testCommand;
+                   return this._changeRangeValue;
                    }
                }, 
 			   	   	   

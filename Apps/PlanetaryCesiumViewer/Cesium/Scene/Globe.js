@@ -118,7 +118,7 @@ define([
             ellipsoid : ellipsoid
         });
 		
-		console.log(ellipsoid);
+		// console.log(ellipsoid);
 		
         var imageryLayerCollection = new ImageryLayerCollection();
 
@@ -144,10 +144,10 @@ define([
         });
 
 
-        console.log("dans Globe : ligne   147");
+      //  console.log("dans Globe : ligne   147");
         this._occluder = new Occluder(new BoundingSphere(Cartesian3.ZERO, ellipsoid.minimumRadius), Cartesian3.ZERO);
-		console.log(this._occluder);
-		console.log("**************");
+	//	console.log(this._occluder);
+	//	console.log("**************");
 
         this._rsColor = undefined;
         this._rsColorWithoutDepthTest = undefined;

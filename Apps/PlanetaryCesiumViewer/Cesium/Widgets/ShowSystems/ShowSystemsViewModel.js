@@ -131,6 +131,9 @@ define([
 
 		function getXmlPlanetData(that, viewer, xhr, method, url, async, listContainer, pn, naifCode){
 
+
+            viewer.tools.viewModel.removeAllCommands;
+
 			xhr.open(method, url, async);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 			xhr.send();
@@ -230,13 +233,14 @@ define([
                           colomn2.appendChild(document.createTextNode(finalLayerName));
 						  
                           var colomn3 = document.createElement('TD');
+						  colomn3.className = "cesium-showSystems-configContainer-colomn3";
                           tableLine.appendChild(colomn3)
 
 						  var inputRange  = document.createElement('INPUT');
 						  inputRange.type = 'range'; 
 						  inputRange.min  = '0';
 						  inputRange.max  = '1';
-						  inputRange.step = '0.01';
+						  inputRange.step = '0.05';
 						  inputRange.setAttribute('data-bind', 'value: alpha_'+i+', valueUpdate: "input"');
 				          colomn3.appendChild(inputRange);
 						  
@@ -384,7 +388,7 @@ define([
 						  inputRange.type = 'range'; 
 						  inputRange.min  = '0';
 						  inputRange.max  = '1';
-						  inputRange.step = '0.01';
+						  inputRange.step = '0.05';
 						  inputRange.setAttribute('data-bind', 'value: alpha_'+i+', valueUpdate: "input"');
 				          colomn3.appendChild(inputRange);
 						  
@@ -532,6 +536,7 @@ define([
 		 */
 		
         var ShowSystemsViewModel = function(viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, solarSystem) {
+
 
                this._viewer            = viewer;
 			   this._scene             = scene;
@@ -711,14 +716,20 @@ define([
 		
 	function initializeScene(that, objectDimensions){
 		that._ellipsoid =  freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
+		
+		try {
+			that._viewer.scene.primitives.removeAll(true);
+			that._viewer.lngLat.viewModel.removeCommand;			
+			that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+			that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+		} catch (e) {};	
 
 		var newTerrainProvider      = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
 		var newGeographicProjection = new GeographicProjection(that._ellipsoid);
 		var newGlobe                = new Globe(that._ellipsoid); 
 
-	  /*  var newOccluder             = new Occluder(new BoundingSphere(Cartesian3.ZERO, that._ellipsoid.minimumRadius), Cartesian3.ZERO);    
-		
-		var cameraPosition          =  Cartesian3.ZERO;
+	  /*  var newOccluder          = new Occluder(new BoundingSphere(Cartesian3.ZERO, that._ellipsoid.minimumRadius), Cartesian3.ZERO);    
+		var cameraPosition         =  Cartesian3.ZERO;
 		var occluderBoundingSphere = new BoundingSphere(Cartesian3.ZERO, that._ellipsoid.minimumRadius);
 		Occluder.fromBoundingSphere(occluderBoundingSphere, cameraPosition, newOccluder);  */
 					
