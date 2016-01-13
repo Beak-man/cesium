@@ -65,6 +65,14 @@ var trashIcon = '<g><g><path d="M75.834,33.388h-51.67c-1.311,0-2.375,1.058-2.375
 			c-1.312,0-2.375,1.059-2.375,2.373v6.932c0,1.314,1.063,2.373,2.375,2.373h58.008c1.314,0,2.375-1.059,2.375-2.373v-6.932\
 			C81.379,18.41,80.318,17.352,79.004,17.352z"/></g></g>';
 			
+var circleIcon = '<g><path d="M74.301,0C33.333,0,0,33.333,0,74.301c0,40.969,33.333,74.301,74.301,74.301c40.969,0,74.301-33.332,74.301-74.301C148.602,33.333,115.27,0,74.301,0z M132.768,77.954h3.537c-1.897,32.56-28.978,58.468-62.004,58.468\
+				c-34.254,0-62.121-27.867-62.121-62.121c0-34.253,27.867-62.12,62.121-62.12c33.846,0,61.436,27.211,62.09,60.902h-3.623c-1.348,0-2.437,1.089-2.437,2.437S131.42,77.954,132.768,77.954z"/>\
+				<path d="M110.842,73.083h-7.308c-1.349,0-2.437,1.089-2.437,2.437s1.088,2.436,2.437,2.436h7.308c1.348,0,2.438-1.088,2.438-2.436C113.277,74.172,112.189,73.083,110.842,73.083z"/>\
+				<path d="M96.227,73.083h-7.309c-1.348,0-2.438,1.089-2.438,2.437s1.09,2.436,2.438,2.436h7.309c1.347,0,2.437-1.088,2.437-2.436\
+				C98.662,74.172,97.572,73.083,96.227,73.083z"/><path d="M125.459,73.083h-7.309c-1.349,0-2.437,1.089-2.437,2.437s1.088,2.436,2.437,2.436h7.309c1.348,0,2.436-1.088,2.436-2.436\
+			    S126.807,73.083,125.459,73.083z"/><path d="M81.609,73.083H74.3c-1.347,0-2.436,1.089-2.436,2.437s1.089,2.436,2.436,2.436h7.31c1.347,0,2.436-1.088,2.436-2.436\
+				S82.956,73.083,81.609,73.083z"/></g>';			
+			
 
     /**
      * A widget to show the subMenu of the draw polylines widget.
@@ -89,11 +97,18 @@ var trashIcon = '<g><g><path d="M75.834,33.388h-51.67c-1.311,0-2.375,1.058-2.375
 		drawButton.setAttribute('data-bind', 'attr  : { title: "Draw polylines" }, event : {click : drawCommand}');             
 	    wrapperMenu.appendChild(drawButton); 
 		
-		var cutButton       = document.createElement('div');                              
+	/*	var cutButton       = document.createElement('div');                              
         cutButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       
         cutButton.innerHTML = '<svg width="25" height="25" viewBox="-50 -50 640 640">'+cutIcon+' </svg>';   
 		cutButton.setAttribute('data-bind', 'attr  : { title: "Cut line" }, event : {click : cutCommand}');             
-	    wrapperMenu.appendChild(cutButton); 
+	    wrapperMenu.appendChild(cutButton); */
+		
+		var circleButton       = document.createElement('div');                              
+        circleButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       
+        circleButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 168.602  168.602">'+circleIcon+' </svg>';   
+		circleButton.setAttribute('data-bind', 'attr  : { title: "Draw circle" }, event : {click : circleCommand}');             
+	    wrapperMenu.appendChild(circleButton); 
+		
 		
 		var trashButton       = document.createElement('div');                              
         trashButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       

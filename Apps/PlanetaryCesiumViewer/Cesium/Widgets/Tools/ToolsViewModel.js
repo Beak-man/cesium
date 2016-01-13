@@ -66,13 +66,9 @@ define([
 		}, ScreenSpaceEventType.MIDDLE_DOWN);
 		
 		that._handlerUpClick.setInputAction(function(){
-	
-			try {
-				that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-				that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-			} catch (e){
-				console.log(e);
-			}
+			
+				if (that._handlerDownClick) that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+				if (that._handlerMove) that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 			 
 		}, ScreenSpaceEventType.MIDDLE_UP);	
   	 };
