@@ -106,14 +106,14 @@ var circleIcon = '<g><path d="M74.301,0C33.333,0,0,33.333,0,74.301c0,40.969,33.3
 		var circleButton       = document.createElement('div');                              
         circleButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       
         circleButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 168.602  168.602">'+circleIcon+' </svg>';   
-		circleButton.setAttribute('data-bind', 'attr  : { title: "Draw circle" }, event : {click : circleCommand}');             
+		circleButton.setAttribute('data-bind', 'attr  : { title: "Draw circles" }, event : {click : circleCommand}');             
 	    wrapperMenu.appendChild(circleButton); 
 		
 		
 		var trashButton       = document.createElement('div');                              
         trashButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       
         trashButton.innerHTML = '<svg width="30" height="30" viewBox="0 0 100 100">'+trashIcon+' </svg>';   
-		trashButton.setAttribute('data-bind', 'attr  : { title: "Remove all polylines" }, event : {click : trashCommand}');             
+		trashButton.setAttribute('data-bind', 'attr  : { title: "Remove all objects" }, event : {click : trashCommand}');             
 	    wrapperMenu.appendChild(trashButton); 
 		
 		var saveButton       = document.createElement('div');                              

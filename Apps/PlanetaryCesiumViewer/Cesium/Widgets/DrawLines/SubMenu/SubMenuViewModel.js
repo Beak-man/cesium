@@ -44,14 +44,21 @@ define([
 		) {
     "use strict";
 
+    var targetMouse;
+
     function drawLinesFunction(that, viewer, polyLines, ellipsoid){
+
+
+    document.onmousemove =  getPosition;
+	// document.onclick     =  getPosition;
+
 
      if (that._isPolyLineActive) {
 	 
-	 	that._handlerLeftClick = new ScreenSpaceEventHandler();
+	 	that._handlerLeftClick   = new ScreenSpaceEventHandler();
 	 	that._handlerMiddleClick = new ScreenSpaceEventHandler();
-	 	that._handlerRightClick = new ScreenSpaceEventHandler();
-	 	that._handlerMove = new ScreenSpaceEventHandler();
+	 	that._handlerRightClick  = new ScreenSpaceEventHandler();
+	 	that._handlerMove        = new ScreenSpaceEventHandler();
 	 	
 	 	var arrayRadians = [];
 			
@@ -59,9 +66,10 @@ define([
 			
 			    var ellipsoid = viewer.scene.globe.ellipsoid;
 				var cursorClickPosition = click.position;
+				
 				var cartesian = viewer.scene.camera.pickEllipsoid(cursorClickPosition, ellipsoid);
 				
-				if (cartesian) {
+				if (cartesian && targetMouse === "[object HTMLCanvasElement]" ) {
 					var cartographic = ellipsoid.cartesianToCartographic(cartesian);
 					arrayRadians.push(cartographic.longitude);
 					arrayRadians.push(cartographic.latitude);
@@ -82,11 +90,29 @@ define([
 						arrayRadians.push(cartographic.latitude);
 					}
 				}
+				
+				console.log( polyline = viewer.scene.primitives);
+				
 			}, ScreenSpaceEventType.LEFT_CLICK);
 			
 			
 			that._handlerMiddleClick.setInputAction(function(click){
 				arrayRadians = [];
+				
+				var polyline = viewer.scene.primitives._primitives[0]._polylines[dim - 1];
+				
+				
+				
+				var polyline = polyLines.add({
+							positions: PolylinePipeline.generateCartesianArc({
+								   positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
+								   ellipsoid: ellipsoid
+							}),
+							material: Material.fromType('Color', {
+								color: Color.YELLOW
+							})
+						});
+
 			}, ScreenSpaceEventType.MIDDLE_CLICK);
 			
 			that._handlerRightClick.setInputAction(function(click){
@@ -122,6 +148,7 @@ define([
 
      function drawCircleFunction(that, viewer, ellipsoid){
 
+             document.onmousemove =  getPosition;
 
             if (that._isCircleActive){
 
@@ -143,7 +170,7 @@ define([
 					  var newPrim;
 			 
 			 
-                     if (cartesianCircleCenter) {
+                     if (cartesianCircleCenter && targetMouse === "[object HTMLCanvasElement]") {
 					 	var cartographicCircleCenter = ellipsoid.cartesianToCartographic(cartesianCircleCenter);
 						var cartesianCartographicCircleCenter = Cartesian3.fromRadians(cartographicCircleCenter.longitude, cartographicCircleCenter.latitude, cartographicCircleCenter.height, ellipsoid);
 
@@ -200,12 +227,20 @@ define([
 
 
 							  if (oldPrim && oldPrimFill) {
-							  	viewer.scene.primitives.remove(oldPrim);
-								viewer.scene.primitives.remove(oldPrimFill);
-							   }
-							   
-							   viewer.scene.primitives.add(newPrim);
-				               viewer.scene.primitives.add(newPrimFill);
+							  	//viewer.scene.primitives.remove(oldPrim);
+							  	//viewer.scene.primitives.remove(oldPrimFill);
+								
+								viewer.scene.primitives.update(newPrim);
+							  	viewer.scene.primitives.update(newPrimFill);
+								
+							  }
+							  else {
+							  
+							  	viewer.scene.primitives.add(newPrim);
+							  	viewer.scene.primitives.add(newPrimFill);
+							  	
+							  }
+							  // console.log(newPrimFill);
 							   
 							   oldPrim = newPrim;
 							   oldPrimFill = newPrimFill;
@@ -215,16 +250,10 @@ define([
 
 				  that._handlerLeftDblClickCircle.setInputAction(function(){
 					     if (that._handlerMouseMoveCircle) that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+						 
 			      }, ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 					 
 				}, ScreenSpaceEventType.LEFT_CLICK);
-				
-				
-				
-				
-				
-				
-				
 				
 
 				that._handlerRightClickCircle.setInputAction(function(click){
@@ -379,7 +408,10 @@ define([
 		});
 		
 		this._trashCommand = createCommand(function() {
-
+              var primitives = viewer.scene.primitives;
+				primitives.removeAll();
+			   that._polyLines = viewer.scene.primitives.add(new PolylineCollection());
+			   removeHandlers (that);
 		});
 		
 		this._saveCommand = createCommand(function() {
@@ -492,6 +524,25 @@ function removeHandlers (that){
 	 
 }
 
+function getPosition(e){
+	e = e || window.event;
+	
+	 targetMouse = e.target.toString();
+	
+	//console.log(targetMouse);
+	
+	/*var cursor = {
+		x: 0,
+		y: 0
+	};
+	if (e.pageX || e.pageY) {
+		cursor.x = e.pageX;
+		cursor.y = e.pageY;
+		
+		console.log(cursor);
+	}*/
+	
+}
 
     return SubMenuViewModel;
 });
