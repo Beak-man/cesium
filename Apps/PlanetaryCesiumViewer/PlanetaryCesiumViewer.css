@@ -21,7 +21,7 @@ body {
 
 .fullWindow {
     position: absolute;
-	z-index : 0;
+    z-index : 0;
     top: 0;
     left: 0;
     height: 100%;
@@ -46,81 +46,81 @@ body {
     background-image: url(Images/ajax-loader.gif);
 }
 
-    #toolbar {
-        background: rgba(42, 42, 42, 0.8);
-        padding: 4px;
-        border-radius: 4px;
-	color: white;
-	font-family: sans-serif;
-	/*font-size: 70%;
-	position: absolute;
-	left: 100px;*/
-    }
-    #toolbar input {
-        vertical-align: middle;
-        padding-top: 2px;
-        padding-bottom: 2px;
-    }
-    #toolbar table tr {
-        transform: translateY(0);
-        transition: transform 0.4s ease-out;
-    }
-    #toolbar table tr.up {
-        transform: translateY(33px);
-        transition: none;
-    }
-    #toolbar table tr.down {
-        transform: translateY(-33px);
-        transition: none;
-    }
+#toolbar {
+    background: rgba(42, 42, 42, 0.8);
+    padding: 4px;
+    border-radius: 4px;
+    color: white;
+    font-family: sans-serif;
+    /*font-size: 70%;
+    position: absolute;
+    left: 100px;*/
+}
+#toolbar input {
+    vertical-align: middle;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+#toolbar table tr {
+    transform: translateY(0);
+    transition: transform 0.4s ease-out;
+}
+#toolbar table tr.up {
+    transform: translateY(33px);
+    transition: none;
+}
+#toolbar table tr.down {
+    transform: translateY(-33px);
+    transition: none;
+}
 
-    #vtoolbar {
-        background: rgba(42, 42, 42, 0.8);
-        padding: 4px;
-        border-radius: 4px;
-        color: white;
-        font-family: sans-serif;
-        /*font-size: 70%;*/
-	position: absolute;
-	bottom: 110px;
-	right: 100px;
-    }
-    #vtoolbar input {
-        vertical-align: middle;
-        padding-top: 2px;
-        padding-bottom: 2px;
-    }
-    #vtoolbar table tr {
-        transform: translateY(0);
-        transition: transform 0.4s ease-out;
-    }
-    #vtoolbar table tr.up {
-        transform: translateY(33px);
-        transition: none;
-    }
-    #vtoolbar table tr.down {
-        transform: translateY(-33px);
-        transition: none;
-    }
+#vtoolbar {
+    background: rgba(42, 42, 42, 0.8);
+    padding: 4px;
+    border-radius: 4px;
+    color: white;
+    font-family: sans-serif;
+    /*font-size: 70%;*/
+    position: absolute;
+    bottom: 110px;
+    right: 100px;
+}
+#vtoolbar input {
+    vertical-align: middle;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+#vtoolbar table tr {
+    transform: translateY(0);
+    transition: transform 0.4s ease-out;
+}
+#vtoolbar table tr.up {
+    transform: translateY(33px);
+    transition: none;
+}
+#vtoolbar table tr.down {
+    transform: translateY(-33px);
+    transition: none;
+}
 
-    #coordinates {
-        background: rgba(42, 42, 42, 0.8);
-        padding: 4px;
-        border-radius: 4px;
-	color: white;
-	font-family: sans-serif;
-	/*font-size: 70%;*/
-	position : absolute;
-	top : 50px;
-	right : 70px;   
-    }
-	
-	
-    #coordinates.table {
-        border: 1px solid white;
-		    opacity: 1;
+#coordinates {
+    background: rgba(42, 42, 42, 0.8);
+    padding: 4px;
+    border-radius: 4px;
+    color: white;
+    font-family: sans-serif;
+    /*font-size: 70%;*/
+    position : absolute;
+    top : 50px;
+    right : 70px;   
+}
+
+
+#coordinates.table {
+    border: 1px solid white;
+    opacity: 1;
     transition: opacity 1.0s linear;
-    }
+}
 
 .cesium-rlayer-menu-button {
     position: absolute;
@@ -164,8 +164,8 @@ body {
 /* ======================================================================================= 
    =============================== Planet toolbar buttons ================================ 
    ======================================================================================= */
- .cesium-viewer-planetsToolbar {
- 	vertical-align:top;
+.cesium-viewer-planetsToolbar {
+    vertical-align:top;
     display: block;
     position: absolute;
     top: 5px;
@@ -179,27 +179,27 @@ body {
     background: #303336; 
     border: 1px solid #444;
     color: #edffff; /* For text buttons */
-   /* fill: #edffff; /* For SVG buttons */
+    /* fill: #edffff; /* For SVG buttons */
     border-radius: 4px;
     padding: 5px 6px;
     margin: 2px 3px;
-	font-size : 0.9em;
-	vertical-align: middle;
+    font-size : 0.9em;
+    vertical-align: middle;
     cursor: pointer;
     overflow: hidden;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
-	text-align:center;
+    text-align:center;
 }
 
 .cesium-button-planet:focus {
     color: #fff; /* For text buttons */
-  /*  fill: #fff; /* For SVG buttons */
+    /*  fill: #fff; /* For SVG buttons */
     border-color: #ea4;
     outline: none;
-	background: #48b;
+    background: #48b;
 }
 
 .cesium-button-planet:hover {
@@ -212,7 +212,7 @@ body {
 
 .cesium-button-planet:active {
     color: #000; /* For text buttons */
-  /*  fill: #000; /* For SVG buttons */
+    /*  fill: #000; /* For SVG buttons */
     background: #adf;
     border-color: #fff;
     box-shadow: 0 0 8px #fff;
@@ -227,7 +227,6 @@ body {
     color: #777;
 }
 
-
 .cesium-button-planet:disabled,
 .cesium-button-planet-disabled,
 .cesium-button-planet-disabled:focus,
@@ -236,7 +235,7 @@ body {
     background: #303336;
     border-color: #444;
     color: #646464; /* For text buttons */
-   /* fill: #646464; /* For SVG buttons */
+    /* fill: #646464; /* For SVG buttons */
     box-shadow: none;
     cursor: default;
 }
@@ -251,32 +250,32 @@ body {
     padding: 0;
     vertical-align: middle;
     z-index: 0; /* Workaround for rounded raster image corners in Chrome */
-	}
-	
- /* ====================================================================================== 
-   =============================== footer toolbar buttons ================================ 
-   ======================================================================================= */
-  
+}
+
+/* ====================================================================================== 
+  =============================== footer toolbar buttons ================================ 
+  ======================================================================================= */
+
 .cesium-viewer-footerToolbar {
-	 	vertical-align : bottom;
-	    display        : block;
-	    position       : absolute;
-		bottom         : 30px;
-	    left           : 10px;
-	    /*height: 30px;
-		width  : 30px;
-		border : #ffffff thin solid;*/
-	}
-	
+    vertical-align : bottom;
+    display        : block;
+    position       : absolute;
+    bottom         : 30px;
+    left           : 10px;
+    /*height: 30px;
+        width  : 30px;
+        border : #ffffff thin solid;*/
+}
+
 /* ======================================================================================= 
    ============================ modifications toolbar buttons ============================ 
    ======================================================================================= */
-  
+
 .cesium-viewer-modificationsToolbar {
     display  : block;
     position : absolute;
-	top   : 500px;
+    top   : 500px;
     left    : 405px;
     height   : 30px;
-	/*border : #ffffff thin solid;*/
+    /*border : #ffffff thin solid;*/
 }
