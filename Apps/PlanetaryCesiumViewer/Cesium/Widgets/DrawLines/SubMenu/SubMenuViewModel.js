@@ -12,6 +12,9 @@ define([
     '../../../Core/defineProperties',
     '../../../Core/GeometryInstance',
     '../../../ThirdParty/knockout',
+     '../../../Scene/HorizontalOrigin',
+    '../../../Scene/LabelCollection',
+    '../../../Scene/LabelStyle',
     '../../../Scene/Material',
     '../../../Scene/PolylineCollection',
     '../../../Core/PolylinePipeline',
@@ -19,7 +22,8 @@ define([
     '../../../Scene/Primitive',
     '../../../Core/ScreenSpaceEventHandler',
     '../../../Core/ScreenSpaceEventType',
-    '../../../Core/SimplePolylineGeometry'
+    '../../../Core/SimplePolylineGeometry',
+     '../../../Scene/VerticalOrigin',
 ], function (
         CesiumMath,
         Cartesian3,
@@ -33,6 +37,9 @@ define([
         defineProperties,
         GeometryInstance,
         knockout,
+        HorizontalOrigin,
+        LabelCollection,
+        LabelStyle,
         Material,
         PolylineCollection,
         PolylinePipeline,
@@ -40,13 +47,14 @@ define([
         Primitive,
         ScreenSpaceEventHandler,
         ScreenSpaceEventType,
-        SimplePolylineGeometry
+        SimplePolylineGeometry,
+        VerticalOrigin
         ) {
     "use strict";
 
     var targetMouse;
 
-    function drawLinesFunction(that, viewer, polyLines, ellipsoid) {
+    function drawLinesFunction(that, viewer, polyLines) {
 
         document.onmousemove = getPosition;
         // document.onclick     =  getPosition;
@@ -56,32 +64,40 @@ define([
             that._handlerLeftClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerMiddleClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerRightClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
+            that._handlerDblLeftClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerMove = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
             var arrayRadians = [];
-            var oldPolyLine; 
-
+            var oldPolyLine;
+            
             that._handlerLeftClick.setInputAction(function (click) {
-
+                that._undoIsactivated = false;
+                 var newPolyLine;
+                
                 var ellipsoid = viewer.scene.globe.ellipsoid;
-                var cursorClickPosition = click.position;
-
-                var cartesian = viewer.scene.camera.pickEllipsoid(cursorClickPosition, ellipsoid);
-
+                var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
+                
                 if (cartesian && targetMouse === "[object HTMLCanvasElement]") {
                     var cartographic = ellipsoid.cartesianToCartographic(cartesian);
                     
-                    arrayRadians.push(cartographic.longitude);
-                    arrayRadians.push(cartographic.latitude);
+                  //  console.log(arrayRadians);
                     
+                 //   arrayRadians.push(cartographic.longitude);
+                 //   arrayRadians.push(cartographic.latitude);
                     
-                     that._handlerMove.setInputAction(function (mouvement) {
-                         
-                         
-                         
-                        var cursorMovePosition = mouvement.endPosition;
-                        var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(cursorMovePosition, ellipsoid);  
+                    if (!that._undoIsactivated){        
+                        arrayRadians.push(cartographic.longitude);
+                        arrayRadians.push(cartographic.latitude);
+                    }
+                    
+                 //   console.log(arrayRadians);
+                    
+                    that._handlerMove.setInputAction(function (mouvement) {
+
+                        var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);  
+                        
                         if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
+                            
                                    var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
 
                                    if (arrayRadians[2] && arrayRadians[3]){
@@ -91,85 +107,87 @@ define([
                                        arrayRadians.push(cartographicMovePosition.longitude);
                                        arrayRadians.push(cartographicMovePosition.latitude);
                                    }
-                     }
-
-                    if (arrayRadians.length == 4) {
-
-
-                       var newPolyLine = {
-                            positions: PolylinePipeline.generateCartesianArc({
-                                positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
-                                ellipsoid: ellipsoid
-                            }),
-                            material: Material.fromType('Color', {
-                                color: Color.YELLOW
-                            })
-                        } 
-
-
-                        if (oldPolyLine) {
-                                console.log(oldPolyLine);
-                                 console.log(polyLines.removeAll());
                         }
+ 
+                    if (arrayRadians.length === 4) {
 
-                         polyLines.add(newPolyLine);
-                         
-                         oldPolyLine = newPolyLine;
-
-
-                      /*  var polyline = polyLines.add({
+                        newPolyLine = {
                             positions: PolylinePipeline.generateCartesianArc({
                                 positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
                                 ellipsoid: ellipsoid
                             }),
-                            material: Material.fromType('Color', {
-                                color: Color.YELLOW
+                            material : Material.fromType('Color', {
+                                color : Color.YELLOW
                             })
-                        });*/
-                        arrayRadians = [];
-                        arrayRadians.push(cartographic.longitude);
-                        arrayRadians.push(cartographic.latitude);
-                    }
+                        };
+
+                        polyLines.add(newPolyLine);
+
+                        var dim = viewer.scene.primitives._primitives[0]._polylines.length;
+
+                        if (dim > 1) {
+                               var polyline = viewer.scene.primitives._primitives[0]._polylines[dim - 2];
+                               polyLines.remove(polyline);
+                        }
+                    
+                   //     console.log(arrayRadians);   
+                        
+                        if (!that._undoIsactivated){ 
+                            arrayRadians = [];
+                            arrayRadians.push(cartographic.longitude);
+                            arrayRadians.push(cartographic.latitude);
+                        } else {
+                            arrayRadians = [];
+                            arrayRadians.push(that._coordFirstPosition.longitude);
+                            arrayRadians.push(that._coordFirstPosition.latitude);
+                        }
+                    };
                     
                 },  ScreenSpaceEventType.MOUSE_MOVE);
 
-
+                 polyLines.add(newPolyLine);
                 }
-              //  console.log(viewer.scene.primitives);
 
             }, ScreenSpaceEventType.LEFT_CLICK);
 
+            that._handlerMiddleClick.setInputAction(function () {
+                
+                 arrayRadians = [];
+                 var dim = viewer.scene.primitives._primitives[0]._polylines.length;
+                 var polyline = viewer.scene.primitives._primitives[0]._polylines[dim-1];
+                 polyLines.remove(polyline);
 
-            that._handlerMiddleClick.setInputAction(function (click) {
-                arrayRadians = [];
+             //  console.log(viewer.scene.primitives._primitives[0]);
 
-
-                /*    var dim = viewer.scene.primitives._primitives[0]._polylines.length;
-                 var polyline = viewer.scene.primitives._primitives[0]._polylines[dim - 1];
+                that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                that._handlerMove      =  new ScreenSpaceEventHandler(viewer.scene.canvas);
+                
                  
-                 var polyline = polyLines.add({
-                 positions: PolylinePipeline.generateCartesianArc({
-                 positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
-                 ellipsoid: ellipsoid
-                 }),
-                 material: Material.fromType('Color', {
-                 color: Color.YELLOW
-                 })
-                 });*/
 
             }, ScreenSpaceEventType.MIDDLE_CLICK);
 
             that._handlerRightClick.setInputAction(function (click) {
-
+                that._undoIsactivated = true;
                 var dim = viewer.scene.primitives._primitives[0]._polylines.length;
 
                 if (dim > 1) {
 
                     var polyline = viewer.scene.primitives._primitives[0]._polylines[dim - 1];
-                    polyLines.remove(polyline);
+                    
+                    console.log(viewer.scene.primitives._primitives[0]._polylines);
+                    
                     var beforeLastPolyline = viewer.scene.primitives._primitives[0]._polylines[dim - 2];
-
+                    var cartesianPosition = beforeLastPolyline._actualPositions[0];
+                    that._coordFirstPosition = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesianPosition);
+ 
                     arrayRadians = [];
+                    arrayRadians.push(that._coordFirstPosition.longitude);
+                    arrayRadians.push(that._coordFirstPosition.latitude);
+                    
+                    
+                    polyLines.remove(polyline);
+                    
+                    //  console.log(arrayRadians);
 
                 } else if (dim == 1) {
 
@@ -185,12 +203,11 @@ define([
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
             that._isPolyLineActive = false; // to prevent servral instance of the same Handlers
-
         }
     }
 
 
-    function drawCircleFunction(that, viewer, ellipsoid) {
+    function drawCircleFunction(that, viewer, ellipsoid, circlesLabels) {
 
 
         // use that to check if we are on the canvas or not (for example, on a button);
@@ -204,25 +221,30 @@ define([
             that._handlerMouseMoveCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
             var circleRadius;
+            var cartesianCartographicCircleCenter;
             var newPrim;
 
 
             that._handlerLeftClickCircle.setInputAction(function (click) {
                 var oldPrim = null;
-                var oldPrimFill = null;
+              //  var oldPrimFill = null;
+              //  var oldLabel = null;
+                
                 var ellipsoid = viewer.scene.globe.ellipsoid;
 
                 var cursorCircleCenter = click.position;
                 var cartesianCircleCenter = viewer.scene.camera.pickEllipsoid(cursorCircleCenter, ellipsoid);
 
+              //  var circleRadius;
+               // var newPrim;
 
-                var circleRadius;
-                var newPrim;
-
+               // 275.484,39.095
 
                 if (cartesianCircleCenter && targetMouse === "[object HTMLCanvasElement]") {
                     var cartographicCircleCenter = ellipsoid.cartesianToCartographic(cartesianCircleCenter);
-                    var cartesianCartographicCircleCenter = Cartesian3.fromRadians(cartographicCircleCenter.longitude, cartographicCircleCenter.latitude, cartographicCircleCenter.height, ellipsoid);
+                    cartesianCartographicCircleCenter = Cartesian3.fromRadians(cartographicCircleCenter.longitude, cartographicCircleCenter.latitude, cartographicCircleCenter.height, ellipsoid);
+
+                    console.log(cartesianCartographicCircleCenter.x);
 
                     that._handlerMouseMoveCircle.setInputAction(function (mouvement) {
 
@@ -257,7 +279,7 @@ define([
                                 })
                             });
 
-                            var circleGeometry = new CircleGeometry({
+                         /*   var circleGeometry = new CircleGeometry({
                                 center: cartesianCartographicCircleCenter,
                                 radius: circleRadius,
                                 ellipsoid: ellipsoid,
@@ -266,7 +288,67 @@ define([
 
                             var redCircleInstance = new GeometryInstance({
                                 geometry: circleGeometry,
-                                attributes: {color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.4))}
+                                attributes: {color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.5))}
+                            });
+
+                            var newPrimFill = new Primitive({
+                                geometryInstances: [redCircleInstance],
+                                primitiveType: "circle",
+                                appearance: new PerInstanceColorAppearance({closed: true})
+                            });*/
+
+                            /*  var newLabel ={
+                                  position : cartesianCartographicCircleCenter,
+                                  text : 'r = ' + Math.trunc(circleRadius) + ' m',
+                                  scale : 0.5
+                                 };*/
+
+                          /*  if (oldPrim && oldPrimFill) {
+                                viewer.scene.primitives.remove(oldPrim);
+                                viewer.scene.primitives.remove(oldPrimFill);
+                             //   circlesLabels.remove(oldLabel);
+                            }*/
+                            
+                             if (oldPrim) {
+                                viewer.scene.primitives.remove(oldPrim);
+                            }
+                            
+
+                            viewer.scene.primitives.add(newPrim);
+                           // viewer.scene.primitives.add(newPrimFill);
+                          /*  circlesLabels.add(newLabel);*/
+
+                            oldPrim = newPrim;
+                           // oldPrimFill = newPrimFill;
+                           // oldLabel = newLabel;
+                            
+                         //   console.log(viewer.scene.primitives);
+                          //  console.log(newPrim);
+                        }
+                    }, ScreenSpaceEventType.MOUSE_MOVE);
+                }
+
+                that._handlerLeftDblClickCircle.setInputAction(function () {
+                    if (that._handlerMouseMoveCircle) that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                    
+                    var radCircle =  circleRadius.toFixed(2);
+                    
+                    console.log(circleRadius);
+                    console.log(cartesianCartographicCircleCenter.x);
+                    
+                    var cartesianCircleCenter = newPrim._boundingSphereWC[0].center;
+                    
+                    
+                    var circleGeometry = new CircleGeometry({
+                                center: cartesianCircleCenter,
+                                radius: circleRadius,
+                                ellipsoid: ellipsoid,
+                                vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT
+                            });
+
+                            var redCircleInstance = new GeometryInstance({
+                                geometry: circleGeometry,
+                                attributes: {color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.5))}
                             });
 
                             var newPrimFill = new Primitive({
@@ -274,24 +356,23 @@ define([
                                 primitiveType: "circle",
                                 appearance: new PerInstanceColorAppearance({closed: true})
                             });
-
-
-                            if (oldPrim && oldPrimFill) {
-                                viewer.scene.primitives.remove(oldPrim);
-                                viewer.scene.primitives.remove(oldPrimFill);
-                            }
-
-                            viewer.scene.primitives.add(newPrim);
-                            viewer.scene.primitives.add(newPrimFill);
-
-                            oldPrim = newPrim;
-                            oldPrimFill = newPrimFill;
-                        }
-                    }, ScreenSpaceEventType.MOUSE_MOVE);
-                }
-
-                that._handlerLeftDblClickCircle.setInputAction(function () {
-                    if (that._handlerMouseMoveCircle) that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                    
+                    
+                    
+                     var newLabel ={
+                                  position     : cartesianCircleCenter,
+                                  text         : 'R = ' + radCircle + ' m',
+                                  scale        : 0.5,
+                                  fillColor    : Color.WHITE,
+                                  outlineColor : Color.BLACK,
+                                  style        : LabelStyle.FILL,
+                                  horizontalOrigin : HorizontalOrigin.CENTER,
+                                  verticalOrigin   : VerticalOrigin.CENTER,
+                                 };
+                    
+                    circlesLabels.add(newLabel);
+                    viewer.scene.primitives.add(newPrimFill)
+                    
 
                 }, ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
@@ -301,7 +382,6 @@ define([
             that._handlerRightClickCircle.setInputAction(function (click) {
 
                 if (that._handlerMouseMoveCircle) that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-                
                 that._handlerMouseMoveCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
 
@@ -311,6 +391,9 @@ define([
                 if (dim > 1) {
 
                     while (continueWhile) {
+                        
+                        console.log(viewer.scene.primitives);
+                        
                         var primitiveObject1 = viewer.scene.primitives._primitives[dim - 1];
                         var primitiveObject2 = viewer.scene.primitives._primitives[dim - 2];
 
@@ -332,9 +415,7 @@ define([
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
             that._isCircleActive = false; // to prevent servral instance of the same Handlers
-
         }
-
     }
 
 
@@ -366,12 +447,15 @@ define([
         }
 
         var ellipsoid = viewer.scene.globe.ellipsoid;
-
+        var circlesLabels = viewer.scene.primitives.add(new LabelCollection());
+        
         this._viewer = viewer;
         this._polyLines = polyLines;
+        this._circlesLabels = circlesLabels;
         this._ellipsoid = ellipsoid;
         this._isPolyLineActive = false;
         this._isCircleActive = false;
+        this._undoIsactivated = false;
 
         var that = this;
 
@@ -386,7 +470,7 @@ define([
             that._isPolyLineActive = false;
             that._isCircleActive = true;
             removeHandlers(that);
-            drawCircleFunction(that, that._viewer, that._ellipsoid);
+            drawCircleFunction(that, that._viewer, that._ellipsoid,  that._circlesLabels);
         });
 
         this._cutCommand = createCommand(function () {
@@ -458,9 +542,10 @@ define([
                 this._isPolyLineActive = false;
                 this._isCircleActive = false;
 
-                if (this._handlerLeftClick)   this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerMiddleClick) this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-                if (this._handlerRightClick)  this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerLeftClick)    this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerMiddleClick)  this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
+                if (this._handlerRightClick)   this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerDblLeftClick) this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
                 if (this._handlerLeftClickCircle)    this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
                 if (this._handlerRightClickCircle)   this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
@@ -476,6 +561,7 @@ define([
                 if (this._handlerLeftClick)   this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
                 if (this._handlerMiddleClick) this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
                 if (this._handlerRightClick)  this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerDblLeftClick) this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
                 if (this._handlerLeftClickCircle)    this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
                 if (this._handlerRightClickCircle)   this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
@@ -493,14 +579,15 @@ define([
 
         console.log('all handlers remeved');
 
-        if (that._handlerLeftClick) that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-        if (that._handlerMiddleClick)that._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-        if (that._handlerRightClick) that._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+        if (that._handlerLeftClick)    that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        if (that._handlerMiddleClick)  that._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
+        if (that._handlerRightClick)   that._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+        if (that._handlerDblLeftClick) that._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
-        if (that._handlerLeftClickCircle) that._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-        if (that._handlerRightClickCircle)  that._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+        if (that._handlerLeftClickCircle)    that._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        if (that._handlerRightClickCircle)   that._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
         if (that._handlerLeftDblClickCircle) that._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-        if (that._handlerMouseMoveCircle)  that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+        if (that._handlerMouseMoveCircle)    that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
     }
 
     function getPosition(e) {
