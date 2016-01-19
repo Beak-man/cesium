@@ -297,12 +297,6 @@ define([
                                 appearance: new PerInstanceColorAppearance({closed: true})
                             });*/
 
-                            /*  var newLabel ={
-                                  position : cartesianCartographicCircleCenter,
-                                  text : 'r = ' + Math.trunc(circleRadius) + ' m',
-                                  scale : 0.5
-                                 };*/
-
                           /*  if (oldPrim && oldPrimFill) {
                                 viewer.scene.primitives.remove(oldPrim);
                                 viewer.scene.primitives.remove(oldPrimFill);
