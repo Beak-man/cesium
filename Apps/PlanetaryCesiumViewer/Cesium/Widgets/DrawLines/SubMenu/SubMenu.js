@@ -74,6 +74,13 @@ define([
 				S82.956,73.083,81.609,73.083z"/></g>';
 
 
+   var polygonIcon = '<path d="M182.857,0v36.571l310.856,341.333H512v60.953h-60.952v-18.286L60.952,298.667v6.095H0V243.81h24.381l97.523-207.238V0\
+                                H182.857z M158.477,60.952h-12.19L60.952,243.81v18.286L451.048,384v-6.096L158.477,60.952z M463.238,426.667h36.571v-36.571  h-36.571V426.667z M134.096,\
+                                48.762h36.571V12.19h-36.571V48.762z M48.762,292.571V256H12.19v36.571H48.762z"/>';
+
+
+
+
     /**
      * A widget to show the subMenu of the draw polylines widget.
      *
@@ -108,7 +115,12 @@ define([
         circleButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 168.602  168.602">' + circleIcon + ' </svg>';
         circleButton.setAttribute('data-bind', 'attr  : { title: "Draw circles" }, event : {click : circleCommand}');
         wrapperMenu.appendChild(circleButton);
-
+        
+        var polygonButton = document.createElement('div');
+        polygonButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
+        polygonButton.innerHTML = '<svg width="26" height="26" viewBox="-30 0 550 438.857">' + polygonIcon + ' </svg>';
+        polygonButton.setAttribute('data-bind', 'attr  : { title: "Draw polygons" }, event : {click : polygonCommand}');
+        wrapperMenu.appendChild(polygonButton);
 
         var trashButton = document.createElement('div');
         trashButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
