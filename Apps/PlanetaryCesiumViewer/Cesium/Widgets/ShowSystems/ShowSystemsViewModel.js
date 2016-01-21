@@ -734,13 +734,12 @@ define([
 		Occluder.fromBoundingSphere(occluderBoundingSphere, cameraPosition, newOccluder);  */
 					
 		that._viewer.dataSources.removeAll(true);
-        that._viewer.scene.globe              = newGlobe;
+                that._viewer.scene.globe              = newGlobe;
 		that._viewer.scene.mapProjection      = newGeographicProjection;
 		that._viewer.scene.camera.projection  = newGeographicProjection;
 		that._viewer.terrainProvider          = newTerrainProvider;
 		that._viewer.scene.globe.baseColor    = Color.BLACK;	
-		
-		
+
 		//console.log(that._viewer.scene.globe);
 		
 	}	

@@ -33,7 +33,7 @@ define([
         '../Geocoder/Geocoder',
         '../getElement',
         '../HomeButton/HomeButton',
-		'../HomePlanetButton/HomePlanetButton',
+	'../HomePlanetButton/HomePlanetButton',
         '../InfoBox/InfoBox',
         '../NavigationHelpButton/NavigationHelpButton',
         '../SceneModePicker/SceneModePicker',
@@ -42,9 +42,9 @@ define([
         '../Timeline/Timeline',
         '../LongitudeLatitdude/LngLat', /* *** NEW *** */
         '../MarkerMove/MarkerMove',     /* *** NEW *** */
-		'../ShowSystems/ShowSystems',   /* *** NEW *** */
-		'../Tools/Tools',               /* *** NEW *** */
-		'../DrawLines/DrawLines'        /* *** NEW *** */
+	'../ShowSystems/ShowSystems',   /* *** NEW *** */
+	'../Tools/Tools',               /* *** NEW *** */
+	'../DrawLines/DrawLines'        /* *** NEW *** */
     ], function(
         BoundingSphere,
         Cartesian3,
@@ -79,7 +79,7 @@ define([
         Geocoder,
         getElement,
         HomeButton,
-		HomePlanetButton,
+	HomePlanetButton,
         InfoBox,
         NavigationHelpButton,
         SceneModePicker,
@@ -88,9 +88,9 @@ define([
         Timeline,
         LngLat,      /* *** NEW *** */
         MarkerMove,  /* *** NEW *** */
-		ShowSystems, /* *** NEW *** */
-		Tools,       /* *** NEW *** */
-		DrawLines    /* *** NEW *** */) {
+	ShowSystems, /* *** NEW *** */
+	Tools,       /* *** NEW *** */
+	DrawLines    /* *** NEW *** */) {
     "use strict";
 
     var boundingSphereScratch = new BoundingSphere();

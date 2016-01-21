@@ -15,10 +15,12 @@ define([
     '../../../Core/defineProperties',
     '../../../Core/GeometryInstance',
     '../../../ThirdParty/knockout',
+    '../../../Scene/HeightReference',
     '../../../Scene/HorizontalOrigin',
     '../../../Scene/LabelCollection',
     '../../../Scene/LabelStyle',
     '../../../Scene/Material',
+    '../../../Core/NearFarScalar',
     '../../../Scene/PolylineCollection',
     '../../../Core/PolylinePipeline',
     '../../../Scene/PerInstanceColorAppearance',
@@ -41,10 +43,12 @@ define([
         defineProperties,
         GeometryInstance,
         knockout,
+        HeightReference,
         HorizontalOrigin,
         LabelCollection,
         LabelStyle,
         Material,
+        NearFarScalar,
         PolylineCollection,
         PolylinePipeline,
         PerInstanceColorAppearance,
@@ -132,14 +136,15 @@ define([
 
                             var newLabelPolyline = {
                                 position: cartesianMovePosition,
-                                text: 'R = ' + distanceTrunc + ' m',
-                                scale: 1.0,
-                                font: '12px cursive',
+                                text: 'D = ' + distanceTrunc + ' m',
+                                scale: 0.3,
+                                font: '50px arial',
                                 fillColor: Color.WHITE,
                                 outlineColor: Color.BLACK,
                                 style: LabelStyle.FILL,
                                 horizontalOrigin: HorizontalOrigin.LEFT,
                                 verticalOrigin: VerticalOrigin.BOTTOM,
+                                translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0)
                             };
 
                             polyLines.add(newPolyLine);
@@ -222,7 +227,7 @@ define([
                     polyLines.remove(polyline);
                     polyLinesLabelsCollection.remove(polylineLabel);
 
-                    console.log(polyLines);
+                    //  console.log(polyLines);
 
                 } else if (dim == 1) {
 
@@ -312,13 +317,14 @@ define([
                             var newLabel = {
                                 position: cartesianCircleCenter,
                                 text: 'R = ' + radCircle + ' m',
-                                scale: 1.0,
-                                font: '12px cursive',
+                                scale: 0.3,
+                                font: '50px arial',
                                 fillColor: Color.WHITE,
                                 outlineColor: Color.BLACK,
                                 style: LabelStyle.FILL,
                                 horizontalOrigin: HorizontalOrigin.CENTER,
                                 verticalOrigin: VerticalOrigin.CENTER,
+                                translucencyByDistance: new NearFarScalar(8.0e5, 1.0, 8.0e6, 0.0)
                             };
 
                             if (oldPrim && oldLabel) {
@@ -329,6 +335,7 @@ define([
                             }
 
                             circleCollection.add(newPrim);
+
                             circlesLabels.add(newLabel);
 
                             oldPrim = newPrim;
@@ -352,7 +359,7 @@ define([
 
                     var circleInstance = new GeometryInstance({
                         geometry: circleGeometry,
-                        attributes: {color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.35))}
+                        attributes: {color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.3))}
                     });
 
                     var newPrimFill = new Primitive({
@@ -413,7 +420,6 @@ define([
                         }
                     }
                 }
-
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
             that._isCircleActive = false; // to prevent servral instance of the same Handlers
@@ -427,11 +433,9 @@ define([
      */
     var SubMenuViewModel = function (viewer) {
 
-        // A MODIFIER :  si on souhaite charger un fichier de polyLines il faut etre capable de recuperer la collection de polyLines chagree
-
         var collectionsObjects = collectionsInitialization(viewer);
 
-        console.log(viewer.scene.primitives);
+        //  console.log(viewer.scene.primitives);
 
         this._viewer = viewer;
 
@@ -452,6 +456,9 @@ define([
             that._isPolyLineActive = true;
             that._isCircleActive = false;
             removeHandlers(that);
+            
+            console.log(that._viewer.infoBox.viewModel.showInfo);
+            
             drawLinesFunction(that, that._viewer, that._polyLinesCollection, that._polyLinesLabelsCollection);
         });
 
@@ -480,7 +487,7 @@ define([
 
 
         this._saveCommand = createCommand(function () {
-             console.log("I'd like to save my data");
+            console.log("I'd like to save my data");
         });
 
         this._closeSubMenu = createCommand(function () {
