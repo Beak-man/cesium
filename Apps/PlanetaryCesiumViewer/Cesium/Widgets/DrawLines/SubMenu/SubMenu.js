@@ -176,6 +176,7 @@ define([
         destroyWrapperMenu: {
             get: function () {
                 try {
+                    knockout.cleanNode(this._wrapperMenu);
                     this._IconsContainer.removeChild(this._wrapperMenu);
                     return true;
                 } catch (e) {

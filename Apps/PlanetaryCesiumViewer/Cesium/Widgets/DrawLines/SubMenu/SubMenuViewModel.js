@@ -4,6 +4,7 @@
 /*global define*/
 define([
     '../../../Core/Math',
+    '../../../Core/Cartesian2',
     '../../../Core/Cartesian3',
     '../../../Core/Cartographic',
     '../../../Core/CircleGeometry',
@@ -32,6 +33,7 @@ define([
     '../../../Scene/VerticalOrigin',
 ], function (
         CesiumMath,
+        Cartesian2,
         Cartesian3,
         Cartographic,
         CircleGeometry,
@@ -63,7 +65,7 @@ define([
 
     var targetMouse;
 
-    function drawLinesFunction(that, viewer, polyLines, polyLinesLabelsCollection) {
+    function drawLinesFunction(that, viewer, polyLines, polyLinesLabels) {
 
         document.onmousemove = getPosition;
 
@@ -76,7 +78,7 @@ define([
             that._handlerMove = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
             var arrayRadians = [];
-            var arrayCartesian = [];
+            var middlePoint = {};
             var oldLabel;
 
             that._handlerLeftClick.setInputAction(function (click) {
@@ -92,8 +94,6 @@ define([
                     if (!that._undoIsactivated) {
                         arrayRadians.push(cartographic.longitude);
                         arrayRadians.push(cartographic.latitude);
-
-                        arrayCartesian.push(cartesian);
                     }
 
                     that._handlerMove.setInputAction(function (mouvement) {
@@ -127,12 +127,15 @@ define([
 
                             var startPoint = Cartesian3.fromRadians(arrayRadians[0], arrayRadians[1], cartographic.height, ellipsoid);
                             var endPoint = Cartesian3.fromRadians(arrayRadians[2], arrayRadians[3], cartographicMovePosition.height, ellipsoid);
-
-                            var deltaX = Cartesian3.distance(endPoint, startPoint);
-
-                            var distance = deltaX;
-
+                            var distance = Cartesian3.distance(endPoint, startPoint);
                             var distanceTrunc = distance.toFixed(2);
+                            
+                        /*    middlePoint = {
+                                x : (cartesianMovePosition.x + cartesian.x)/2.0,
+                                y : (cartesianMovePosition.y + cartesian.y)/2.0,
+                                z : (cartesianMovePosition.z + cartesian.z)/2.0,
+                            }*/
+                            
 
                             var newLabelPolyline = {
                                 position: cartesianMovePosition,
@@ -156,14 +159,13 @@ define([
                                 polyLines.remove(polyline);
                             }
 
-
                             if (oldLabel) {
-                                var dimLabel = polyLinesLabelsCollection._labels.length;
-                                var primitiveLabel = polyLinesLabelsCollection._labels[dimLabel - 1];
-                                polyLinesLabelsCollection.remove(primitiveLabel);
+                                var dimLabel = polyLinesLabels._labels.length;
+                                var primitiveLabel = polyLinesLabels._labels[dimLabel - 1];
+                                polyLinesLabels.remove(primitiveLabel);
                             }
 
-                            polyLinesLabelsCollection.add(newLabelPolyline);
+                            polyLinesLabels.add(newLabelPolyline);
 
                             if (!that._undoIsactivated) {
                                 arrayRadians = [];
@@ -177,13 +179,12 @@ define([
 
                             oldLabel = newLabelPolyline;
 
-                        }
-                        ;
+                        };
 
                     }, ScreenSpaceEventType.MOUSE_MOVE);
 
-                    polyLines.add(newPolyLine);
-                    polyLinesLabelsCollection.add(oldLabel);
+                    polyLines.add(newPolyLine);        
+                    polyLinesLabels.add(oldLabel);
                 }
 
             }, ScreenSpaceEventType.LEFT_CLICK);
@@ -193,28 +194,71 @@ define([
                 arrayRadians = [];
 
                 var dim = polyLines._polylines.length;
-                var dimLabel = polyLinesLabelsCollection._labels.length;
+                var dimLabel = polyLinesLabels._labels.length;
 
                 var polyline = polyLines._polylines[dim - 1];
-                var polylineLabel = polyLinesLabelsCollection._labels[dimLabel - 1];
-
+                var polylineLabel = polyLinesLabels._labels[dimLabel - 1];
+                
                 polyLines.remove(polyline);
-                polyLinesLabelsCollection.remove(polylineLabel);
+                polyLinesLabels.remove(polylineLabel);
 
                 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
                 that._handlerMove = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
+                var dimSegment = polyLines._polylines.length;
+
+                var smumDistance = 0;
+
+                for (var j = 0; j < dimSegment - 1; j++) {
+                    var dimSeg = polyLines._polylines[j]._actualPositions.length;
+                    var posStart = polyLines._polylines[j]._actualPositions[0];
+                    var posEnd = polyLines._polylines[j]._actualPositions[dimSeg - 1];
+
+                    smumDistance = smumDistance + Cartesian3.distance(posEnd, posStart);
+                }
+
+                var smumDistanceTrunc = smumDistance.toFixed(2);
+                var beforeLastpolylineLabel = polyLinesLabels._labels[dimLabel - 2];
+                
+                var finalLabelPolylinePosition = {
+                    x : beforeLastpolylineLabel._position.x,
+                    y : beforeLastpolylineLabel._position.y - 50,
+                    z : beforeLastpolylineLabel._position.z
+                }
+
+                var finalLabelPolyline = {
+                    position: finalLabelPolylinePosition,
+                    text: 'T = ' + smumDistanceTrunc + ' m',
+                    scale: 0.3,
+                    font: '50px arial',
+                    fillColor: Color.RED,
+                    outlineColor: Color.BLACK,
+                    style: LabelStyle.FILL,
+                    horizontalOrigin: HorizontalOrigin.CENTER,
+                    verticalOrigin: VerticalOrigin.TOP,
+                    translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0),
+                };
+
+                 polyLinesLabels.add(finalLabelPolyline);
+
+                polyLines = viewer.scene.primitives.add(new PolylineCollection());
+                polyLines.associatedObject = 'polylines';
+
+                polyLinesLabels = that._viewer.scene.primitives.add(new LabelCollection());
+                polyLinesLabels.associatedObject = 'polyLinesLabels';
+
             }, ScreenSpaceEventType.MIDDLE_CLICK);
 
-            that._handlerRightClick.setInputAction(function (click) {
+            that._handlerRightClick.setInputAction(function () {
+
                 that._undoIsactivated = true;
                 var dim = polyLines._polylines.length;
-                var dimLabel = polyLinesLabelsCollection._labels.length;
+                var dimLabel = polyLinesLabels._labels.length;
 
                 if (dim > 1) {
 
                     var polyline = polyLines._polylines[dim - 1];
-                    var polylineLabel = polyLinesLabelsCollection._labels[dimLabel - 1];
+                    var polylineLabel = polyLinesLabels._labels[dimLabel - 1];
 
                     var beforeLastPolyline = polyLines._polylines[dim - 2];
                     var cartesianPosition = beforeLastPolyline._actualPositions[0];
@@ -225,16 +269,16 @@ define([
                     arrayRadians.push(that._coordFirstPosition.latitude);
 
                     polyLines.remove(polyline);
-                    polyLinesLabelsCollection.remove(polylineLabel);
+                    polyLinesLabels.remove(polylineLabel);
 
                     //  console.log(polyLines);
 
                 } else if (dim == 1) {
 
                     var polyline = polyLines._polylines[dim - 1];
-                    var polylineLabel = polyLinesLabelsCollection._labels[dimLabel - 1];
+                    var polylineLabel = polyLinesLabels._labels[dimLabel - 1];
                     polyLines.remove(polyline);
-                    polyLinesLabelsCollection.remove(polylineLabel);
+                    polyLinesLabels.remove(polylineLabel);
 
                     that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
                     that._handlerMove = new ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -324,7 +368,7 @@ define([
                                 style: LabelStyle.FILL,
                                 horizontalOrigin: HorizontalOrigin.CENTER,
                                 verticalOrigin: VerticalOrigin.CENTER,
-                                translucencyByDistance: new NearFarScalar(8.0e5, 1.0, 8.0e6, 0.0)
+                                translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0)
                             };
 
                             if (oldPrim && oldLabel) {
@@ -393,16 +437,12 @@ define([
 
                         try {
                             var primitiveObject1 = circleCollection._primitives[dim - 1];
-                            //  var primitiveObject2 = circleCollection._primitives[dim - 2];
+                            var primitiveLabel1  = circlesLabels._labels[dimLabel - 1];
 
-                            var primitiveLabel1 = circlesLabels._labels[dimLabel - 1];
-
-                            //  if (primitiveObject1.primitiveType === "circle" && primitiveObject2.primitiveType === "circle")
                             if (primitiveObject1.primitiveType === "circle") {
                                 try {
 
                                     circleCollection.remove(primitiveObject1);
-                                    //  circleCollection.remove(primitiveObject2);
                                     circlesLabels.remove(primitiveLabel1);
 
                                 } catch (e) {
@@ -433,32 +473,22 @@ define([
      */
     var SubMenuViewModel = function (viewer) {
 
-        var collectionsObjects = collectionsInitialization(viewer);
-
-        //  console.log(viewer.scene.primitives);
-
         this._viewer = viewer;
-
-        this._polyLinesCollection = collectionsObjects.polylines;
-        this._circlesLabelsCollection = collectionsObjects.circleLabels;
-        this._polyLinesLabelsCollection = collectionsObjects.polylinesLables;
-        this._circleCollection = collectionsObjects.circles;
-
         this._ellipsoid = viewer.scene.globe.ellipsoid;
-
         this._isPolyLineActive = false;
         this._isCircleActive = false;
         this._undoIsactivated = false;
 
         var that = this;
+        var collectionsObjects = collectionsInitialization(that);
 
         this._drawCommand = createCommand(function () {
             that._isPolyLineActive = true;
             that._isCircleActive = false;
             removeHandlers(that);
-            
+
             console.log(that._viewer.infoBox.viewModel.showInfo);
-            
+
             drawLinesFunction(that, that._viewer, that._polyLinesCollection, that._polyLinesLabelsCollection);
         });
 
@@ -470,15 +500,12 @@ define([
         });
 
         this._trashCommand = createCommand(function () {
-            var primitives = viewer.scene.primitives;
+            that._viewer.scene.primitives.removeAll();
 
-            that._polyLinesCollection.removeAll();
-            that._circleCollection.removeAll();
-            that._circlesLabelsCollection.removeAll();
-            that._polyLinesLabelsCollection.removeAll();
-
-            console.log(primitives);
             removeHandlers(that);
+            var collection = collectionsInitialization(that);
+
+         //   console.log(that._viewer.scene.primitives);
         });
 
         this._polygonCommand = createCommand(function () {
@@ -488,6 +515,7 @@ define([
 
         this._saveCommand = createCommand(function () {
             console.log("I'd like to save my data");
+            console.log(that._viewer.scene.primitives);
         });
 
         this._closeSubMenu = createCommand(function () {
@@ -547,51 +575,33 @@ define([
                 this._isPolyLineActive = false;
                 this._isCircleActive = false;
 
-                if (this._handlerLeftClick)
-                    this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerMiddleClick)
-                    this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-                if (this._handlerRightClick)
-                    this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerDblLeftClick)
-                    this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMove)
-                    this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                if (this._handlerLeftClick) this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerMiddleClick) this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
+                if (this._handlerRightClick) this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerDblLeftClick) this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+                if (this._handlerMove) this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
-                if (this._handlerLeftClickCircle)
-                    this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerRightClickCircle)
-                    this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerLeftDblClickCircle)
-                    this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMouseMoveCircle)
-                    this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                if (this._handlerLeftClickCircle) this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerRightClickCircle) this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerLeftDblClickCircle) this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+                if (this._handlerMouseMoveCircle) this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
             }
         },
         removeAllHandlers: {
             get: function () {
 
-                console.log('all handlers remeved');
+                // console.log('all handlers remeved');
 
-                if (this._handlerLeftClick)
-                    this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerMiddleClick)
-                    this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-                if (this._handlerRightClick)
-                    this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerDblLeftClick)
-                    this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMove)
-                    this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-
-                if (this._handlerLeftClickCircle)
-                    this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerRightClickCircle)
-                    this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerLeftDblClickCircle)
-                    this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMouseMoveCircle)
-                    this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                if (this._handlerLeftClick) this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerMiddleClick) this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
+                if (this._handlerRightClick)  this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerDblLeftClick) this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+                if (this._handlerMove) this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                
+                if (this._handlerLeftClickCircle) this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerRightClickCircle) this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerLeftDblClickCircle) this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+                if (this._handlerMouseMoveCircle) this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
             }
         },
     });
@@ -600,24 +610,28 @@ define([
 // ======================================================= LOCAL FUNCTIONS ========================================================
 // ================================================================================================================================
 
-    function collectionsInitialization(viewer) {
+    function collectionsInitialization(that) {
+
         var polyLines;
         var circles;
         var circlesLabels;
         var polyLinesLabels;
 
-        var primitives = viewer.scene.primitives._primitives;
+        var primitives = that._viewer.scene.primitives._primitives;
 
         if (primitives.length === 0) {
 
-            polyLines = viewer.scene.primitives.add(new PolylineCollection());
-            circles = viewer.scene.primitives.add(new PrimitiveCollection());
-            circlesLabels = viewer.scene.primitives.add(new LabelCollection());
-            polyLinesLabels = viewer.scene.primitives.add(new LabelCollection());
+            polyLines = that._viewer.scene.primitives.add(new PolylineCollection());
+            polyLinesLabels = that._viewer.scene.primitives.add(new LabelCollection());
+            circles = that._viewer.scene.primitives.add(new PrimitiveCollection());
+            circlesLabels = that._viewer.scene.primitives.add(new LabelCollection());
 
             circles.associatedObject = 'circleGeomtry';
-            circlesLabels.associatedObject = 'circles';
-            polyLinesLabels.associatedObject = 'polyLines';
+            circlesLabels.associatedObject = 'circlesLabels';
+            polyLines.associatedObject = 'polylines';
+            polyLinesLabels.associatedObject = 'polyLinesLabels';
+
+         //   console.log(that._viewer.scene.primitives)
 
         } else if (primitives.length > 0) {
 
@@ -625,7 +639,6 @@ define([
             var statusFindcircle = false;
             var statusFindCirclesLabels = false;
             var statusFindpolyLinesLabels = false;
-
 
             for (var i = 0; i < primitives.length; i++) {
 
@@ -641,24 +654,22 @@ define([
                     circles = primitives[i];
                     statusFindcircle = true;
                     continue;
-
                 }
 
                 if (primitives[i]._labels) {
 
-                    if (primitives[i].associatedObject === "circles") {
+                    if (primitives[i].associatedObject === "circlesLabels") {
                         circlesLabels = primitives[i];
                         statusFindCirclesLabels = true;
                         continue;
-                    }
+                    };
 
-                    if (primitives[i].associatedObject === "polyLines") {
+                    if (primitives[i].associatedObject === "polyLinesLabels") {
                         polyLinesLabels = primitives[i];
                         statusFindpolyLinesLabels = true;
                         continue;
                     }
-                }
-                ;
+                };
 
                 if (statusFindpolyLines && statusFindCirclesLabels && statusFindpolyLinesLabels && statusFindcircle)
                     break;
@@ -666,33 +677,28 @@ define([
                 if (i === primitives.length - 1 && !statusFindpolyLines || !statusFindCirclesLabels || !statusFindpolyLinesLabels || !statusFindcircle) {
 
                     if (!statusFindpolyLines) {
-                        polyLines = viewer.scene.primitives.add(new PolylineCollection());
-                    }
-                    ;
-
-                    if (!statusFindcircle) {
-                        circles = viewer.scene.primitives.add(new PrimitiveCollection());
-                        circles.associatedObject = 'circleGeomtry';
-                    }
-                    ;
-
-                    if (!statusFindCirclesLabels) {
-                        circlesLabels = viewer.scene.primitives.add(new LabelCollection());
-                        circlesLabels.associatedObject = 'circles';
-                    }
-                    ;
+                        polyLines = that._viewer.scene.primitives.add(new PolylineCollection());
+                        polyLines.associatedObject = 'polylines';
+                    };
 
                     if (!statusFindpolyLinesLabels) {
-                        polyLinesLabels = viewer.scene.primitives.add(new LabelCollection());
-                        polyLinesLabels.associatedObject = 'polyLines';
-                    }
-                    ;
+                        polyLinesLabels = that._viewer.scene.primitives.add(new LabelCollection());
+                        polyLinesLabels.associatedObject = 'polyLinesLabels';
+                    };
+
+                    if (!statusFindcircle) {
+                        circles = that._viewer.scene.primitives.add(new PrimitiveCollection());
+                        circles.associatedObject = 'circleGeomtry';
+                    };
+
+                    if (!statusFindCirclesLabels) {
+                        circlesLabels = that._viewer.scene.primitives.add(new LabelCollection());
+                        circlesLabels.associatedObject = 'circlesLabels';
+                    };
 
                 }
-            }
-            ;
-        }
-        ;
+            };
+        };
 
         var collectionsObject = {
             polylines: polyLines,
@@ -701,33 +707,28 @@ define([
             circles: circles
         };
 
+        that._polyLinesCollection = collectionsObject.polylines;
+        that._circlesLabelsCollection = collectionsObject.circleLabels;
+        that._polyLinesLabelsCollection = collectionsObject.polylinesLables;
+        that._circleCollection = collectionsObject.circles;
+
         return collectionsObject;
-    }
-    ;
+    };
 
     function removeHandlers(that) {
 
-        console.log('all handlers remeved');
+        if (that._handlerLeftClick) that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        if (that._handlerMiddleClick) that._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
+        if (that._handlerRightClick) that._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+        if (that._handlerDblLeftClick) that._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+        if (that._handlerMove) that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
-        if (that._handlerLeftClick)
-            that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-        if (that._handlerMiddleClick)
-            that._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-        if (that._handlerRightClick)
-            that._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-        if (that._handlerDblLeftClick)
-            that._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-        if (that._handlerMove)
-            that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-
-        if (that._handlerLeftClickCircle)
-            that._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-        if (that._handlerRightClickCircle)
-            that._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-        if (that._handlerLeftDblClickCircle)
-            that._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-        if (that._handlerMouseMoveCircle)
-            that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+        if (that._handlerLeftClickCircle)that._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        if (that._handlerRightClickCircle) that._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+        if (that._handlerLeftDblClickCircle) that._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+        if (that._handlerMouseMoveCircle) that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+        
+         console.log('all handlers remeved');
     }
 
     function getPosition(e) {

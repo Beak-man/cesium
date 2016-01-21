@@ -28,6 +28,12 @@ define([
 		that._viewer.drawLines.viewModel.isPanelToolVisible = false;
 
 		// Activate the sub-menu of the drawLines widget
+                
+                try{
+                    that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+                    that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+                }catch (e){}
+                
 		that._subMenu = new SubMenu(that._IconsContainer, that._viewer);
 		
 		/*var subMenuViewModel = SubMenuViewModel();
