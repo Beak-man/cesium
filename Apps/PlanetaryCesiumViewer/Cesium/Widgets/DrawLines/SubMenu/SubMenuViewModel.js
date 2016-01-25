@@ -465,7 +465,63 @@ define([
             that._isCircleActive = false; // to prevent servral instance of the same Handlers
         }
     }
+    
+    
+    
+    function saveData(that){
+        
+        
+        var primitives = that._viewer.scene.primitives._primitives;
+        var geoJsonObject = {};
+        geoJsonObject.features = [];
 
+        
+        for (var i = 0; i<primitives.length; i++){ 
+            
+            if (primitives[i].associatedObject === "polylines"){
+                
+                var geoJsonPolyline = {};
+                geoJsonPolyline.type = "MultiLineString";
+                geoJsonPolyline.coordinates = [];
+                
+                var polylines = primitives[i]._polylines;
+                
+                if (polylines.length > 0){
+                
+                    for (var j=0; j<polylines.length; j++){
+
+                        var positions     = polylines[j]._positions;
+
+                        var firstPosition = positions[0];
+                        var lastPosition  = positions[positions.length - 1];
+
+                        var cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
+                        var cartographicLastPosition  = that._ellipsoid.cartesianToCartographic(lastPosition);
+
+                        var firstPositionLng =  CesiumMath.toDegrees(cartographicFirstPosition.longitude);
+                        var firstPositionLat =  CesiumMath.toDegrees(cartographicLastPosition.latitude);
+                        var lastPositionLng  =  CesiumMath.toDegrees(cartographicLastPosition.longitude);
+                        var lastPositionLat  =  CesiumMath.toDegrees(cartographicLastPosition.latitude);
+
+                        var line = [[firstPositionLng, firstPositionLat], [lastPositionLng, lastPositionLat]];
+
+                        geoJsonPolyline.coordinates.push(line);
+                    }
+
+                    geoJsonObject.features.push(geoJsonPolyline);
+                
+                }
+                
+            }
+            
+        }
+
+        
+        
+          console.log(geoJsonObject);
+        
+        
+    }
     /**
      * The view model for {@link subMenu}.
      * @alias SubMenuViewModel
@@ -516,6 +572,9 @@ define([
         this._saveCommand = createCommand(function () {
             console.log("I'd like to save my data");
             console.log(that._viewer.scene.primitives);
+            
+            saveData(that);
+            
         });
 
         this._closeSubMenu = createCommand(function () {
