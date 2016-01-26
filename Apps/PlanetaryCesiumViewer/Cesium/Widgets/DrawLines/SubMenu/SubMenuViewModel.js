@@ -468,58 +468,117 @@ define([
     
     
     
-    function saveData(that){
+    function saveData(that, container){
         
-        
+        // obtention de TOUTES les primitives  (polylines, labels et cerlces et autres objets)
         var primitives = that._viewer.scene.primitives._primitives;
-        var geoJsonObject = {};
-        geoJsonObject.features = [];
-
         
+        // Declaration de l'Objet geoJson a enrigstrer dans un fichier
+        var geoJsonObject = {};
+         geoJsonObject.type = "FeatureCollection";
+         geoJsonObject.features = [];
+
+        // on parcours toutes les primitives
         for (var i = 0; i<primitives.length; i++){ 
             
+            // Si la primitive est un polyline alors ...
             if (primitives[i].associatedObject === "polylines"){
                 
+                // Declaration de l'objet featureObject contenant un ensemble de lignes continues
+                var featurePolylines = {};
+                featurePolylines.type = "Feature";
+                
+                // Declaration de l'objet contenant toutes les coordonnées des 
+                // points de depart et d'arrivé de chaque ligne d'un meme ensemble de ligne
                 var geoJsonPolyline = {};
                 geoJsonPolyline.type = "MultiLineString";
                 geoJsonPolyline.coordinates = [];
                 
+                // on recupere l'ensemble des polylines contenues dans la primitive[i]
+                // Ici, polyLine est un tableau d'objet. Chaque composante du tableau
+                // représente une ligne
                 var polylines = primitives[i]._polylines;
                 
+                // Si il y a des lignes alors...
                 if (polylines.length > 0){
                 
                     for (var j=0; j<polylines.length; j++){
+                         
+                        // On récupere la ligne [j]
+                        var positions = polylines[j]._positions;
 
-                        var positions     = polylines[j]._positions;
-
+                        // On recupere le point de départ et d'arrivé de la ligne
                         var firstPosition = positions[0];
                         var lastPosition  = positions[positions.length - 1];
 
+                        // On passe des coordonnées cartésiennes aux coordonnées cartographiques
                         var cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
                         var cartographicLastPosition  = that._ellipsoid.cartesianToCartographic(lastPosition);
 
-                        var firstPositionLng =  CesiumMath.toDegrees(cartographicFirstPosition.longitude);
-                        var firstPositionLat =  CesiumMath.toDegrees(cartographicLastPosition.latitude);
-                        var lastPositionLng  =  CesiumMath.toDegrees(cartographicLastPosition.longitude);
-                        var lastPositionLat  =  CesiumMath.toDegrees(cartographicLastPosition.latitude);
+                        // On passe de Radians à Degrés 
+                        var firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
+                        var firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
+                        var lastPositionLng  = CesiumMath.toDegrees(cartographicLastPosition.longitude);
+                        var lastPositionLat  = CesiumMath.toDegrees(cartographicLastPosition.latitude);
 
+                        // On fabrique le vecteur coordonnées contenant les points de depart et d'arrivé en coord
+                        // (longitude, latitude)
                         var line = [[firstPositionLng, firstPositionLat], [lastPositionLng, lastPositionLat]];
-
+                        console.log(line);
+                        // on introduit le vecteur line dans la propriété "coordinates" de l'objet geoJsonPolyline  
                         geoJsonPolyline.coordinates.push(line);
-                    }
-
-                    geoJsonObject.features.push(geoJsonPolyline);
-                
-                }
-                
-            }
-            
-        }
-
-        
-        
+                        featurePolylines.geometry = geoJsonPolyline;
+                    };
+                    
+                   // Une fois l'ensemble des coordonnées récupérées, on introduit
+                    geoJsonObject.features.push(featurePolylines);
+                };
+            };
+        };
           console.log(geoJsonObject);
-        
+          
+          if (geoJsonObject.features.length > 0){
+          
+            var geoJsonData = JSON.stringify(geoJsonObject);
+            var blob = new Blob([geoJsonData], {
+                  type: "application/octet-stream",
+                  endings : "native"
+              });
+            var url = URL.createObjectURL(blob); 
+            var fileName = "geoJsonFile.geojson";
+
+            if (!that._isSaveButtonActivate){
+
+                var wrapperSaveSubMenu = document.createElement('span');
+                wrapperSaveSubMenu.className = 'cesium-subMenu-saveButton';
+                container.appendChild(wrapperSaveSubMenu);
+
+                that._linkDownload = document.createElement("a");
+                wrapperSaveSubMenu.appendChild(that._linkDownload);
+                that._linkDownload.innerHTML = '<svg width="25px" height="25px" viewBox="-10 0 100 100"><g>\
+                                          <path d="M84.514,49.615H67.009c-2.133,0-4.025,1.374-4.679,3.406c-1.734,5.375-6.691,8.983-12.329,8.983\
+                                            c-5.64,0-10.595-3.608-12.329-8.983c-0.656-2.032-2.546-3.406-4.681-3.406H15.486c-2.716,0-4.919,2.2-4.919,4.919v28.054\
+                                            c0,2.714,2.203,4.917,4.919,4.917h69.028c2.719,0,4.919-2.203,4.919-4.917V54.534C89.433,51.815,87.233,49.615,84.514,49.615z"/>\
+                                            <path d="M48.968,52.237c0.247,0.346,0.651,0.553,1.076,0.553h0.003c0.428,0,0.826-0.207,1.076-0.558l13.604-19.133\
+                                            c0.286-0.404,0.321-0.932,0.096-1.374c-0.225-0.442-0.682-0.716-1.177-0.716h-6.399V13.821c0-0.735-0.593-1.326-1.323-1.326H44.078\
+                                            c-0.732,0-1.323,0.591-1.323,1.326v17.188h-6.404c-0.495,0-0.949,0.279-1.174,0.716c-0.229,0.442-0.19,0.97,0.098,1.374\
+                                            L48.968,52.237z"/></g></svg>';
+                that._linkDownload.className = 'cesium-button cesium-toolbar-button';
+                that._linkDownload.href = url;
+                that._linkDownload.download = fileName || 'unknown'; 
+                that._linkDownload.onclick = function () {
+                      this.parentElement.removeChild(this);
+                      that._isSaveButtonActivate = false;  
+                  };  
+                that._isSaveButtonActivate = true;  
+            } else if(that._isSaveButtonActivate){
+                try{
+                    that._linkDownload.parentElement.removeChild(that._linkDownload);
+                } catch (e){console.log(e)};
+
+                that._isSaveButtonActivate = false; 
+            };
+       };
         
     }
     /**
@@ -527,13 +586,15 @@ define([
      * @alias SubMenuViewModel
      * @constructor
      */
-    var SubMenuViewModel = function (viewer) {
+    var SubMenuViewModel = function (viewer, container) {
 
         this._viewer = viewer;
+        this._container = container;
         this._ellipsoid = viewer.scene.globe.ellipsoid;
         this._isPolyLineActive = false;
         this._isCircleActive = false;
         this._undoIsactivated = false;
+        this._isSaveButtonActivate = false;
 
         var that = this;
         var collectionsObjects = collectionsInitialization(that);
@@ -542,9 +603,7 @@ define([
             that._isPolyLineActive = true;
             that._isCircleActive = false;
             removeHandlers(that);
-
-            console.log(that._viewer.infoBox.viewModel.showInfo);
-
+            
             drawLinesFunction(that, that._viewer, that._polyLinesCollection, that._polyLinesLabelsCollection);
         });
 
@@ -556,7 +615,10 @@ define([
         });
 
         this._trashCommand = createCommand(function () {
+            
+          try{  
             that._viewer.scene.primitives.removeAll();
+        } catch (e){console.log(e)};
 
             removeHandlers(that);
             var collection = collectionsInitialization(that);
@@ -566,14 +628,14 @@ define([
 
         this._polygonCommand = createCommand(function () {
             console.log("I'd like to draw a polygon");
+            console.log(that._viewer.scene.primitives);
         });
 
 
         this._saveCommand = createCommand(function () {
             console.log("I'd like to save my data");
             console.log(that._viewer.scene.primitives);
-            
-            saveData(that);
+            saveData(that, that._container);
             
         });
 
@@ -633,6 +695,7 @@ define([
             get: function () {
                 this._isPolyLineActive = false;
                 this._isCircleActive = false;
+                this._isSaveButtonActivate = false;
 
                 if (this._handlerLeftClick) this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
                 if (this._handlerMiddleClick) this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);

@@ -127,12 +127,16 @@ define([
         trashButton.innerHTML = '<svg width="30" height="30" viewBox="0 0 100 100">' + trashIcon + ' </svg>';
         trashButton.setAttribute('data-bind', 'attr  : { title: "Remove all objects" }, event : {click : trashCommand}');
         wrapperMenu.appendChild(trashButton);
+        
+        var wrapperSaveButtonMenu = document.createElement('span');
+        wrapperMenu.appendChild(wrapperSaveButtonMenu);
+        
 
         var saveButton = document.createElement('div');
         saveButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         saveButton.innerHTML = '<svg width="40" height="40" viewBox="-50 -50 640 640">' + saveIcon + ' </svg>';
-        saveButton.setAttribute('data-bind', 'attr  : { title: "Save polylines" }, event : {click : saveCommand}');
-        wrapperMenu.appendChild(saveButton);
+        saveButton.setAttribute('data-bind', 'attr  : { title: "Create file" }, event : {click : saveCommand}');
+        wrapperSaveButtonMenu.appendChild(saveButton);
 
         var closeButton = document.createElement('div');
         closeButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
@@ -140,7 +144,7 @@ define([
         closeButton.setAttribute('data-bind', 'attr  : { title: "Close menu" }, event : {click : closeSubMenu}');
         wrapperMenu.appendChild(closeButton);
 
-        var viewModel = new SubMenuViewModel(viewer);
+        var viewModel = new SubMenuViewModel(viewer, wrapperSaveButtonMenu);
 
         this._IconsContainer = IconsContainer;
         this._wrapperMenu = wrapperMenu;

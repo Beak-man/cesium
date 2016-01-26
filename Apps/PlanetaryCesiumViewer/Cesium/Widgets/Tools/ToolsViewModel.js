@@ -135,6 +135,7 @@ define([
         });
 
         this._showToolPanel = createCommand(function () {
+            console.log(that._viewer.scene.primitives);
             removeHandlers(that);
             showPanel(that);
         });

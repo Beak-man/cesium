@@ -5,6 +5,7 @@
 @import url(./Cesium/Widgets/InfoBox/InfoBoxDescription.css);
 @import url(./Cesium/Widgets/Tools/Tools.css);
 @import url(./Cesium/Widgets/DrawLines/DrawLines.css);
+@import url(./Cesium/Widgets/DrawLines/SubMenu/SubMenu.css);
 
 html {
     height: 100%;

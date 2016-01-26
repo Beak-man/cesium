@@ -39,6 +39,11 @@ define([
             var entity = null;
 
             that._handlerLeft.setInputAction(function (click) {
+
+               try{
+                 that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+             }catch (e){}
+                
                 var ellipsoid = viewer.scene.globe.ellipsoid;
 
                 entity = null;
@@ -157,7 +162,7 @@ define([
 														c-0.732,0-1.323,0.591-1.323,1.326v17.188h-6.404c-0.495,0-0.949,0.279-1.174,0.716c-0.229,0.442-0.19,0.97,0.098,1.374\
 														L48.968,52.237z"/>\
 												</g>\
-												</svg>'
+												</svg>';
             saveLink.href = url;
             saveLink.target = '_blank';
             saveLink.download = fileName || 'unknown';
@@ -193,6 +198,12 @@ define([
         var that = this;
 
         this._command = createCommand(function () {
+            
+           // that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+            try{
+                 that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+             }catch (e){}
+            
             that._isActive = !that._isActive;
             markerMoveView(that._toolbar, that._scene, that._viewer, that);
             that.dropDownVisible = !that.dropDownVisible;

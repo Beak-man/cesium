@@ -252,7 +252,7 @@ define([
                 } else if (/\.geojson$/i.test(fileName) || /\.json$/i.test(fileName) || /\.topojson$/i.test(fileName)) {
                     loadPromise = GeoJsonDataSource.load(JSON.parse(evt.target.result), {
                         sourceUri : fileName, 
-						view      : viewer						
+			view      : viewer						
                     });
 
                 } else if (/\.(kml|kmz)$/i.test(fileName)) {

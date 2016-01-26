@@ -240,12 +240,12 @@ define([
 
     function coordinatesArrayToCartesianArray(coordinates, crsFunction) {
         var positions = new Array(coordinates.length);
-		
-		if (!this._ellipsoid) {
+                
+		if (!GeoJsonDataSource._ellipsoid) {
 			for (var i = 0; i < coordinates.length; i++) {
 				positions[i] = crsFunction(coordinates[i]);
 			}
-		} else if (this._ellipsoid){
+		} else if (GeoJsonDataSource._ellipsoid){
 			for (var i = 0; i < coordinates.length; i++) {
 				positions[i] = crsFunction(coordinates[i], GeoJsonDataSource._ellipsoid);
 			}
