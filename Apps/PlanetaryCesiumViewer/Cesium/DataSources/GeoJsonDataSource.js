@@ -68,7 +68,7 @@ define([
 	    var coordinatesReferenceSystems = new CoordinatesReferenceSystems(crsNames, crsFunctionType);
 		
 		// for dynamical change
-		
+
 		function crsChange(obj){
 			
 			GeoJsonDataSource._ellipsoid =  obj.ellipsoid;
@@ -240,12 +240,14 @@ define([
 
     function coordinatesArrayToCartesianArray(coordinates, crsFunction) {
         var positions = new Array(coordinates.length);
-                
+
 		if (!GeoJsonDataSource._ellipsoid) {
 			for (var i = 0; i < coordinates.length; i++) {
 				positions[i] = crsFunction(coordinates[i]);
 			}
 		} else if (GeoJsonDataSource._ellipsoid){
+                    
+                    console.log('test');
 			for (var i = 0; i < coordinates.length; i++) {
 				positions[i] = crsFunction(coordinates[i], GeoJsonDataSource._ellipsoid);
 			}
@@ -465,11 +467,12 @@ define([
         polygon.material = material;
         var holes = [];
         for (var i = 1, len = coordinates.length; i < len; i++) {
+
             holes.push(new PolygonHierarchy(coordinatesArrayToCartesianArray(coordinates[i], crsFunction)));
         }
 		
         var positions = coordinates[0];
-		
+
         polygon.hierarchy = new ConstantProperty(new PolygonHierarchy(coordinatesArrayToCartesianArray(positions, crsFunction), holes));
         if (positions[0].length > 2) {
             polygon.perPositionHeight = new ConstantProperty(true);
@@ -556,7 +559,7 @@ define([
         this._entityCollection = new EntityCollection(this);
         this._promises = [];
         this._pinBuilder = new PinBuilder();
-		this._ellipsoid = null;
+	this._ellipsoid = null;
     };
 
     /**
@@ -681,6 +684,12 @@ define([
         crsNames : {
             get : function() {
                 return crsNames;
+            }
+        },
+        
+        crsFunctionType : {
+            get : function() {
+                return crsFunctionType;
             }
         },
 		

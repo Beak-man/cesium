@@ -104,12 +104,6 @@ define([
         drawButton.setAttribute('data-bind', 'attr  : { title: "Draw polylines" }, event : {click : drawCommand}');
         wrapperMenu.appendChild(drawButton);
 
-        /*	var cutButton       = document.createElement('div');                              
-         cutButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';                                                       
-         cutButton.innerHTML = '<svg width="25" height="25" viewBox="-50 -50 640 640">'+cutIcon+' </svg>';   
-         cutButton.setAttribute('data-bind', 'attr  : { title: "Cut line" }, event : {click : cutCommand}');             
-         wrapperMenu.appendChild(cutButton); */
-
         var circleButton = document.createElement('div');
         circleButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         circleButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 168.602  168.602">' + circleIcon + ' </svg>';
@@ -137,6 +131,12 @@ define([
         saveButton.innerHTML = '<svg width="40" height="40" viewBox="-50 -50 640 640">' + saveIcon + ' </svg>';
         saveButton.setAttribute('data-bind', 'attr  : { title: "Create file" }, event : {click : saveCommand}');
         wrapperSaveButtonMenu.appendChild(saveButton);
+        
+        var infosButton = document.createElement('div');
+        infosButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
+        infosButton.innerHTML = 'i';
+        infosButton.setAttribute('data-bind', 'attr  : { title: "infos sur Primitives" }, event : {click : infosCommand}');
+        wrapperMenu.appendChild(infosButton);
 
         var closeButton = document.createElement('div');
         closeButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
