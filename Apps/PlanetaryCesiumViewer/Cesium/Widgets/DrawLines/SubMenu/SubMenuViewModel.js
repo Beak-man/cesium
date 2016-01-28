@@ -1035,16 +1035,22 @@ define([
                     geoJsonObject.features.push(featurePolygons);
                 }
             }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+        } 
+            if (that._viewer.geoJsonData){
+                
+               var geoJsonData = that._viewer.geoJsonData.features;
+               var dimGeoJsonData = geoJsonData.length;
+                
+                for (var l=0; l<dimGeoJsonData;l++){
+                    console.log(geoJsonData[l]);
+                    var geomType = geoJsonData[l].geometry.type;
+                    
+                    if (geomType == "Polygon" || geomType == "LineString" || geomType == "MultiLineString" || geomType == "Point" || geomType == "MultiPoint"){
+                          console.log(geoJsonData[l]);
+                         geoJsonObject.features.push(geoJsonData[l]);
+                }
+            }   
         }
 
         if (geoJsonObject.features.length > 0) {
@@ -1154,6 +1160,10 @@ define([
 
         this._infosCommand = createCommand(function () {
             console.log(that._viewer.scene.primitives);
+            var geoJson = GeoJsonDataSource.entities;
+            console.log(geoJson);
+            
+            that._viewer.scene.primitives.update(that._viewer.scene.frameState);
         });
 
         this._closeSubMenu = createCommand(function () {

@@ -21,7 +21,6 @@ define(['../Core/Cartesian3',
     // specific case : 
 
     function CustomizedCrsFunction(coordinates, ellipsoid) {
-
         return Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2], ellipsoid);
     }
 

@@ -4,6 +4,7 @@
 define([
     '../../Core/BoundingSphere',
     '../../Core/CesiumTerrainProvider',
+    '../../Widgets/CesiumWidget/CesiumWidget',
     '../../Scene/Camera',
     '../../Core/Cartesian3',
     '../../Core/Math',
@@ -24,10 +25,12 @@ define([
     '../../Core/Matrix4',
     '../../Core/Occluder',
     '../../Core/ScreenSpaceEventType',
-    '../../Scene/WebMapServiceImageryProvider'
+    '../../Scene/WebMapServiceImageryProvider',
+    '../../Core/WebMercatorProjection'
 ], function (
         BoundingSphere,
         CesiumTerrainProvider,
+        CesiumWidget,
         Camera,
         Cartesian3,
         CesiumMath,
@@ -48,7 +51,8 @@ define([
         Matrix4,
         Occluder,
         ScreenSpaceEventType,
-        WebMapServiceImageryProvider
+        WebMapServiceImageryProvider,
+        WebMercatorProjection
         ) {
     "use strict";
 
@@ -157,7 +161,10 @@ define([
 
                     var capability = data.getElementsByTagName("Capability");
                     var layers = capability[0].getElementsByTagName("Layer");
+                    
                     var names = [];
+                    var title = []
+                    var abstract = [];
                     var layerName = [];
                     var layer = [];
                     var crs;
@@ -185,6 +192,8 @@ define([
 
                         names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                         layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
+                        title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
+                        abstract[i] =  layers[i].getElementsByTagName("Abstract")[0].textContent;
                         crs = layers[0].getElementsByTagName("CRS")[0].textContent;
                         bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
 
@@ -229,7 +238,7 @@ define([
                         var btnShowLayer = document.createElement('INPUT');
                         btnShowLayer.type = 'checkbox';
                         btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                        btnShowLayer.setAttribute('data-bind', 'checked : show_' + i);
+                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"'+ abstract[i]+'"},checked : show_' + i);
                         colomn1.appendChild(btnShowLayer);
 
                         var colomn2 = document.createElement('TD');
@@ -296,6 +305,8 @@ define([
                 /* ==== declaration of variables ==== */
 
                 var names = [];
+                var title = [];
+                var abstract = [];
                 var layerName = [];
                 var layer = [];
                 var bBox = [];
@@ -326,6 +337,8 @@ define([
                 var dimLayers = layers.length;
                 for (var i = 0; i < layers.length; i++) {
                     names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
+                    title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
+                    abstract[i] =  layers[i].getElementsByTagName("Abstract")[0].textContent;
                     layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                     crs = layers[0].getElementsByTagName("CRS")[0].textContent;
                     bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
@@ -375,10 +388,12 @@ define([
                     var colomn1 = document.createElement('TD');
                     tableLine.appendChild(colomn1);
 
+                    console.log(title[i]);
+
                     var btnShowLayer = document.createElement('INPUT');
                     btnShowLayer.type = 'checkbox';
                     btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                    btnShowLayer.setAttribute('data-bind', 'checked : show_' + i);
+                    btnShowLayer.setAttribute('data-bind', 'attr: { title:"'+ abstract[i]+'"}, checked : show_' + i);
                     colomn1.appendChild(btnShowLayer);
 
                     var colomn2 = document.createElement('TD');
@@ -727,7 +742,7 @@ define([
 
     function initializeScene(that, objectDimensions) {
         that._ellipsoid = freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
-
+        WebMercatorProjection.ellipsoid = that._ellipsoid;
         try {
             that._viewer.scene.primitives.removeAll(true);
             that._viewer.lngLat.viewModel.removeCommand;
@@ -753,8 +768,11 @@ define([
         that._viewer.terrainProvider = newTerrainProvider;
         that._viewer.scene.globe.baseColor = Color.BLACK;
 
-        //console.log(that._viewer.scene.globe);
+        
 
+       /* CesiumWidget.ellipsoid = that._ellipsoid;
+        CesiumWidget.scene =  that._viewer.scene;
+        CesiumWidget.render;*/
     }
 
     function initializeMarkerMoveWidget(that) {

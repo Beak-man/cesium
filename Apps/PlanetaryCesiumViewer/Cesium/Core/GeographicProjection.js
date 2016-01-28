@@ -35,8 +35,8 @@ define([
 	/*	console.log("************* Ellipsoid depuis GeographicProjection *********************");
 		console.log(ellipsoid);
 		console.log("*************************************************************************");
-		
-	*/	
+		*/
+
         this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84);
         this._semimajorAxis = this._ellipsoid.maximumRadius;
         this._oneOverSemimajorAxis = 1.0 / this._semimajorAxis;

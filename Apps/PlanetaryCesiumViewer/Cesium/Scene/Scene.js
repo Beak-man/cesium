@@ -366,6 +366,7 @@ define([
 
 
         // ========================= Map Projection ICI ==================================
+        console.log(this._mapProjection);
 
 
         this._mapProjection = defined(options.mapProjection) ? options.mapProjection : new GeographicProjection();
@@ -1262,7 +1263,7 @@ define([
             if (frameState.mode !== SceneMode.SCENE3D) {
                 center = Matrix4.multiplyByPoint(transformFrom2D, center, center);
 				
-				console.log(frameState.mapProjection);
+				//console.log(frameState.mapProjection);
 				
                 var projection = frameState.mapProjection;
                 var centerCartographic = projection.unproject(center);

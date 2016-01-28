@@ -287,7 +287,7 @@ define([ //  Definition des d�pendances
         } else if (/\.geojson$/i.test(source) || /\.json$/i.test(source) || /\.topojson$/i.test(source)) {
         
 		
-		console.log(source);
+		//console.log(source);
 		
             dataSource = new GeoJsonDataSource(getFilenameFromUri(source), {
 	        markerColor : Color.RED

@@ -242,15 +242,17 @@ define([
         var positions = new Array(coordinates.length);
 
 		if (!GeoJsonDataSource._ellipsoid) {
+                    
 			for (var i = 0; i < coordinates.length; i++) {
 				positions[i] = crsFunction(coordinates[i]);
 			}
+                        
 		} else if (GeoJsonDataSource._ellipsoid){
                     
-                    console.log('test');
 			for (var i = 0; i < coordinates.length; i++) {
-				positions[i] = crsFunction(coordinates[i], GeoJsonDataSource._ellipsoid);
+				 positions[i] = crsFunction(coordinates[i], GeoJsonDataSource._ellipsoid);
 			}
+                        
 		} 
         return positions;
     }
@@ -477,8 +479,10 @@ define([
         if (positions[0].length > 2) {
             polygon.perPositionHeight = new ConstantProperty(true);
         }
+        
         var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
         entity.polygon = polygon;
+        
     }
 
     function processPolygon(dataSource, geoJson, geometry, crsFunction, options) {
@@ -838,10 +842,11 @@ define([
 		
 		/*console.log("******************* Depuis GeoJsonDataSource **************************");
 		console.log(options.view);
-		console.log(defaultDescribeProperty);
 		console.log("***********************************************************************");*/
 		
 		options.view.geoJsonData = data;
+                
+                console.log(data);
 		
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         var sourceUri = options.sourceUri;
