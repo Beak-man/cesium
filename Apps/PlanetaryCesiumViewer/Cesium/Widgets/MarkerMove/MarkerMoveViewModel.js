@@ -148,11 +148,15 @@ define([
             var url = URL.createObjectURL(blob);
 
             var fileName = "jsonFile.json";
-
-            var wrapper = document.getElementById("wrapper");
-            var saveLink = document.createElement('a');
-            saveLink.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
-            saveLink.innerHTML = '<svg width="25px" height="25px" viewBox="-10 0 100 100">\
+            
+            try{
+                  that._saveLink.parentElement.removeChild(that._saveLink);
+            }catch (e){}
+            
+            that._wrapper = document.getElementById("wrapper");
+            that._saveLink = document.createElement('a');
+            that._saveLink.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
+            that._saveLink.innerHTML = '<svg width="25px" height="25px" viewBox="-10 0 100 100">\
 												<g>\
 													<path d="M84.514,49.615H67.009c-2.133,0-4.025,1.374-4.679,3.406c-1.734,5.375-6.691,8.983-12.329,8.983\
 														c-5.64,0-10.595-3.608-12.329-8.983c-0.656-2.032-2.546-3.406-4.681-3.406H15.486c-2.716,0-4.919,2.2-4.919,4.919v28.054\
@@ -163,14 +167,14 @@ define([
 														L48.968,52.237z"/>\
 												</g>\
 												</svg>';
-            saveLink.href = url;
-            saveLink.target = '_blank';
-            saveLink.download = fileName || 'unknown';
-            saveLink.setAttribute('id', 'saveFile');
-            saveLink.onclick = function () {
+            that._saveLink.href = url;
+            that._saveLink.target = '_blank';
+            that._saveLink.download = fileName || 'unknown';
+            that._saveLink.setAttribute('id', 'saveFile');
+            that._saveLink.onclick = function () {
                 this.parentElement.removeChild(this);
             };
-            wrapper.appendChild(saveLink);
+             that._wrapper.appendChild(that._saveLink);
 
         } else {
             alert("Load a file in first");

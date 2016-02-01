@@ -37,7 +37,8 @@ define([
                         if (cartesian) { 
                             var cartographic = ellipsoid.cartesianToCartographic(cartesian);
                             var longitudeNumber = cartographic.longitude;
-
+                            var longitudeNumber180 = cartographic.longitude;
+                            
                             if (longitudeNumber < 0){
                                 longitudeNumber = longitudeNumber + 2.0*Math.PI;
                             }

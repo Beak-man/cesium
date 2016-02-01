@@ -26,7 +26,8 @@ define([
     '../../Core/Occluder',
     '../../Core/ScreenSpaceEventType',
     '../../Scene/WebMapServiceImageryProvider',
-    '../../Core/WebMercatorProjection'
+    '../../Core/WebMercatorProjection',
+    '../../Core/WebMercatorTilingScheme'
 ], function (
         BoundingSphere,
         CesiumTerrainProvider,
@@ -52,7 +53,8 @@ define([
         Occluder,
         ScreenSpaceEventType,
         WebMapServiceImageryProvider,
-        WebMercatorProjection
+        WebMercatorProjection,
+        WebMercatorTilingScheme
         ) {
     "use strict";
 
@@ -263,7 +265,8 @@ define([
                             url: finalUrl,
                             layers: layer[i],
                             credit: 'USGS @ planetarymaps.usgs.gov',
-                            ellipsoid: that._ellipsoid
+                            ellipsoid: that._ellipsoid,
+                            enablePickFeatures : false
                         });
                     }
                     ;
@@ -421,7 +424,8 @@ define([
                         url: finalUrl,
                         layers: layer[i],
                         credit: 'USGS @ planetarymaps.usgs.gov',
-                        ellipsoid: that._ellipsoid
+                        ellipsoid: that._ellipsoid,
+                        enablePickFeatures : false
                     });
                 }
                 ;
@@ -742,7 +746,7 @@ define([
 
     function initializeScene(that, objectDimensions) {
         that._ellipsoid = freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
-        WebMercatorProjection.ellipsoid = that._ellipsoid;
+        
         try {
             that._viewer.scene.primitives.removeAll(true);
             that._viewer.lngLat.viewModel.removeCommand;
@@ -750,7 +754,9 @@ define([
             that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
         } catch (e) {
         }
-        ;
+              console.log( that._viewer._dataSourceDisplay.globe);
+
+
 
         var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
         var newGeographicProjection = new GeographicProjection(that._ellipsoid);

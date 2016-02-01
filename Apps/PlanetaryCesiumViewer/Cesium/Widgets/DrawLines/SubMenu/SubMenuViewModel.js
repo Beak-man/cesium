@@ -224,7 +224,7 @@ define([
 
                 var finalLabelPolylinePosition = {
                     x: beforeLastpolylineLabel._position.x,
-                    y: beforeLastpolylineLabel._position.y - 50,
+                    y: beforeLastpolylineLabel._position.y,
                     z: beforeLastpolylineLabel._position.z
                 }
 
@@ -1035,18 +1035,20 @@ define([
                     geoJsonObject.features.push(featurePolygons);
                 }
             }
-
-        } 
+            
+        }
+            console.log(geoJsonObject);
+            
             if (that._viewer.geoJsonData){
                 
                var geoJsonData = that._viewer.geoJsonData.features;
                var dimGeoJsonData = geoJsonData.length;
                 
                 for (var l=0; l<dimGeoJsonData;l++){
-                    console.log(geoJsonData[l]);
+                  //  console.log(geoJsonData[l]);
                     var geomType = geoJsonData[l].geometry.type;
                     
-                    if (geomType == "Polygon" || geomType == "LineString" || geomType == "MultiLineString" || geomType == "Point" || geomType == "MultiPoint"){
+                    if (geomType === "Polygon" || geomType === "LineString" || geomType === "MultiLineString" || geomType === "MultiPoint"){
                           console.log(geoJsonData[l]);
                          geoJsonObject.features.push(geoJsonData[l]);
                 }

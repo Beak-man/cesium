@@ -377,6 +377,8 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             dataSourceCollection : dataSourceCollection
         });
 
+         console.log(dataSourceDisplay);
+
         var clock = cesiumWidget.clock;
         var clockViewModel = new ClockViewModel(clock);
         var eventHelper = new EventHelper();

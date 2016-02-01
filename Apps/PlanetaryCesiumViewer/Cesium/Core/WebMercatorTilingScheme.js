@@ -74,6 +74,9 @@ define([
         ellipsoid : {
             get : function() {
                 return this._ellipsoid;
+            }, 
+             set : function(ellipsoid) {
+                 this._ellipsoid = ellipsoid;
             }
         },
 

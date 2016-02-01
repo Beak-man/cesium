@@ -482,6 +482,7 @@ define([
         
         var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
         entity.polygon = polygon;
+        entity.polygon.ellipsoid = GeoJsonDataSource._ellipsoid;
         
     }
 
@@ -846,7 +847,7 @@ define([
 		
 		options.view.geoJsonData = data;
                 
-                console.log(data);
+                console.log(options.view._dataSourceDisplay._scene.globe);
 		
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         var sourceUri = options.sourceUri;
