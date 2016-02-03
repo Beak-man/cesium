@@ -33,7 +33,7 @@ define([
      */
     var WebMercatorProjection = function(ellipsoid) {
         
-        console.log(ellipsoid);
+      //  console.log(ellipsoid);
         
         this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84);
         this._semimajorAxis = this._ellipsoid.maximumRadius;

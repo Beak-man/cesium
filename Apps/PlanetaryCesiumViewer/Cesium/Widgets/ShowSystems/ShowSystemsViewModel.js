@@ -145,6 +145,7 @@ define([
         viewer.tools.viewModel.removeAllCommands;
 
         xhr.open(method, url, async);
+        xhr.withCredentials = false;
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.send();
 
@@ -284,6 +285,7 @@ define([
     function getXmlDataSatellite(that, viewer, xhr, method, url, async, listContainer, pn, sn, naifCode) {
 
         xhr.open(method, url, async);
+        xhr.withCredentials = false;
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.send();
 
@@ -568,7 +570,6 @@ define([
 
     var ShowSystemsViewModel = function (viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, solarSystem) {
 
-
         this._viewer = viewer;
         this._scene = scene;
         this._viewerContainer = viewerContainer;
@@ -746,6 +747,7 @@ define([
 
     function initializeScene(that, objectDimensions) {
         that._ellipsoid = freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
+          Ellipsoid.WGS84 = freezeObject(that._ellipsoid);
         
         try {
             that._viewer.scene.primitives.removeAll(true);

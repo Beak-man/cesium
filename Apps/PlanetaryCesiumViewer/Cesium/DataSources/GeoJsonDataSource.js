@@ -21,10 +21,13 @@ define([
         '../ThirdParty/when',
         './BillboardGraphics',
         './CallbackProperty',
+        '../Core/CircleGeometry',
+        '../Core/ColorGeometryInstanceAttribute',
         './ColorMaterialProperty',
         './ConstantPositionProperty',
         './ConstantProperty',
         './DataSource',
+        './EllipseGraphics',
         './EntityCollection',
         './PolygonGraphics',
         './PolylineGraphics'
@@ -50,10 +53,13 @@ define([
         when,
         BillboardGraphics,
         CallbackProperty,
+        CircleGeometry,
+        ColorGeometryInstanceAttribute,
         ColorMaterialProperty,
         ConstantPositionProperty,
         ConstantProperty,
         DataSource,
+        EllipseGraphics,
         EntityCollection,
         PolygonGraphics,
         PolylineGraphics
@@ -298,55 +304,96 @@ define([
     }
 
     function createPoint(dataSource, geoJson, crsFunction, coordinates, options) {
-        var symbol = options.markerSymbol;
-        var color = options.markerColor;
-        var size = options.markerSize;
+        
+        
+        if(geoJson.properties.radius && geoJson.properties.surface && geoJson.properties.Name == "Circle"){  
+                  
+         var radiusString = geoJson.properties.radius;
+         var stringSplit = radiusString.split(" ");
+         var radius = parseFloat(stringSplit[0]); 
+         var position;   
+         
+         if (!GeoJsonDataSource._ellipsoid) {
+                                     position = new ConstantPositionProperty(crsFunction(coordinates));
 
-        var properties = geoJson.properties;
-        if (definedNotNull(properties)) {
-            var cssColor = properties['marker-color'];
-            if (definedNotNull(cssColor)) {
-                color = Color.fromCssColorString(cssColor);
-            }
+                            } else if (GeoJsonDataSource._ellipsoid){
+                                     position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
+                            }  
 
-            size = defaultValue(sizes[properties['marker-size']], size);
-            var markerSymbol = properties['marker-symbol'];
-            if (definedNotNull(markerSymbol)) {
-                symbol = markerSymbol;
-            }
-        }
+        var circle = new EllipseGraphics();
 
-        stringifyScratch[0] = symbol;
-        stringifyScratch[1] = color;
-        stringifyScratch[2] = size;
-        var id = JSON.stringify(stringifyScratch);
+        circle.outline = new ConstantProperty(true);
+        circle.semiMajorAxis = radius;
+        circle.semiMinorAxis = radius;
+        circle.material = new Color(1.0, 1.0, 0.0, 0.3);
+        circle.outline = true;
+        circle.outlineColor = Color.YELLOW;
+        circle.outlineWidth = 1.0;
+         
+         if (!GeoJsonDataSource._ellipsoid) {
+                                     position = new ConstantPositionProperty(crsFunction(coordinates));
 
-        var canvasOrPromise;
-        if (defined(symbol)) {
-            if (symbol.length === 1) {
-                canvasOrPromise = dataSource._pinBuilder.fromText(symbol.toUpperCase(), color, size);
-            } else {
-                canvasOrPromise = dataSource._pinBuilder.fromMakiIconId(symbol, color, size);
-            }
+                            } else if (GeoJsonDataSource._ellipsoid){
+                                     position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
+                            }  
+        
+        
+        var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
+        entity.position = position;
+        entity.ellipse = circle;
+            
         } else {
-            canvasOrPromise = dataSource._pinBuilder.fromColor(color, size);
+
+            var symbol = options.markerSymbol;
+            var color = options.markerColor;
+            var size = options.markerSize;
+
+            var properties = geoJson.properties;
+            if (definedNotNull(properties)) {
+                var cssColor = properties['marker-color'];
+                if (definedNotNull(cssColor)) {
+                    color = Color.fromCssColorString(cssColor);
+                }
+
+                size = defaultValue(sizes[properties['marker-size']], size);
+                var markerSymbol = properties['marker-symbol'];
+                if (definedNotNull(markerSymbol)) {
+                    symbol = markerSymbol;
+                }
+            }
+
+            stringifyScratch[0] = symbol;
+            stringifyScratch[1] = color;
+            stringifyScratch[2] = size;
+            var id = JSON.stringify(stringifyScratch);
+
+            var canvasOrPromise;
+            if (defined(symbol)) {
+                if (symbol.length === 1) {
+                    canvasOrPromise = dataSource._pinBuilder.fromText(symbol.toUpperCase(), color, size);
+                } else {
+                    canvasOrPromise = dataSource._pinBuilder.fromMakiIconId(symbol, color, size);
+                }
+            } else {
+                canvasOrPromise = dataSource._pinBuilder.fromColor(color, size);
+            }
+
+            dataSource._promises.push(when(canvasOrPromise, function(dataUrl) {
+                var billboard = new BillboardGraphics();
+                billboard.verticalOrigin = new ConstantProperty(VerticalOrigin.BOTTOM);
+                billboard.image = new ConstantProperty(dataUrl);
+
+                var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
+                entity.billboard = billboard;
+
+                            if (!GeoJsonDataSource._ellipsoid) {
+                                     entity.position = new ConstantPositionProperty(crsFunction(coordinates));
+
+                            } else if (GeoJsonDataSource._ellipsoid){
+                                     entity.position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
+                            } 
+            }));
         }
-
-        dataSource._promises.push(when(canvasOrPromise, function(dataUrl) {
-            var billboard = new BillboardGraphics();
-            billboard.verticalOrigin = new ConstantProperty(VerticalOrigin.BOTTOM);
-            billboard.image = new ConstantProperty(dataUrl);
-
-            var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
-            entity.billboard = billboard;
-				
-			if (!GeoJsonDataSource._ellipsoid) {
-				 entity.position = new ConstantPositionProperty(crsFunction(coordinates));
-				 
-			} else if (GeoJsonDataSource._ellipsoid){
-				 entity.position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
-			} 
-        }));
     }
 
     function processPoint(dataSource, geoJson, geometry, crsFunction, options) {
@@ -371,6 +418,9 @@ define([
             if (definedNotNull(width)) {
                 widthProperty = new ConstantProperty(width);
             }
+            
+            // force la valeur de width a etre égale à 1
+             widthProperty._value = 1.0;
 
             var color;
             var stroke = properties.stroke;

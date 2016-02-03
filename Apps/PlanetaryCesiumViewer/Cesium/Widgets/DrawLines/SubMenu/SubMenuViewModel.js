@@ -263,11 +263,12 @@ define([
                     var polylineLabel = polyLinesLabels._labels[dimLabel - 1];
 
 
-                    try{
+                    try {
                         var beforeLastPolyline = polyLines._polylines[dim - 2];
                         var cartesianPosition = beforeLastPolyline._actualPositions[0];
                         that._coordFirstPosition = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesianPosition);
-                    }catch (e){}
+                    } catch (e) {
+                    }
 
                     arrayRadians = [];
                     arrayRadians.push(that._coordFirstPosition.longitude);
@@ -497,8 +498,8 @@ define([
 
 
 
-    function drawPolygonsFunction(that, viewer, ellipsoid, polygonsCollection, polygonsLabelsCollection){
-        
+    function drawPolygonsFunction(that, viewer, ellipsoid, polygonsCollection, polygonsLabelsCollection) {
+
         document.onmousemove = getPosition;
 
         if (that._isPolygonsActive) {
@@ -517,7 +518,7 @@ define([
             // commence un nouveau polygone et est détruit quand on desactive la fonctionnalité
             var polyLinesTmp = viewer.scene.primitives.add(new PolylineCollection());
             var polyLinesLabelsTmp = viewer.scene.primitives.add(new LabelCollection());
-            
+
             polyLinesTmp.associatedObject = 'polylinesTmpPolygons';
             polyLinesLabelsTmp.associatedObject = 'polyLinesLabelsTmpPolygons';
 
@@ -527,26 +528,26 @@ define([
             var polygonsCoord = []; // ==> tableau de points pour le tracé du polygon
             var oldLabel;
             var oldPolygons;
-            
+
             // on recupere l'ellipsoid de référence pour obtenir les coordonnées
             var ellipsoid = viewer.scene.globe.ellipsoid;
 
 
             //  EVENEMENT : on clic sur le boutton gauche de la souris
             that._handlerLeftClick.setInputAction(function (click) {
-                
+
                 // On desactive le undo
                 that._undoIsactivated = false;
-                
+
                 // Declaration de la nouvelle ligne : Objet qui va servir a tracer la ligne;
                 var newPolyLine;
-                
+
                 // On recupere les coordonnées cartesienne du point sur lequel on a cliqué
                 var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
 
                 // si les coordoonées existent et que l'on est sur le canvas alors... 
                 if (cartesian && targetMouse === "[object HTMLCanvasElement]") {
-                    
+
                     // on transforme les coordonees du point selectionnes de cartesiennes (x, y, z )
                     // à cartographique (long, lat) en radians
                     var cartographic = ellipsoid.cartesianToCartographic(cartesian);
@@ -569,7 +570,7 @@ define([
                         // on recupere les coordonnees de chaque point survolé par la souris
                         var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
 
-                         // si les coordonnées existent et que l'on est sur le canvas alors...
+                        // si les coordonnées existent et que l'on est sur le canvas alors...
                         if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
 
                             // on transforme les coordonnées du point survolé de cartisiennes (x, y, z )
@@ -587,7 +588,7 @@ define([
                                 coordLinesForPolygonsRadians.push(cartographicMovePosition.latitude);
                             }
                         }
-                         
+
                         // Si le vecteur coordPolygonsRadians possède 4 composantes (i.e coord du point de 
                         // depart et coord du point d'arrivé)
                         if (coordLinesForPolygonsRadians.length === 4) {
@@ -633,7 +634,7 @@ define([
 
                             // on ajoute la ligne dans la scene pour le rendu
                             polyLinesTmp.add(newPolyLine);
-                            
+
                             // on ajoute le label dans la scene pour le rendu
                             polyLinesLabelsTmp.add(newLabelPolyline);
 
@@ -646,7 +647,7 @@ define([
                             if (dim > 1) {
                                 var polyline = polyLinesTmp._polylines[dim - 2];
                                 polyLinesTmp.remove(polyline);
-                                
+
                                 var primitiveLabel = polyLinesLabelsTmp._labels[dimLabel - 2];
                                 polyLinesLabelsTmp.remove(primitiveLabel);
                             }
@@ -655,7 +656,7 @@ define([
                             // pour pouvoir en tracer une autre. pour creer une continuité dans le tracage, on recupuère
                             // les coordonnées du point d'arrivé de la ligne precedante qui devint le point de départ
                             // de la ligne suivante
-                            
+
                             // Si la fonctionnalité undo est active, alors on recupere les anciennes coordonnées pour modifier
                             // la derniere ligne tracée.
                             if (!that._undoIsactivated) {
@@ -676,48 +677,48 @@ define([
 
                     polyLinesTmp.add(newPolyLine);
                     polyLinesLabelsTmp.add(oldLabel);
-                    
+
                     // Il faut au minimum 3 points afin de tracer un polygon (donc 6 coordonnées). 
                     // Donc si il y a au moins 6 composantes dans le vecteur polygonsCoord, alors 
                     // on commence le tracé du polygon
-                    if (polygonsCoord.length >= 6){
-                        
-                       var polygonsCoordDegree =  Cartesian3.fromRadiansArray(polygonsCoord, ellipsoid);
-                       
-                       var polygonInstance = new GeometryInstance({
-                           geometry : PolygonGeometry.fromPositions({
-                               positions    : polygonsCoordDegree,
-                               vertexFormat : PerInstanceColorAppearance.VERTEX_FORMAT,
-                               ellipsoid: ellipsoid,}),
+                    if (polygonsCoord.length >= 6) {
+
+                        var polygonsCoordDegree = Cartesian3.fromRadiansArray(polygonsCoord, ellipsoid);
+
+                        var polygonInstance = new GeometryInstance({
+                            geometry: PolygonGeometry.fromPositions({
+                                positions: polygonsCoordDegree,
+                                vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT,
+                                ellipsoid: ellipsoid, }),
                             attributes: {
-                            color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.3))  
+                                color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.3))
+                            }
+                        });
+
+                        var newPolygon = new Primitive({
+                            geometryInstances: polygonInstance,
+                            appearance: new PerInstanceColorAppearance({
+                                closed: true,
+                                translucent: true
+                            })
+                        });
+
+                        polygonsCollection.add(newPolygon);
+
+                        var dim = polygonsCollection._primitives.length;
+
+                        if (oldPolygons) {
+                            polygonsCollection.remove(oldPolygons);
                         }
-                    });
-                        
-                       var newPolygon =  new Primitive({
-                        geometryInstances :polygonInstance,
-                        appearance : new PerInstanceColorAppearance({
-                            closed : true,
-                            translucent : true
-                        })
-                    });
-  
-                    polygonsCollection.add(newPolygon);
-                    
-                     var dim = polygonsCollection._primitives.length;
-                    
-                    if (oldPolygons){
-                        polygonsCollection.remove(oldPolygons);
+
+                        oldPolygons = newPolygon;
+
                     }
-                        
-                    oldPolygons = newPolygon;    
-                        
-                    }  
                 }
 
             }, ScreenSpaceEventType.LEFT_CLICK);
-            
-             that._handlerMiddleClick.setInputAction(function () {
+
+            that._handlerMiddleClick.setInputAction(function () {
 
                 // on vide le vevteur positions
                 coordLinesForPolygonsRadians = [];
@@ -737,12 +738,12 @@ define([
 
                 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
                 that._handlerMove = new ScreenSpaceEventHandler(viewer.scene.canvas);
-                
+
                 // ajout de la deniere ligne
                 var dimSegment = polyLinesTmp._polylines.length;
 
                 var firstLine = polyLinesTmp._polylines[0];
-                var lastLine  = polyLinesTmp._polylines[dimSegment - 2];
+                var lastLine = polyLinesTmp._polylines[dimSegment - 2];
 
                 var firstLineStartPoint = firstLine._actualPositions[0];
                 var lasttLineStartPoint = lastLine._actualPositions[lastLine._actualPositions.length - 1];
@@ -750,43 +751,43 @@ define([
                 var finalLine = [firstLineStartPoint, lasttLineStartPoint];
 
                 var finalPolyLine = {
-                                positions: PolylinePipeline.generateCartesianArc({
-                                    positions: finalLine,
-                                    ellipsoid: ellipsoid
-                                }),
-                                material: Material.fromType('Color', {
-                                    color: Color.YELLOW
-                                })
-                            };
+                    positions: PolylinePipeline.generateCartesianArc({
+                        positions: finalLine,
+                        ellipsoid: ellipsoid
+                    }),
+                    material: Material.fromType('Color', {
+                        color: Color.YELLOW
+                    })
+                };
 
-                  polyLinesTmp.add(finalPolyLine);
+                polyLinesTmp.add(finalPolyLine);
 
                 // on reevalue la dimension de polyLinesTmp._polylines car une nouvelle
                 // ligne a été introduite. Cela est important pour le calcul de la distance
                 // totale
-                
+
                 var dimSegmentFinal = polyLinesTmp._polylines.length;
-                
+
                 var smumDistance = 0;
 
                 for (var j = 0; j < dimSegmentFinal; j++) {
-                    if(polyLinesTmp._polylines[j]){
-                    var dimSeg = polyLinesTmp._polylines[j]._actualPositions.length;
-                    var posStart = polyLinesTmp._polylines[j]._actualPositions[0];
-                    var posEnd = polyLinesTmp._polylines[j]._actualPositions[dimSeg - 1];
+                    if (polyLinesTmp._polylines[j]) {
+                        var dimSeg = polyLinesTmp._polylines[j]._actualPositions.length;
+                        var posStart = polyLinesTmp._polylines[j]._actualPositions[0];
+                        var posEnd = polyLinesTmp._polylines[j]._actualPositions[dimSeg - 1];
 
-                    smumDistance = smumDistance + Cartesian3.distance(posEnd, posStart);
-                }
+                        smumDistance = smumDistance + Cartesian3.distance(posEnd, posStart);
+                    }
                 }
 
                 var smumDistanceTrunc = smumDistance.toFixed(2);
-              /*  var beforeLastpolylineLabel = polyLinesLabelsTmp._labels[dimLabel - 2];
-
-                var finalLabelPolylinePosition = {
-                    x: beforeLastpolylineLabel._position.x,
-                    y: beforeLastpolylineLabel._position.y,
-                    z: beforeLastpolylineLabel._position.z
-                }*/
+                /*  var beforeLastpolylineLabel = polyLinesLabelsTmp._labels[dimLabel - 2];
+                 
+                 var finalLabelPolylinePosition = {
+                 x: beforeLastpolylineLabel._position.x,
+                 y: beforeLastpolylineLabel._position.y,
+                 z: beforeLastpolylineLabel._position.z
+                 }*/
 
                 var finalLabelPolyline = {
                     position: firstLineStartPoint,
@@ -805,12 +806,12 @@ define([
 
                 polyLinesTmp = viewer.scene.primitives.add(new PolylineCollection());
                 polyLinesLabelsTmp = that._viewer.scene.primitives.add(new LabelCollection());
-                
+
                 polyLinesTmp.associatedObject = 'polylinesTmpPolygons';
                 polyLinesLabelsTmp.associatedObject = 'polyLinesLabelsTmpPolygons';
 
             }, ScreenSpaceEventType.MIDDLE_CLICK);
-            
+
             that._handlerRightClick.setInputAction(function () {
 
                 that._undoIsactivated = true;
@@ -822,11 +823,12 @@ define([
                     var polyline = polyLinesTmp._polylines[dim - 1];
                     var polylineLabel = polyLinesLabelsTmp._labels[dimLabel - 1];
 
-                    try{
+                    try {
                         var beforeLastPolyline = polyLinesTmp._polylines[dim - 2];
                         var cartesianPosition = beforeLastPolyline._actualPositions[0];
                         that._coordFirstPosition = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesianPosition);
-                    }catch (e){}
+                    } catch (e) {
+                    }
 
                     coordLinesForPolygonsRadians = [];
                     coordLinesForPolygonsRadians.push(that._coordFirstPosition.longitude);
@@ -834,37 +836,37 @@ define([
 
                     polyLinesTmp.remove(polyline);
                     polyLinesLabelsTmp.remove(polylineLabel);
-                    
-                    var lastPlygons =  polygonsCollection._primitives[polygonsCollection._primitives.length - 1];
+
+                    var lastPlygons = polygonsCollection._primitives[polygonsCollection._primitives.length - 1];
                     polygonsCollection.remove(lastPlygons);
 
                     var dimpolygonsCoord = polygonsCoord.length;
                     var newPolygonsCoord = polygonsCoord.slice(0, dimpolygonsCoord - 2);
                     polygonsCoord = newPolygonsCoord;
-                    
-                    var polygonsCoordDegree =  Cartesian3.fromRadiansArray(polygonsCoord, ellipsoid);
-                       
-                       var polygonInstance = new GeometryInstance({
-                           geometry : PolygonGeometry.fromPositions({
-                               positions    : polygonsCoordDegree,
-                               vertexFormat : PerInstanceColorAppearance.VERTEX_FORMAT,
-                               ellipsoid: ellipsoid,}),
-                            attributes: {
-                            color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.3))  
+
+                    var polygonsCoordDegree = Cartesian3.fromRadiansArray(polygonsCoord, ellipsoid);
+
+                    var polygonInstance = new GeometryInstance({
+                        geometry: PolygonGeometry.fromPositions({
+                            positions: polygonsCoordDegree,
+                            vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT,
+                            ellipsoid: ellipsoid, }),
+                        attributes: {
+                            color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.3))
                         }
                     });
-                        
-                       var newPolygon =  new Primitive({
-                        geometryInstances :polygonInstance,
-                        appearance : new PerInstanceColorAppearance({
-                            closed : true,
-                            translucent : true
+
+                    var newPolygon = new Primitive({
+                        geometryInstances: polygonInstance,
+                        appearance: new PerInstanceColorAppearance({
+                            closed: true,
+                            translucent: true
                         })
                     });
-  
+
                     polygonsCollection.add(newPolygon);
 
-                     oldPolygons = newPolygon;
+                    oldPolygons = newPolygon;
 
                     //  console.log(polyLines);
 
@@ -883,8 +885,8 @@ define([
                     coordLinesForPolygonsRadians = [];
 
                 } else if (dim == 0) {
-                    
-                     console.log("dim == 0");
+
+                    console.log("dim == 0");
 
                     coordLinesForPolygonsRadians = [];
 
@@ -906,7 +908,7 @@ define([
         var geoJsonObject = {};
         geoJsonObject.type = "FeatureCollection";
         geoJsonObject.features = [];
-          geoJsonObject.crs = crs.crs;
+        geoJsonObject.crs = crs.crs;
 
         // on parcours toutes les primitives
         for (var i = 0; i < primitives.length; i++) {
@@ -920,9 +922,9 @@ define([
 
                 // Declaration de l'objet contenant toutes les coordonnées des 
                 // points de depart et d'arrivé de chaque ligne d'un meme ensemble de ligne
-                var geoJsonPolyline = {};
-                geoJsonPolyline.type = "MultiLineString";
-                geoJsonPolyline.coordinates = [];
+                var jsonPolylineGeometry = {};
+                jsonPolylineGeometry.type = "MultiLineString";
+                jsonPolylineGeometry.coordinates = [];
 
                 // on recupere l'ensemble des polylines contenues dans la primitive[i]
                 // Ici, polyLine est un tableau d'objet. Chaque composante du tableau
@@ -954,17 +956,63 @@ define([
                         // On fabrique le vecteur coordonnées contenant les points de depart et d'arrivé en coord
                         // (longitude, latitude)
                         var line = [[firstPositionLng, firstPositionLat], [lastPositionLng, lastPositionLat]];
-                        
+
                         // on introduit le vecteur line dans la propriété "coordinates" de l'objet geoJsonPolyline  
-                        geoJsonPolyline.coordinates.push(line);
-                        featurePolylines.geometry = geoJsonPolyline;
+                        jsonPolylineGeometry.coordinates.push(line);
+                        featurePolylines.geometry = jsonPolylineGeometry;
+                        featurePolylines.properties = {
+                            Name: "Line"
+                        }
                     }
 
                     // Une fois l'ensemble des coordonnées récupérées, on introduit featurePolylines dans l'objet final
                     geoJsonObject.features.push(featurePolylines);
                 }
             }
-            
+
+            if (primitives[i].associatedObject === "circleGeomtry") {
+
+                // on recupere l'ensemble des cercles contenus dans la primitive[i]
+                // Ici, circles est un tableau d'objet. Chaque composante du tableau
+                // représente un circle
+                var circles = primitives[i]._primitives;
+
+                if (circles.length > 0) {
+
+                    for (var j = 0; j < circles.length; j++) {
+
+                        // On récupere les coordonnées du centre du cercle[j]
+                        var centerCoordinates = circles[j]._boundingSpheres[0].center;
+                        var circleRadius = circles[j]._boundingSpheres[0].radius;
+                        var circleSurface = CesiumMath.PI * circleRadius * circleRadius;
+
+                        var cartographicCenterPosition = that._ellipsoid.cartesianToCartographic(centerCoordinates);
+                        var centerPositionLng = CesiumMath.toDegrees(cartographicCenterPosition.longitude);
+                        var centerPositionLat = CesiumMath.toDegrees(cartographicCenterPosition.latitude);
+
+                        var centerPosition = [centerPositionLng, centerPositionLat];
+
+                        var jsonCircleGeometry = {};
+                        jsonCircleGeometry.type = "Point";
+                        jsonCircleGeometry.coordinates = centerPosition;
+
+                        var featureCircle = {};
+                        featureCircle.type = "Feature";
+                        featureCircle.geometry = jsonCircleGeometry;
+                        featureCircle.properties = {
+                            Name: "Circle",
+                            radius: circleRadius + " m",
+                            surface: circleSurface + " m2"
+                        };
+                        geoJsonObject.features.push(featureCircle);
+                    }
+                }
+
+            }
+
+
+
+
             // Si la primitive est un polygonsGeomtry alors ...
             if (primitives[i].associatedObject === "polylinesTmpPolygons") {
 
@@ -981,13 +1029,13 @@ define([
                 // on recupere l'ensemble des polylines contenues dans la primitive[i]
                 // Ici, polyLine est un tableau d'objet. Chaque composante du tableau
                 // représente une ligne
-               var polylines = primitives[i]._polylines;
-               var polygonsPoints = [];
+                var polylines = primitives[i]._polylines;
+                var polygonsPoints = [];
 
                 // Si il y a des lignes alors...
                 if (polylines.length > 0) {
 
-                    for (var j = 0; j < polylines.length-1; j++) {
+                    for (var j = 0; j < polylines.length - 1; j++) {
 
                         // On récupere la ligne [j]
                         var positions = polylines[j]._positions;
@@ -1005,54 +1053,67 @@ define([
                         var lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
 
                         // On fabrique le vecteur coordonnées contenant les points (longitude, latitude) du polygon
-                        
-                        if (j==0){ // Ici, on doit considerer le point de départ pour le premier segment
-                            
+
+                        if (j == 0) { // Ici, on doit considerer le point de départ pour le premier segment
+
                             var firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
                             var firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
-                            
+
                             var coordFirstPoint = [firstPositionLng, firstPositionLat];
-                            var coordLastPoint  =  [lastPositionLng, lastPositionLat];
-                            
+                            var coordLastPoint = [lastPositionLng, lastPositionLat];
+
                             polygonsPoints.push(coordFirstPoint);
                             polygonsPoints.push(coordLastPoint);
-                            
+
                         } else { // sinon, on prend que le dernier point de chaque segement
-                             var coordLastPoint  =  [lastPositionLng, lastPositionLat];
+                            var coordLastPoint = [lastPositionLng, lastPositionLat];
                             polygonsPoints.push(coordLastPoint);
                         }
-                        
-                        
+
+
                         // on introduit le vecteur line dans la propriété "coordinates" de l'objet geoJsonPolyline  
-                     /*   geoJsonPolygons.coordinates.push(line);
-                        featurePolygons.geometry = geoJsonPolygons;*/
+                        /*   geoJsonPolygons.coordinates.push(line);
+                         featurePolygons.geometry = geoJsonPolygons;*/
                     }
-                    
+
                     geoJsonPolygons.coordinates.push(polygonsPoints);
                     featurePolygons.geometry = geoJsonPolygons;
+                    featurePolygons.properties = {
+                        Name: "Polygons"
+                    }
 
                     // Une fois l'ensemble des coordonnées récupérées, on introduit
                     geoJsonObject.features.push(featurePolygons);
                 }
             }
-            
+
         }
-            console.log(geoJsonObject);
-            
-            if (that._viewer.geoJsonData){
-                
-               var geoJsonData = that._viewer.geoJsonData.features;
-               var dimGeoJsonData = geoJsonData.length;
-                
-                for (var l=0; l<dimGeoJsonData;l++){
-                  //  console.log(geoJsonData[l]);
-                    var geomType = geoJsonData[l].geometry.type;
-                    
-                    if (geomType === "Polygon" || geomType === "LineString" || geomType === "MultiLineString" || geomType === "MultiPoint"){
-                          console.log(geoJsonData[l]);
-                         geoJsonObject.features.push(geoJsonData[l]);
+        console.log(geoJsonObject);
+
+
+        // on verifie si il y a des données déja chargées
+        if (that._viewer.geoJsonData) {
+
+            // Si oui, alors on recupere ces données
+            var geoJsonData = that._viewer.geoJsonData.features;
+            var dimGeoJsonData = geoJsonData.length;
+
+            // On parcours ces données et on verifie de quel type sont ces données
+            for (var l = 0; l < dimGeoJsonData; l++) {
+
+                // on recupere le type des données
+                var geomType = geoJsonData[l].geometry.type;
+
+                if (geomType === "Polygon" || geomType === "LineString" || geomType === "MultiLineString" || geomType === "MultiPoint") {
+                    geoJsonObject.features.push(geoJsonData[l]);
                 }
-            }   
+
+                if (geomType === "Point") {
+                    if (geoJsonData[l].properties.radius && geoJsonData[l].properties.surface) {
+                        geoJsonObject.features.push(geoJsonData[l]);
+                    }
+                }
+            }
         }
 
         if (geoJsonObject.features.length > 0) {
@@ -1114,7 +1175,7 @@ define([
         this._isCircleActive = false;
         this._isPolyLineActive = false;
         this._isPolygonsActive = false;
-        
+
         this._undoIsactivated = false;
         this._isSaveButtonActivate = false;
 
@@ -1136,7 +1197,7 @@ define([
             removeHandlers(that);
             drawCircleFunction(that, that._viewer, that._ellipsoid, that._circleCollection, that._circlesLabelsCollection);
         });
-        
+
         this._polygonCommand = createCommand(function () {
             that._isPolyLineActive = false;
             that._isCircleActive = false;
@@ -1148,11 +1209,13 @@ define([
         this._trashCommand = createCommand(function () {
             try {
                 that._viewer.scene.primitives.removeAll();
+                removeHandlers(that);
+                var collection = collectionsInitialization(that);
+                that._viewer.geoJsonData = null;
             } catch (e) {
                 console.log(e)
-            };
-            removeHandlers(that);
-            var collection = collectionsInitialization(that);
+            }
+
         });
 
         this._saveCommand = createCommand(function () {
@@ -1164,7 +1227,7 @@ define([
             console.log(that._viewer.scene.primitives);
             var geoJson = GeoJsonDataSource.entities;
             console.log(geoJson);
-            
+
             that._viewer.scene.primitives.update(that._viewer.scene.frameState);
         });
 
@@ -1231,31 +1294,49 @@ define([
                 this._isCircleActive = false;
                 this._isSaveButtonActivate = false;
 
-                if (this._handlerLeftClick) this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerMiddleClick) this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-                if (this._handlerRightClick) this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerDblLeftClick) this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMove) this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                if (this._handlerLeftClick)
+                    this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerMiddleClick)
+                    this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
+                if (this._handlerRightClick)
+                    this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerDblLeftClick)
+                    this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+                if (this._handlerMove)
+                    this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
-                if (this._handlerLeftClickCircle) this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerRightClickCircle) this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerLeftDblClickCircle) this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMouseMoveCircle) this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                if (this._handlerLeftClickCircle)
+                    this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerRightClickCircle)
+                    this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerLeftDblClickCircle)
+                    this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+                if (this._handlerMouseMoveCircle)
+                    this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
             }
         },
         removeAllHandlers: {
             get: function () {
 
-                if (this._handlerLeftClick) this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerMiddleClick) this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-                if (this._handlerRightClick) this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerDblLeftClick) this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMove) this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                if (this._handlerLeftClick)
+                    this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerMiddleClick)
+                    this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
+                if (this._handlerRightClick)
+                    this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerDblLeftClick)
+                    this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+                if (this._handlerMove)
+                    this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
-                if (this._handlerLeftClickCircle) this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerRightClickCircle)  this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerLeftDblClickCircle) this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMouseMoveCircle) this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                if (this._handlerLeftClickCircle)
+                    this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerRightClickCircle)
+                    this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                if (this._handlerLeftDblClickCircle)
+                    this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+                if (this._handlerMouseMoveCircle)
+                    this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
             }
         },
     });
@@ -1271,7 +1352,7 @@ define([
         var polygons;
         var circlesLabels;
         var polyLinesLabels;
-         var polygonsLabels;
+        var polygonsLabels;
 
         var primitives = that._viewer.scene.primitives._primitives;
 
@@ -1316,16 +1397,10 @@ define([
                     statusFindcircle = true;
                     continue;
                 }
-                
+
                 if (primitives[i].associatedObject === 'polygonsGeomtry') {
                     polygons = primitives[i];
                     statusFindPolygons = true;
-                    continue;
-                }
-                
-                if (primitives[i].associatedObject === 'polygonsLabels') {
-                    polygonsLabels = primitives[i];
-                    statusFindPolygonsLabels = true;
                     continue;
                 }
 
@@ -1342,43 +1417,60 @@ define([
                         statusFindpolyLinesLabels = true;
                         continue;
                     }
+
+                    if (primitives[i].associatedObject === 'polygonsLabels') {
+                        polygonsLabels = primitives[i];
+                        statusFindPolygonsLabels = true;
+                        continue;
+                    }
                 }
 
                 if (statusFindpolyLines && statusFindCirclesLabels && statusFindpolyLinesLabels && statusFindcircle && statusFindPolygons && statusFindPolygonsLabels)
                     break;
 
-                if (i === primitives.length - 1 && !statusFindpolyLines || !statusFindCirclesLabels || !statusFindpolyLinesLabels || !statusFindcircle || !statusFindPolygons || !statusFindPolygonsLabels) {
+                if (i === primitives.length - 1) {
 
                     if (!statusFindpolyLines) {
                         polyLines = that._viewer.scene.primitives.add(new PolylineCollection());
                         polyLines.associatedObject = 'polylines';
+                        statusFindpolyLines = true;
+                        console.log("line");
                     }
 
                     if (!statusFindpolyLinesLabels) {
                         polyLinesLabels = that._viewer.scene.primitives.add(new LabelCollection());
                         polyLinesLabels.associatedObject = 'polyLinesLabels';
+                        statusFindpolyLinesLabels = true;
+                        console.log("lineLabel");
                     }
 
                     if (!statusFindcircle) {
                         circles = that._viewer.scene.primitives.add(new PrimitiveCollection());
                         circles.associatedObject = 'circleGeomtry';
+                        statusFindcircle = true;
+                        console.log("circle");
                     }
 
                     if (!statusFindCirclesLabels) {
                         circlesLabels = that._viewer.scene.primitives.add(new LabelCollection());
                         circlesLabels.associatedObject = 'circlesLabels';
+                        statusFindCirclesLabels = true;
+                        console.log("circlesLabels");
                     }
-                    
+
                     if (!statusFindPolygons) {
                         polygons = that._viewer.scene.primitives.add(new PrimitiveCollection());
                         polygons.associatedObject = 'polygonsGeomtry';
+                        statusFindPolygons = true;
+                        console.log("polygonsGeomtry");
                     }
 
                     if (!statusFindPolygonsLabels) {
                         polygonsLabels = that._viewer.scene.primitives.add(new LabelCollection());
                         polygonsLabels.associatedObject = 'polygonsLabels';
+                        statusFindPolygonsLabels = true;
+                        console.log("polygonsLabels");
                     }
-
                 }
             }
         }
@@ -1388,9 +1480,9 @@ define([
             polylinesLables: polyLinesLabels,
             circles: circles,
             circleLabels: circlesLabels,
-            polygons : polygons,
-            polygonsLabels : polygonsLabels
-            
+            polygons: polygons,
+            polygonsLabels: polygonsLabels
+
         };
 
         that._polyLinesCollection = collectionsObject.polylines;
@@ -1405,16 +1497,25 @@ define([
 
     function removeHandlers(that) {
 
-        if (that._handlerLeftClick) that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-        if (that._handlerMiddleClick) that._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-        if (that._handlerRightClick) that._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-        if (that._handlerDblLeftClick) that._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-        if (that._handlerMove) that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+        if (that._handlerLeftClick)
+            that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        if (that._handlerMiddleClick)
+            that._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
+        if (that._handlerRightClick)
+            that._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+        if (that._handlerDblLeftClick)
+            that._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+        if (that._handlerMove)
+            that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
-        if (that._handlerLeftClickCircle) that._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-        if (that._handlerRightClickCircle) that._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-        if (that._handlerLeftDblClickCircle)that._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-        if (that._handlerMouseMoveCircle) that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+        if (that._handlerLeftClickCircle)
+            that._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        if (that._handlerRightClickCircle)
+            that._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+        if (that._handlerLeftDblClickCircle)
+            that._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+        if (that._handlerMouseMoveCircle)
+            that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
         console.log('all handlers remeved');
     }

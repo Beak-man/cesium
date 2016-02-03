@@ -144,6 +144,8 @@ define([
         var metadataError;
 
         function metadataSuccess(data) {
+            
+            
             var tileInfo = data.tileInfo;
             if (!defined(tileInfo)) {
                 that._useTiles = false;
@@ -169,6 +171,9 @@ define([
                             data.fullExtent.spatialReference.wkid === 102113) {
 
                             var projection = new WebMercatorProjection();
+                            
+                            console.log(projection);
+                            
                             var sw = projection.unproject(new Cartesian2(data.fullExtent.xmin, data.fullExtent.ymin));
                             var ne = projection.unproject(new Cartesian2(data.fullExtent.xmax, data.fullExtent.ymax));
                             that._rectangle = new Rectangle(sw.longitude, sw.latitude, ne.longitude, ne.latitude);

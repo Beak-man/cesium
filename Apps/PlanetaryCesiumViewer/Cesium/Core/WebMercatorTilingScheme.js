@@ -47,6 +47,8 @@ define([
         this._numberOfLevelZeroTilesX = defaultValue(options.numberOfLevelZeroTilesX, 1);
         this._numberOfLevelZeroTilesY = defaultValue(options.numberOfLevelZeroTilesY, 1);
 
+       // console.log(this._ellipsoid);
+
         this._projection = new WebMercatorProjection(this._ellipsoid);
 
         if (defined(options.rectangleSouthwestInMeters) &&
