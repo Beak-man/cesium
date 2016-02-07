@@ -6,6 +6,7 @@
 @import url(./Cesium/Widgets/Tools/Tools.css);
 @import url(./Cesium/Widgets/DrawLines/DrawLines.css);
 @import url(./Cesium/Widgets/DrawLines/SubMenu/SubMenu.css);
+@import url(./Cesium/Widgets/CustomObject/CustomObject.css);
 
 html {
     height: 100%;
@@ -163,14 +164,27 @@ body {
 }
 
 /* ======================================================================================= 
-   =============================== Planet toolbar buttons ================================ 
+   ================================= Main planet toolbar ================================= 
    ======================================================================================= */
-.cesium-viewer-planetsToolbar {
+
+.cesium-viewer-mainPlanetsToolbar{
     vertical-align:top;
     display: block;
     position: absolute;
     top: 5px;
     left: 5px;
+    height: 30px;
+}
+
+/* ======================================================================================= 
+   =============================== Planet toolbar buttons ================================ 
+   ======================================================================================= */
+.cesium-viewer-planetsToolbar {
+    vertical-align:top;
+    display: inline-block;
+    position: relative;
+    top: 0px;
+    left: 0px;
     height: 30px;
 }
 
@@ -251,6 +265,20 @@ body {
     padding: 0;
     vertical-align: middle;
     z-index: 0; /* Workaround for rounded raster image corners in Chrome */
+    display: inline-block; 
+}
+
+/* ====================================================================================== 
+  ================================= custom toolbar  ===================================== 
+  ======================================================================================= */
+
+.cesium-viewer-customToolbar {
+    vertical-align:top;
+    display: inline-block;
+    position: relative;
+    top: 0px;
+    left: 10px;
+    height: 30px;
 }
 
 /* ====================================================================================== 
@@ -275,8 +303,8 @@ body {
 .cesium-viewer-modificationsToolbar {
     display  : block;
     position : absolute;
-    top   : 40px;
-    left    : 405px;
+    top   : 5px;
+    left    : 1100px;
     height   : 30px;
     /*border : #ffffff thin solid;*/
 }

@@ -342,54 +342,57 @@ define([
 
                             circleRadius = deltaX;
 
-                            var circleOutlineGeometry = new CircleOutlineGeometry({
-                                center: cartesianCartographicCircleCenter,
-                                radius: circleRadius,
-                                ellipsoid: ellipsoid
-                            });
+                            if (circleRadius > 0) {
 
-                            var circleOutlineInstance = new GeometryInstance({
-                                geometry: circleOutlineGeometry,
-                                attributes: {color: ColorGeometryInstanceAttribute.fromColor(Color.YELLOW)}
-                            });
+                                var circleOutlineGeometry = new CircleOutlineGeometry({
+                                    center: cartesianCartographicCircleCenter,
+                                    radius: circleRadius,
+                                    ellipsoid: ellipsoid
+                                });
 
-                            newPrim = new Primitive({
-                                geometryInstances: [circleOutlineInstance],
-                                primitiveType: "circle",
-                                appearance: new PerInstanceColorAppearance({
-                                    flat: true,
-                                    renderState: {lineWidth: Math.min(1.0, viewer.scene.maximumAliasedLineWidth)}
-                                })
-                            });
+                                var circleOutlineInstance = new GeometryInstance({
+                                    geometry: circleOutlineGeometry,
+                                    attributes: {color: ColorGeometryInstanceAttribute.fromColor(Color.YELLOW)}
+                                });
 
-                            var radCircle = circleRadius.toFixed(2);
+                                newPrim = new Primitive({
+                                    geometryInstances: [circleOutlineInstance],
+                                    primitiveType: "circle",
+                                    appearance: new PerInstanceColorAppearance({
+                                        flat: true,
+                                        renderState: {lineWidth: Math.min(1.0, viewer.scene.maximumAliasedLineWidth)}
+                                    })
+                                });
 
-                            var newLabel = {
-                                position: cartesianCircleCenter,
-                                text: 'R = ' + radCircle + ' m',
-                                scale: 0.3,
-                                font: '50px arial',
-                                fillColor: Color.WHITE,
-                                outlineColor: Color.BLACK,
-                                style: LabelStyle.FILL,
-                                horizontalOrigin: HorizontalOrigin.CENTER,
-                                verticalOrigin: VerticalOrigin.CENTER,
-                                translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0)
-                            };
+                                var radCircle = circleRadius.toFixed(2);
 
-                            if (oldPrim && oldLabel) {
-                                circleCollection.remove(oldPrim);
-                                var dimLabel = circlesLabels._labels.length;
-                                var primitiveLabel = circlesLabels._labels[dimLabel - 1];
-                                circlesLabels.remove(primitiveLabel);
+                                var newLabel = {
+                                    position: cartesianCircleCenter,
+                                    text: 'R = ' + radCircle + ' m',
+                                    scale: 0.3,
+                                    font: '50px arial',
+                                    fillColor: Color.WHITE,
+                                    outlineColor: Color.BLACK,
+                                    style: LabelStyle.FILL,
+                                    horizontalOrigin: HorizontalOrigin.CENTER,
+                                    verticalOrigin: VerticalOrigin.CENTER,
+                                    translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0)
+                                };
+
+                                if (oldPrim && oldLabel) {
+                                    circleCollection.remove(oldPrim);
+                                    var dimLabel = circlesLabels._labels.length;
+                                    var primitiveLabel = circlesLabels._labels[dimLabel - 1];
+                                    circlesLabels.remove(primitiveLabel);
+                                }
+
+                                circleCollection.add(newPrim);
+
+                                circlesLabels.add(newLabel);
+
+                                oldPrim = newPrim;
+                                oldLabel = newLabel;
                             }
-
-                            circleCollection.add(newPrim);
-
-                            circlesLabels.add(newLabel);
-
-                            oldPrim = newPrim;
-                            oldLabel = newLabel;
                         }
                     }, ScreenSpaceEventType.MOUSE_MOVE);
                 }
@@ -399,6 +402,9 @@ define([
                         that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
                     var cartesianCircleCenter = newPrim._boundingSphereWC[0].center;
+                    var radius = circleRadius = newPrim._boundingSphereWC[0].radius;
+
+                    console.log(circleRadius);
 
                     var circleGeometry = new CircleGeometry({
                         center: cartesianCircleCenter,
@@ -471,32 +477,6 @@ define([
             that._isCircleActive = false; // to prevent servral instance of the same Handlers
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     function drawPolygonsFunction(that, viewer, ellipsoid, polygonsCollection, polygonsLabelsCollection) {
 
@@ -914,7 +894,9 @@ define([
         for (var i = 0; i < primitives.length; i++) {
 
             // Si la primitive est un polyline alors ...
-            if (primitives[i].associatedObject === "polylines") {
+            if (primitives[i].associatedObject === "polylines" && primitives[i]._polylines.length > 0) {
+
+                console.log(primitives[i]);
 
                 // Declaration de l'objet featureObject contenant un ensemble de lignes continues
                 var featurePolylines = {};
@@ -930,6 +912,14 @@ define([
                 // Ici, polyLine est un tableau d'objet. Chaque composante du tableau
                 // représente une ligne
                 var polylines = primitives[i]._polylines;
+
+                // On récupere l'objet label correspondant a la distance totale de la trajectoire
+                var labels = primitives[i + 1]._labels;
+
+                // on extrait de l'objet label l'information sur la distance totale
+                var totalLengthPath = labels[labels.length - 1]._text;
+
+                console.log(totalLengthPath);
 
                 // Si il y a des lignes alors...
                 if (polylines.length > 0) {
@@ -961,7 +951,8 @@ define([
                         jsonPolylineGeometry.coordinates.push(line);
                         featurePolylines.geometry = jsonPolylineGeometry;
                         featurePolylines.properties = {
-                            Name: "Line"
+                            Name: "Line",
+                            Total_distance: totalLengthPath
                         }
                     }
 
@@ -1001,7 +992,9 @@ define([
                         featureCircle.geometry = jsonCircleGeometry;
                         featureCircle.properties = {
                             Name: "Circle",
-                            radius: circleRadius + " m",
+                            Center_lng: centerPositionLng.toFixed(3) + " deg",
+                            Center_lat: centerPositionLat.toFixed(3) + " deg",
+                            radius: circleRadius.toFixed(3) + " m",
                             surface: circleSurface + " m2"
                         };
                         geoJsonObject.features.push(featureCircle);
@@ -1128,12 +1121,13 @@ define([
 
             if (!that._isSaveButtonActivate) {
 
-                var wrapperSaveSubMenu = document.createElement('span');
-                wrapperSaveSubMenu.className = 'cesium-subMenu-saveButton';
-                container.appendChild(wrapperSaveSubMenu);
+                that._wrapperSaveSubMenu = document.createElement('span');
+                that._wrapperSaveSubMenu.className = 'cesium-subMenu-saveButton';
+                container.appendChild(that._wrapperSaveSubMenu);
 
                 that._linkDownload = document.createElement("a");
-                wrapperSaveSubMenu.appendChild(that._linkDownload);
+                that._linkDownload.className = 'cesium-subMenu-saveButtonLink';
+                that._wrapperSaveSubMenu.appendChild(that._linkDownload);
                 that._linkDownload.innerHTML = '<svg width="25px" height="25px" viewBox="-10 0 100 100"><g>\
                                           <path d="M84.514,49.615H67.009c-2.133,0-4.025,1.374-4.679,3.406c-1.734,5.375-6.691,8.983-12.329,8.983\
                                             c-5.64,0-10.595-3.608-12.329-8.983c-0.656-2.032-2.546-3.406-4.681-3.406H15.486c-2.716,0-4.919,2.2-4.919,4.919v28.054\
@@ -1146,13 +1140,19 @@ define([
                 that._linkDownload.href = url;
                 that._linkDownload.download = fileName || 'unknown';
                 that._linkDownload.onclick = function () {
+                    console.log(this);
                     this.parentElement.removeChild(this);
+                    that._wrapperSaveSubMenu.parentElement.removeChild(that._wrapperSaveSubMenu);
                     that._isSaveButtonActivate = false;
                 };
                 that._isSaveButtonActivate = true;
+
             } else if (that._isSaveButtonActivate) {
+
                 try {
+                    console.log(that._linkDownload.parentElement);
                     that._linkDownload.parentElement.removeChild(that._linkDownload);
+                    that._wrapperSaveSubMenu.parentElement.removeChild(that._wrapperSaveSubMenu);
                 } catch (e) {
                     console.log(e)
                 }

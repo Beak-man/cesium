@@ -123,6 +123,7 @@ define([
         wrapperMenu.appendChild(trashButton);
         
         var wrapperSaveButtonMenu = document.createElement('span');
+        wrapperSaveButtonMenu.className =  "cesium-subMenu-saveButtonWrapper";
         wrapperMenu.appendChild(wrapperSaveButtonMenu);
         
 

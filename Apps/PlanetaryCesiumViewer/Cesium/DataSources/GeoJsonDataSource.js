@@ -896,8 +896,6 @@ define([
 		console.log("***********************************************************************");*/
 		
 		options.view.geoJsonData = data;
-                
-                console.log(options.view._dataSourceDisplay._scene.globe);
 		
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         var sourceUri = options.sourceUri;

@@ -31,11 +31,13 @@ define([
         var sizePageY = document.documentElement.clientHeight;
 
         that._handlerDownClick.setInputAction(function () {
+            
+            document.onmousemove = getPosition;
+                var cursorPosition = cursor;
+            
             that._handlerMove.setInputAction(function (mouvement) {
 
-
-                var test = document.onmousemove = getPosition;
-                var cursorPosition = cursor;
+                 var cursorPosition = cursor;
 
                 //  var offsetY = cursorPosition.y - (wrapper.children[1].offsetHeight / 2) - (wrapper.children[0].offsetHeight);
                 //  var offsetX = cursorPosition.x - (wrapper.children[1].offsetWidth / 2);
@@ -71,8 +73,10 @@ define([
 
         that._handlerUpClick.setInputAction(function () {
 
-            if (that._handlerDownClick) that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-            if (that._handlerMove) that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+            if (that._handlerDownClick)
+                that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+            if (that._handlerMove)
+                that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
         }, ScreenSpaceEventType.MIDDLE_UP);
     }
@@ -89,8 +93,10 @@ define([
             that._isPanelVisible = true;
             that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
 
-            if (that._handlerDownClick) that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-            if (that._handlerMove) that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+            if (that._handlerDownClick)
+                that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+            if (that._handlerMove)
+                that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
             try {
                 that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
@@ -104,8 +110,10 @@ define([
             that._isPanelVisible = false;
             that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
 
-            if (that._handlerDownClick) that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-            if (that._handlerMove)  that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+            if (that._handlerDownClick)
+                that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+            if (that._handlerMove)
+                that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
             try {
                 that._viewer.drawLines.viewModel.destroyWrapperMenu;
@@ -167,9 +175,12 @@ define([
         },
         removeAllCommands: {
             get: function () {
-                if (this._handlerDownClick) this._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-                if (this._handlerUpClick) this._handlerUpClick.removeInputAction(ScreenSpaceEventType.MIDDLE_UP);
-                if (this._handlerMove) this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                if (this._handlerDownClick)
+                    this._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+                if (this._handlerUpClick)
+                    this._handlerUpClick.removeInputAction(ScreenSpaceEventType.MIDDLE_UP);
+                if (this._handlerMove)
+                    this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
             }
         }
     });
@@ -190,12 +201,15 @@ define([
         ;
 
     }
-    
-    
+
+
     function removeHandlers(that) {
-         if (that._handlerDownClick) that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-         if (that._handlerUpClick) that._handlerUpClick.removeInputAction(ScreenSpaceEventType.MIDDLE_UP);
-         if (that._handlerMove) that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+        if (that._handlerDownClick)
+            that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+        if (that._handlerUpClick)
+            that._handlerUpClick.removeInputAction(ScreenSpaceEventType.MIDDLE_UP);
+        if (that._handlerMove)
+            that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
     }
 
 

@@ -66,8 +66,10 @@ define([
         ;
 
         var sendBtn = document.getElementById('sendBtn');
-        if (sendBtn)
+
+        if (sendBtn) {
             btnContainer.removeChild(sendBtn);
+        }
 
         if (configContainer.style.left !== that._windowsMove && configContainer.style.left !== '') {
             configContainer.className = "";
@@ -164,7 +166,7 @@ define([
 
                     var capability = data.getElementsByTagName("Capability");
                     var layers = capability[0].getElementsByTagName("Layer");
-                    
+
                     var names = [];
                     var title = []
                     var abstract = [];
@@ -196,7 +198,7 @@ define([
                         names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                         layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                         title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
-                        abstract[i] =  layers[i].getElementsByTagName("Abstract")[0].textContent;
+                        abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
                         crs = layers[0].getElementsByTagName("CRS")[0].textContent;
                         bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
 
@@ -241,7 +243,7 @@ define([
                         var btnShowLayer = document.createElement('INPUT');
                         btnShowLayer.type = 'checkbox';
                         btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"'+ abstract[i]+'"},checked : show_' + i);
+                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstract[i] + '"},checked : show_' + i);
                         colomn1.appendChild(btnShowLayer);
 
                         var colomn2 = document.createElement('TD');
@@ -267,7 +269,7 @@ define([
                             layers: layer[i],
                             credit: 'USGS @ planetarymaps.usgs.gov',
                             ellipsoid: that._ellipsoid,
-                            enablePickFeatures : false
+                            enablePickFeatures: false
                         });
                     }
                     ;
@@ -290,6 +292,22 @@ define([
         xhr.send();
 
         listContainer.innerHTML = '';
+        var satelliteName = sn.replace(sn.charAt(0), sn.charAt(0).toUpperCase())
+
+        /* === set some HTML containers for the vizualisation === */
+
+        var listContainer2 = document.createElement('div');
+        listContainer2.setAttribute('id', 'listId');
+        listContainer.appendChild(listContainer2);
+
+        listContainer2.innerHTML = satelliteName + ' : </br>';
+        listContainer2.innerHTML += ' </br>';
+
+        var listShow = document.createElement('div');
+        listContainer2.appendChild(listShow);
+
+        var tableList = document.createElement('TABLE');
+        listShow.appendChild(tableList);
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
@@ -318,32 +336,13 @@ define([
                 var crs;
                 var imageryProvidersTab = [];
 
-                var satelliteName = sn.replace(sn.charAt(0), sn.charAt(0).toUpperCase())
-
-
-                /* === set some HTML containers for the vizualisation === */
-
-                var listContainer2 = document.createElement('div');
-                listContainer2.setAttribute('id', 'listId');
-                listContainer.appendChild(listContainer2);
-
-                listContainer2.innerHTML = satelliteName + ' : </br>';
-                listContainer2.innerHTML += ' </br>';
-
-                var listShow = document.createElement('div');
-                listContainer2.appendChild(listShow);
-
-                var tableList = document.createElement('TABLE');
-                listShow.appendChild(tableList);
-
-
                 /* ==== get informations from tables previously built ==== */
 
                 var dimLayers = layers.length;
                 for (var i = 0; i < layers.length; i++) {
                     names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                     title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
-                    abstract[i] =  layers[i].getElementsByTagName("Abstract")[0].textContent;
+                    abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
                     layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                     crs = layers[0].getElementsByTagName("CRS")[0].textContent;
                     bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
@@ -393,12 +392,10 @@ define([
                     var colomn1 = document.createElement('TD');
                     tableLine.appendChild(colomn1);
 
-                    console.log(title[i]);
-
                     var btnShowLayer = document.createElement('INPUT');
                     btnShowLayer.type = 'checkbox';
                     btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                    btnShowLayer.setAttribute('data-bind', 'attr: { title:"'+ abstract[i]+'"}, checked : show_' + i);
+                    btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstract[i] + '"}, checked : show_' + i);
                     colomn1.appendChild(btnShowLayer);
 
                     var colomn2 = document.createElement('TD');
@@ -427,7 +424,7 @@ define([
                         layers: layer[i],
                         credit: 'USGS @ planetarymaps.usgs.gov',
                         ellipsoid: that._ellipsoid,
-                        enablePickFeatures : false
+                        enablePickFeatures: false
                     });
                 }
                 ;
@@ -487,6 +484,7 @@ define([
                 that["buttonVisible_" + i] = false;
             }
             ;
+            
             that['buttonVisible_' + index] = !that['buttonVisible_' + index];
             cancelFunction(that);
             that.isShowSystemActive = false;
@@ -503,6 +501,7 @@ define([
             var xhr = new XMLHttpRequest();
         } else if (typeof ActiveXObject !== " undefined") {
             var xhr = new ActiveXObject("Microsoft.XMLHTTP"); // activeX pour IE
+            console.log("IE");
         } else {
             console.log("AJAX don't available on this browser");
             var xhr = null;
@@ -685,7 +684,7 @@ define([
         command: {
             get: function () {
                 return this._command;
-           }
+            }
         },
         commandSatellite: {
             get: function () {
@@ -696,7 +695,7 @@ define([
             get: function () {
                 return this._showSystem;
             }
-       },
+        },
         cancelCommand: {
             get: function () {
                 return this._cancelCommand;
@@ -747,8 +746,8 @@ define([
 
     function initializeScene(that, objectDimensions) {
         that._ellipsoid = freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
-          Ellipsoid.WGS84 = freezeObject(that._ellipsoid);
-        
+        Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // A MODIFIER 
+
         try {
             that._viewer.scene.primitives.removeAll(true);
             that._viewer.lngLat.viewModel.removeCommand;
@@ -756,9 +755,6 @@ define([
             that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
         } catch (e) {
         }
-              console.log( that._viewer._dataSourceDisplay.globe);
-
-
 
         var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
         var newGeographicProjection = new GeographicProjection(that._ellipsoid);
@@ -776,11 +772,11 @@ define([
         that._viewer.terrainProvider = newTerrainProvider;
         that._viewer.scene.globe.baseColor = Color.BLACK;
 
-        
 
-       /* CesiumWidget.ellipsoid = that._ellipsoid;
-        CesiumWidget.scene =  that._viewer.scene;
-        CesiumWidget.render;*/
+
+        /* CesiumWidget.ellipsoid = that._ellipsoid;
+         CesiumWidget.scene =  that._viewer.scene;
+         CesiumWidget.render;*/
     }
 
     function initializeMarkerMoveWidget(that) {

@@ -252,8 +252,6 @@ define([
 
             configureCameraFrustum(this);
 
-          console.log(scene.mapProjection.ellipsoid);
-
             this._ellipsoid = defaultValue(scene.mapProjection.ellipsoid, Ellipsoid.WGS84);
             var creditDisplay = scene.frameState.creditDisplay;
 

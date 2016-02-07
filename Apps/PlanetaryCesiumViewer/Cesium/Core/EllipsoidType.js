@@ -11,6 +11,7 @@ define([ './freezeObject','./Math'], function(freezeObject, CesiumMath) {
              * @constant
              */
            Ellipsoid.WGS84 = freezeObject(new Ellipsoid(6378137.0, 6378137.0, 6356752.3142451793));
+		  // Ellipsoid.WGS84 = freezeObject(new Ellipsoid(3396190.0, 3396190.0, 3376200.0));
 
             /**
              * An Ellipsoid instance initialized to a sphere with the lunar radius.
@@ -72,7 +73,8 @@ define([ './freezeObject','./Math'], function(freezeObject, CesiumMath) {
             // A NETTOYER
             
 		        if (endUserOptions.ellipsoidType.toString().toUpperCase() == 'WGS84' || endUserOptions.ellipsoidType.toString().toUpperCase() == 'EARTHIAU2000') {
-				Ellipsoid.WGS84 = freezeObject(new Ellipsoid(6378137.0, 6378137.0, 6356752.3142451793));
+				 Ellipsoid.WGS84 = freezeObject(new Ellipsoid(6378137.0, 6378137.0, 6356752.3142451793));
+				//Ellipsoid.WGS84 = freezeObject(new Ellipsoid(3396190.0, 3396190.0, 3376200.0));
                                         
 					Ellipsoid.EARTHIAU2000 = freezeObject(new Ellipsoid(6378137.0, 6378137.0, 6356752.3142451793));
 					
