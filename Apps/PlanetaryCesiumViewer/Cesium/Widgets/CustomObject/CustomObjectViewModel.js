@@ -1,13 +1,27 @@
 define([
+    '../../Core/Cartesian3',
     '../../Core/Math',
+    '../../Core/Color',
     '../../Core/defineProperties',
+    '../../Core/Ellipsoid',
+    '../../Core/EllipsoidTerrainProvider',
+    '../../Core/freezeObject',
+    '../../Core/GeographicProjection',
+    '../../Scene/Globe',
     '../../Core/ScreenSpaceEventHandler',
     '../../Core/ScreenSpaceEventType',
     '../../ThirdParty/knockout',
     '../createCommand'],
         function (
+                Cartesian3,
                 CesiumMath,
+                Color,
                 defineProperties,
+                Ellipsoid,
+                EllipsoidTerrainProvider,
+                freezeObject,
+                GeographicProjection,
+                Globe,
                 ScreenSpaceEventHandler,
                 ScreenSpaceEventType,
                 knockout,
@@ -27,7 +41,7 @@ define([
 
                     setTimeout(function () {
                         that._ellipsTextContainer.style.zIndex = "2";
-                        that._ellipsTextContainer.style.left = "280px";
+                        that._ellipsTextContainer.style.left = "330px";
                         that._ellipsTextContainer.className = "cesium-customObject-ellipsoidTexture-show";
                     }, 500);
 
@@ -66,8 +80,12 @@ define([
                 var that = this;
 
                 this._customCommand = createCommand(function () {
-                    initialization(that._viewer);
+                    initialization(that);
                     showPanel(that);
+                });
+                
+                this._validateCommand = createCommand(function () {
+                    
                 });
 
                 /**
@@ -91,11 +109,51 @@ define([
                         return this._customCommand;
                     }
                 },
+                
+                validateCommand: {
+                    get: function () {
+                        return this._validateCommand;
+                    }
+                },
             });
 
 
-            function initialization() {
+            function initialization(that) {
+                that._ellipsoid = freezeObject(new Ellipsoid(1000000.0, 1000000.0, 1000000.0)); // 1000 km
+                Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // A MODIFIER 
 
+                try {
+                    that._viewer.scene.primitives.removeAll(true);
+                    that._viewer.lngLat.viewModel.removeCommand;
+                    that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+                    that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+                } catch (e) {
+                }
+
+                var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
+                var newGeographicProjection = new GeographicProjection(that._ellipsoid);
+                var newGlobe = new Globe(that._ellipsoid);
+
+                /*  var newOccluder          = new Occluder(new BoundingSphere(Cartesian3.ZERO, that._ellipsoid.minimumRadius), Cartesian3.ZERO);    
+                 var cameraPosition         =  Cartesian3.ZERO;
+                 var occluderBoundingSphere = new BoundingSphere(Cartesian3.ZERO, that._ellipsoid.minimumRadius);
+                 Occluder.fromBoundingSphere(occluderBoundingSphere, cameraPosition, newOccluder);  */
+
+                that._viewer.dataSources.removeAll(true);
+                that._viewer.scene.globe = newGlobe;
+                that._viewer.scene.mapProjection = newGeographicProjection;
+                that._viewer.scene.camera.projection = newGeographicProjection;
+                that._viewer.terrainProvider = newTerrainProvider;
+                that._viewer.scene.globe.baseColor = Color.BLUE;
+                that._viewer.scene.camera.setView({
+                    destination: Cartesian3.fromDegrees(0, 0, 10.0)
+                });
+                
+                
+
+             //   that._viewer.scene.camera.zoomIn(10000);
+                
+                
             }
 
 

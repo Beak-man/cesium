@@ -3,7 +3,7 @@
     top: 40px;
     left : 10px;
     width :  800px;
-    height : 70%;
+    height : 50%;
   //  background: #303336; 
   //  border: 1px solid #444;
     opacity : 0.0;
@@ -16,7 +16,7 @@
     top: 40px;
     left : 10px;
     width :  800px;
-    height : 70%;
+    height : 50%;
   //  background: #303336; 
   //  border: 1px solid #444;
     background: linear-gradient(to right, #303333 30%, rgba(0,255,0,0));
@@ -33,7 +33,7 @@
     top: 40px;
     left : 10px;
     width :  800px;
-    height : 70%;
+    height : 50%;
  //   background: #303336; 
   //  border: 1px solid #444;
      background: linear-gradient(to right, #303333 30%, rgba(0,255,0,0));
@@ -69,21 +69,23 @@
   //  border : red thin solid;
 }
 
+
+
 .cesium-customObject-ellipsoidParameters{
     position : absolute;
     top : 70px;
     left: -470px;
-    width: 200px;
+    width: 290px;
     height: 200px;
-    border : red thin solid;
+  //  border : red thin solid;
 }
 
 .cesium-customObject-ellipsoidParameters-show{
     position : absolute;
     top : 70px;
-    width: 200px;
+    width: 290px;
     height: 200px;
-    border : red thin solid;
+  //  border : red thin solid;
     
     transition-property: left;
     transition:  1s;
@@ -92,9 +94,9 @@
 .cesium-customObject-ellipsoidParameters-hide{
     position : absolute;
     top : 70px;
-    width: 200px;
+    width: 290px;
     height: 200px;
-    border : red thin solid;
+  //  border : red thin solid;
     
     transition-property: left;
     transition:  0s;
@@ -104,7 +106,7 @@
     position : absolute;
     top : 70px;
     left: -470px;
-    width: 200px;
+    width: 250px;
     height: 200px;
     border : red thin solid;
 }
@@ -112,7 +114,7 @@
 .cesium-customObject-ellipsoidTexture-show{
     position : absolute;
     top : 70px;
-    width: 200px;
+    width: 250px;
     height: 200px;
     border : red thin solid;
     
@@ -123,7 +125,7 @@
 .cesium-customObject-ellipsoidTexture-hide{
     position : absolute;
     top : 70px;
-    width: 200px;
+    width: 250px;
     height: 200px;
     border : red thin solid;
     
