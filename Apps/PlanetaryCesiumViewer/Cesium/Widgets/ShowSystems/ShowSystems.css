@@ -76,7 +76,7 @@ span.cesium-showSystems-wrapper {
     top: 0px;
     width :  120%;
     height : 93%;
-    border : #ffffff thin solid;
+ //   border : #ffffff thin solid;
 }
 
 .cesium-showSystems-btnContainer{
@@ -87,7 +87,7 @@ span.cesium-showSystems-wrapper {
     margin : 0px;
     width :  100%;
     height : 6%;
-    border : red thin solid;
+ //   border : red thin solid;
 }	
 
 .cesium-showSystems-configContainer-button {

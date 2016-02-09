@@ -63,7 +63,6 @@ define([
         for (var i = 0; i < that.dim; i++) {
             that["buttonVisible_" + i] = false;
         }
-        ;
 
         var sendBtn = document.getElementById('sendBtn');
 
@@ -364,7 +363,7 @@ define([
                     }
                     ;
 
-                    /* ==== set the imagery request parameters (WMS) === */
+                    /* === set the imagery request parameters (WMS) === */
 
                     var bboxString = bBox[i].attributes[2].value + ',' + bBox[i].attributes[1].value + ',' + bBox[i].attributes[4].value + ',' + bBox[i].attributes[3].value;
                     var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fjpeg' + '&' + 'LAYERS=' + layer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
@@ -484,14 +483,13 @@ define([
                 that["buttonVisible_" + i] = false;
             }
             ;
-            
+
             that['buttonVisible_' + index] = !that['buttonVisible_' + index];
             cancelFunction(that);
             that.isShowSystemActive = false;
             that.previousIndex = index;
         }
     }
-
 
     /**
      * function to get the XMLHttpRequest for AJAX requests
@@ -654,6 +652,10 @@ define([
 
         this._showSystem = createCommand(function (index) {
             showSystemButtons(that, index);
+            try {
+                that._viewer.customObject.viewModel.hideCustomPanelCommand;
+            } catch (e) {
+            }
         });
 
         this._cancelCommand = createCommand(function () {
@@ -705,8 +707,16 @@ define([
             get: function () {
                 return this._hideCommand;
             }
-        }
-
+        },
+        hidePanel: {
+            get: function () {
+                var configContainer = document.getElementById("configId");
+                configContainer.className = "";
+                configContainer.style.opacity = 0;
+                configContainer.className = "cesium-showSystems-configContainer-transition";
+                configContainer.style.left = this._windowsMove;
+            }
+        },
     });
 
     /* ================================================================================================================== */
@@ -751,10 +761,21 @@ define([
         try {
             that._viewer.scene.primitives.removeAll(true);
             that._viewer.lngLat.viewModel.removeCommand;
+
+        } catch (e) {
+        }
+
+        try {
             that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
             that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
         } catch (e) {
         }
+
+        try {
+            that._viewer.customObject.viewModel.hideCustomPanelCommand;
+        } catch (e) {
+        }
+
 
         var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
         var newGeographicProjection = new GeographicProjection(that._ellipsoid);

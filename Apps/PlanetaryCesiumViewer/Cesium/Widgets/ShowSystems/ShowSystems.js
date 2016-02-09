@@ -31,21 +31,28 @@ define([
 
         var count = 0;
         var i;
+        
+        // on parcours l'objet solarSystem construit a partir du fichier de config avec AJAX
         for (i in solarSystem) {
 
             var planetarySystem = solarSystem[i];
             var systemsDimensionsProperty = i + "System";
             var objectDimensions = systemsDimensions[systemsDimensionsProperty];
 
+            // On recupere le nom de l'astre
             var name = planetarySystem[0];
             var planetName = planetarySystem[0].replace(planetarySystem[0].charAt(0), planetarySystem[0].charAt(0).toUpperCase());
 
+
+            // Si la planete possède un ou plusieurs satellites
             if (planetarySystem.length > 1) {
 
+                // on cree le container qui va contenir les sous-boutons 
                 window[name + 'Wrapper'] = document.createElement('span');
                 window[name + 'Wrapper'].className = 'cesium-planetsToolbar-button cesium-showSystems-wrapper';
                 PlanetsToolbar.appendChild(window[name + 'Wrapper']);
 
+                // on cree le bouton pour le systeme afin d'acceder à la planete et a ses satellites 
                 window[name + 'SystemButton'] = document.createElement('div');
                 window[name + 'SystemButton'].className = 'cesium-button-planet cesium-planetsToolbar-button';
                 window[name + 'SystemButton'].innerHTML = planetName;
@@ -53,8 +60,10 @@ define([
                 window[name + 'SystemButton'].setAttribute('data-bind', 'attr: { title: tooltip}, click: showSystem.bind($data,"' + count + '")');
                 window[name + 'Wrapper'].appendChild(window[name + 'SystemButton']);
 
+                // On parcours le systeme planetaire (j=0 c'est la planète. J>0 ce sont les satellites
                 for (var j = 0; j < planetarySystem.length; j++) {
 
+                     // on fait un traitement specifique pour la planete 
                     if (j == 0) {
 
                         var name = planetarySystem[j];

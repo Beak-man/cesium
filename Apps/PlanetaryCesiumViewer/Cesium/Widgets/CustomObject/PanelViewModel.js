@@ -27,8 +27,45 @@ define([
                 knockout,
                 createCommand) {
             "use strict"
+            
+            
+            function testInputValues(inputField){
+                
+                if (/^[0-9.,]+$/g.test(inputField.value)) {
+                    return true;
+                } else {
+                    
+                    console.log("pas que des chiffres");
+                    alert("Please, enter a NUMBER type value for the " +inputField.name.toUpperCase() +" axis");
+                    return false
+                } 
+            }
 
-            function  showPanel(that) {
+            function  createNewEllipsoid(that, elementsForAxis) {
+
+               var xTest = testInputValues(elementsForAxis.x);
+               var yTest = testInputValues(elementsForAxis.y);
+               var zTest = testInputValues(elementsForAxis.z);
+
+                if (xTest && yTest && zTest) {
+
+                    var axisParameters = {
+                        x: parseFloat(that._elementsForAxis.x.value),
+                        y: parseFloat(that._elementsForAxis.y.value),
+                        z: parseFloat(that._elementsForAxis.z.value)
+                    }
+
+                    that._ellipsoid = freezeObject(new Ellipsoid(axisParameters.x, axisParameters.y, axisParameters.z));
+                    var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
+                    var newGeographicProjection = new GeographicProjection(that._ellipsoid);
+                    var newGlobe = new Globe(that._ellipsoid);
+
+                    that._viewer.scene.globe = newGlobe;
+                    that._viewer.scene.mapProjection = newGeographicProjection;
+                    that._viewer.scene.camera.projection = newGeographicProjection;
+                    that._viewer.terrainProvider = newTerrainProvider;
+                    
+                } 
 
             }
 
@@ -37,15 +74,15 @@ define([
                 this._viewer = viewer;
                 this._elementsForAxis = elementsForAxis;
                 var that = this;
-                
+
                 this._validateCommand = createCommand(function () {
-                    
-                  //  console.log("dans PanelViewModel");
-                    console.log(parseFloat(that._elementsForAxis.x.value));
-                    console.log(parseFloat(that._elementsForAxis.y.value));
-                    console.log(parseFloat(that._elementsForAxis.z.value));
-                    
+                    createNewEllipsoid(that, elementsForAxis);
                 });
+                
+                this._loadCommand = createCommand(function () {
+                    console.log("je charge un fichier");
+                });
+                
 
                 /**
                  * Gets or sets the tooltip.  This property is observable.
@@ -66,6 +103,12 @@ define([
                 validateCommand: {
                     get: function () {
                         return this._validateCommand;
+                    }
+                },
+                
+                loadCommand: {
+                    get: function () {
+                        return this._loadCommand;
                     }
                 },
             });

@@ -37,19 +37,28 @@ define([
                 btnElement.setAttribute('data-bind', 'attr: { title: "Create or load a custom object" }, click: customCommand');
                 container.appendChild(btnElement);
 
-                // creation du panneau pour l'affichage des paramètres
+                // creation du panneau pour l'affichage des paramètres : containr principal
                 var configContainer = document.createElement('div');
                 configContainer.className = 'cesium-customObject-configContainer';
                 viewerContainer.appendChild(configContainer);
 
+                // container qui contient tous les containers de parametres (ellipsoidParameter et textureParameters)
                 var parametersContainer = document.createElement('div');
                 parametersContainer.className = 'cesium-customObject-listContainer';
                 configContainer.appendChild(parametersContainer);
 
+                var configContainerTitle = document.createElement('div');
+                configContainerTitle.className = 'cesium-customObject-configContainer-title';
+                configContainerTitle.innerHTML = "Custom ellispoid factory"
+                parametersContainer.appendChild(configContainerTitle);
+
+                /* ============================================================= 
+                 * ================== Ellipsoid parameters =====================
+                 * ============================================================= */
+
                 var ellipsoidParametersContainer = document.createElement('div');
                 ellipsoidParametersContainer.className = 'cesium-customObject-ellipsoidParameters';
                 parametersContainer.appendChild(ellipsoidParametersContainer);
-
 
                 var FieldSetEllipsParameters = document.createElement('fieldset');
                 ellipsoidParametersContainer.appendChild(FieldSetEllipsParameters)
@@ -58,11 +67,8 @@ define([
                 FieldSetLegend.innerHTML = "Ellipsoid parameters";
                 FieldSetEllipsParameters.appendChild(FieldSetLegend);
 
-
-
                 var tableParameters = document.createElement('table');
                 FieldSetEllipsParameters.appendChild(tableParameters)
-
 
                 // ======================= FIRST Line ==========================
 
@@ -75,6 +81,7 @@ define([
 
                 var inputXparameter = document.createElement('input');
                 inputXparameter.type = 'text';
+                inputXparameter.name = 'x';
                 inputXparameter.value = 0;
 
                 var colomn2Line1 = document.createElement('TD');
@@ -92,6 +99,7 @@ define([
 
                 var inputYparameter = document.createElement('input');
                 inputYparameter.type = 'text';
+                inputYparameter.name = 'y';
                 inputYparameter.value = 0;
 
                 var colomn2Line2 = document.createElement('TD');
@@ -109,6 +117,7 @@ define([
 
                 var inputZparameter = document.createElement('input');
                 inputZparameter.type = 'text';
+                inputZparameter.name = 'z';
                 inputZparameter.value = 0;
 
                 var colomn2Line3 = document.createElement('TD');
@@ -132,36 +141,63 @@ define([
                 colomn2Line4.appendChild(validationBtn);
                 tableLine4.appendChild(colomn2Line4);
 
-                // ==============================================================
+                /* ============================================================== 
+                 * ==================== Ellipsoid Textures ======================
+                 * ============================================================== */
 
                 var ellipsoidTextureContainer = document.createElement('div');
                 ellipsoidTextureContainer.className = 'cesium-customObject-ellipsoidTexture';
                 parametersContainer.appendChild(ellipsoidTextureContainer);
 
+                /* ============================================================= 
+                 * ================== Load configuration file ==================
+                 * ============================================================= */
+
+                var loadConfigContainer = document.createElement('div');
+                loadConfigContainer.className = 'cesium-customObject-configFile';
+                parametersContainer.appendChild(loadConfigContainer);
+
+                var FieldSetLoadFile = document.createElement('fieldset');
+                loadConfigContainer.appendChild(FieldSetLoadFile)
+
+                var FieldSetLegendLoadFile = document.createElement('legend');
+                FieldSetLegendLoadFile.innerHTML = "Load configuration file";
+                FieldSetLoadFile.appendChild(FieldSetLegendLoadFile);
+
+                var loadBtn = document.createElement('BUTTON');
+                loadBtn.innerHTML = "Load";
+                loadBtn.setAttribute('data-bind', 'attr: { title: "Load a config file" }, click: loadCommand');
+                FieldSetLoadFile.appendChild(loadBtn);
+
+                var inputloadFile = document.createElement('input');
+                inputloadFile.type = 'text';
+                inputloadFile.name = 'loadFile';
+                FieldSetLoadFile.appendChild(inputloadFile);
+
+                /* ============================================================= 
+                 * ==================== Buttons container ======================
+                 * ============================================================= */
+
                 var btnContainer = document.createElement('div');
                 btnContainer.className = 'cesium-customObject-btnContainer';
                 configContainer.appendChild(btnContainer);
-                
+
                 var elementsForAxis = {
-                    x : inputXparameter,
-                    y : inputYparameter,
-                    z : inputZparameter,
+                    x: inputXparameter,
+                    y: inputYparameter,
+                    z: inputZparameter,
                 }
 
                 // creation du model pour cette vue (i.e CustomObject)
-                var viewModel = new CustomObjectViewModel(configContainer, ellipsoidParametersContainer, ellipsoidTextureContainer, viewer);
+                var viewModel = new CustomObjectViewModel(configContainer, ellipsoidParametersContainer, ellipsoidTextureContainer, loadConfigContainer, viewer);
                 this._viewModel = viewModel;
 
                 var panelViewModel = new PanelViewModel(elementsForAxis, viewer);
                 this._panelViewModel = panelViewModel;
-                
-                
 
                 // application du binding pour attacher le model à la vue
                 knockout.applyBindings(viewModel, container);
                 knockout.applyBindings(panelViewModel, configContainer);
-
-
             }
 
             defineProperties(CustomObject.prototype, {
@@ -185,6 +221,11 @@ define([
                 viewModel: {
                     get: function () {
                         return this._viewModel;
+                    }
+                },
+                panelViewModel: {
+                    get: function () {
+                        return this._panelViewModel;
                     }
                 },
             });

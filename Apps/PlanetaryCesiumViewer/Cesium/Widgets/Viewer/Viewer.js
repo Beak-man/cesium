@@ -642,6 +642,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         this._showSystems = showSystems; /* *** NEW *** */
         this._tools = tools;             /* *** NEW *** */
         this._drawLines = drawLines;     /* *** NEW *** */
+        this._customObject = customObject;     /* *** NEW *** */
         this._sceneModePicker = sceneModePicker;
         this._baseLayerPicker = baseLayerPicker;
         this._navigationHelpButton = navigationHelpButton;
@@ -791,6 +792,11 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         drawLines: {
             get: function () {
                 return this._drawLines;
+            }
+        },
+        customObject: {
+            get: function () {
+                return this._customObject;
             }
         },
         /**
