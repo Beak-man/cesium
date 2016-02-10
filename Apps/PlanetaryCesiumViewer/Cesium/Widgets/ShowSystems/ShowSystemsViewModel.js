@@ -533,15 +533,15 @@ define([
         configContainer.className = "cesium-showSystems-configContainer-transition";
         configContainer.style.left = that._windowsMove;
 
-        var btnShowPanel = document.createElement('BUTTON');
-        btnShowPanel.className = 'cesium-footerToolbar-button cesium-footerToolbar-animation-show cesium-button-planet';
-        btnShowPanel.innerHTML = 'show panel';
-        btnShowPanel.setAttribute('data-bind', 'click: testCommand');
-        that._footerToolbar.appendChild(btnShowPanel);
-        that._btnShowPanel = btnShowPanel;
+        that._btnShowPanel = document.createElement('BUTTON');
+        that._btnShowPanel.className = 'cesium-footerToolbar-button cesium-footerToolbar-animation-show cesium-button-planet';
+        that._btnShowPanel.innerHTML = 'show panel';
+        that._btnShowPanel.setAttribute('data-bind', 'click: testCommand');
+        that._footerToolbar.appendChild(that._btnShowPanel);
+        that._btnShowPanel = that._btnShowPanel;
 
-        var footerViewModel = new FooterViewModel(that._footerToolbar, configContainer, btnShowPanel);
-        knockout.applyBindings(footerViewModel, btnShowPanel);
+        var footerViewModel = new FooterViewModel(that._footerToolbar, configContainer, that._btnShowPanel);
+        knockout.applyBindings(footerViewModel, that._btnShowPanel);
     }
 
     function testFunction() {
@@ -715,6 +715,11 @@ define([
                 configContainer.style.opacity = 0;
                 configContainer.className = "cesium-showSystems-configContainer-transition";
                 configContainer.style.left = this._windowsMove;
+                
+                try{
+                    this._btnShowPanel.parentElement.removeChild(this._btnShowPanel);
+                }catch(e){}
+                
             }
         },
     });
@@ -751,7 +756,6 @@ define([
         } catch (e) {
 
         }
-
     }
 
     function initializeScene(that, objectDimensions) {

@@ -13,7 +13,7 @@ define([
                 PanelViewModel) {
             "use strict";
 
-            var CustomObject = function (viewerContainer, customToolbar, viewer) {
+            function createPanel(jsonData, solarSystem, viewerContainer, customToolbar, viewer, that) {
 
                 var container = getElement(customToolbar);
 
@@ -149,6 +149,54 @@ define([
                 ellipsoidTextureContainer.className = 'cesium-customObject-ellipsoidTexture';
                 parametersContainer.appendChild(ellipsoidTextureContainer);
 
+                var FieldSetTexture = document.createElement('fieldset');
+                ellipsoidTextureContainer.appendChild(FieldSetTexture)
+
+                var FieldSetLegendTexture = document.createElement('legend');
+                FieldSetLegendTexture.innerHTML = "Load configuration file";
+                FieldSetTexture.appendChild(FieldSetLegendTexture);
+
+                var tableTexture = document.createElement('table');
+                FieldSetTexture.appendChild(tableTexture)
+
+                // ======================= FIRST Line ==========================
+
+                var tableTextureLine1 = document.createElement('TR');
+                tableTexture.appendChild(tableTextureLine1);
+
+                var colomn1Line1Texture = document.createElement('TD');
+                colomn1Line1Texture.innerHTML = "Select WMS server : ";
+                tableTextureLine1.appendChild(colomn1Line1Texture);
+
+                var selectElementServerTexture = document.createElement('SELECT');
+                selectElementServerTexture.className = 'cesium-customObject-select';
+                selectElementServerTexture.style.cssText = 'text-align : center; font-family : Arial';
+                selectElementServerTexture.setAttribute('data-bind', 'options: availableServers, optionsText : "name", value: selectedServer');
+
+                var colomn2Line1Texture = document.createElement('TD');
+                colomn2Line1Texture.appendChild(selectElementServerTexture);
+                tableTextureLine1.appendChild(colomn2Line1Texture);
+                
+                
+                
+                
+                var tableTextureLine2 = document.createElement('TR');
+                tableTexture.appendChild(tableTextureLine2);
+
+                var colomn1Line2Texture = document.createElement('TD');
+                colomn1Line2Texture.innerHTML = "Select Planet : ";
+                tableTextureLine2.appendChild(colomn1Line2Texture);
+
+                var selectElementServerTexture = document.createElement('SELECT');
+                selectElementServerTexture.className = 'cesium-customObject-select';
+                selectElementServerTexture.style.cssText = 'text-align : center; font-family : Arial';
+                selectElementServerTexture.setAttribute('data-bind', 'options: availablePlanets, value: selectedPlanet');
+
+                var colomn2Line2Texture = document.createElement('TD');
+                colomn2Line2Texture.appendChild(selectElementServerTexture);
+                tableTextureLine2.appendChild(colomn2Line2Texture);
+
+
                 /* ============================================================= 
                  * ================== Load configuration file ==================
                  * ============================================================= */
@@ -190,14 +238,71 @@ define([
 
                 // creation du model pour cette vue (i.e CustomObject)
                 var viewModel = new CustomObjectViewModel(configContainer, ellipsoidParametersContainer, ellipsoidTextureContainer, loadConfigContainer, viewer);
-                this._viewModel = viewModel;
+                that._viewModel = viewModel;
 
-                var panelViewModel = new PanelViewModel(elementsForAxis, viewer);
-                this._panelViewModel = panelViewModel;
+                var panelViewModel = new PanelViewModel(jsonData, solarSystem, elementsForAxis, viewer);
+                that._panelViewModel = panelViewModel;
 
                 // application du binding pour attacher le model à la vue
                 knockout.applyBindings(viewModel, container);
                 knockout.applyBindings(panelViewModel, configContainer);
+
+            }
+
+            function getServerData(xhr, xhrPlanetarSystem, method, urlServer, urlPlanetarySystem, async, viewerContainer, customToolbar, viewer, that) {
+
+                xhr.open(method, urlServer, async);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.send();
+                xhr.onreadystatechange = function () {
+
+                    if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
+
+                        var data = xhr.responseText;
+                        var jsonData = JSON.parse(data);
+
+
+                        xhrPlanetarSystem.open(method, urlPlanetarySystem, async);
+                        xhrPlanetarSystem.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        xhrPlanetarSystem.send();
+                        xhrPlanetarSystem.onreadystatechange = function () {
+
+                            if (xhrPlanetarSystem.readyState == 4 && xhrPlanetarSystem.status == 200 || xhrPlanetarSystem.status == 0) {
+
+                                var data = xhrPlanetarSystem.responseText;
+                                var jsonDataPlanets = JSON.parse(data);
+                                var solarSystem = jsonDataPlanets.solarSystem;
+
+                                console.log(solarSystem);
+
+                                createPanel(jsonData, solarSystem, viewerContainer, customToolbar, viewer, that);
+                            }
+                        }
+                    }
+                }
+            }
+
+            function getXMLHttpRequest() {
+                if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                    var xhr = new XMLHttpRequest();
+                } else if (typeof ActiveXObject !== " undefined") {
+                    var xhr = new ActiveXObject("Microsoft.XMLHTTP"); // activeX pour IE
+                } else {
+                    console.log("AJAX don't available on this browser");
+                    var xhr = null;
+                }
+                return xhr;
+            }
+
+            var CustomObject = function (viewerContainer, customToolbar, viewer) {
+
+                var that = this;
+                var xhr = getXMLHttpRequest();
+                var xhrPlanetarySystem = getXMLHttpRequest();
+                var urlServer = 'Cesium/ConfigurationFiles/serverList.json';
+                var urlPlanetarySystem = 'Cesium/ConfigurationFiles/SolarSystemConfig.json';
+
+                getServerData(xhr, xhrPlanetarySystem, 'GET', urlServer, urlPlanetarySystem, true, viewerContainer, customToolbar, viewer, that);
             }
 
             defineProperties(CustomObject.prototype, {

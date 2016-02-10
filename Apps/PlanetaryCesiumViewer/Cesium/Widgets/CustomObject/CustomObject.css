@@ -115,9 +115,9 @@
     position : absolute;
     top : 40px;
     left: -470px;
-    width: 250px;
+    width: 360px;
     height: 200px;
-    border : red thin solid;
+   // border : red thin solid;
 }
 
 .cesium-customObject-ellipsoidTexture-show{

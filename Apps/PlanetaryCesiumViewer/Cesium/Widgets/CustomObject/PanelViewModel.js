@@ -26,26 +26,26 @@ define([
                 ScreenSpaceEventType,
                 knockout,
                 createCommand) {
-            "use strict"
-            
-            
-            function testInputValues(inputField){
-                
+            'use strict'
+
+
+            function testInputValues(inputField) {
+
                 if (/^[0-9.,]+$/g.test(inputField.value)) {
                     return true;
                 } else {
-                    
+
                     console.log("pas que des chiffres");
-                    alert("Please, enter a NUMBER type value for the " +inputField.name.toUpperCase() +" axis");
+                    alert("Please, enter a NUMBER type value for the " + inputField.name.toUpperCase() + " axis");
                     return false
-                } 
+                }
             }
 
             function  createNewEllipsoid(that, elementsForAxis) {
 
-               var xTest = testInputValues(elementsForAxis.x);
-               var yTest = testInputValues(elementsForAxis.y);
-               var zTest = testInputValues(elementsForAxis.z);
+                var xTest = testInputValues(elementsForAxis.x);
+                var yTest = testInputValues(elementsForAxis.y);
+                var zTest = testInputValues(elementsForAxis.z);
 
                 if (xTest && yTest && zTest) {
 
@@ -64,25 +64,66 @@ define([
                     that._viewer.scene.mapProjection = newGeographicProjection;
                     that._viewer.scene.camera.projection = newGeographicProjection;
                     that._viewer.terrainProvider = newTerrainProvider;
-                    
-                } 
+
+                }
 
             }
 
-            var PanelViewModel = function (elementsForAxis, viewer) {
+
+            function textureSelection(serverDataObject, solarSystem, that) {
+
+               var server_1 = serverDataObject.server1;
+               var server_2 = serverDataObject.server2;
+               
+               var servers = [];
+               
+               for (var server in serverDataObject) {
+                   servers.push(server);
+               }
+               
+               
+               
+               var Planets = [];
+               
+               for (var i in solarSystem) {
+                   Planets.push(i.toString());
+               }
+
+                that.availableServers = knockout.observableArray(servers);
+                that.availablePlanets = knockout.observableArray(Planets);
+                
+                that.selectedServer = knockout.observableArray();
+                that.selectedServer.subscribe(function (data) {
+                    console.log(data.url)
+                });
+                that.selectedPlanet = knockout.observableArray();
+                that.selectedPlanet.subscribe(function (data) {
+                    console.log(data)
+                });
+            }
+
+            var PanelViewModel = function (serverDataObject, solarSystem, elementsForAxis, viewer) {
 
                 this._viewer = viewer;
                 this._elementsForAxis = elementsForAxis;
+                this._serverDataObject = serverDataObject;
+                this._solarSystem = solarSystem;
+
+                 console.log(serverDataObject);
+
                 var that = this;
+
+                var url = 'Cesium/ConfigurationFiles/serverList.json';
+                textureSelection(that._serverDataObject, that._solarSystem, that);
 
                 this._validateCommand = createCommand(function () {
                     createNewEllipsoid(that, elementsForAxis);
                 });
-                
+
                 this._loadCommand = createCommand(function () {
                     console.log("je charge un fichier");
                 });
-                
+
 
                 /**
                  * Gets or sets the tooltip.  This property is observable.
@@ -105,7 +146,6 @@ define([
                         return this._validateCommand;
                     }
                 },
-                
                 loadCommand: {
                     get: function () {
                         return this._loadCommand;

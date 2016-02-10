@@ -1,0 +1,11 @@
+{
+	"server1" : {	
+		"name" : "Planetary maps (USGS)",
+		"url"  : "http://planetarymaps.usgs.gov/cgi-bin/mapserv"
+	    },
+		
+	"server2" : {	
+		"name" : "IAS u-psud (Mars only)",
+		"url"  : "http://idoc-wmsmars.ias.u-psud.fr/cgi-bin/mapserv"
+	    }	
+}
