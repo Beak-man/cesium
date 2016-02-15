@@ -40,17 +40,20 @@ define([
                         that._viewer.lngLat.viewModel.removeCommand;
 
                     } catch (e) {
+                        console.log(e);
                     }
 
                     try {
                         that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
                         that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
                     } catch (e) {
+                        console.log(e);
                     }
 
                     try {
                         that._viewer.showSystems.viewModel.hidePanel;
                     } catch (e) {
+                        console.log(e);
                     }
 
                     var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
@@ -92,6 +95,12 @@ define([
                         that._ellipsTextContainer.style.left = "320px";
                         that._ellipsTextContainer.className = "cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-show";
                     }, 400);
+                    
+                    setTimeout(function () {
+                        that._layerInfoContainer.style.zIndex = "2";
+                        that._layerInfoContainer.style.left = "320px";
+                        that._layerInfoContainer.className = "cesium-customObject-infosLayer cesium-customObject-infosLayer-show";
+                    }, 600);
 
                     setTimeout(function () {
                         that._loadConfigContainer.style.zIndex = "2";
@@ -113,8 +122,12 @@ define([
                         that._ellipsParamContainer.className = "cesium-customObject-ellipsoidParameters cesium-customObject-ellipsoidParameters-hide";
 
                         that._ellipsTextContainer.style.zIndex = "-1";
-                        that._ellipsTextContainer.style.left = "-470px";
+                        that._ellipsTextContainer.style.left = "-570px";
                         that._ellipsTextContainer.className = "cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-hide";
+                        
+                        that._layerInfoContainer.style.zIndex = "-1";
+                        that._layerInfoContainer.style.left = "-570px";
+                        that._layerInfoContainer.className = "cesium-customObject-infosLayer cesium-customObject-infosLayer-hide";
 
                         that._loadConfigContainer.style.zIndex = "-1";
                         that._loadConfigContainer.style.left = "-470px";
@@ -141,7 +154,11 @@ define([
                         that._ellipsTextContainer.style.zIndex = "-1";
                         that._ellipsTextContainer.style.left = "-470px";
                         that._ellipsTextContainer.className = "cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-hide";
-
+                        
+                        that._layerInfoContainer.style.zIndex = "-1";
+                        that._layerInfoContainer.style.left = "-470px";
+                        that._layerInfoContainer.className = "cesium-customObject-infosLayer cesium-customObject-infosLayer-hide";
+                        
                         that._loadConfigContainer.style.zIndex = "-1";
                         that._loadConfigContainer.style.left = "-470px";
                         that._loadConfigContainer.className = "cesium-customObject-configFile cesium-customObject-configFile-hide";
@@ -152,12 +169,13 @@ define([
                 }
             }
 
-            var CustomObjectViewModel = function (configContainer, ellipsParamContainer, ellipsTextContainer, loadConfigContainer, viewer) {
+            var CustomObjectViewModel = function (configContainer, ellipsParamContainer, ellipsTextContainer, layerInformationContainer, loadConfigContainer, viewer) {
 
                 this._configContainer = configContainer;
                 this._ellipsParamContainer = ellipsParamContainer;
                 this._ellipsTextContainer = ellipsTextContainer;
                 this._loadConfigContainer = loadConfigContainer;
+                this._layerInfoContainer = layerInformationContainer;
 
                 this._viewer = viewer;
                 this._isCustomPanelActive = false;
@@ -201,6 +219,7 @@ define([
                 },
                 hideCustomPanelCommand: {
                     get: function () {
+                        this._isCustomWidgetActive = false;
                         hidePanel(this);
                     },
                 }

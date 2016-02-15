@@ -1227,6 +1227,7 @@ define([
             console.log(that._viewer.scene.primitives);
             var geoJson = GeoJsonDataSource.entities;
             console.log(geoJson);
+            console.log(that._viewer.imageryLayers);
 
             that._viewer.scene.primitives.update(that._viewer.scene.frameState);
         });

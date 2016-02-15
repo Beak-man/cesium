@@ -69,7 +69,6 @@ define([
                 }
             }
 
-
             function textureSelection(serverDataObject, solarSystem, selectElementSatelliteTexture, that) {
 
                 var servers = [];
@@ -83,6 +82,10 @@ define([
                 for (var i in solarSystem) {
                     Planets.push(i.toString());
                 }
+
+                /* =============================================================
+                 ====================== SERVER SELECTION =====================
+                 =============================================================  */
 
                 that.availableServers = knockout.observableArray(servers);
                 that.availablePlanets = knockout.observableArray(Planets);
@@ -100,17 +103,15 @@ define([
 
                         var xhr = getXMLHttpRequest();
                         getXmlData(xhr, 'post', adressGetCapabilities, true, that);
-                        console.log(that.availableSatellites); 
-                        that.selectedSatellite.indexOf = 0 ;
-                        
-                        
+                        that.selectedSatellite.indexOf = 0;
 
                     } catch (e) {
-
                     }
-
-
                 });
+
+                /* =============================================================
+                 ==================== PLANET AND SELECTION ===================
+                 ============================================================= */
 
                 that.selectedPlanet = knockout.observableArray();
                 that.availableSatellites = knockout.observableArray([]);
@@ -121,7 +122,7 @@ define([
                     that._planet = data;
 
                     var satellites = solarSystem[data];
-                   // satellites[0] = "";
+                    // satellites[0] = "";
 
                     that.availableSatellites.removeAll();
                     if (satellites.length > 1) {
@@ -142,18 +143,35 @@ define([
                 that.selectedSatellite = knockout.observableArray();
                 that.selectedSatellite.subscribe(function (data) {
                     that._satellite = data;
-console.log(data);
-                    var adressGetCapabilities = that._urlServer + "?map=" + that._serverDir + that._planet + "/" + that._satellite + that._serverMapExtension + "&service=WMS&request=GetCapabilities";
 
+                    if (that._satellite) {
+
+                        var adressGetCapabilities = that._urlServer + "?map=" + that._serverDir + that._planet + "/" + that._satellite + that._serverMapExtension + "&service=WMS&request=GetCapabilities";
+
+                    } else if (!that._satellite) {
+
+                        var adressGetCapabilities = that._urlServer + "?map=" + that._serverDir + that._planet + "/" + that._planet + that._serverMapExtension + "&service=WMS&request=GetCapabilities";
+                    }
                     var xhr = getXMLHttpRequest();
                     getXmlData(xhr, 'post', adressGetCapabilities, true, that);
                 });
 
+                /* =============================================================
+                 ====================== LAYER SELECTION ======================
+                 ============================================================= */
+
                 that.selectedLayer = knockout.observableArray();
                 that.selectedLayer.subscribe(function (data) {
+
                     that._layer = data;
 
-                    //   console.log(data);
+                    that._layerAdded = {
+                        serverName: that._server.name,
+                        layerName: data.layer,
+                        urlLayer: data.layerUrl,
+                        layer: data.layer,
+                        object: that._planet
+                    }
 
                     var imageryProvider = new WebMapServiceImageryProvider({
                         url: data.layerUrl,
@@ -172,8 +190,6 @@ console.log(data);
             function getXmlData(xhr, method, url, async, that) {
 
                 that.availableLayers.removeAll();
-                
-                console.log(url);
 
                 xhr.open(method, url, async);
                 xhr.withCredentials = false;
@@ -245,11 +261,10 @@ console.log(data);
                                 }
 
                                 that.availableLayers.push(infosLayers);
-
                             }
 
                         } catch (e) {
-                            console.log(e);
+                            //  console.log(e);
                         }
 
                     } else if (xhr.readyState == 4 && xhr.status == 404) {
@@ -258,6 +273,22 @@ console.log(data);
                 }
                 xhr.send();
             }
+
+
+            function addLayerFunction(tableLayerInfo, addedLayerObject, that) {
+
+                if (that._layerAdded && that._layerAdded !== 'undefined') {
+                    addedLayerObject.push(that._layerAdded);
+                    console.log(addedLayerObject());
+                    that._layerAdded = 'undefined';
+                }
+            }
+
+            function textureValidationFunction() {
+                var configName = prompt("Please enter a name for this configuration", "Configuration Name");
+                console.log(configName);
+            }
+
 
             function getXMLHttpRequest() {
                 if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -271,15 +302,16 @@ console.log(data);
                 return xhr;
             }
 
-            var PanelViewModel = function (serverDataObject, solarSystem, elementsForAxis, selectElementSatelliteTexture, viewer) {
+            var PanelViewModel = function (serverDataObject, solarSystem, elementsForAxis, selectElementSatelliteTexture, tableLayerInfo, viewer) {
 
                 this._viewer = viewer;
                 this._elementsForAxis = elementsForAxis;
                 this._serverDataObject = serverDataObject;
                 this._solarSystem = solarSystem;
                 this._selectElementSatelliteTexture = selectElementSatelliteTexture;
+                this._tableLayerInfo = tableLayerInfo;
 
-                console.log(serverDataObject);
+                this.addedLayerObject = knockout.observableArray([]);
 
                 var that = this;
 
@@ -291,6 +323,19 @@ console.log(data);
                 });
 
                 this._validateTextureCommand = createCommand(function () {
+
+                    textureValidationFunction();
+
+                });
+
+                this._addLayerCommand = createCommand(function () {
+                    addLayerFunction(that._tableLayerInfo, that.addedLayerObject, that);
+                });
+
+                this._removeLayerCommand = createCommand(function (tableLine) {
+                    //   console.log("je supprime une couche");
+                    //   console.log(this);
+                    that.addedLayerObject.remove(tableLine);
                 });
 
                 this._loadCommand = createCommand(function () {
@@ -322,6 +367,16 @@ console.log(data);
                 validateTextureCommand: {
                     get: function () {
                         return this._validateTextureCommand;
+                    }
+                },
+                addLayerCommand: {
+                    get: function () {
+                        return this._addLayerCommand;
+                    }
+                },
+                removeLayerCommand: {
+                    get: function () {
+                        return this._removeLayerCommand;
                     }
                 },
                 loadCommand: {

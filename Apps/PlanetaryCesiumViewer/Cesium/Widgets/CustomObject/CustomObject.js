@@ -49,7 +49,7 @@ define([
 
                 var configContainerTitle = document.createElement('div');
                 configContainerTitle.className = 'cesium-customObject-configContainer-title';
-                configContainerTitle.innerHTML = "Custom ellispoid factory"
+                configContainerTitle.innerHTML = "Custom ellispoid factory";
                 parametersContainer.appendChild(configContainerTitle);
 
                 /* ============================================================= 
@@ -61,14 +61,14 @@ define([
                 parametersContainer.appendChild(ellipsoidParametersContainer);
 
                 var FieldSetEllipsParameters = document.createElement('fieldset');
-                ellipsoidParametersContainer.appendChild(FieldSetEllipsParameters)
+                ellipsoidParametersContainer.appendChild(FieldSetEllipsParameters);
 
                 var FieldSetLegend = document.createElement('legend');
                 FieldSetLegend.innerHTML = "Ellipsoid axis";
                 FieldSetEllipsParameters.appendChild(FieldSetLegend);
 
                 var tableParameters = document.createElement('table');
-                FieldSetEllipsParameters.appendChild(tableParameters)
+                FieldSetEllipsParameters.appendChild(tableParameters);
 
                 // ======================= FIRST Line ==========================
 
@@ -150,14 +150,14 @@ define([
                 parametersContainer.appendChild(ellipsoidTextureContainer);
 
                 var FieldSetTexture = document.createElement('fieldset');
-                ellipsoidTextureContainer.appendChild(FieldSetTexture)
+                ellipsoidTextureContainer.appendChild(FieldSetTexture);
 
                 var FieldSetLegendTexture = document.createElement('legend');
                 FieldSetLegendTexture.innerHTML = "Texture selection";
                 FieldSetTexture.appendChild(FieldSetLegendTexture);
 
                 var tableTexture = document.createElement('table');
-                FieldSetTexture.appendChild(tableTexture)
+                FieldSetTexture.appendChild(tableTexture);
 
                 // ======================= FIRST Line ==========================
 
@@ -215,12 +215,18 @@ define([
                 selectElementLayers.className = 'cesium-customObject-select';
                 selectElementLayers.style.cssText = 'text-align : center; font-family : Arial';
                 selectElementLayers.setAttribute('data-bind', 'options: availableLayers, optionsText : "layerName", value: selectedLayer, optionsCaption: "Select a layer"');
+                
+                var addLayerBtn = document.createElement('BUTTON');
+                addLayerBtn.innerHTML = "add layer";
+                addLayerBtn.style.visibility = "visible";
+                addLayerBtn.setAttribute('data-bind', 'attr: { title: "Create object" }, click: addLayerCommand');
 
                 var colomn2Line3Texture = document.createElement('TD');
                 colomn2Line3Texture.appendChild(selectElementLayers);
+                 colomn2Line3Texture.appendChild(addLayerBtn);
                 tableTextureLine3.appendChild(colomn2Line3Texture);
                 
-                 // ======================== LAST Line ==========================
+                // ======================== LAST Line ==========================
 
                 var tableLineLAST = document.createElement('TR');
                 tableTexture.appendChild(tableLineLAST);
@@ -230,13 +236,61 @@ define([
                 tableLineLAST.appendChild(colomn1LineLAST);
 
                 var validationTextureBtn = document.createElement('BUTTON');
-                validationTextureBtn.innerHTML = "Validate";
+                validationTextureBtn.innerHTML = "Validate configuration";
                 validationTextureBtn.setAttribute('data-bind', 'attr: { title: "Create object" }, click: validateTextureCommand');
 
                 var colomn2LineLAST = document.createElement('TD');
                 colomn2LineLAST.appendChild(validationTextureBtn);
                 tableLineLAST.appendChild(colomn2LineLAST);
 
+                /* ============================================================= 
+                 * ======================== Layer added ========================
+                 * ============================================================= */
+
+                var layerInformationContainer = document.createElement('div');
+                layerInformationContainer.className = 'cesium-customObject-infosLayer';
+                parametersContainer.appendChild(layerInformationContainer);
+
+                var FieldSetLayerInfo = document.createElement('fieldset');
+                layerInformationContainer.appendChild(FieldSetLayerInfo);
+
+                var FieldSetLegendLayerInfo = document.createElement('legend');
+                FieldSetLegendLayerInfo.innerHTML = "Layer added";
+                FieldSetLayerInfo.appendChild(FieldSetLegendLayerInfo);
+
+                var tableLayerInfo = document.createElement('table');
+                tableLayerInfo.className = 'cesium-customObject-infosLayer-table';
+                FieldSetLayerInfo.appendChild(tableLayerInfo);
+                
+                var tableLineLayerInfo = document.createElement('TR');
+                tableLayerInfo.appendChild(tableLineLayerInfo);
+                tableLayerInfo.setAttribute('data-bind', 'foreach: addedLayerObject');
+                
+                var colomn1Line1LayerInfo = document.createElement('TD');
+                colomn1Line1LayerInfo.setAttribute('data-bind','text:serverName');
+                tableLineLayerInfo.appendChild(colomn1Line1LayerInfo);
+                
+                 var colomn2Line1LayerInfo = document.createElement('TD');
+                colomn2Line1LayerInfo.setAttribute('data-bind','text:object');
+                tableLineLayerInfo.appendChild(colomn2Line1LayerInfo);
+                
+                var colomn3Line1LayerInfo = document.createElement('TD');
+                colomn3Line1LayerInfo.setAttribute('data-bind','text:layerName');
+                tableLineLayerInfo.appendChild(colomn3Line1LayerInfo);
+                
+                var colomn4Line1LayerInfo = document.createElement('TD');
+                tableLineLayerInfo.appendChild(colomn4Line1LayerInfo);
+                
+                var removeLayerBtn = document.createElement('BUTTON');
+                removeLayerBtn.innerHTML = "Remove";
+                removeLayerBtn.setAttribute('data-bind', 'click: $parent.removeLayerCommand');
+                colomn4Line1LayerInfo.appendChild(removeLayerBtn);
+
+                
+                
+                
+                
+                
 
                 /* ============================================================= 
                  * ================== Load configuration file ==================
@@ -247,7 +301,7 @@ define([
                 parametersContainer.appendChild(loadConfigContainer);
 
                 var FieldSetLoadFile = document.createElement('fieldset');
-                loadConfigContainer.appendChild(FieldSetLoadFile)
+                loadConfigContainer.appendChild(FieldSetLoadFile);
 
                 var FieldSetLegendLoadFile = document.createElement('legend');
                 FieldSetLegendLoadFile.innerHTML = "Load configuration file";
@@ -278,10 +332,10 @@ define([
                 }
 
                 // creation du model pour cette vue (i.e CustomObject)
-                var viewModel = new CustomObjectViewModel(configContainer, ellipsoidParametersContainer, ellipsoidTextureContainer, loadConfigContainer, viewer);
+                var viewModel = new CustomObjectViewModel(configContainer, ellipsoidParametersContainer, ellipsoidTextureContainer, layerInformationContainer, loadConfigContainer, viewer);
                 that._viewModel = viewModel;
 
-                var panelViewModel = new PanelViewModel(jsonData, solarSystem, elementsForAxis, selectElementSatelliteTexture, viewer);
+                var panelViewModel = new PanelViewModel(jsonData, solarSystem, elementsForAxis, selectElementSatelliteTexture, tableLayerInfo, viewer);
                 that._panelViewModel = panelViewModel;
 
                 // application du binding pour attacher le model à la vue
@@ -313,8 +367,6 @@ define([
                                 var data = xhrPlanetarSystem.responseText;
                                 var jsonDataPlanets = JSON.parse(data);
                                 var solarSystem = jsonDataPlanets.solarSystem;
-
-                                console.log(solarSystem);
 
                                 createPanel(jsonData, solarSystem, viewerContainer, customToolbar, viewer, that);
                             }

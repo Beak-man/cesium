@@ -8,7 +8,7 @@
     top: 40px;
     left : 10px;
     width :  800px;
-    height : 50%;
+    height : 70%;
     //  background: #303336; 
     //  border: 1px solid #444;
     opacity : 0.0;
@@ -114,8 +114,8 @@
 .cesium-customObject-ellipsoidTexture{
     position : absolute;
     top : 40px;
-    left: -470px;
-    width: 500px;
+    left: -570px;
+    width: 550px;
     height: 200px;
    // border : red thin solid;
 }
@@ -130,6 +130,36 @@
 
     transition-property: left;
     transition:  0s;
+}
+
+/* =============================================================================
+   ========================== Infos layers CONTAINER ===========================
+   ============================================================================= */
+
+.cesium-customObject-infosLayer{
+    position : absolute;
+    top : 200px;
+    left: -570px;
+    width: 550px;
+    height: 200px;
+   // border : red thin solid;
+}
+
+.cesium-customObject-infosLayer-show{
+
+    transition-property: left;
+    transition:  1s;
+}
+
+.cesium-customObject-infosLayer-hide{
+
+    transition-property: left;
+    transition:  0s;
+}
+
+.cesium-customObject-infosLayer-table{
+    width: 100%;
+    text-align: center;
 }
 
 /* =============================================================================
