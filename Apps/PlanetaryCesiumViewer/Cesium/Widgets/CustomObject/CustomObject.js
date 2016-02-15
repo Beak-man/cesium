@@ -64,7 +64,7 @@ define([
                 ellipsoidParametersContainer.appendChild(FieldSetEllipsParameters)
 
                 var FieldSetLegend = document.createElement('legend');
-                FieldSetLegend.innerHTML = "Ellipsoid parameters";
+                FieldSetLegend.innerHTML = "Ellipsoid axis";
                 FieldSetEllipsParameters.appendChild(FieldSetLegend);
 
                 var tableParameters = document.createElement('table');
@@ -153,7 +153,7 @@ define([
                 ellipsoidTextureContainer.appendChild(FieldSetTexture)
 
                 var FieldSetLegendTexture = document.createElement('legend');
-                FieldSetLegendTexture.innerHTML = "Load configuration file";
+                FieldSetLegendTexture.innerHTML = "Texture selection";
                 FieldSetTexture.appendChild(FieldSetLegendTexture);
 
                 var tableTexture = document.createElement('table');
@@ -165,36 +165,77 @@ define([
                 tableTexture.appendChild(tableTextureLine1);
 
                 var colomn1Line1Texture = document.createElement('TD');
-                colomn1Line1Texture.innerHTML = "Select WMS server : ";
+                colomn1Line1Texture.innerHTML = "WMS server : ";
                 tableTextureLine1.appendChild(colomn1Line1Texture);
 
                 var selectElementServerTexture = document.createElement('SELECT');
                 selectElementServerTexture.className = 'cesium-customObject-select';
                 selectElementServerTexture.style.cssText = 'text-align : center; font-family : Arial';
-                selectElementServerTexture.setAttribute('data-bind', 'options: availableServers, optionsText : "name", value: selectedServer');
+                selectElementServerTexture.setAttribute('data-bind', 'options: availableServers, optionsText : "name", value: selectedServer, optionsCaption: "Select a server"');
 
-                var colomn2Line1Texture = document.createElement('TD');
+                var colomn2Line1Texture = document.createElement('TD'); 
                 colomn2Line1Texture.appendChild(selectElementServerTexture);
                 tableTextureLine1.appendChild(colomn2Line1Texture);
                 
                 
-                
+                // ======================= SECOND Line ==========================
                 
                 var tableTextureLine2 = document.createElement('TR');
                 tableTexture.appendChild(tableTextureLine2);
 
                 var colomn1Line2Texture = document.createElement('TD');
-                colomn1Line2Texture.innerHTML = "Select Planet : ";
+                colomn1Line2Texture.innerHTML = "Planet and satellite : ";
                 tableTextureLine2.appendChild(colomn1Line2Texture);
 
-                var selectElementServerTexture = document.createElement('SELECT');
-                selectElementServerTexture.className = 'cesium-customObject-select';
-                selectElementServerTexture.style.cssText = 'text-align : center; font-family : Arial';
-                selectElementServerTexture.setAttribute('data-bind', 'options: availablePlanets, value: selectedPlanet');
+                var selectElementPlanetTexture = document.createElement('SELECT');
+                selectElementPlanetTexture.className = 'cesium-customObject-select';
+                selectElementPlanetTexture.style.cssText = 'text-align : center; font-family : Arial';
+                selectElementPlanetTexture.setAttribute('data-bind', 'options: availablePlanets, value: selectedPlanet, optionsCaption: "Select a planet"');
+                
+                var selectElementSatelliteTexture = document.createElement('SELECT');
+                selectElementSatelliteTexture.className = 'cesium-customObject-select';
+                selectElementSatelliteTexture.style.cssText = 'text-align : center; font-family : Arial;  visibility: hidden;';
+                selectElementSatelliteTexture.setAttribute('data-bind', 'options: availableSatellites, value: selectedSatellite, optionsCaption: "Select a satellite"');
 
                 var colomn2Line2Texture = document.createElement('TD');
-                colomn2Line2Texture.appendChild(selectElementServerTexture);
+                colomn2Line2Texture.appendChild(selectElementPlanetTexture);
+                colomn2Line2Texture.appendChild(selectElementSatelliteTexture);
                 tableTextureLine2.appendChild(colomn2Line2Texture);
+                
+                 // ======================= SECOND Line ==========================
+                
+                var tableTextureLine3 = document.createElement('TR');
+                tableTexture.appendChild(tableTextureLine3);
+
+                var colomn1Line3Texture = document.createElement('TD');
+                colomn1Line3Texture.innerHTML = "Available layers : ";
+                tableTextureLine3.appendChild(colomn1Line3Texture);
+
+                var selectElementLayers = document.createElement('SELECT');
+                selectElementLayers.className = 'cesium-customObject-select';
+                selectElementLayers.style.cssText = 'text-align : center; font-family : Arial';
+                selectElementLayers.setAttribute('data-bind', 'options: availableLayers, optionsText : "layerName", value: selectedLayer, optionsCaption: "Select a layer"');
+
+                var colomn2Line3Texture = document.createElement('TD');
+                colomn2Line3Texture.appendChild(selectElementLayers);
+                tableTextureLine3.appendChild(colomn2Line3Texture);
+                
+                 // ======================== LAST Line ==========================
+
+                var tableLineLAST = document.createElement('TR');
+                tableTexture.appendChild(tableLineLAST);
+
+                var colomn1LineLAST = document.createElement('TD');
+                colomn1LineLAST.innerHTML = " ";
+                tableLineLAST.appendChild(colomn1LineLAST);
+
+                var validationTextureBtn = document.createElement('BUTTON');
+                validationTextureBtn.innerHTML = "Validate";
+                validationTextureBtn.setAttribute('data-bind', 'attr: { title: "Create object" }, click: validateTextureCommand');
+
+                var colomn2LineLAST = document.createElement('TD');
+                colomn2LineLAST.appendChild(validationTextureBtn);
+                tableLineLAST.appendChild(colomn2LineLAST);
 
 
                 /* ============================================================= 
@@ -240,7 +281,7 @@ define([
                 var viewModel = new CustomObjectViewModel(configContainer, ellipsoidParametersContainer, ellipsoidTextureContainer, loadConfigContainer, viewer);
                 that._viewModel = viewModel;
 
-                var panelViewModel = new PanelViewModel(jsonData, solarSystem, elementsForAxis, viewer);
+                var panelViewModel = new PanelViewModel(jsonData, solarSystem, elementsForAxis, selectElementSatelliteTexture, viewer);
                 that._panelViewModel = panelViewModel;
 
                 // application du binding pour attacher le model à la vue
