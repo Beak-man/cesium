@@ -95,7 +95,7 @@ define([
                         that._ellipsTextContainer.style.left = "320px";
                         that._ellipsTextContainer.className = "cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-show";
                     }, 400);
-                    
+
                     setTimeout(function () {
                         that._layerInfoContainer.style.zIndex = "2";
                         that._layerInfoContainer.style.left = "320px";
@@ -124,7 +124,7 @@ define([
                         that._ellipsTextContainer.style.zIndex = "-1";
                         that._ellipsTextContainer.style.left = "-570px";
                         that._ellipsTextContainer.className = "cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-hide";
-                        
+
                         that._layerInfoContainer.style.zIndex = "-1";
                         that._layerInfoContainer.style.left = "-570px";
                         that._layerInfoContainer.className = "cesium-customObject-infosLayer cesium-customObject-infosLayer-hide";
@@ -148,25 +148,39 @@ define([
 
                     setTimeout(function () {
                         that._ellipsParamContainer.style.zIndex = "-1";
-                        that._ellipsParamContainer.style.left = "-470px";
+                        that._ellipsParamContainer.style.left = "-570px";
                         that._ellipsParamContainer.className = "cesium-customObject-ellipsoidParameters cesium-customObject-ellipsoidParameters-hide";
 
                         that._ellipsTextContainer.style.zIndex = "-1";
-                        that._ellipsTextContainer.style.left = "-470px";
+                        that._ellipsTextContainer.style.left = "-570px";
                         that._ellipsTextContainer.className = "cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-hide";
-                        
+
                         that._layerInfoContainer.style.zIndex = "-1";
-                        that._layerInfoContainer.style.left = "-470px";
+                        that._layerInfoContainer.style.left = "-570px";
                         that._layerInfoContainer.className = "cesium-customObject-infosLayer cesium-customObject-infosLayer-hide";
-                        
+
                         that._loadConfigContainer.style.zIndex = "-1";
-                        that._loadConfigContainer.style.left = "-470px";
+                        that._loadConfigContainer.style.left = "-570px";
                         that._loadConfigContainer.className = "cesium-customObject-configFile cesium-customObject-configFile-hide";
                     }, 300);
 
                     that._isCustomPanelActive = false;
                     that._isCustomWidgetActive = false;
                 }
+            }
+
+            function listInitialisation(that) {
+
+                that.availableObjects = knockout.observableArray([]);
+                that.selectedObject = knockout.observableArray();
+                that.selectedObject.subscribe(function (data) {
+                    console.log(data);
+
+                    if (that._isCustomPanelActive) {
+                        hidePanel(that);
+                    }
+
+                });
             }
 
             var CustomObjectViewModel = function (configContainer, ellipsParamContainer, ellipsTextContainer, layerInformationContainer, loadConfigContainer, viewer) {
@@ -182,6 +196,8 @@ define([
                 this._isCustomWidgetActive = false;
 
                 var that = this;
+
+                listInitialisation(that);
 
                 this._customCommand = createCommand(function () {
                     initialization(that);
@@ -221,8 +237,14 @@ define([
                     get: function () {
                         this._isCustomWidgetActive = false;
                         hidePanel(this);
-                    },
-                }
+                    }
+                },
+                setAvailableObjects: {
+                    set: function (Object) {
+                        this.availableObjects.push(Object);
+                        console.log(this.availableObjects());
+                    }
+                },
             });
 
             return CustomObjectViewModel;

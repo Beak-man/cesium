@@ -32,27 +32,35 @@ define([
 
         if (that._isActive == true) {
 
+            // Initialisation des evenements de la souris
             that._handlerLeft = new ScreenSpaceEventHandler(scene.canvas);
             that._handlerRight = new ScreenSpaceEventHandler(scene.canvas);
 
             var lastEntity;
             var entity = null;
 
+            // implementatio de l'action a mener pour le click guache  
             that._handlerLeft.setInputAction(function (click) {
 
-               try{
-                 that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
-             }catch (e){}
-                
+                // on retire les handlers des autres fonctionnalités afin d'éviter les conflits
+                try {
+                    that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+                } catch (e) {
+                }
+
+                // on recupere l'ellipsoid
                 var ellipsoid = viewer.scene.globe.ellipsoid;
 
                 entity = null;
                 var pickedObject = null;
 
+                // on capture un objet avec le click de la souris
                 pickedObject = viewer.scene.pick(click.position);
 
+                // si on a capturé un objet, alors...
                 if (pickedObject) {
 
+                    
                     entity = pickedObject.primitive.id;
                     entity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
 
@@ -148,11 +156,12 @@ define([
             var url = URL.createObjectURL(blob);
 
             var fileName = "jsonFile.json";
-            
-            try{
-                  that._saveLink.parentElement.removeChild(that._saveLink);
-            }catch (e){}
-            
+
+            try {
+                that._saveLink.parentElement.removeChild(that._saveLink);
+            } catch (e) {
+            }
+
             that._wrapper = document.getElementById("wrapper");
             that._saveLink = document.createElement('a');
             that._saveLink.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
@@ -174,7 +183,7 @@ define([
             that._saveLink.onclick = function () {
                 this.parentElement.removeChild(this);
             };
-             that._wrapper.appendChild(that._saveLink);
+            that._wrapper.appendChild(that._saveLink);
 
         } else {
             alert("Load a file in first");
@@ -202,12 +211,13 @@ define([
         var that = this;
 
         this._command = createCommand(function () {
-            
-           // that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
-            try{
-                 that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
-             }catch (e){}
-            
+
+            // that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+            try {
+                that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+            } catch (e) {
+            }
+
             that._isActive = !that._isActive;
             markerMoveView(that._toolbar, that._scene, that._viewer, that);
             that.dropDownVisible = !that.dropDownVisible;

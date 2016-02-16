@@ -73,7 +73,7 @@ define([
 
         document.onmousemove = getPosition;
 
-        if (that._isPolyLineActive) {
+        if (that.isPolyLineActive) {
 
             that._handlerLeftClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerMiddleClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -298,7 +298,7 @@ define([
                 }
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
-            that._isPolyLineActive = false; // to prevent servral instance of the same Handlers
+            that.isPolyLineActive = false; // to prevent servral instance of the same Handlers
         }
     }
 
@@ -307,7 +307,7 @@ define([
         // use that to check if we are on the canvas or not (for example, on a button);
         document.onmousemove = getPosition;
 
-        if (that._isCircleActive) {
+        if (that.isCircleActive) {
 
             that._handlerLeftClickCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerRightClickCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -474,7 +474,7 @@ define([
                 }
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
-            that._isCircleActive = false; // to prevent servral instance of the same Handlers
+            that.isCircleActive = false; // to prevent servral instance of the same Handlers
         }
     }
 
@@ -482,7 +482,7 @@ define([
 
         document.onmousemove = getPosition;
 
-        if (that._isPolygonsActive) {
+        if (that.isPolygonsActive) {
 
             // initialisation des evenements 
 
@@ -873,7 +873,7 @@ define([
                 }
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
-            that._isPolygonsActive = false; // to prevent servral instance of the same Handlers  
+            that.isPolygonsActive = false; // to prevent servral instance of the same Handlers  
         }
     }
 
@@ -1171,10 +1171,9 @@ define([
         this._viewer = viewer;
         this._container = container;
         this._ellipsoid = viewer.scene.globe.ellipsoid;
-        this._isPolyLineActive = false;
-        this._isCircleActive = false;
-        this._isPolyLineActive = false;
-        this._isPolygonsActive = false;
+        this.isPolyLineActive = false;
+        this.isCircleActive = false;
+        this.isPolygonsActive = false;
 
         this._undoIsactivated = false;
         this._isSaveButtonActivate = false;
@@ -1183,25 +1182,28 @@ define([
         var collectionsObjects = collectionsInitialization(that);
 
         this._drawCommand = createCommand(function () {
-            that._isPolyLineActive = true;
-            that._isCircleActive = false;
-            that._isPolygonsActive = false;
+            that.isPolyLineActive = true;
+            that.isCircleActive = false;
+            that.isPolygonsActive = false;
             removeHandlers(that);
             drawLinesFunction(that, that._viewer, that._polyLinesCollection, that._polyLinesLabelsCollection);
         });
 
         this._circleCommand = createCommand(function () {
-            that._isPolyLineActive = false;
-            that._isCircleActive = true;
-            that._isPolygonsActive = false;
+            that.isPolyLineActive = false;
+            that.isCircleActive = true;
+            that.isPolygonsActive = false;
+            
+            console.log(that.isCircleActive);
+            
             removeHandlers(that);
             drawCircleFunction(that, that._viewer, that._ellipsoid, that._circleCollection, that._circlesLabelsCollection);
         });
 
         this._polygonCommand = createCommand(function () {
-            that._isPolyLineActive = false;
-            that._isCircleActive = false;
-            that._isPolygonsActive = true;
+            that.isPolyLineActive = false;
+            that.isCircleActive = false;
+            that.isPolygonsActive = true;
             removeHandlers(that);
             drawPolygonsFunction(that, that._viewer, that._ellipsoid, that._polygonsCollection, that._polygonsLabelsCollection);
         });
@@ -1243,7 +1245,7 @@ define([
             }
         });
 
-        //  knockout.track(this, ["", ""]);
+          knockout.track(this, ['isCircleActive', 'isPolyLineActive', 'isPolygonsActive']);
 
     };
     defineProperties(SubMenuViewModel.prototype, {
@@ -1291,9 +1293,9 @@ define([
         },
         removeAllCommands: {
             get: function () {
-                this._isPolyLineActive = false;
-                this._isCircleActive = false;
-                this._isSaveButtonActivate = false;
+                this.isPolyLineActive = false;
+                this.isCircleActive = false;
+                this.isSaveButtonActivate = false;
 
                 if (this._handlerLeftClick)
                     this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);

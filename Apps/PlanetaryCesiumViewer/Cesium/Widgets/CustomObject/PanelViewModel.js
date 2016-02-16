@@ -58,6 +58,8 @@ define([
                     }
 
                     that._ellipsoid = freezeObject(new Ellipsoid(axisParameters.x, axisParameters.y, axisParameters.z));
+                    Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // A MODIFIER 
+                    
                     var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
                     var newGeographicProjection = new GeographicProjection(that._ellipsoid);
                     var newGlobe = new Globe(that._ellipsoid);
@@ -93,19 +95,22 @@ define([
                 that.selectedServer = knockout.observableArray();
                 that.selectedServer.subscribe(function (data) {
 
-                    that._urlServer = data.url;
-                    that._serverDir = data.dir;
-                    that._serverMapExtension = data.extension;
-                    that._server = data;
+                    if (data !== null || data === "undefined") {
+                        
+                        that._urlServer = data.url;
+                        that._serverDir = data.dir;
+                        that._serverMapExtension = data.extension;
+                        that._server = data;
 
-                    try {
-                        var adressGetCapabilities = that._urlServer + "?map=" + that._serverDir + that._planet + "/" + that._planet + that._serverMapExtension + "&service=WMS&request=GetCapabilities";
+                        try {
+                            var adressGetCapabilities = that._urlServer + "?map=" + that._serverDir + that._planet + "/" + that._planet + that._serverMapExtension + "&service=WMS&request=GetCapabilities";
 
-                        var xhr = getXMLHttpRequest();
-                        getXmlData(xhr, 'post', adressGetCapabilities, true, that);
-                        that.selectedSatellite.indexOf = 0;
+                            var xhr = getXMLHttpRequest();
+                            getXmlData(xhr, 'post', adressGetCapabilities, true, that);
+                            that.selectedSatellite.indexOf = 0;
 
-                    } catch (e) {
+                        } catch (e) {
+                        }
                     }
                 });
 
@@ -119,25 +124,27 @@ define([
 
                 that.selectedPlanet.subscribe(function (data) {
 
-                    that._planet = data;
+                    if (data !== null || data === "undefined") {
+                        
+                        that._planet = data;
 
-                    var satellites = solarSystem[data];
-                    // satellites[0] = "";
+                        var satellites = solarSystem[data];
 
-                    that.availableSatellites.removeAll();
-                    if (satellites.length > 1) {
-                        selectElementSatelliteTexture.style.visibility = "visible";
-                        for (var j = 1; j < satellites.length; j++) {
-                            that.availableSatellites.push(satellites[j]);
+                        that.availableSatellites.removeAll();
+                        if (satellites.length > 1) {
+                            selectElementSatelliteTexture.style.visibility = "visible";
+                            for (var j = 1; j < satellites.length; j++) {
+                                that.availableSatellites.push(satellites[j]);
+                            }
+                        } else {
+                            selectElementSatelliteTexture.style.visibility = "hidden";
                         }
-                    } else {
-                        selectElementSatelliteTexture.style.visibility = "hidden";
+
+                        var adressGetCapabilities = that._urlServer + "?map=" + that._serverDir + that._planet + "/" + that._planet + that._serverMapExtension + "&service=WMS&request=GetCapabilities";
+
+                        var xhr = getXMLHttpRequest();
+                        getXmlData(xhr, 'post', adressGetCapabilities, true, that);
                     }
-
-                    var adressGetCapabilities = that._urlServer + "?map=" + that._serverDir + that._planet + "/" + that._planet + that._serverMapExtension + "&service=WMS&request=GetCapabilities";
-
-                    var xhr = getXMLHttpRequest();
-                    getXmlData(xhr, 'post', adressGetCapabilities, true, that);
                 });
 
                 that.selectedSatellite = knockout.observableArray();
@@ -281,12 +288,46 @@ define([
                     addedLayerObject.push(that._layerAdded);
                     console.log(addedLayerObject());
                     that._layerAdded = 'undefined';
+                } else {
+
+                    alert("Please select a layer from the list before to add it.");
                 }
             }
 
-            function textureValidationFunction() {
-                var configName = prompt("Please enter a name for this configuration", "Configuration Name");
-                console.log(configName);
+            function textureValidationFunction(viewer, addedLayerObject, that) {
+
+                if (addedLayerObject().length > 0) {
+
+                    var configName = prompt("Please enter a name for this configuration", "Configuration Name");
+                    that._layersArray = addedLayerObject.splice(0, addedLayerObject().length);
+
+                    var configuration = {
+                        layers: that._layersArray,
+                        objectName: configName
+                    }
+
+                    viewer.customObject.viewModel.setAvailableObjects = configuration;
+
+                    that._layersArray = null;
+                    that._server = null;
+                    that._planet = null;
+                    that._satellite = null;
+
+                    that.selectedServer(null);
+                    that.selectedSatellite(null);
+                    that.selectedPlanet(null);
+                    that.selectedLayer(null);
+                    
+                     that.availableLayers.removeAll();
+
+                } else if (addedLayerObject().length == 0) {
+                    alert("Please, select at least ONE layer.");
+                }
+
+            }
+
+            function selectionInitialization() {
+
             }
 
 
@@ -324,7 +365,7 @@ define([
 
                 this._validateTextureCommand = createCommand(function () {
 
-                    textureValidationFunction();
+                    textureValidationFunction(that._viewer, that.addedLayerObject, that);
 
                 });
 

@@ -21,13 +21,14 @@ define([
                 var selectElement = document.createElement('SELECT');
                 selectElement.className = 'cesium-customObject-select';
                 selectElement.style.cssText = 'text-align : center; font-family : Arial';
+                selectElement.setAttribute('data-bind', 'options: availableObjects, optionsText : "objectName", value: selectedObject, optionsCaption: "Select a custom object"');
                 container.appendChild(selectElement);
 
                 // premier element de la liste
-                var option = document.createElement("option");
+               /* var option = document.createElement("option");
                 option.value = 0;
                 option.text = "------------------------";
-                selectElement.appendChild(option);
+                selectElement.appendChild(option);*/
 
                 // creation du bouton custom pour activer la fonctionnalité 
                 var btnElement = document.createElement('div');
@@ -82,7 +83,7 @@ define([
                 var inputXparameter = document.createElement('input');
                 inputXparameter.type = 'text';
                 inputXparameter.name = 'x';
-                inputXparameter.value = 0;
+                inputXparameter.value = 1000000.0;
 
                 var colomn2Line1 = document.createElement('TD');
                 colomn2Line1.appendChild(inputXparameter);
@@ -100,7 +101,7 @@ define([
                 var inputYparameter = document.createElement('input');
                 inputYparameter.type = 'text';
                 inputYparameter.name = 'y';
-                inputYparameter.value = 0;
+                inputYparameter.value = 1000000.0;
 
                 var colomn2Line2 = document.createElement('TD');
                 colomn2Line2.appendChild(inputYparameter);
@@ -118,7 +119,7 @@ define([
                 var inputZparameter = document.createElement('input');
                 inputZparameter.type = 'text';
                 inputZparameter.name = 'z';
-                inputZparameter.value = 0;
+                inputZparameter.value = 1000000.0;
 
                 var colomn2Line3 = document.createElement('TD');
                 colomn2Line3.appendChild(inputZparameter);

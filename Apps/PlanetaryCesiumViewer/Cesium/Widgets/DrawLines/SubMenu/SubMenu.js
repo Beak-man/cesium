@@ -105,9 +105,9 @@ define([
         wrapperMenu.appendChild(drawButton);
 
         var circleButton = document.createElement('div');
-        circleButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
+        circleButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show ';
         circleButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 168.602  168.602">' + circleIcon + ' </svg>';
-        circleButton.setAttribute('data-bind', 'attr  : { title: "Draw circles" }, event : {click : circleCommand}');
+        circleButton.setAttribute('data-bind', 'attr  : { title: "Draw circles" }, event : {click : circleCommand}, css: {"cesium-subMenu-focus": isCircleActive}');
         wrapperMenu.appendChild(circleButton);
         
         var polygonButton = document.createElement('div');

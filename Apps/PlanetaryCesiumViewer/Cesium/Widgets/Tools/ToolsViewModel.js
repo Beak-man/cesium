@@ -31,13 +31,13 @@ define([
         var sizePageY = document.documentElement.clientHeight;
 
         that._handlerDownClick.setInputAction(function () {
-            
+
             document.onmousemove = getPosition;
-                var cursorPosition = cursor;
-            
+            var cursorPosition = cursor;
+
             that._handlerMove.setInputAction(function (mouvement) {
 
-                 var cursorPosition = cursor;
+                var cursorPosition = cursor;
 
                 //  var offsetY = cursorPosition.y - (wrapper.children[1].offsetHeight / 2) - (wrapper.children[0].offsetHeight);
                 //  var offsetX = cursorPosition.x - (wrapper.children[1].offsetWidth / 2);
@@ -92,6 +92,7 @@ define([
             that._wrapper.children[0].className = 'cesium-Tools-wrapperPanel-transition-show';
             that._isPanelVisible = true;
             that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
+            that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
 
             if (that._handlerDownClick)
                 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);

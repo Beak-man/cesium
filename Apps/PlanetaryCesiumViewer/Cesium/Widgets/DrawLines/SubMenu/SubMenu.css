@@ -2,8 +2,8 @@
     position : relative;
     height: 37px;
     display: inline-block;
-     margin : 0px;
-     padding: 0px;
+    margin : 0px;
+    padding: 0px;
 }
 
 .cesium-subMenu-saveButton {
@@ -13,5 +13,13 @@
 }
 
 .cesium-subMenu-saveButtonLink{
- 
+
+}
+
+.cesium-subMenu-focus{
+    border : #33ff00 1px solid; 
+}
+
+.cesium-subMenu-unfocus{
+    border: 1px solid #444;
 }

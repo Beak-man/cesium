@@ -45,7 +45,8 @@ define([
     '../ShowSystems/ShowSystems', /* *** NEW *** */
     '../Tools/Tools', /* *** NEW *** */
     '../DrawLines/DrawLines',        /* *** NEW *** */
-    '../CustomObject/CustomObject'  /* *** NEW *** */
+    '../CustomObject/CustomObject',  /* *** NEW *** */
+    '../EditDrawing/EditDrawing'  /* *** NEW *** */
 ], function (
         BoundingSphere,
         Cartesian3,
@@ -92,7 +93,8 @@ define([
         ShowSystems, /* *** NEW *** */
         Tools, /* *** NEW *** */
         DrawLines,    /* *** NEW *** */
-        CustomObject  /* *** NEW *** */) {
+        CustomObject,  /* *** NEW *** */
+        EditDrawing /* *** NEW *** */) {
     "use strict";
 
     var boundingSphereScratch = new BoundingSphere();
@@ -514,7 +516,10 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         tools = new Tools(modificationsToolbar, modificationsToolbarWrapper, this);
 
         var drawLines;
-        drawLines = new DrawLines(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this)
+        drawLines = new DrawLines(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
+        
+        var editDrawing;
+         editDrawing = new EditDrawing(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
 
 
         /* *******************************************************************************************************************************
@@ -643,6 +648,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         this._tools = tools;             /* *** NEW *** */
         this._drawLines = drawLines;     /* *** NEW *** */
         this._customObject = customObject;     /* *** NEW *** */
+        this._editDrawing = editDrawing;  /* *** NEW *** */
         this._sceneModePicker = sceneModePicker;
         this._baseLayerPicker = baseLayerPicker;
         this._navigationHelpButton = navigationHelpButton;
@@ -792,6 +798,11 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         drawLines: {
             get: function () {
                 return this._drawLines;
+            }
+        },
+        editDrawing: {
+            get: function () {
+                return this._editDrawing;
             }
         },
         customObject: {
