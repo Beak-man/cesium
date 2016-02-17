@@ -26,6 +26,7 @@ define([
         that._wrapperPanel.className = 'cesium-Tools-wrapperPanel-transition-hide';
         that._viewer.tools.viewModel._isPanelVisible = false;
         that._viewer.drawLines.viewModel.isPanelToolVisible = false;
+        that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
 
         // Activate the sub-menu of the drawLines widget
 

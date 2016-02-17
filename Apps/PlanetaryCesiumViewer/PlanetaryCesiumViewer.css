@@ -7,6 +7,7 @@
 @import url(./Cesium/Widgets/DrawLines/DrawLines.css);
 @import url(./Cesium/Widgets/DrawLines/SubMenu/SubMenu.css);
 @import url(./Cesium/Widgets/CustomObject/CustomObject.css);
+@import url(./Cesium/Widgets/EditDrawing/EditDrawing.css);
 
 html {
     height: 100%;

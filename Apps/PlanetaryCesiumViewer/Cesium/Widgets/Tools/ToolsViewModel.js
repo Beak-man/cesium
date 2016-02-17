@@ -106,10 +106,13 @@ define([
 
         } else if (that._isPanelVisible === true) {
 
+
+
             that._wrapper.children[0].classeName = "";
             that._wrapper.children[0].className = 'cesium-Tools-wrapperPanel-transition-hide';
             that._isPanelVisible = false;
             that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
+            that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
 
             if (that._handlerDownClick)
                 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);

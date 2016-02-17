@@ -45,16 +45,17 @@ define([
 
         // For the icon inside the main menu panel
 
-        var editDrawButton = document.createElement('div');
-        editDrawButton.className = 'cesium-button cesium-toolbar-button cesium-modificationsToolbar-button';
-        editDrawButton.innerHTML = '<svg width="305" height="305" viewBox="12.5 12.5 210 210">' + icone +' </svg>';
-        editDrawButton.setAttribute('data-bind', 'attr  : { title: "Edit draw" },\
-		                                          css   : { "cesium-modificationsToolbar-button-hidden"  : !isPanelToolVisibleEdit,\
-						                    "cesium-modificationsToolbar-button-visible" : isPanelToolVisibleEdit },\
-							             event : {click : editCommand}');
-        wrapperPanel.appendChild(editDrawButton);
 
-        knockout.applyBindings(viewModel, editDrawButton);
+            var editDrawButton = document.createElement('div');
+            editDrawButton.className = 'cesium-button cesium-toolbar-button cesium-modificationsToolbar-button';
+            editDrawButton.innerHTML = '<svg width="305" height="305" viewBox="12.5 12.5 210 210">' + icone + ' </svg>';
+            editDrawButton.setAttribute('data-bind', 'attr  : { title: "Edit draw" },\
+		                                          css   : { "cesium-drawEdit-button-hidden"  : !isPanelToolVisibleEdit,\
+						                    "cesium-drawEdit-button-visible" : isPanelToolVisibleEdit },\
+							             event : {click : editCommand}');
+            wrapperPanel.appendChild(editDrawButton);
+
+            knockout.applyBindings(viewModel, editDrawButton);
 
 
     };

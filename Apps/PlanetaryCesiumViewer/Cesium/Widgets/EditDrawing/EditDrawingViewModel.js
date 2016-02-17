@@ -5,14 +5,16 @@ define([
     '../../Core/defineProperties',
     '../../Core/ScreenSpaceEventHandler',
     '../../Core/ScreenSpaceEventType',
-    '../../ThirdParty/knockout'
+    '../../ThirdParty/knockout',
+    './SubMenu/SubMenu'
 ], function (
         createCommand,
         defined,
         defineProperties,
         ScreenSpaceEventHandler,
         ScreenSpaceEventType,
-        knockout
+        knockout,
+        SubMenu
         ) {
     "use strict";
 
@@ -24,6 +26,7 @@ define([
         that._wrapperPanel.className = 'cesium-Tools-wrapperPanel-transition-hide';
         that._viewer.tools.viewModel._isPanelVisible = false;
         that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
+        that._viewer.drawLines.viewModel.isPanelToolVisible = false;
 
         // Activate the sub-menu of the drawLines widget
 
@@ -33,10 +36,10 @@ define([
         } catch (e) {
         }
 
-     //   that._subMenu = new SubMenu(that._IconsContainer, that._viewer);
+        that._subMenu = new SubMenu(that._IconsContainer, that._viewer);
 
-        /*var subMenuViewModel = SubMenuViewModel();
-         knockout.applyBindings(subMenuViewModel, that._wrapperMenu);*/
+        var subMenuViewModel = SubMenuViewModel();
+        knockout.applyBindings(subMenuViewModel, that._wrapperMenu);
     }
 
     /**
@@ -47,7 +50,7 @@ define([
     var EditDrawingViewModel = function (IconsContainer, wrapperPanel, viewer) {
 
 
-              console.log("dans EditDrawingViewModel");
+        console.log("dans EditDrawingViewModel");
 
         this._IconsContainer = IconsContainer;
         this._wrapperPanel = wrapperPanel;
@@ -60,7 +63,7 @@ define([
             InitializeDrawEdit(that);
         });
 
-        knockout.track(this, ["isPanelToolVisibleEdit", "isDrawEditActive"]);
+        knockout.track(this, ['isPanelToolVisibleEdit', 'isDrawEditActive']);
 
     };
     defineProperties(EditDrawingViewModel.prototype, {
@@ -74,7 +77,7 @@ define([
             get: function () {
                 return this._editCommand;
             }
-       },
+        },
         isPanelToolVisibleEdit: {
             set: function (value) {
                 this._isPanelToolVisibleEdit = value;
