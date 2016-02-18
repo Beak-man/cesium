@@ -5,6 +5,7 @@ defineSuite([
         'Core/defined',
         'Core/Ellipsoid',
         'Core/GeographicTilingScheme',
+        'Core/getAbsoluteUri',
         'Core/HeightmapTerrainData',
         'Core/loadWithXhr',
         'Core/Math',
@@ -19,6 +20,7 @@ defineSuite([
         defined,
         Ellipsoid,
         GeographicTilingScheme,
+        getAbsoluteUri,
         HeightmapTerrainData,
         loadWithXhr,
         CesiumMath,
@@ -28,7 +30,6 @@ defineSuite([
         Uri,
         when) {
     "use strict";
-    /*global jasmine,describe,xdescribe,it,xit,expect,beforeEach,afterEach,beforeAll,afterAll,spyOn*/
 
     afterEach(function() {
         loadWithXhr.load = loadWithXhr.defaultLoad;
@@ -51,14 +52,6 @@ defineSuite([
 
     function returnQuantizedMeshTileJson() {
         return returnTileJson('Data/CesiumTerrainTileJson/QuantizedMesh.tile.json');
-    }
-
-    function returnQuantizedMesh20TileJson() {
-        return returnTileJson('Data/CesiumTerrainTileJson/QuantizedMesh2.0.tile.json');
-    }
-
-    function returnQuantizedMesh11TileJson() {
-        return returnTileJson('Data/CesiumTerrainTileJson/QuantizedMesh1.1.tile.json');
     }
 
     function returnVertexNormalTileJson() {
@@ -393,9 +386,7 @@ defineSuite([
         it('supports scheme-less template URLs in layer.json resolved with absolute URL', function() {
             returnTileJson('Data/CesiumTerrainTileJson/MultipleUrls.tile.json');
 
-            var baseUri = new Uri(document.location.href);
-            var relativeUri = new Uri('Data/CesiumTerrainTileJson');
-            var url = relativeUri.resolve(baseUri).toString();
+            var url = getAbsoluteUri('Data/CesiumTerrainTileJson');
 
             var provider = new CesiumTerrainProvider({
                 url : url
@@ -442,8 +433,6 @@ defineSuite([
         });
 
         it('provides HeightmapTerrainData', function() {
-            var baseUrl = 'made/up/url';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 // Just return any old file, as long as its big enough
                 loadWithXhr.defaultLoad('Data/EarthOrientationParameters/IcrfToFixedStkComponentsRotationData.json', responseType, method, data, headers, deferred);
@@ -457,8 +446,6 @@ defineSuite([
         });
 
         it('provides QuantizedMeshTerrainData', function() {
-            var baseUrl = 'made/up/url';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 loadWithXhr.defaultLoad('Data/CesiumTerrainTileJson/tile.terrain', responseType, method, data, headers, deferred);
             };
@@ -471,8 +458,6 @@ defineSuite([
         });
 
         it('provides QuantizedMeshTerrainData with 32bit indices', function() {
-            var baseUrl = 'made/up/url';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 loadWithXhr.defaultLoad('Data/CesiumTerrainTileJson/tile.32bitIndices.terrain', responseType, method, data, headers, deferred);
             };
@@ -486,8 +471,6 @@ defineSuite([
         });
 
         it('provides QuantizedMeshTerrainData with VertexNormals', function() {
-            var baseUrl = 'made/up/url';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 loadWithXhr.defaultLoad('Data/CesiumTerrainTileJson/tile.vertexnormals.terrain', responseType, method, data, headers, deferred);
             };
@@ -501,8 +484,6 @@ defineSuite([
         });
 
         it('provides QuantizedMeshTerrainData with WaterMask', function() {
-            var baseUrl = 'made/up/url';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 loadWithXhr.defaultLoad('Data/CesiumTerrainTileJson/tile.watermask.terrain', responseType, method, data, headers, deferred);
             };
@@ -516,8 +497,6 @@ defineSuite([
         });
 
         it('provides QuantizedMeshTerrainData with VertexNormals and WaterMask', function() {
-            var baseUrl = 'made/up/url';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 loadWithXhr.defaultLoad('Data/CesiumTerrainTileJson/tile.octvertexnormals.watermask.terrain', responseType, method, data, headers, deferred);
             };
@@ -532,8 +511,6 @@ defineSuite([
         });
 
         it('provides QuantizedMeshTerrainData with OctVertexNormals', function() {
-            var baseUrl = 'made/up/url';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 loadWithXhr.defaultLoad('Data/CesiumTerrainTileJson/tile.octvertexnormals.terrain', responseType, method, data, headers, deferred);
             };
@@ -547,8 +524,6 @@ defineSuite([
         });
 
         it('provides QuantizedMeshTerrainData with VertexNormals and unknown extensions', function() {
-            var baseUrl = 'made/up/url';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 loadWithXhr.defaultLoad('Data/CesiumTerrainTileJson/tile.vertexnormals.unknownext.terrain', responseType, method, data, headers, deferred);
             };
@@ -562,8 +537,6 @@ defineSuite([
         });
 
         it('provides QuantizedMeshTerrainData with OctVertexNormals and unknown extensions', function() {
-            var baseUrl = 'made/up/url';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 loadWithXhr.defaultLoad('Data/CesiumTerrainTileJson/tile.octvertexnormals.unknownext.terrain', responseType, method, data, headers, deferred);
             };
@@ -577,8 +550,6 @@ defineSuite([
         });
 
         it('provides QuantizedMeshTerrainData with unknown extension', function() {
-            var baseUrl = 'made/up/url';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 loadWithXhr.defaultLoad('Data/CesiumTerrainTileJson/tile.unknownext.terrain', responseType, method, data, headers, deferred);
             };
@@ -665,8 +636,6 @@ defineSuite([
         });
 
         it('supports a query string in the base URL', function() {
-            var baseUrl = 'made/up/url?a=some&b=query';
-
             loadWithXhr.load = function(url, responseType, method, data, headers, deferred, overrideMimeType) {
                 // Just return any old file, as long as its big enough
                 loadWithXhr.defaultLoad('Data/EarthOrientationParameters/IcrfToFixedStkComponentsRotationData.json', responseType, method, data, headers, deferred);
