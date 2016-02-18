@@ -1102,7 +1102,7 @@ define([
                 }
 
                 if (geomType === "Point") {
-                    if (geoJsonData[l].properties.radius && geoJsonData[l].properties.surface) {
+                    if (geoJsonData[l].properties.radius) {
                         geoJsonObject.features.push(geoJsonData[l]);
                     }
                 }

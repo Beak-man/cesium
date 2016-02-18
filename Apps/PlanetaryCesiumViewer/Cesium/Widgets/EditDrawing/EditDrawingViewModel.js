@@ -25,8 +25,8 @@ define([
         that._wrapperPanel.className = '';
         that._wrapperPanel.className = 'cesium-Tools-wrapperPanel-transition-hide';
         that._viewer.tools.viewModel._isPanelVisible = false;
-        that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
         that._viewer.drawLines.viewModel.isPanelToolVisible = false;
+        that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
 
         // Activate the sub-menu of the drawLines widget
 
@@ -37,9 +37,6 @@ define([
         }
 
         that._subMenu = new SubMenu(that._IconsContainer, that._viewer);
-
-        var subMenuViewModel = SubMenuViewModel();
-        knockout.applyBindings(subMenuViewModel, that._wrapperMenu);
     }
 
     /**

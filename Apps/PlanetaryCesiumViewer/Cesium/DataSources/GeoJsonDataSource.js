@@ -316,10 +316,9 @@ define([
                 var position;
             } catch (e) {
                 var radiusString = geoJson.properties.radius;
-                var radius = parseFloat(radiusString)*1000;
+                var radius = parseFloat(radiusString);
                 var position;
             }
-
 
             if (!GeoJsonDataSource._ellipsoid) {
                 position = new ConstantPositionProperty(crsFunction(coordinates));
@@ -349,6 +348,9 @@ define([
             var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
             entity.position = position;
             entity.ellipse = circle;
+            
+            console.log(dataSource._entityCollection);
+            console.log(entity);
 
         } else {
 
@@ -373,7 +375,7 @@ define([
             stringifyScratch[0] = symbol;
             stringifyScratch[1] = color;
             stringifyScratch[2] = size;
-            var id = JSON.stringify(stringifyScratch);
+           // var id = JSON.stringify(stringifyScratch);
 
             var canvasOrPromise;
             if (defined(symbol)) {

@@ -64,8 +64,8 @@ define([
                     entity = pickedObject.primitive.id;
                     entity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
 
-                    console.log(viewer.infoBox.frame.contentDocument.all);
-                    console.log(viewer);
+                //    console.log(viewer.infoBox.frame.contentDocument.all);
+                //    console.log(viewer);
 
                     /* *************** COMMANDE A UTILISER POUR MODIFIER LE CONTENU DU INFOBOX *************** */
 

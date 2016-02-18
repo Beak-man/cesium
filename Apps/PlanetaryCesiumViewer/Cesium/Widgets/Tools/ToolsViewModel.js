@@ -90,7 +90,9 @@ define([
 
             that._wrapper.children[0].classeName = "";
             that._wrapper.children[0].className = 'cesium-Tools-wrapperPanel-transition-show';
+
             that._isPanelVisible = true;
+
             that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
 
@@ -101,6 +103,13 @@ define([
 
             try {
                 that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+                that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+            } catch (e) {
+            }
+
+            try {
+                that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu;
+                that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
             }
 
@@ -110,7 +119,9 @@ define([
 
             that._wrapper.children[0].classeName = "";
             that._wrapper.children[0].className = 'cesium-Tools-wrapperPanel-transition-hide';
+
             that._isPanelVisible = false;
+
             that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
 
@@ -120,7 +131,13 @@ define([
                 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
             try {
-                that._viewer.drawLines.viewModel.destroyWrapperMenu;
+                that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+                that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+            } catch (e) {
+            }
+            try {
+                that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu;
+                that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
             }
         }
