@@ -122,7 +122,7 @@ define([
                  pickedObject.material = new Color(1.0, 0.0, 0.0, 0.3);
 
                 var bool = viewer.scene.primitives.contains(pickedObject.primitive);
-                console.log(bool);
+                console.log(viewer.scene.primitives.get(pickedObject.primitive));
                 
                  viewer.scene.primitives.get(1).material = new Color(0.0, 1.0, 0.0, 0.3);
                  viewer.scene.primitives.get(1).outlineColor = Color.GREEN
