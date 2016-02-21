@@ -715,11 +715,12 @@ define([
                 configContainer.style.opacity = 0;
                 configContainer.className = "cesium-showSystems-configContainer-transition";
                 configContainer.style.left = this._windowsMove;
-                
-                try{
+
+                try {
                     this._btnShowPanel.parentElement.removeChild(this._btnShowPanel);
-                }catch(e){}
-                
+                } catch (e) {
+                }
+
             }
         },
     });
@@ -761,6 +762,11 @@ define([
     function initializeScene(that, objectDimensions) {
         that._ellipsoid = freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
         Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // A MODIFIER 
+        
+        if ( that._viewer.geoJsonData){
+             that._viewer.geoJsonData = null;
+        }
+        
 
         try {
             that._viewer.scene.primitives.removeAll(true);
@@ -785,23 +791,13 @@ define([
         var newGeographicProjection = new GeographicProjection(that._ellipsoid);
         var newGlobe = new Globe(that._ellipsoid);
 
-        /*  var newOccluder          = new Occluder(new BoundingSphere(Cartesian3.ZERO, that._ellipsoid.minimumRadius), Cartesian3.ZERO);    
-         var cameraPosition         =  Cartesian3.ZERO;
-         var occluderBoundingSphere = new BoundingSphere(Cartesian3.ZERO, that._ellipsoid.minimumRadius);
-         Occluder.fromBoundingSphere(occluderBoundingSphere, cameraPosition, newOccluder);  */
-
         that._viewer.dataSources.removeAll(true);
         that._viewer.scene.globe = newGlobe;
         that._viewer.scene.mapProjection = newGeographicProjection;
         that._viewer.scene.camera.projection = newGeographicProjection;
         that._viewer.terrainProvider = newTerrainProvider;
         that._viewer.scene.globe.baseColor = Color.BLACK;
-
-
-
-        /* CesiumWidget.ellipsoid = that._ellipsoid;
-         CesiumWidget.scene =  that._viewer.scene;
-         CesiumWidget.render;*/
+        that._viewer.scene.camera.ellipsoid = that._ellipsoid;
     }
 
     function initializeMarkerMoveWidget(that) {

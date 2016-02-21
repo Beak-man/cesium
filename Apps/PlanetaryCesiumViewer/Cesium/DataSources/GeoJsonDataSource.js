@@ -21,8 +21,6 @@ define([
     '../ThirdParty/when',
     './BillboardGraphics',
     './CallbackProperty',
-    '../Core/CircleGeometry',
-    '../Core/ColorGeometryInstanceAttribute',
     './ColorMaterialProperty',
     './ConstantPositionProperty',
     './ConstantProperty',
@@ -53,8 +51,6 @@ define([
         when,
         BillboardGraphics,
         CallbackProperty,
-        CircleGeometry,
-        ColorGeometryInstanceAttribute,
         ColorMaterialProperty,
         ConstantPositionProperty,
         ConstantProperty,
@@ -278,6 +274,7 @@ define([
             if (!definedNotNull(geometryHandler)) {
                 throw new RuntimeError('Unknown geometry type: ' + geometryType);
             }
+
             geometryHandler(dataSource, feature, feature.geometry, crsFunction, options);
         }
     }
@@ -305,19 +302,20 @@ define([
 
     function createPoint(dataSource, geoJson, crsFunction, coordinates, options) {
 
-
         // if (geoJson.properties.radius && geoJson.properties.surface && geoJson.properties.Name == "Circle") {
         if (geoJson.properties.radius) {
+
+            var radius;
+            var position;
 
             try {
                 var radiusString = geoJson.properties.radius;
                 var stringSplit = radiusString.split(" ");
-                var radius = parseFloat(stringSplit[0]);
-                var position;
+                radius = parseFloat(stringSplit[0]);
             } catch (e) {
                 var radiusString = geoJson.properties.radius;
-                var radius = parseFloat(radiusString);
-                var position;
+                radius = parseFloat(radiusString);
+
             }
 
             if (!GeoJsonDataSource._ellipsoid) {
@@ -332,10 +330,23 @@ define([
             circle.outline = new ConstantProperty(true);
             circle.semiMajorAxis = radius;
             circle.semiMinorAxis = radius;
-            circle.material = new Color(1.0, 1.0, 0.0, 0.3);
             circle.outline = true;
             circle.outlineColor = Color.YELLOW;
             circle.outlineWidth = 1.0;
+
+            if (geoJson.properties.status) {
+                if (geoJson.properties.status == "Valid") {
+                    circle.material = new Color(0.0, 1.0, 0.0, 0.3);
+                } else if (geoJson.properties.status == "Remove") {
+                    circle.material = new Color(1.0, 0.0, 0.0, 0.3);
+                } else if (geoJson.properties.status == "Discuss") {
+                    circle.material = new Color(1.0, 0.5, 0.0, 0.3);
+                }
+            } else {
+                 circle.material = new Color(1.0, 1.0, 0.0, 0.3);
+            }
+
+
 
             if (!GeoJsonDataSource._ellipsoid) {
                 position = new ConstantPositionProperty(crsFunction(coordinates));
@@ -344,13 +355,9 @@ define([
                 position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
             }
 
-
             var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
             entity.position = position;
             entity.ellipse = circle;
-            
-            console.log(dataSource._entityCollection);
-            console.log(entity);
 
         } else {
 
@@ -375,7 +382,7 @@ define([
             stringifyScratch[0] = symbol;
             stringifyScratch[1] = color;
             stringifyScratch[2] = size;
-           // var id = JSON.stringify(stringifyScratch);
+            // var id = JSON.stringify(stringifyScratch);
 
             var canvasOrPromise;
             if (defined(symbol)) {
@@ -407,6 +414,7 @@ define([
     }
 
     function processPoint(dataSource, geoJson, geometry, crsFunction, options) {
+
         createPoint(dataSource, geoJson, crsFunction, geometry.coordinates, options);
     }
 
@@ -899,6 +907,8 @@ define([
          console.log("***********************************************************************");*/
 
         options.view.geoJsonData = data;
+
+        GeoJsonDataSource._viewer = options.view;
 
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         var sourceUri = options.sourceUri;

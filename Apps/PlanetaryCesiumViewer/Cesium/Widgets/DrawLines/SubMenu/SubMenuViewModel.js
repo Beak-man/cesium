@@ -1002,10 +1002,7 @@ define([
                 }
 
             }
-
-
-
-
+            
             // Si la primitive est un polygonsGeomtry alors ...
             if (primitives[i].associatedObject === "polylinesTmpPolygons") {
 
@@ -1209,6 +1206,9 @@ define([
         });
 
         this._trashCommand = createCommand(function () {
+            
+            if ( that._viewer.scene.primitives.length > 0){
+            
             try {
                 that._viewer.scene.primitives.removeAll();
                 removeHandlers(that);
@@ -1217,6 +1217,16 @@ define([
             } catch (e) {
                 console.log(e)
             }
+        } else {
+            try {
+                removeHandlers(that);
+                var collection = collectionsInitialization(that);
+                that._viewer.geoJsonData = null;
+            } catch (e) {
+                console.log(e)
+            }
+            
+        }
 
         });
 
