@@ -6,64 +6,26 @@ define([
     '../../../Core/Math',
     '../../../Core/Cartesian2',
     '../../../Core/Cartesian3',
-    '../../../Core/Cartographic',
-    '../../../Core/CircleGeometry',
-    '../../../Core/CircleOutlineGeometry',
     '../../../Core/Color',
-    '../../../Core/ColorGeometryInstanceAttribute',
     '../../createCommand',
     '../../../Core/defined',
     '../../../Core/defineProperties',
     '../../../DataSources/GeoJsonDataSource',
-    '../../../Core/GeometryInstance',
     '../../../ThirdParty/knockout',
-    '../../../Scene/HeightReference',
-    '../../../Scene/HorizontalOrigin',
-    '../../../Scene/LabelCollection',
-    '../../../Scene/LabelStyle',
-    '../../../Scene/Material',
-    '../../../Core/NearFarScalar',
-    '../../../Core/PolygonGeometry',
-    '../../../Scene/PolylineCollection',
-    '../../../Core/PolylinePipeline',
-    '../../../Scene/PerInstanceColorAppearance',
-    '../../../Scene/Primitive',
-    '../../../Scene/PrimitiveCollection',
     '../../../Core/ScreenSpaceEventHandler',
-    '../../../Core/ScreenSpaceEventType',
-    '../../../Core/SimplePolylineGeometry',
-    '../../../Scene/VerticalOrigin',
+    '../../../Core/ScreenSpaceEventType'
 ], function (
         CesiumMath,
         Cartesian2,
         Cartesian3,
-        Cartographic,
-        CircleGeometry,
-        CircleOutlineGeometry,
         Color,
-        ColorGeometryInstanceAttribute,
         createCommand,
         defined,
         defineProperties,
         GeoJsonDataSource,
-        GeometryInstance,
         knockout,
-        HeightReference,
-        HorizontalOrigin,
-        LabelCollection,
-        LabelStyle,
-        Material,
-        NearFarScalar,
-        PolygonGeometry,
-        PolylineCollection,
-        PolylinePipeline,
-        PerInstanceColorAppearance,
-        Primitive,
-        PrimitiveCollection,
         ScreenSpaceEventHandler,
-        ScreenSpaceEventType,
-        SimplePolylineGeometry,
-        VerticalOrigin
+        ScreenSpaceEventType
         ) {
     "use strict";
 
@@ -119,7 +81,7 @@ define([
 
                 var objectPosition = pickedObject.position;
 
-                objectId.ellipse.material.color = new Color(0.0, 1.0, 0.0, 0.3);
+               objectId.ellipse.material.color = new Color(0.0, 1.0, 0.0, 0.3);
                 objectId.properties.status = "Valid";
 
 
@@ -127,9 +89,7 @@ define([
 
             }, ScreenSpaceEventType.LEFT_CLICK);
 
-
             that._handlerMiddle.setInputAction(function (click) {
-
 
                 // on recupere l'ellipsoid
                 var ellipsoid = viewer.scene.globe.ellipsoid;
@@ -167,7 +127,7 @@ define([
 
                 var objectPosition = pickedObject.position;
 
-                objectId.ellipse.material.color = new Color(1.0, 0.5, 0.0, 0.3);
+                objectId.ellipse.material.color = new Color(1.0, 0.5, 0.0, 0.5);
                 objectId.properties.status = "Discuss";
 
                 that._isflagCommandActive = true;
@@ -176,7 +136,6 @@ define([
 
             that._handlerRight.setInputAction(function (click) {
 
-
                 // on recupere l'ellipsoid
                 var ellipsoid = viewer.scene.globe.ellipsoid;
 
@@ -213,24 +172,19 @@ define([
 
                 var objectPosition = pickedObject.position;
 
-                objectId.ellipse.material.color = new Color(1.0, 0.0, 0.0, 0.3);
+                objectId.ellipse.material.color = new Color(1.0, 0.0, 0.0, 0.6);
                 objectId.properties.status = "Remove";
 
                 that._isflagCommandActive = true;
 
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
-
-
-
         } else {
             that._isflagCommandActive = false;
         }
 
-
     }
-    
-        function saveData(that, container) {
+    function saveData(that, container) {
 
         // obtention de TOUTES les primitives  (polylines, labels et cerlces et autres objets)
         var primitives = that._viewer.scene.primitives._primitives;
@@ -354,9 +308,6 @@ define([
                 }
 
             }
-
-
-
 
             // Si la primitive est un polygonsGeomtry alors ...
             if (primitives[i].associatedObject === "polylinesTmpPolygons") {
@@ -522,16 +473,16 @@ define([
         this._viewer = viewer;
         this._container = container;
         this._isflagCommandActive = false;
+        this._ellipsoid = viewer.scene.globe.ellipsoid;
         var that = this;
 
+        viewer.infoBox.viewModel.showInfo = false;
+
         this._flagCommand = createCommand(function () {
-
             flagFunction(that, that._viewer);
-
         });
 
         this._moveCommand = createCommand(function () {
-
         });
 
         this._saveCommand = createCommand(function () {
@@ -542,6 +493,7 @@ define([
         });
 
         this._closeSubMenu = createCommand(function () {
+
             try {
 
                 // AJOUTER LA SUPPRESSION DES DONNEES LORSQUE L'ON CHANGE DE PLANETE
@@ -549,9 +501,9 @@ define([
                 removeHandlers(that);
                 that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu;
             } catch (e) {
+                console.log(e);
             }
         });
-
         // knockout.track(this, []);
 
     };
@@ -616,6 +568,17 @@ define([
 // ======================================================= LOCAL FUNCTIONS ========================================================
 // ================================================================================================================================
 
+    function removeHandlers(that) {
+
+        if (that._handlerLeft)
+            that._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        if (that._handlerRight)
+            that._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+        if (that._handlerMiddle)
+            that._handlerMiddle.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
+
+
+    }
 
     return SubMenuViewModel;
 });

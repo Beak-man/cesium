@@ -509,7 +509,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         // build custom objects
         var customObject;
-        customObject = new CustomObject(viewerContainer, customToolbar, this);
+       /* customObject = new CustomObject(viewerContainer, customToolbar, this);*/
 
         // tools for modifications
         var tools;

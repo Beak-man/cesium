@@ -478,6 +478,217 @@ define([
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+    function drawCircleFromTwoPointsFunction(that, viewer, ellipsoid, circleCollection, circlesLabels, polyLinesTmps, polyLinesLabelsTmps) {
+
+        // use that to check if we are on the canvas or not (for example, on a button);
+        document.onmousemove = getPosition;
+
+        if (that.isCircleActive) {
+
+            // Initialisation des evenements de la souris
+
+            that._handlerLeftClickCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
+            that._handlerRightClickCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
+            that._handlerLeftDblClickCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
+            that._handlerMouseMoveCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
+
+
+            // initialisation des variables
+
+            var arrayRadians = [];
+            var circleRadius;
+            var cartesianCartographicCircleCenter;
+            var ellipsoid = viewer.scene.globe.ellipsoid;
+            var oldLabel;
+
+            // Implementation des actions a mener lorsque l'evenement a lieu
+
+            that._handlerLeftClickCircle.setInputAction(function (click) {
+                that._undoIsactivated = false;
+                var newLine;
+
+                // on recupere les coordonnées cartésiennes du point ou l'on a cliqué.
+                var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
+
+                // Si les coordonnées cartésiennes existent et que l'on est sur le canvas, alors...
+                if (cartesian && targetMouse === "[object HTMLCanvasElement]") {
+
+                    // on transforme les coordonnées cartésiennes en cartographiques (lng, lat) en radians
+                    var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+
+                    // on commence a remplir le tableau arrayRadians qui contiens les coordonnées 
+                    // des points de départ et d'arrivé de la droite
+
+                    arrayRadians.push(cartographic.longitude);
+                    arrayRadians.push(cartographic.latitude);
+
+                    if (arrayRadians.length === 6) {
+                        
+                        
+                        var startPoint = Cartesian3.fromRadians(arrayRadians[0], arrayRadians[1], cartographic.height, ellipsoid);
+                        var endPoint = Cartesian3.fromRadians(arrayRadians[2], arrayRadians[3], cartographic.height, ellipsoid);
+                        var diameter = Cartesian3.distance(endPoint, startPoint);
+                        var distanceTrunc = diameter.toFixed(2);
+                        
+                        console.log(startPoint);
+                        
+                        
+                        arrayRadians = [];
+
+                    }
+
+
+                    // Implementation de l'evenement "Mouse move" pour voir apparaitre le trait. Cela falicite le tracage pour l'utilisateur
+
+                    that._handlerMouseMoveCircle.setInputAction(function (mouvement) {
+
+                        // on recupere les coordonnées de chaque point survolé par la souris
+
+                        var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
+
+                        // si cartesianMovePosition existe et que l'on est sur le canvas, alors...
+
+                        if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
+
+                            // on transforme les coordonnées...
+
+                            var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
+
+                            // on introduit les nouvelles coordonées dans le tableau
+                            // La condition if est pour dire qu'il faut remplacer systematiquement le point final de maniere
+                            // a ne conserver que un seul trait
+
+
+
+                            if (arrayRadians.length >= 2) {
+
+                                if (arrayRadians[2] && arrayRadians[3]) {
+                                    arrayRadians[2] = cartographicMovePosition.longitude;
+                                    arrayRadians[3] = cartographicMovePosition.latitude;
+                                } else {
+                                    arrayRadians.push(cartographicMovePosition.longitude);
+                                    arrayRadians.push(cartographicMovePosition.latitude);
+                                }
+                            }
+                        }
+
+                        // si on a le point de départ et le point d'arrivé du trait (soit 2 coordonnées pour 2 coordonnées ==> 4 ), alors...
+                        if (arrayRadians.length === 4) {
+
+                            // on fabrique la ligne 
+                            newLine = {
+                                positions: PolylinePipeline.generateCartesianArc({
+                                    positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
+                                    ellipsoid: ellipsoid
+                                }),
+                                material: Material.fromType('Color', {
+                                    color: Color.YELLOW
+                                })
+                            };
+
+                            // on determine la distance entre les deux points 
+
+                            var startPoint = Cartesian3.fromRadians(arrayRadians[0], arrayRadians[1], cartographic.height, ellipsoid);
+                            var endPoint = Cartesian3.fromRadians(arrayRadians[2], arrayRadians[3], cartographicMovePosition.height, ellipsoid);
+                            var distance = Cartesian3.distance(endPoint, startPoint);
+                            var distanceTrunc = distance.toFixed(2);
+
+                            // on détermine le milieu du segement
+
+                            var middlePoint = {
+                                x: (cartesianMovePosition.x + cartesian.x) / 2.0,
+                                y: (cartesianMovePosition.y + cartesian.y) / 2.0,
+                                z: (cartesianMovePosition.z + cartesian.z) / 2.0,
+                            }
+
+                            // creation du label pour l'aide a la visualisation 
+
+                            var newLabelPolyline = {
+                                position: cartesianMovePosition,
+                                text: 'd = ' + distanceTrunc + ' m',
+                                scale: 0.3,
+                                font: '50px arial',
+                                fillColor: Color.WHITE,
+                                outlineColor: Color.BLACK,
+                                style: LabelStyle.FILL,
+                                horizontalOrigin: HorizontalOrigin.LEFT,
+                                verticalOrigin: VerticalOrigin.BOTTOM,
+                                translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0)
+                            };
+
+                            //  ajout de la ligne 
+
+                            polyLinesTmps.add(newLine);
+
+                            var dim = polyLinesTmps._polylines.length;
+
+                            if (dim > 1) {
+                                var polyline = polyLinesTmps._polylines[dim - 2];
+                                polyLinesTmps.remove(polyline);
+                            }
+
+                            if (oldLabel) {
+                                var dimLabel = polyLinesLabelsTmps._labels.length;
+                                var primitiveLabel = polyLinesLabelsTmps._labels[dimLabel - 1];
+                                polyLinesLabelsTmps.remove(primitiveLabel);
+                            }
+
+                            polyLinesLabelsTmps.add(newLabelPolyline);
+
+                            /*   if (!that._undoIsactivated) {
+                             arrayRadians = [];
+                             arrayRadians.push(cartographic.longitude);
+                             arrayRadians.push(cartographic.latitude);
+                             } else {
+                             arrayRadians = [];
+                             arrayRadians.push(that._coordFirstPosition.longitude);
+                             arrayRadians.push(that._coordFirstPosition.latitude);
+                             }*/
+
+                            oldLabel = newLabelPolyline;
+                        }
+                    }, ScreenSpaceEventType.MOUSE_MOVE);
+                }
+
+
+            }, ScreenSpaceEventType.LEFT_CLICK);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     function drawPolygonsFunction(that, viewer, ellipsoid, polygonsCollection, polygonsLabelsCollection) {
 
         document.onmousemove = getPosition;
@@ -1002,7 +1213,7 @@ define([
                 }
 
             }
-            
+
             // Si la primitive est un polygonsGeomtry alors ...
             if (primitives[i].associatedObject === "polylinesTmpPolygons") {
 
@@ -1190,11 +1401,18 @@ define([
             that.isPolyLineActive = false;
             that.isCircleActive = true;
             that.isPolygonsActive = false;
-            
-            console.log(that.isCircleActive);
-            
+
             removeHandlers(that);
             drawCircleFunction(that, that._viewer, that._ellipsoid, that._circleCollection, that._circlesLabelsCollection);
+        });
+
+        this._circleFromTwoPointsCommand = createCommand(function () {
+            that.isPolyLineActive = false;
+            that.isCircleActive = true;
+            that.isPolygonsActive = false;
+
+            removeHandlers(that);
+            drawCircleFromTwoPointsFunction(that, that._viewer, that._ellipsoid, that._circleCollection, that._circlesLabelsCollection, that._polyLinesCollectionTmps, that._polyLinesLabelsCollectionTmps);
         });
 
         this._polygonCommand = createCommand(function () {
@@ -1206,28 +1424,26 @@ define([
         });
 
         this._trashCommand = createCommand(function () {
-            
-            if ( that._viewer.scene.primitives.length > 0){
-            
-            try {
-                that._viewer.scene.primitives.removeAll();
-                removeHandlers(that);
-                var collection = collectionsInitialization(that);
-                that._viewer.geoJsonData = null;
-            } catch (e) {
-                console.log(e)
-            }
-        } else {
-            try {
-                removeHandlers(that);
-                var collection = collectionsInitialization(that);
-                that._viewer.geoJsonData = null;
-            } catch (e) {
-                console.log(e)
-            }
-            
-        }
 
+            if (that._viewer.scene.primitives.length > 0) {
+
+                try {
+                    that._viewer.scene.primitives.removeAll();
+                    removeHandlers(that);
+                    var collection = collectionsInitialization(that);
+                    that._viewer.geoJsonData = null;
+                } catch (e) {
+                    console.log(e)
+                }
+            } else {
+                try {
+                    removeHandlers(that);
+                    var collection = collectionsInitialization(that);
+                    that._viewer.geoJsonData = null;
+                } catch (e) {
+                    console.log(e)
+                }
+            }
         });
 
         this._saveCommand = createCommand(function () {
@@ -1255,7 +1471,7 @@ define([
             }
         });
 
-          knockout.track(this, ['isCircleActive', 'isPolyLineActive', 'isPolygonsActive']);
+        knockout.track(this, ['isCircleActive', 'isPolyLineActive', 'isPolygonsActive']);
 
     };
     defineProperties(SubMenuViewModel.prototype, {
@@ -1274,6 +1490,11 @@ define([
         circleCommand: {
             get: function () {
                 return this._circleCommand;
+            }
+        },
+        circleFromTwoPointsCommand: {
+            get: function () {
+                return this._circleFromTwoPointsCommand;
             }
         },
         polygonCommand: {
@@ -1361,10 +1582,12 @@ define([
     function collectionsInitialization(that) {
 
         var polyLines;
+        var polyLinesTmps;
         var circles;
         var polygons;
         var circlesLabels;
         var polyLinesLabels;
+        var polyLinesLabelsTmps;
         var polygonsLabels;
 
         var primitives = that._viewer.scene.primitives._primitives;
@@ -1372,7 +1595,9 @@ define([
         if (primitives.length === 0) {
 
             polyLines = that._viewer.scene.primitives.add(new PolylineCollection());
+            polyLinesTmps = that._viewer.scene.primitives.add(new PolylineCollection());
             polyLinesLabels = that._viewer.scene.primitives.add(new LabelCollection());
+            polyLinesLabelsTmps = that._viewer.scene.primitives.add(new LabelCollection());
             circles = that._viewer.scene.primitives.add(new PrimitiveCollection());
             circlesLabels = that._viewer.scene.primitives.add(new LabelCollection());
             polygons = that._viewer.scene.primitives.add(new PrimitiveCollection());
@@ -1381,7 +1606,9 @@ define([
             circles.associatedObject = 'circleGeomtry';
             circlesLabels.associatedObject = 'circlesLabels';
             polyLines.associatedObject = 'polylines';
+            polyLinesTmps.associatedObject = 'polylinesTmps';
             polyLinesLabels.associatedObject = 'polyLinesLabels';
+            polyLinesLabelsTmps.associatedObject = 'polyLinesLabelsTmps';
             polygons.associatedObject = 'polygonsGeomtry';
             polygonsLabels.associatedObject = 'polygonsLabels';
 
@@ -1390,18 +1617,29 @@ define([
         } else if (primitives.length > 0) {
 
             var statusFindpolyLines = false;
+            var statusFindpolyLinesTmps = false;
             var statusFindcircle = false;
             var statusFindCirclesLabels = false;
             var statusFindpolyLinesLabels = false;
+            var statusFindpolyLinesLabelsTmps = false;
             var statusFindPolygons = false;
             var statusFindPolygonsLabels = false;
 
             for (var i = 0; i < primitives.length; i++) {
 
+
                 if (primitives[i]._polylines) {
 
                     polyLines = primitives[i];
                     statusFindpolyLines = true;
+                    continue;
+                }
+
+
+                if (primitives[i].associatedObject === 'polyLinesTmps') {
+
+                    polyLinesTmps = primitives[i];
+                    statusFindpolyLinesTmps = true;
                     continue;
                 }
 
@@ -1431,6 +1669,12 @@ define([
                         continue;
                     }
 
+                    if (primitives[i].associatedObject === "polyLinesLabelsTmps") {
+                        polyLinesLabelsTmps = primitives[i];
+                        statusFindpolyLinesLabelsTmps = true;
+                        continue;
+                    }
+
                     if (primitives[i].associatedObject === 'polygonsLabels') {
                         polygonsLabels = primitives[i];
                         statusFindPolygonsLabels = true;
@@ -1438,7 +1682,7 @@ define([
                     }
                 }
 
-                if (statusFindpolyLines && statusFindCirclesLabels && statusFindpolyLinesLabels && statusFindcircle && statusFindPolygons && statusFindPolygonsLabels)
+                if (statusFindpolyLines && statusFindCirclesLabels && statusFindpolyLinesLabels && statusFindcircle && statusFindPolygons && statusFindPolygonsLabels && statusFindpolyLinesTmps && statusFindpolyLinesLabelsTmps)
                     break;
 
                 if (i === primitives.length - 1) {
@@ -1450,11 +1694,25 @@ define([
                         console.log("line");
                     }
 
+                    if (!statusFindpolyLinesTmps) {
+                        polyLinesTmps = that._viewer.scene.primitives.add(new PolylineCollection());
+                        polyLinesTmps.associatedObject = 'polyLinesTmps';
+                        statusFindpolyLinesTmps = true;
+                        console.log("lineTmps");
+                    }
+
                     if (!statusFindpolyLinesLabels) {
                         polyLinesLabels = that._viewer.scene.primitives.add(new LabelCollection());
                         polyLinesLabels.associatedObject = 'polyLinesLabels';
                         statusFindpolyLinesLabels = true;
                         console.log("lineLabel");
+                    }
+
+                    if (!statusFindpolyLinesLabelsTmps) {
+                        polyLinesLabelsTmps = that._viewer.scene.primitives.add(new LabelCollection());
+                        polyLinesLabelsTmps.associatedObject = 'polyLinesLabelsTmps';
+                        statusFindpolyLinesLabelsTmps = true;
+                        console.log("lineLabelTmps");
                     }
 
                     if (!statusFindcircle) {
@@ -1490,7 +1748,9 @@ define([
 
         var collectionsObject = {
             polylines: polyLines,
+            polylinesTmps: polyLinesTmps,
             polylinesLables: polyLinesLabels,
+            polylinesLablesTmps: polyLinesLabelsTmps,
             circles: circles,
             circleLabels: circlesLabels,
             polygons: polygons,
@@ -1499,8 +1759,10 @@ define([
         };
 
         that._polyLinesCollection = collectionsObject.polylines;
+        that._polyLinesCollectionTmps = collectionsObject.polylinesTmps;
         that._circlesLabelsCollection = collectionsObject.circleLabels;
         that._polyLinesLabelsCollection = collectionsObject.polylinesLables;
+        that._polyLinesLabelsCollectionTmps = collectionsObject.polylinesLablesTmps;
         that._circleCollection = collectionsObject.circles;
         that._polygonsLabelsCollection = collectionsObject.polygonsLabels;
         that._polygonsCollection = collectionsObject.polygons;

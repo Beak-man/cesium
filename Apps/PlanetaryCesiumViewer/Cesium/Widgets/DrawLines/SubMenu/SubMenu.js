@@ -103,12 +103,22 @@ define([
         drawButton.innerHTML = '<svg width="35" height="35" viewBox="-15 -11 210 210">' + DrawIcon + ' </svg>';
         drawButton.setAttribute('data-bind', 'attr  : { title: "Draw polylines" }, event : {click : drawCommand}');
         wrapperMenu.appendChild(drawButton);
+        
+        var wrapperCircleButton = document.createElement('span');
+        wrapperCircleButton.className =  "cesium-subMenu-saveButtonWrapper";
+        wrapperMenu.appendChild(wrapperCircleButton);
 
         var circleButton = document.createElement('div');
         circleButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show ';
         circleButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 168.602  168.602">' + circleIcon + ' </svg>';
-        circleButton.setAttribute('data-bind', 'attr  : { title: "Draw circles" }, event : {click : circleCommand}, css: {"cesium-subMenu-focus": isCircleActive}');
-        wrapperMenu.appendChild(circleButton);
+        circleButton.setAttribute('data-bind', 'attr  : { title: "Draw circles from a given radius" }, event : {click : circleCommand}, css: {"cesium-subMenu-focus": isCircleActive}');
+        wrapperCircleButton.appendChild(circleButton);
+        
+        var circleTwoPointsButton = document.createElement('div');
+        circleTwoPointsButton.className = 'cesium-button cesium-toolbar-button cesium-subMenu-saveButton';
+        circleTwoPointsButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 168.602  168.602">' + circleIcon + ' </svg>';
+        circleTwoPointsButton.setAttribute('data-bind', 'attr  : { title: "Draw circles with two points"}, event : {click : circleFromTwoPointsCommand}, css: {"cesium-subMenu-focus": isCircleActive}');
+        wrapperCircleButton.appendChild(circleTwoPointsButton);
         
         var polygonButton = document.createElement('div');
         polygonButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
