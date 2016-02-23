@@ -73,6 +73,14 @@ define([
 			        S126.807,73.083,125.459,73.083z"/><path d="M81.609,73.083H74.3c-1.347,0-2.436,1.089-2.436,2.437s1.089,2.436,2.436,2.436h7.31c1.347,0,2.436-1.088,2.436-2.436\
 				S82.956,73.083,81.609,73.083z"/></g>';
 
+    var circle2Icon = '<g><circle style="fill:none; stroke:#fff; stroke-width:20;" cx="150" cy="150" r="145" id="circle"/>\
+                          <circle style="fill:#fff; stroke:#fff; stroke-width:20;" cx="10" cy="150" r="20" id="circle"/>\\n\
+                          <circle style="fill:#fff; stroke:#fff; stroke-width:20;" cx="290" cy="150" r="20" id="circle"/>\
+	<path style="fill:none;stroke:#fff;stroke-width:20;" d="M 28.8,150 271.2,150 300, 150 z" id="triangle"/></g>'
+
+    var circle3Icon = '<g><circle style="fill:none; stroke:#fff; stroke-width:20;" cx="150" cy="150" r="145" id="circle"/>\
+	<path style="fill:none;stroke:#fff;stroke-width:20;" d="M 28.8,80 271.2,80 150,290 ,80 z" id="triangle"/></g>';
+
 
    var polygonIcon = '<path d="M182.857,0v36.571l310.856,341.333H512v60.953h-60.952v-18.286L60.952,298.667v6.095H0V243.81h24.381l97.523-207.238V0\
                                 H182.857z M158.477,60.952h-12.19L60.952,243.81v18.286L451.048,384v-6.096L158.477,60.952z M463.238,426.667h36.571v-36.571  h-36.571V426.667z M134.096,\
@@ -101,7 +109,7 @@ define([
         var drawButton = document.createElement('div');
         drawButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         drawButton.innerHTML = '<svg width="35" height="35" viewBox="-15 -11 210 210">' + DrawIcon + ' </svg>';
-        drawButton.setAttribute('data-bind', 'attr  : { title: "Draw polylines" }, event : {click : drawCommand}');
+        drawButton.setAttribute('data-bind', 'attr  : { title: "Draw polylines" }, event : {click : drawCommand}, css: {"cesium-subMenu-focus": isPolyLineActive}');
         wrapperMenu.appendChild(drawButton);
         
         var wrapperCircleButton = document.createElement('span');
@@ -116,14 +124,21 @@ define([
         
         var circleTwoPointsButton = document.createElement('div');
         circleTwoPointsButton.className = 'cesium-button cesium-toolbar-button cesium-subMenu-saveButton';
-        circleTwoPointsButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 168.602  168.602">' + circleIcon + ' </svg>';
-        circleTwoPointsButton.setAttribute('data-bind', 'attr  : { title: "Draw circles with two points"}, event : {click : circleFromTwoPointsCommand}, css: {"cesium-subMenu-focus": isCircleActive}');
+        circleTwoPointsButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 325  325">' + circle2Icon + ' </svg>';
+        circleTwoPointsButton.setAttribute('data-bind', 'attr  : { title: "Draw circles with two points"}, event : {click : circleFromTwoPointsCommand}, css: {"cesium-subMenu-focus": isCircleFromTwoPointsActive}');
         wrapperCircleButton.appendChild(circleTwoPointsButton);
+        
+        var circleThreePointsButton = document.createElement('div');
+        circleThreePointsButton.className = 'cesium-button cesium-toolbar-button cesium-subMenu-saveButton';
+        circleThreePointsButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 325  325">' + circle3Icon + ' </svg>';
+        circleThreePointsButton.style.left = '80px';
+        circleThreePointsButton.setAttribute('data-bind', 'attr  : { title: "Draw circles with three points"}, event : {click : circleFromThreePointsCommand}, css: {"cesium-subMenu-focus": isCircleFromThreePointsActive}');
+        wrapperCircleButton.appendChild(circleThreePointsButton);
         
         var polygonButton = document.createElement('div');
         polygonButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         polygonButton.innerHTML = '<svg width="26" height="26" viewBox="-30 0 550 438.857">' + polygonIcon + ' </svg>';
-        polygonButton.setAttribute('data-bind', 'attr  : { title: "Draw polygons" }, event : {click : polygonCommand}');
+        polygonButton.setAttribute('data-bind', 'attr  : { title: "Draw polygons" }, event : {click : polygonCommand}, css: {"cesium-subMenu-focus": isPolygonsActive}');
         wrapperMenu.appendChild(polygonButton);
 
         var trashButton = document.createElement('div');
