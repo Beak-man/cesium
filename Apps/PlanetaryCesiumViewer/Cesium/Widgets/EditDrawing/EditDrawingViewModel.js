@@ -27,6 +27,7 @@ define([
         that._viewer.tools.viewModel._isPanelVisible = false;
         that._viewer.drawLines.viewModel.isPanelToolVisible = false;
         that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
+        that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;
 
         // Activate the sub-menu of the drawLines widget
 
@@ -41,7 +42,7 @@ define([
 
     /**
      * The view model for {@link DrawLines}.
-     * @alias DrawLinesViewModel
+     * @alias EditDrawingViewModel
      * @constructor
      */
     var EditDrawingViewModel = function (IconsContainer, wrapperPanel, viewer) {

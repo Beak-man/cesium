@@ -95,6 +95,7 @@ define([
 
             that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
+            that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = that._isPanelVisible;
 
             if (that._handlerDownClick)
                 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
@@ -124,6 +125,7 @@ define([
 
             that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
+            that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = that._isPanelVisible;
 
             if (that._handlerDownClick)
                 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);

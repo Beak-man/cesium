@@ -44,9 +44,10 @@ define([
     '../MarkerMove/MarkerMove', /* *** NEW *** */
     '../ShowSystems/ShowSystems', /* *** NEW *** */
     '../Tools/Tools', /* *** NEW *** */
-    '../DrawLines/DrawLines',        /* *** NEW *** */
-    '../CustomObject/CustomObject',  /* *** NEW *** */
-    '../EditDrawing/EditDrawing'  /* *** NEW *** */
+    '../DrawLines/DrawLines', /* *** NEW *** */
+    '../CustomObject/CustomObject', /* *** NEW *** */
+    '../EditDrawing/EditDrawing', /* *** NEW *** */
+    '../ShowGrid/ShowGrid'/* *** NEW *** */
 ], function (
         BoundingSphere,
         Cartesian3,
@@ -92,9 +93,10 @@ define([
         MarkerMove, /* *** NEW *** */
         ShowSystems, /* *** NEW *** */
         Tools, /* *** NEW *** */
-        DrawLines,    /* *** NEW *** */
-        CustomObject,  /* *** NEW *** */
-        EditDrawing /* *** NEW *** */) {
+        DrawLines, /* *** NEW *** */
+        CustomObject, /* *** NEW *** */
+        EditDrawing, /* *** NEW *** */
+        ShowGrid  /* *** NEW *** */) {
     "use strict";
 
     var boundingSphereScratch = new BoundingSphere();
@@ -427,7 +429,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         var planetsToolbar = document.createElement('div');
         planetsToolbar.className = 'cesium-viewer-planetsToolbar';
         mainPlanetsToolbar.appendChild(planetsToolbar);
-        
+
         // custom Toolbar
         var customToolbar = document.createElement('div');
         customToolbar.className = 'cesium-viewer-customToolbar';
@@ -509,7 +511,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         // build custom objects
         var customObject;
-       /* customObject = new CustomObject(viewerContainer, customToolbar, this);*/
+        /* customObject = new CustomObject(viewerContainer, customToolbar, this);*/
 
         // tools for modifications
         var tools;
@@ -517,9 +519,12 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         var drawLines;
         drawLines = new DrawLines(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
-        
+
         var editDrawing;
-         editDrawing = new EditDrawing(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
+        editDrawing = new EditDrawing(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
+
+        var showGrid;
+        showGrid = new ShowGrid(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
 
 
         /* *******************************************************************************************************************************
@@ -649,6 +654,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         this._drawLines = drawLines;     /* *** NEW *** */
         this._customObject = customObject;     /* *** NEW *** */
         this._editDrawing = editDrawing;  /* *** NEW *** */
+        this._showGrid = showGrid;  /* *** NEW *** */
         this._sceneModePicker = sceneModePicker;
         this._baseLayerPicker = baseLayerPicker;
         this._navigationHelpButton = navigationHelpButton;
@@ -803,6 +809,11 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         editDrawing: {
             get: function () {
                 return this._editDrawing;
+            }
+        },
+        showGrid: {
+            get: function () {
+                return this._showGrid;
             }
         },
         customObject: {

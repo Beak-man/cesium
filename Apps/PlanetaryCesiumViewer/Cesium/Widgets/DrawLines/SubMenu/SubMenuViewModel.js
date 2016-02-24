@@ -697,52 +697,62 @@ define([
                 that._handlerMouseMoveCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
 
-                try {
-                    polyLinesTmps.removeAll();
-                } catch (e) {
-                    console.log(e)
-                }
-                try {
-                    polyLinesLabelsTmps.removeAll();
-                } catch (e) {
-                    console.log(e)
-                }
+                var dimPolyLines = polyLinesTmps._polylines.length;
 
-                arrayRadians = [];
+                if (dimPolyLines > 0) {
 
-                var dim = circleCollection._primitives.length;
-                var dimLabel = circlesLabels._labels.length;
+                    try {
+                        polyLinesTmps.removeAll();
+                    } catch (e) {
+                        console.log(e)
+                    }
+                    try {
+                        polyLinesLabelsTmps.removeAll();
+                    } catch (e) {
+                        console.log(e)
+                    }
 
-                var continueWhile = true;
+                    arrayRadians = [];
 
-                if (dim >= 1) {
+                } else if (dimPolyLines == 0) {
 
-                    while (continueWhile) {
+                    var dim = circleCollection._primitives.length;
+                    var dimLabel = circlesLabels._labels.length;
 
-                        try {
-                            var primitiveObject1 = circleCollection._primitives[dim - 1];
-                            var primitiveLabel1 = circlesLabels._labels[dimLabel - 1];
+                    var continueWhile = true;
 
-                            if (primitiveObject1.primitiveType === "circle") {
-                                try {
+                    if (dim >= 1) {
 
-                                    circleCollection.remove(primitiveObject1);
-                                    circlesLabels.remove(primitiveLabel1);
+                        while (continueWhile) {
 
-                                } catch (e) {
-                                }
-                                continueWhile = false;
-                            } else {
-                                if (dim == 0) {
+                            try {
+                                var primitiveObject1 = circleCollection._primitives[dim - 1];
+                                var primitiveLabel1 = circlesLabels._labels[dimLabel - 1];
+
+                                if (primitiveObject1.primitiveType === "circle") {
+                                    try {
+
+                                        circleCollection.remove(primitiveObject1);
+                                        circlesLabels.remove(primitiveLabel1);
+
+                                    } catch (e) {
+                                    }
                                     continueWhile = false;
+                                } else {
+                                    if (dim == 0) {
+                                        continueWhile = false;
+                                    }
+                                    else {
+                                        dim--;
+                                    }
                                 }
-                                else {
-                                    dim--;
-                                }
+                            } catch (e) {
                             }
-                        } catch (e) {
                         }
                     }
+
+                    arrayRadians = [];
+
                 }
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
@@ -752,16 +762,110 @@ define([
     }
 
 
+    function  computeMedianPoint(P1, P2) {
+
+        var C0 = (P2.x + P1.x) / 2.0;
+        var C1 = (P2.y + P1.y) / 2.0;
+        var C2 = (P2.z + P1.z) / 2.0;
+
+        var medianPoint = [C0, C1, C2];
+
+        return medianPoint;
+
+    }
+
+    function computeVectors(P1, P2) {
+
+        var C0 = (P2.x - P1.x);
+        var C1 = (P2.y - P1.y);
+        var C2 = (P2.z - P1.z);
+
+        var VD = [C0, C1, C2];
+
+        return VD;
+    }
+
+
+    function computeNormalVector(U, V) {
+
+        var C0 = U[1] * V[2] - U[2] * V[1];
+        var C1 = U[2] * V[0] - U[0] * V[2];
+        var C2 = U[0] * V[1] - U[1] * V[0];
+
+        var N = [C0, C1, C2];
+
+        return N;
+    }
+
+    function computePlanCoefficent(P1, N) {
+
+        var C0 = N[0];
+        var C1 = N[1];
+        var C2 = N[2];
+        var C3 = N[0] * P1[0] + N[1] * P1[1] + N[2] * P1[2];
+
+        var C = [C0, C1, C2, C3];
+
+        return C;
+    }
+
+    function extractionSubMatrix(A, indexI) {
+
+        var selectedLine1 = indexI + 1;
+        var selectedLine2 = indexI + 2;
+
+        if (selectedLine1 > 2) {
+            selectedLine1 = 0;
+        }
+
+        if (selectedLine2 > 2 && indexI != 2) {
+            selectedLine2 = 0;
+        }
+
+        if (selectedLine2 > 2 && indexI == 2) {
+            selectedLine2 = indexI - 1;
+        }
 
 
 
+        var line1 = A[selectedLine1];
+        var line2 = A[selectedLine2];
+
+        //  console.log(line1);
+        //  console.log(line2);
 
 
 
+        var finalLine1 = line1.slice(1, line1.length);
+        var finalLine2 = line2.slice(1, line2.length);
+
+        var subA = [finalLine1, finalLine2];
+
+        return subA;
+
+    }
+
+    function computDetMatrix2x2(subA, coef) {
+        var detA = subA[0][0] * subA[1][1] - subA[1][0] * subA[0][1];
+        return detA * coef;
+    }
 
 
+    function computeDeterminant3x3(A) {
 
+        var sumDet = 0;
 
+        for (var i = 0; i < A.length; i++) {
+
+            var coef = Math.pow(-1.0, i);
+            var subA = extractionSubMatrix(A, i);
+            var detA = computDetMatrix2x2(subA, coef);
+
+            sumDet = sumDet + coef * detA * A[i][0];
+        }
+
+        return sumDet;
+    }
 
     function drawCircleFromThreePointsFunction(that, viewer, ellipsoid, circleCollection, circlesLabels, polyLinesTmps, polyLinesLabelsTmps) {
 
@@ -786,10 +890,12 @@ define([
             var cartesianCartographicCircleCenter;
             var ellipsoid = viewer.scene.globe.ellipsoid;
             var oldLabel;
+            var cartesianMovePosition;
 
             // Implementation des actions a mener lorsque l'evenement a lieu
 
             that._handlerLeftClickCircle.setInputAction(function (click) {
+
                 that._undoIsactivated = false;
                 var newPolyLine;
 
@@ -808,53 +914,69 @@ define([
 
                     if (polyLinesCoord.length >= 6) {
 
-                      //  console.log(polyLinesCoord);
-                      
-                      
-                    //  console.log(firstPoint);
-
-
                         var firstPoint = Cartesian3.fromRadians(polyLinesCoord[0], polyLinesCoord[1], cartographic.height, ellipsoid);
                         var secondPoint = Cartesian3.fromRadians(polyLinesCoord[2], polyLinesCoord[3], cartographic.height, ellipsoid);
                         var thirdPoint = Cartesian3.fromRadians(polyLinesCoord[4], polyLinesCoord[5], cartographic.height, ellipsoid);
-                        
-                        console.log(firstPoint);
-                        console.log(secondPoint);
-                        console.log(thirdPoint);
-                        
-                        var term1X = (thirdPoint.x * thirdPoint.x - secondPoint.x * secondPoint.x + thirdPoint.y * thirdPoint.y - secondPoint.y * secondPoint.y) / (2.0 * (thirdPoint.y - secondPoint.y));
-                        var term2X = (secondPoint.x * secondPoint.x - firstPoint.x * firstPoint.x + secondPoint.y * secondPoint.y - firstPoint.y * firstPoint.y) / (2.0 * (secondPoint.y - firstPoint.y));
-                        var term3X = (secondPoint.x - firstPoint.x) / (secondPoint.y - firstPoint.y);
-                        var term4X = (thirdPoint.x - secondPoint.x) / (thirdPoint.y - secondPoint.y);
 
-                        var centerX = -(term1X - term2X) / (term3X - term4X);
-                        
-                        console.log(centerX);
+                        /*   console.log(firstPoint);
+                         console.log(secondPoint);
+                         console.log(thirdPoint);*/
 
-                        var term1Y = term3X;
-                        var term2Y = term2X;
+                        // on calcul les points médians
 
-                        var centerY = -term1Y * centerX + term2Y;
+                        var medianPoint12 = computeMedianPoint(firstPoint, secondPoint);
+                        var medianPoint23 = computeMedianPoint(secondPoint, thirdPoint);
 
-                          console.log(centerY);
+                        // on calcul les vecteurs directeurs
 
-                      //  var centerRadius = Math.sqrt((firstPoint.x - centerX) * (firstPoint.x - centerX) + (firstPoint.y - centerY) * (firstPoint.y - centerY));
-                      
-                      var centerPosition = {
-                            x: centerX,
-                            y: centerY,
-                            z: (firstPoint.z + secondPoint.z + thirdPoint.z)/3.0
-                        }
-                        
-                        
+                        var V12 = computeVectors(firstPoint, secondPoint);
+                        var V23 = computeVectors(secondPoint, thirdPoint);
+
+                        // on calcul le vecteur normal au plan contenant les 3 points 
+
+                        var normalVector = computeNormalVector(V12, V23);
+
+                        // on calcul les coefs de l'equation du plan
+
+                        var point1 = [firstPoint.x, firstPoint.y, firstPoint.z];
+
+                        var plan1 = computePlanCoefficent(point1, normalVector);
+                        var plan2 = computePlanCoefficent(medianPoint12, V12);
+                        var plan3 = computePlanCoefficent(medianPoint23, V23);
+
+                        var arrayDelta = [[plan1[0], plan1[1], plan1[2]],
+                            [plan2[0], plan2[1], plan2[2]],
+                            [plan3[0], plan3[1], plan3[2]]];
+
+                        var delta = computeDeterminant3x3(arrayDelta);
+
+                        var arrayDeltaX = [[plan1[3], plan1[1], plan1[2]],
+                            [plan2[3], plan2[1], plan2[2]],
+                            [plan3[3], plan3[1], plan3[2]]];
+
+                        var deltaX = computeDeterminant3x3(arrayDeltaX);
+
+                        var arrayDeltaY = [[plan1[0], plan1[3], plan1[2]],
+                            [plan2[0], plan2[3], plan2[2]],
+                            [plan3[0], plan3[3], plan3[2]]];
+
+                        var deltaY = computeDeterminant3x3(arrayDeltaY);
+
+                        var arrayDeltaZ = [[plan1[0], plan1[1], plan1[3]],
+                            [plan2[0], plan2[1], plan2[3]],
+                            [plan3[0], plan3[1], plan3[3]]];
+
+                        var deltaZ = computeDeterminant3x3(arrayDeltaZ);
+
+                        var centerPosition = {
+                            x: deltaX / delta,
+                            y: deltaY / delta,
+                            z: deltaZ / delta
+                        };
                         var centerRadius = Cartesian3.distance(centerPosition, firstPoint);
-                        
+
                         var diameter = centerRadius * 2.0;
                         var distanceTrunc = diameter.toFixed(2);
-
-                        console.log(centerPosition);
-                         console.log(centerRadius);
-
 
                         if (diameter > 0) {
 
@@ -894,112 +1016,196 @@ define([
 
                             arrayRadians = [];
                             polyLinesCoord = [];
-                            
-
-
                         }
-                    }
 
+                        polyLinesTmps.removeAll();
+                        polyLinesLabelsTmps.removeAll();
 
-                    that._handlerMouseMoveCircle.setInputAction(function (mouvement) {
-                        var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
+                        console.log(polyLinesTmps);
+                    } else {
 
-                        if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
+                        that._handlerMouseMoveCircle.setInputAction(function (mouvement) {
 
-                            var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
+                            cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
 
-                            if (arrayRadians.length >= 2) {
+                            if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
 
-                                if (arrayRadians[2] && arrayRadians[3]) {
-                                    arrayRadians[2] = cartographicMovePosition.longitude;
-                                    arrayRadians[3] = cartographicMovePosition.latitude;
-                                } else {
-                                    arrayRadians.push(cartographicMovePosition.longitude);
-                                    arrayRadians.push(cartographicMovePosition.latitude);
+                                var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
+
+                                if (arrayRadians.length >= 2) {
+
+                                    if (arrayRadians[2] && arrayRadians[3]) {
+                                        arrayRadians[2] = cartographicMovePosition.longitude;
+                                        arrayRadians[3] = cartographicMovePosition.latitude;
+                                    } else {
+                                        arrayRadians.push(cartographicMovePosition.longitude);
+                                        arrayRadians.push(cartographicMovePosition.latitude);
+                                    }
                                 }
                             }
 
-                        }
+                            if (arrayRadians.length === 4) {
 
-                        if (arrayRadians.length === 4) {
+                                newPolyLine = {
+                                    positions: PolylinePipeline.generateCartesianArc({
+                                        positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
+                                        ellipsoid: ellipsoid
+                                    }),
+                                    material: Material.fromType('Color', {
+                                        color: Color.YELLOW
+                                    })
+                                };
 
-                            newPolyLine = {
-                                positions: PolylinePipeline.generateCartesianArc({
-                                    positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
-                                    ellipsoid: ellipsoid
-                                }),
-                                material: Material.fromType('Color', {
-                                    color: Color.YELLOW
-                                })
-                            };
+                                var startPoint = Cartesian3.fromRadians(arrayRadians[0], arrayRadians[1], cartographic.height, ellipsoid);
+                                var endPoint = Cartesian3.fromRadians(arrayRadians[2], arrayRadians[3], cartographicMovePosition.height, ellipsoid);
+                                var distance = Cartesian3.distance(endPoint, startPoint);
+                                var distanceTrunc = distance.toFixed(2);
 
-                            var startPoint = Cartesian3.fromRadians(arrayRadians[0], arrayRadians[1], cartographic.height, ellipsoid);
-                            var endPoint = Cartesian3.fromRadians(arrayRadians[2], arrayRadians[3], cartographicMovePosition.height, ellipsoid);
-                            var distance = Cartesian3.distance(endPoint, startPoint);
-                            var distanceTrunc = distance.toFixed(2);
+                                var newLabelPolyline = {
+                                    position: cartesianMovePosition,
+                                    text: 'D = ' + distanceTrunc + ' m',
+                                    scale: 0.3,
+                                    font: '50px arial',
+                                    fillColor: Color.WHITE,
+                                    outlineColor: Color.BLACK,
+                                    style: LabelStyle.FILL,
+                                    horizontalOrigin: HorizontalOrigin.LEFT,
+                                    verticalOrigin: VerticalOrigin.BOTTOM,
+                                    translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0)
+                                };
 
-                            /*    middlePoint = {
-                             x : (cartesianMovePosition.x + cartesian.x)/2.0,
-                             y : (cartesianMovePosition.y + cartesian.y)/2.0,
-                             z : (cartesianMovePosition.z + cartesian.z)/2.0,
-                             }*/
+                                polyLinesTmps.add(newPolyLine);
 
-                            var newLabelPolyline = {
-                                position: cartesianMovePosition,
-                                text: 'D = ' + distanceTrunc + ' m',
-                                scale: 0.3,
-                                font: '50px arial',
-                                fillColor: Color.WHITE,
-                                outlineColor: Color.BLACK,
-                                style: LabelStyle.FILL,
-                                horizontalOrigin: HorizontalOrigin.LEFT,
-                                verticalOrigin: VerticalOrigin.BOTTOM,
-                                translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0)
-                            };
+                                var dim = polyLinesTmps._polylines.length;
 
-                            polyLinesTmps.add(newPolyLine);
+                                if (dim > 1) {
+                                    var polyline = polyLinesTmps._polylines[dim - 2];
+                                    polyLinesTmps.remove(polyline);
+                                }
 
-                            var dim = polyLinesTmps._polylines.length;
+                                if (oldLabel) {
+                                    var dimLabel = polyLinesLabelsTmps._labels.length;
+                                    var primitiveLabel = polyLinesLabelsTmps._labels[dimLabel - 1];
+                                    polyLinesLabelsTmps.remove(primitiveLabel);
+                                }
 
-                            if (dim > 1) {
-                                var polyline = polyLinesTmps._polylines[dim - 2];
-                                polyLinesTmps.remove(polyline);
+                                polyLinesLabelsTmps.add(newLabelPolyline);
+
+                                if (!that._undoIsactivated) {
+                                    arrayRadians = [];
+                                    arrayRadians.push(cartographic.longitude);
+                                    arrayRadians.push(cartographic.latitude);
+                                } else {
+                                    arrayRadians = [];
+                                    arrayRadians.push(that._coordFirstPosition.longitude);
+                                    arrayRadians.push(that._coordFirstPosition.latitude);
+                                }
+
+                                oldLabel = newLabelPolyline;
                             }
 
-                            if (oldLabel) {
-                                var dimLabel = polyLinesLabelsTmps._labels.length;
-                                var primitiveLabel = polyLinesLabelsTmps._labels[dimLabel - 1];
-                                polyLinesLabelsTmps.remove(primitiveLabel);
-                            }
+                        }, ScreenSpaceEventType.MOUSE_MOVE);
 
-                            polyLinesLabelsTmps.add(newLabelPolyline);
-
-                            if (!that._undoIsactivated) {
-                                arrayRadians = [];
-                                arrayRadians.push(cartographic.longitude);
-                                arrayRadians.push(cartographic.latitude);
-                            } else {
-                                arrayRadians = [];
-                                arrayRadians.push(that._coordFirstPosition.longitude);
-                                arrayRadians.push(that._coordFirstPosition.latitude);
-                            }
-
-                            oldLabel = newLabelPolyline;
-                        }
-
-                    }, ScreenSpaceEventType.MOUSE_MOVE);
-
-                    polyLinesTmps.add(newPolyLine);
-                    polyLinesLabelsTmps.add(oldLabel);
+                        polyLinesTmps.add(newPolyLine);
+                        polyLinesLabelsTmps.add(oldLabel);
+                    }
                 }
 
             }, ScreenSpaceEventType.LEFT_CLICK);
 
 
-            //  that.isCircleFromThreePointsActive = false; // to prevent servral instance of the same Handlers
+            that._handlerRightClickCircle.setInputAction(function (click) {
+
+                if (that._handlerMouseMoveCircle)
+                    that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+
+                that._handlerMouseMoveCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
+
+
+                var dimPolyLines = polyLinesTmps._polylines.length;
+
+                if (dimPolyLines > 0) {
+
+                    try {
+                        polyLinesTmps.removeAll();
+                    } catch (e) {
+                        console.log(e)
+                    }
+                    try {
+                        polyLinesLabelsTmps.removeAll();
+                    } catch (e) {
+                        console.log(e)
+                    }
+
+                    arrayRadians = [];
+                    polyLinesCoord = [];
+
+                } else if (dimPolyLines == 0) {
+
+                    var dim = circleCollection._primitives.length;
+                    var dimLabel = circlesLabels._labels.length;
+
+                    var continueWhile = true;
+
+                    if (dim >= 1) {
+
+                        while (continueWhile) {
+
+                            try {
+                                var primitiveObject1 = circleCollection._primitives[dim - 1];
+                                var primitiveLabel1 = circlesLabels._labels[dimLabel - 1];
+
+                                if (primitiveObject1.primitiveType === "circle") {
+                                    try {
+
+                                        circleCollection.remove(primitiveObject1);
+                                        circlesLabels.remove(primitiveLabel1);
+
+                                    } catch (e) {
+                                    }
+                                    continueWhile = false;
+                                } else {
+                                    if (dim == 0) {
+                                        continueWhile = false;
+                                    }
+                                    else {
+                                        dim--;
+                                    }
+                                }
+                            } catch (e) {
+                            }
+                        }
+                    }
+
+                    arrayRadians = [];
+                    polyLinesCoord = [];
+
+                }
+            }, ScreenSpaceEventType.RIGHT_CLICK);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         }
+
+        //  that.isCircleFromThreePointsActive = false; // to prevent servral instance of the same Handlers
+
     }
+
 
 
 
