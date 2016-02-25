@@ -1,45 +1,50 @@
 /*global define*/
 define([
+    '../../Core/Color',
     '../createCommand',
     '../../Core/defineProperties',
+    '../../Core/defaultValue',
     '../../ThirdParty/knockout',
     '../../Scene/GridImageryProvider'
 ], function (
+        Color,
         createCommand,
         defineProperties,
+        defaultValue,
         knockout,
         GridImageryProvider
         ) {
     "use strict";
-    
-    function addAdditionalLayerOption(imageryLayers, name, imageryProvider, alpha, show) {
-    var layer = imageryLayers.addImageryProvider(imageryProvider);
-    layer.alpha = defaultValue(alpha, 0.5);
-    layer.show = defaultValue(show, true);
-    layer.name = name;
-    knockout.track(layer, ['alpha', 'show', 'name']);
-}
-    
-    
 
-    function  InitializeDrawEdit(that, imageryLayers) {
+    function addGridLayerOption(that, imageryLayers, name, imageryProvider, alpha, show) {
+
+        that._layer = imageryLayers.addImageryProvider(imageryProvider);
+        that._layer.alpha = defaultValue(alpha, 0.5);
+        that._layer.show = defaultValue(show, true);
+        that._layer.name = name;
+        knockout.track(that._layer, ['alpha', 'show', 'name']);
+    }
+
+    function  showGridFunction(that) {
 
         if (that._isShowGridActive) {
-            
-            console.log(that._viewer.scene.globe.ellipsoid);
-            
-            var imageryLayers = that._viewer.imageryLayers;
-            var imageryProvider = GridImageryProvider();
-            addAdditionalLayerOption(imageryLayers, that.name, imageryProvider,  that.alphaGrid,  that.showGrid);
 
-            that._wrapperPanel.className = '';
+            if (!that._layer) {
+                that._imageryProvider = new GridImageryProvider({ellipsoid: that._viewer.scene.globe.ellipsoid});
+                var imageryLayers = that._viewer.imageryLayers;
+                addGridLayerOption(that, imageryLayers, that.name, that._imageryProvider, that.alpha, that.show);
+
+            } else if (that._layer) {
+
+                that._layer.show = true;
+            }
+
+           /* that._wrapperPanel.className = '';
             that._wrapperPanel.className = 'cesium-Tools-wrapperPanel-transition-hide';
             that._viewer.tools.viewModel._isPanelVisible = false;
             that._viewer.drawLines.viewModel.isPanelToolVisible = false;
             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
-            that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;
-
-            console.log(that._viewer.showGrid.viewModel.isPanelToolVisibleGrid);
+            that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;*/
 
             try {
                 that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
@@ -47,6 +52,24 @@ define([
             } catch (e) {
             }
 
+        } else if (!that._isShowGridActive) {
+
+            if (that._layer) {
+                that._layer.show = false;
+            }
+
+           /* that._wrapperPanel.className = '';
+            that._wrapperPanel.className = 'cesium-Tools-wrapperPanel-transition-hide';
+            that._viewer.tools.viewModel._isPanelVisible = false;
+            that._viewer.drawLines.viewModel.isPanelToolVisible = false;
+            that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
+            that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;*/
+
+            try {
+                that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+                that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+            } catch (e) {
+            }
         }
 
 
@@ -65,20 +88,23 @@ define([
         this._wrapperPanel = wrapperPanel;
         this._viewer = viewer;
         this._isShowGridActive = false;
-        
-      //  var imageryLayers = viewer.imageryLayers;
-        
+
+        //  var imageryLayers = viewer.imageryLayers;
+
         this.name = 'grid';
-        this.alphaGrid = 0.5;
-        this.showGrid = true;
+        this.alpha = 0.8;
+        this.show = true;
+
         var that = this;
 
+
+
         this._showGridCommand = createCommand(function () {
-            that._isShowGridActive =  !that._isShowGridActive;
-            InitializeDrawEdit(that);
+            that._isShowGridActive = !that._isShowGridActive;
+            showGridFunction(that);
         });
 
-        knockout.track(this, ['isPanelToolVisibleGrid', 'isShowGridActive', 'showGrid', 'alphaGrid']);
+        knockout.track(this, ['isPanelToolVisibleGrid', 'isShowGridActive', 'show', 'alpha']);
 
     };
     defineProperties(ShowGridViewModel.prototype, {
@@ -103,6 +129,16 @@ define([
                 return this._subMenu;
             }
         },
+        deleteGrid: {
+            get: function () {
+                var imageryLayers = this._viewer.imageryLayers;
+                imageryLayers.remove(this._layer);
+                this._layer = null;
+                this._isShowGridActive = false;
+            }
+
+        }
+
     });
 
     return ShowGridViewModel;

@@ -1641,8 +1641,8 @@ define([
                 featurePolylines.type = "Feature";
 
                 // Declaration de l'objet contenant toutes les coordonnées des 
-                // points de depart et d'arrivé de chaque ligne d'un meme ensemble de ligne
                 var jsonPolylineGeometry = {};
+                // points de depart et d'arrivé de chaque ligne d'un meme ensemble de ligne
                 jsonPolylineGeometry.type = "MultiLineString";
                 jsonPolylineGeometry.coordinates = [];
 
@@ -1944,11 +1944,17 @@ define([
         });
 
         this._circleFromTwoPointsCommand = createCommand(function () {
+
+            console.log(that);
+
             that.isPolyLineActive = false;
             that.isCircleActive = false;
             that.isPolygonsActive = false;
             that.isCircleFromTwoPointsActive = true;
             that.isCircleFromThreePointsActive = false;
+
+
+
 
             removeHandlers(that);
             drawCircleFromTwoPointsFunction(that, that._viewer, that._ellipsoid, that._circleCollection, that._circlesLabelsCollection, that._polyLinesCollectionTmps, that._polyLinesLabelsCollectionTmps);
@@ -2103,6 +2109,8 @@ define([
                 this.isPolyLineActive = false;
                 this.isCircleActive = false;
                 this.isSaveButtonActivate = false;
+                this.isCircleFromTwoPointsActive = false;
+                this.isCircleFromThreePointsActive = false;
 
                 if (this._handlerLeftClick)
                     this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
@@ -2123,6 +2131,17 @@ define([
                     this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
                 if (this._handlerMouseMoveCircle)
                     this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+
+
+                var polyLinesTmps = this._viewer.scene.primitives.add(new PolylineCollection());
+                polyLinesTmps.associatedObject = 'polyLinesTmps';
+
+                var polyLinesLabelsTmps = this._viewer.scene.primitives.add(new LabelCollection());
+                polyLinesLabelsTmps.associatedObject = 'polyLinesLabelsTmps';
+
+                this._polyLinesCollectionTmps = polyLinesTmps;
+                this._polyLinesLabelsCollectionTmps = polyLinesLabelsTmps;
+
             }
         },
         removeAllHandlers: {
@@ -2224,6 +2243,7 @@ define([
                     polyLines = primitives[i];
                     statusFindpolyLines = true;
                     continue;
+                    console.log("polylines");
                 }
 
 
@@ -2232,24 +2252,28 @@ define([
                     polyLinesTmps = primitives[i];
                     statusFindpolyLinesTmps = true;
                     continue;
+                    console.log("polyLinesTmps");
                 }
 
                 if (primitives[i].associatedObject === 'circleGeomtry') {
                     circles = primitives[i];
                     statusFindcircle = true;
                     continue;
+                    console.log("circleGeomtry");
                 }
 
                 if (primitives[i].associatedObject === 'polygonsGeomtry') {
                     polygons = primitives[i];
                     statusFindPolygons = true;
                     continue;
+                    console.log("polygonsGeomtry");
                 }
 
                 if (primitives[i].associatedObject === 'polylinesTmpPolygons') {
                     polyLinesTmpPolygons = primitives[i];
                     statusFindpolyLinesTmpPolygons = true;
                     continue;
+                    console.log("polylinesTmpPolygons");
                 }
 
                 if (primitives[i]._labels) {
@@ -2258,30 +2282,35 @@ define([
                         circlesLabels = primitives[i];
                         statusFindCirclesLabels = true;
                         continue;
+                        console.log("circlesLabels");
                     }
 
                     if (primitives[i].associatedObject === "polyLinesLabels") {
                         polyLinesLabels = primitives[i];
                         statusFindpolyLinesLabels = true;
                         continue;
+                        console.log("polyLinesLabels");
                     }
 
                     if (primitives[i].associatedObject === "polyLinesLabelsTmps") {
                         polyLinesLabelsTmps = primitives[i];
                         statusFindpolyLinesLabelsTmps = true;
                         continue;
+                        console.log("polyLinesLabelsTmps");
                     }
 
                     if (primitives[i].associatedObject === 'polygonsLabels') {
                         polygonsLabels = primitives[i];
                         statusFindPolygonsLabels = true;
                         continue;
+                        console.log("polygonsLabels");
                     }
 
                     if (primitives[i].associatedObject === 'polyLinesLabelsTmpPolygons') {
                         polyLinesLabelsTmpPolygons = primitives[i];
                         statusFindpolyLinesLabelsTmpPolygons = true;
                         continue;
+                        console.log("polyLinesLabelsTmpPolygons");
                     }
                 }
 
@@ -2347,7 +2376,7 @@ define([
                     }
 
                     if (!statusFindpolyLinesTmpPolygons) {
-                        polyLinesTmpPolygons = that._viewer.scene.primitives.add(new LabelCollection());
+                        polyLinesTmpPolygons = that._viewer.scene.primitives.add(new PolylineCollection());
                         polyLinesTmpPolygons.associatedObject = 'polylinesTmpPolygons';
                         statusFindpolyLinesTmpPolygons = true;
                         console.log("polylinesTmpPolygons");
@@ -2377,9 +2406,9 @@ define([
         };
 
         that._polyLinesCollection = collectionsObject.polylines;
-        that._polyLinesCollectionTmps = collectionsObject.polylinesTmps;
         that._circlesLabelsCollection = collectionsObject.circleLabels;
         that._polyLinesLabelsCollection = collectionsObject.polylinesLables;
+        that._polyLinesCollectionTmps = collectionsObject.polylinesTmps;
         that._polyLinesLabelsCollectionTmps = collectionsObject.polylinesLablesTmps;
         that._circleCollection = collectionsObject.circles;
         that._polygonsLabelsCollection = collectionsObject.polygonsLabels;
@@ -2412,14 +2441,25 @@ define([
         if (that._handlerMouseMoveCircle)
             that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
+        if (!that._polyLinesCollectionTmps) {
 
-        try {
-            that._polyLinesCollectionTmps.removeAll();
-            that._polyLinesLabelsCollectionTmps.removeAll();
-
-        } catch (e) {
-            console.log(e);
+            var polyLinesTmps = that._viewer.scene.primitives.add(new PolylineCollection());
+            polyLinesTmps.associatedObject = 'polyLinesTmps';
+            that._polyLinesCollectionTmps = polyLinesTmps;
         }
+
+        if (!that._polyLinesLabelsCollectionTmps) {
+            var polyLinesLabelsTmps = that._viewer.scene.primitives.add(new LabelCollection());
+            polyLinesLabelsTmps.associatedObject = 'polyLinesLabelsTmps';
+            that._polyLinesLabelsCollectionTmps = polyLinesLabelsTmps;
+        }
+
+        if (!that._polyLinesTmpPolygons) {
+            var polyLinesTmpPolygons = that._viewer.scene.primitives.add(new PolylineCollection());
+            polyLinesTmpPolygons.associatedObject = 'polylinesTmpPolygons';
+            that._polyLinesTmpPolygons = polyLinesTmpPolygons;
+        }
+
 
         console.log('all handlers remeved');
     }

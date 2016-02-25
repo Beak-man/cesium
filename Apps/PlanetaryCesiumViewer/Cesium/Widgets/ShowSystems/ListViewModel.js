@@ -70,7 +70,7 @@ define([
         ;
     }
 
-    var ListViewModel = function (viewer, dimLayers, layerName, imageryProvidersTab) {
+    var ListViewModel = function (viewer, dimLayers, layerName, imageryProvidersTab, btnHide) {
 
         viewer.imageryLayers.removeAll(true);
 
@@ -86,13 +86,35 @@ define([
             }
         }
 
-        setupLayers(that, viewer, dimLayers, layerName, imageryProvidersTab);
+        setupLayers(that, viewer, dimLayers, layerName, imageryProvidersTab );
         updateLayerList(viewer);
 
 
         this._changeRangeValue = createCommand(function () {
 
             console.log("trdt");
+
+        });
+
+
+       this._hideDataCommand = createCommand(function () {
+
+            var booleanShow = false;
+
+           if (viewer.scene.primitives.length > 0) {
+               viewer.scene.primitives.show = !viewer.scene.primitives.show;
+               booleanShow = viewer.scene.primitives.show;
+           
+           
+           if (booleanShow){
+               btnHide.innerHTML = "Hide data";
+           }
+           
+           if (!booleanShow){
+               btnHide.innerHTML = "Show data";
+           }
+       }
+           
 
         });
 
@@ -117,6 +139,14 @@ define([
                 return this._changeRangeValue;
            }
         },
+        
+        hideDataCommand : {
+            get: function () {
+                return this._hideDataCommand;
+           }
+        },
+        
+        
     });
 
     return ListViewModel;

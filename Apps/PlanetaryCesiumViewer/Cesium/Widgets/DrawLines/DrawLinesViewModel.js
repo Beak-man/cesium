@@ -31,11 +31,11 @@ define([
 
         // Activate the sub-menu of the drawLines widget
 
-        try {
+       /* try {
             that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
             that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
         } catch (e) {
-        }
+        }*/
 
         that._subMenu = new SubMenu(that._IconsContainer, that._viewer);
 

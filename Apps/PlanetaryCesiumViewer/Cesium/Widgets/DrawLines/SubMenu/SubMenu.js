@@ -150,7 +150,6 @@ define([
         var wrapperSaveButtonMenu = document.createElement('span');
         wrapperSaveButtonMenu.className =  "cesium-subMenu-saveButtonWrapper";
         wrapperMenu.appendChild(wrapperSaveButtonMenu);
-        
 
         var saveButton = document.createElement('div');
         saveButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';

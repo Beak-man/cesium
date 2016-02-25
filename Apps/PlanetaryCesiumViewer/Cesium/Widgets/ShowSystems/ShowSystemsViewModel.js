@@ -273,7 +273,40 @@ define([
                     }
                     ;
 
-                    var listViewModel = new ListViewModel(viewer, dimLayers, layerName, imageryProvidersTab);
+
+                    var tableLineFinal = document.createElement('TR');
+                    tableList.appendChild(tableLineFinal);
+
+                    var colomn1 = document.createElement('TD');
+                    tableLineFinal.appendChild(colomn1);
+
+                    /* var hideDataLayer = document.createElement('INPUT');
+                     hideDataLayer.type = 'checkbox';
+                     hideDataLayer.className = 'cesium-showSystems-configContainer-button-send';
+                     hideDataLayer.setAttribute('data-bind', 'checked : showData');
+                     colomn1.appendChild(hideDataLayer);*/
+
+                    var btnHide = document.createElement('BUTTON');
+                    btnHide.className = 'cesium-showSystems-configContainer-button cesium-button-planet';
+                    btnHide.innerHTML = 'Hide data';
+                    btnHide.setAttribute('data-bind', 'click: hideDataCommand');
+                    tableLineFinal.appendChild(btnHide);
+
+                    var colomn2 = document.createElement('TD');
+                    tableLineFinal.appendChild(colomn2);
+
+                    var labelHideData = " ";
+
+                    colomn2.appendChild(document.createTextNode(labelHideData));
+
+                    var colomn3 = document.createElement('TD');
+                    tableLineFinal.appendChild(colomn3)
+                    
+                     colomn3.appendChild(document.createTextNode(labelHideData));
+
+
+
+                    var listViewModel = new ListViewModel(viewer, dimLayers, layerName, imageryProvidersTab, btnHide);
                     knockout.applyBindings(listViewModel, listContainer2);
 
                 } catch (e) {
@@ -427,6 +460,28 @@ define([
                     });
                 }
                 ;
+
+                var tableLineFinal = document.createElement('TR');
+                tableList.appendChild(tableLineFinal);
+
+                var colomn1 = document.createElement('TD');
+                tableLine.appendChild(colomn1);
+
+                var hideDataLayer = document.createElement('INPUT');
+                hideDataLayer.type = 'checkbox';
+                hideDataLayer.className = 'cesium-showSystems-configContainer-button-send';
+                //  hideDataLayer.setAttribute('data-bind', 'attr: { title:"' + abstract[i] + '"}, checked : show_' + i);
+                colomn1.appendChild(hideDataLayer);
+
+                var colomn2 = document.createElement('TD');
+                tableLine.appendChild(colomn2);
+
+                var labelHideData = "Hide data";
+
+                colomn2.appendChild(document.createTextNode(labelHideData));
+
+                console.log(tableList);
+
 
                 /* ==== call of the model ==== */
 
@@ -762,11 +817,11 @@ define([
     function initializeScene(that, objectDimensions) {
         that._ellipsoid = freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
         Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // A MODIFIER 
-        
-        if ( that._viewer.geoJsonData){
-             that._viewer.geoJsonData = null;
+
+        if (that._viewer.geoJsonData) {
+            that._viewer.geoJsonData = null;
         }
-        
+
 
         try {
             that._viewer.scene.primitives.removeAll(true);
@@ -783,6 +838,11 @@ define([
 
         try {
             that._viewer.customObject.viewModel.hideCustomPanelCommand;
+        } catch (e) {
+        }
+
+        try {
+            that._viewer.showGrid.viewModel.deleteGrid;
         } catch (e) {
         }
 
