@@ -5,14 +5,16 @@ define([
     '../../Core/defineProperties',
     '../../Core/defaultValue',
     '../../ThirdParty/knockout',
-    '../../Scene/GridImageryProvider'
+    '../../Scene/GridImageryProvider',
+    '../../Scene/TileCoordinatesImageryProvider',
 ], function (
         Color,
         createCommand,
         defineProperties,
         defaultValue,
         knockout,
-        GridImageryProvider
+        GridImageryProvider,
+        TileCoordinatesImageryProvider
         ) {
     "use strict";
 
@@ -25,26 +27,40 @@ define([
         knockout.track(that._layer, ['alpha', 'show', 'name']);
     }
 
+    function addCoordinateLayerOption(that, imageryLayers, name, imageryProvider, alpha, show) {
+
+        that._layerCoord = imageryLayers.addImageryProvider(imageryProvider);
+        that._layerCoord.alpha = defaultValue(alpha, 0.5);
+        that._layerCoord.show = defaultValue(show, true);
+        that._layerCoord.name = name;
+        knockout.track(that._layer, ['alpha', 'show', 'name']);
+    }
+
     function  showGridFunction(that) {
 
         if (that._isShowGridActive) {
 
             if (!that._layer) {
-                that._imageryProvider = new GridImageryProvider({ellipsoid: that._viewer.scene.globe.ellipsoid});
+                var backgroundColor = new Color(0.0, 0.5, 0.0, 0.0);
+                var backgroundColorCoordinates =  new Color(0.0, 0.0, 0.0, 1.0);
+                that._imageryProvider = new GridImageryProvider({ellipsoid: that._viewer.scene.globe.ellipsoid, backgroundColor: backgroundColor});
+              //  that._imageryProviderCoordinate = new TileCoordinatesImageryProvider({ellipsoid: that._viewer.scene.globe.ellipsoid, backgroundColor: backgroundColorCoordinates});
                 var imageryLayers = that._viewer.imageryLayers;
                 addGridLayerOption(that, imageryLayers, that.name, that._imageryProvider, that.alpha, that.show);
+              //  addGridLayerOption(that, imageryLayers, that.nameCoordinates, that._imageryProviderCoordinate, that.alpha, that.show);
 
             } else if (that._layer) {
 
                 that._layer.show = true;
+              //  that._layerCoord.show = true;
             }
 
-           /* that._wrapperPanel.className = '';
-            that._wrapperPanel.className = 'cesium-Tools-wrapperPanel-transition-hide';
-            that._viewer.tools.viewModel._isPanelVisible = false;
-            that._viewer.drawLines.viewModel.isPanelToolVisible = false;
-            that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
-            that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;*/
+            /* that._wrapperPanel.className = '';
+             that._wrapperPanel.className = 'cesium-Tools-wrapperPanel-transition-hide';
+             that._viewer.tools.viewModel._isPanelVisible = false;
+             that._viewer.drawLines.viewModel.isPanelToolVisible = false;
+             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
+             that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;*/
 
             try {
                 that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
@@ -56,14 +72,15 @@ define([
 
             if (that._layer) {
                 that._layer.show = false;
+               // that._layerCoord.show = false;
             }
 
-           /* that._wrapperPanel.className = '';
-            that._wrapperPanel.className = 'cesium-Tools-wrapperPanel-transition-hide';
-            that._viewer.tools.viewModel._isPanelVisible = false;
-            that._viewer.drawLines.viewModel.isPanelToolVisible = false;
-            that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
-            that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;*/
+            /* that._wrapperPanel.className = '';
+             that._wrapperPanel.className = 'cesium-Tools-wrapperPanel-transition-hide';
+             that._viewer.tools.viewModel._isPanelVisible = false;
+             that._viewer.drawLines.viewModel.isPanelToolVisible = false;
+             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
+             that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;*/
 
             try {
                 that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
@@ -92,6 +109,7 @@ define([
         //  var imageryLayers = viewer.imageryLayers;
 
         this.name = 'grid';
+        this.nameCoordinates = 'Tiles coordinates';
         this.alpha = 0.8;
         this.show = true;
 
@@ -133,7 +151,9 @@ define([
             get: function () {
                 var imageryLayers = this._viewer.imageryLayers;
                 imageryLayers.remove(this._layer);
+               // imageryLayers.remove(this._layerCoord);
                 this._layer = null;
+              //  this._layerCoord = null;
                 this._isShowGridActive = false;
             }
 
