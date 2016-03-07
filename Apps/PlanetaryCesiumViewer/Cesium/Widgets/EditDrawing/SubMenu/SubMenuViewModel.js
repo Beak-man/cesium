@@ -10,8 +10,12 @@ define([
     '../../createCommand',
     '../../../Core/defined',
     '../../../Core/defineProperties',
+    '../../../DataSources/EntityCollection',
     '../../../DataSources/GeoJsonDataSource',
+    '../../../Core/KeyboardEventModifier',
     '../../../ThirdParty/knockout',
+    '../../../Scene/Material',
+    '../../../Scene/MaterialAppearance',
     '../../../Core/ScreenSpaceEventHandler',
     '../../../Core/ScreenSpaceEventType'
 ], function (
@@ -22,8 +26,12 @@ define([
         createCommand,
         defined,
         defineProperties,
+        EntityCollection,
         GeoJsonDataSource,
+        KeyboardEventModifier,
         knockout,
+        Material,
+        MaterialAppearance,
         ScreenSpaceEventHandler,
         ScreenSpaceEventType
         ) {
@@ -31,21 +39,30 @@ define([
 
     function flagFunction(that, viewer) {
 
+        var undo = [];
+        var currentObjet = [];
+
+        try {
+            that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+        } catch (e) {
+        }
+
         if (!that._isflagCommandActive) {
 
             that._handlerLeft = new ScreenSpaceEventHandler(viewer.scene.canvas);
+            that._handlerCtrlLeft = new ScreenSpaceEventHandler(viewer.scene.canvas);
+            that._handlerAltLeft = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerRight = new ScreenSpaceEventHandler(viewer.scene.canvas);
+            that._handlerCtrlRight = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerMiddle = new ScreenSpaceEventHandler(viewer.scene.canvas);
+            that._handlerCtrlMiddle = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
-            that._handlerLeft.setInputAction(function (click) {
+            /*==================================================================
+             ====================== Add Valid (BLEUE) ==========================
+             =================================================================== */
 
-                // on retire les handlers des autres fonctionnalités afin d'éviter les conflits
-                try {
-                    that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
-                } catch (e) {
-                }
+            that._handlerCtrlLeft.setInputAction(function (click) {
 
-                // on recupere l'ellipsoid
                 var ellipsoid = viewer.scene.globe.ellipsoid;
 
                 var pickedObject = null;
@@ -54,7 +71,105 @@ define([
                 pickedObject = viewer.scene.pick(click.position);
 
                 console.log(pickedObject);
-                console.log(pickedObject.primitive.id);
+
+                var objectProperties;
+                var objectId;
+                var id;
+                var objectPrimitive;
+
+                if (pickedObject.id) {
+                    objectProperties = pickedObject.id.properties;
+                    objectId = pickedObject.id;
+                    //   undo.push(objectId);
+                    id = pickedObject.id.id;
+                } else {
+
+                    objectPrimitive = pickedObject.primitive;
+                }
+
+                /*   if (objectProperties.radius) {
+                 try {
+                 var radiusString = objectProperties.radius;
+                 var stringSplit = radiusString.split(" ");
+                 var radius = parseFloat(stringSplit[0]);
+                 } catch (e) {
+                 var radiusString = objectProperties.radius;
+                 var radius = parseFloat(radiusString);
+                 }
+                 }
+                 
+                 var objectPosition = pickedObject.position;*/
+
+                if (pickedObject.id) {
+
+                    objectId.ellipse.material.color = new Color(0.0, 0.0, 1.0, 0.5);
+                    objectId.properties.status = "Add valid";
+
+                    currentObjet.push(objectId);
+
+                } else {
+
+                    console.log(objectPrimitive);
+
+                    var appearance = new MaterialAppearance({
+                        material: Material.fromType('Color', {color : new Color(0.0, 0.0, 1.0, 0.3)}),
+                        faceForward: true
+                    })
+
+                    console.log(appearance);
+
+                    objectPrimitive.appearance = appearance;
+
+                }
+
+                that._isflagCommandActive = true;
+                console.log("add valid");
+
+            }, ScreenSpaceEventType.LEFT_CLICK, KeyboardEventModifier.CTRL);
+
+            /*==================================================================
+             ============================= UNDO ================================
+             =================================================================== */
+
+
+            that._handlerAltLeft.setInputAction(function (click) {
+
+                var dimUndo = undo.length;
+                console.log(dimUndo);
+
+                /*   if (dimUndo > 0) {
+                 
+                 var lastObject = undo[dimUndo - 1];
+                 var lastModifiedObject = currentObjet[dimUndo - 1];
+                 
+                 lastModifiedObject.entityCollection.remove(lastModifiedObject);
+                 lastObject.ellipse.material.color = Color.YELLOW;
+                 lastObject.entityCollection.add(lastObject);
+                 
+                 console.log(lastModifiedObject);
+                 console.log(lastObject);
+                 
+                 that._isflagCommandActive = true;
+                 }*/
+
+                console.log("undo");
+            }, ScreenSpaceEventType.LEFT_CLICK, KeyboardEventModifier.ALT);
+
+            /*==================================================================
+             ========================== GOHST (ROSE) ===========================
+             =================================================================== */
+
+            that._handlerCtrlMiddle.setInputAction(function (click) {
+
+                var ellipsoid = viewer.scene.globe.ellipsoid;
+
+                var pickedObject = null;
+
+                // on capture un objet avec le click de la souris
+                pickedObject = viewer.scene.pick(click.position);
+
+                // console.log(pickedObject);
+                //     console.log(pickedObject.primitive.id);
 
                 var objectProperties = pickedObject.id.properties;
                 var objectPrimitive = pickedObject.primitive;
@@ -81,13 +196,132 @@ define([
 
                 var objectPosition = pickedObject.position;
 
-               objectId.ellipse.material.color = new Color(0.0, 1.0, 0.0, 0.3);
-                objectId.properties.status = "Valid";
-
+                objectId.ellipse.material.color = new Color(1.0, 0.0784, 0.576, 0.5);
+                objectId.properties.status = "Ghost";
 
                 that._isflagCommandActive = true;
+                console.log("tag ghost");
+
+            }, ScreenSpaceEventType.MIDDLE_CLICK, KeyboardEventModifier.CTRL);
+
+            /*==================================================================
+             ====================== SUPRESSION DE L'OBJET ======================
+             =================================================================== */
+
+            that._handlerCtrlRight.setInputAction(function (click) {
+
+                var ellipsoid = viewer.scene.globe.ellipsoid;
+
+                var pickedObject = null;
+
+                // on capture un objet avec le click de la souris
+                pickedObject = viewer.scene.pick(click.position);
+
+                var objectProperties = pickedObject.id.properties;
+                var objectPrimitive = pickedObject.primitive;
+
+                var objectId;
+                var id;
+
+                if (pickedObject.id) {
+                    objectId = pickedObject.id;
+                    id = pickedObject.id.id;
+                }
+
+                if (objectProperties.radius) {
+
+                    try {
+                        var radiusString = objectProperties.radius;
+                        var stringSplit = radiusString.split(" ");
+                        var radius = parseFloat(stringSplit[0]);
+                    } catch (e) {
+                        var radiusString = objectProperties.radius;
+                        var radius = parseFloat(radiusString);
+                    }
+                }
+
+                var objectPosition = pickedObject.position;
+                console.log(objectId);
+
+                objectId.entityCollection.remove(objectId);
+
+                that._isflagCommandActive = true;
+                console.log("tag suppression");
+
+            }, ScreenSpaceEventType.RIGHT_CLICK, KeyboardEventModifier.CTRL);
+
+
+            /*==================================================================
+             ========================= Valid (VERT) ============================
+             =================================================================== */
+
+            that._handlerLeft.setInputAction(function (click) {
+
+                // on recupere l'ellipsoid
+                var ellipsoid = viewer.scene.globe.ellipsoid;
+
+                var pickedObject = null;
+
+                // on capture un objet avec le click de la souris
+                pickedObject = viewer.scene.pick(click.position);
+
+                var objectProperties = pickedObject.id.properties;
+                var objectPrimitive = pickedObject.primitive;
+
+                var objectId;
+                var id;
+
+                if (pickedObject.id) {
+                    objectId = pickedObject.id;
+                    id = pickedObject.id.id;
+                }
+
+                if (objectProperties.radius) {
+
+                    try {
+                        var radiusString = objectProperties.radius;
+                        var stringSplit = radiusString.split(" ");
+                        var radius = parseFloat(stringSplit[0]);
+                    } catch (e) {
+                        var radiusString = objectProperties.radius;
+                        var radius = parseFloat(radiusString);
+                    }
+                }
+
+                //   if (!objectId.properties.status) {
+
+                //   objectId.ellipse.material.color = new Color(0.0, 1.0, 0.0, 0.5);
+                //   objectId.properties.status = "Valid";
+
+                //   } else if (objectId.properties.status) {
+
+                var status = "Valid";
+
+                console.log(that._viewer);
+                var HTMLTable = that._viewer.infoBox.frame.contentDocument.all;
+                var dimTable = HTMLTable.length;
+
+                for (var k = 0; k < dimTable; k++) {
+                    if (HTMLTable[k].innerHTML === "status") {
+                        HTMLTable[k + 1].innerHTML = status;
+                        break;
+                    }
+                }
+
+                console.log(that._viewer.dataSources._dataSources[0].entities.values);
+
+                objectId.ellipse.material.color = new Color(0.0, 1.0, 0.0, 0.5);
+                objectId.properties.status = status;
+                //   }
+
+                that._isflagCommandActive = true;
+                console.log("tag valid");
 
             }, ScreenSpaceEventType.LEFT_CLICK);
+
+            /*==================================================================
+             ======================= DISCUSS (ORANGE) ==========================
+             =================================================================== */
 
             that._handlerMiddle.setInputAction(function (click) {
 
@@ -131,8 +365,14 @@ define([
                 objectId.properties.status = "Discuss";
 
                 that._isflagCommandActive = true;
+                console.log("tag Discuss");
 
             }, ScreenSpaceEventType.MIDDLE_CLICK);
+
+
+            /*==================================================================
+             ========================== REMOVE (RED) ===========================
+             =================================================================== */
 
             that._handlerRight.setInputAction(function (click) {
 
@@ -143,9 +383,6 @@ define([
 
                 // on capture un objet avec le click de la souris
                 pickedObject = viewer.scene.pick(click.position);
-
-                console.log(pickedObject);
-                console.log(pickedObject.primitive.id);
 
                 var objectProperties = pickedObject.id.properties;
                 var objectPrimitive = pickedObject.primitive;
@@ -176,14 +413,123 @@ define([
                 objectId.properties.status = "Remove";
 
                 that._isflagCommandActive = true;
+                console.log("tag remove");
 
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
         } else {
             that._isflagCommandActive = false;
         }
+    }
+
+
+
+    var saveGeoJsondataSourcesObject = {
+        ellipse: createEllipseGeoJsonObect,
+        polygon: createPolygonGeoJsonObect,
+        point: createPointGeoJsonObect,
+        polyline: createPolylineGeoJsonObect
+    }
+
+    function createEllipseGeoJsonObect(that, geoJsonDataSource) {
+
+        var centerCoordinates = geoJsonDataSource.position._value;
+
+        var circleRadius = geoJsonDataSource.ellipse.semiMajorAxis;
+        var circleSurface = CesiumMath.PI * circleRadius * circleRadius;
+
+        var cartographicCenterPosition = that._ellipsoid.cartesianToCartographic(centerCoordinates);
+        var centerPositionLng = CesiumMath.toDegrees(cartographicCenterPosition.longitude);
+        var centerPositionLat = CesiumMath.toDegrees(cartographicCenterPosition.latitude);
+
+        var centerPosition = [centerPositionLng, centerPositionLat];
+
+        var jsonCircleGeoJson = {};
+        jsonCircleGeoJson.type = "Point";
+        jsonCircleGeoJson.coordinates = centerPosition;
+
+        var featureCircleGeometry = {};
+        featureCircleGeometry.type = "Feature";
+        featureCircleGeometry.geometry = jsonCircleGeoJson;
+        featureCircleGeometry.properties = geoJsonDataSource.properties;
+
+        return featureCircleGeometry;
+    }
+
+    function createPolygonGeoJsonObect(that, geoJsonDataSource) {
+
+        var featurePolygons = {};
+        featurePolygons.type = "Feature";
+
+        var geoJsonPolygons = {};
+        geoJsonPolygons.type = "Polygon";
+        geoJsonPolygons.coordinates = [];
+
+        console.log(geoJsonDataSource);
+
+        var positions = geoJsonDataSource.polygon.hierarchy._value.positions;
+        var array = [];
+
+        for (var j = 0; j < positions.length; j++) {
+            var cartographicCenterPosition = that._ellipsoid.cartesianToCartographic(positions[j]);
+            var centerPositionLng = CesiumMath.toDegrees(cartographicCenterPosition.longitude);
+            var centerPositionLat = CesiumMath.toDegrees(cartographicCenterPosition.latitude);
+
+            var centerPosition = [centerPositionLng, centerPositionLat];
+            array.push(centerPosition);
+        }
+
+        geoJsonPolygons.coordinates.push(array);
+        featurePolygons.geometry = geoJsonPolygons;
+        featurePolygons.properties = {
+            Name: "Polygons"
+        }
+
+        return featurePolygons;
 
     }
+
+    function createPolylineGeoJsonObect(that, geoJsonDataSource) {
+
+        var featurePolylines = {};
+        featurePolylines.type = "Feature";
+
+        var jsonPolylineGeometry = {};
+        jsonPolylineGeometry.type = "MultiLineString";
+        jsonPolylineGeometry.coordinates = [];
+
+        var positions = geoJsonDataSource.polyline.positions._value;
+        var distance = Cartesian3.distance(positions[0], positions[1]);
+        var distTrunc = distance.toFixed(2);
+
+        // console.log(distance);
+
+        var array = [];
+
+        for (var j = 0; j < positions.length; j++) {
+
+            var cartographicCenterPosition = that._ellipsoid.cartesianToCartographic(positions[j]);
+            var centerPositionLng = CesiumMath.toDegrees(cartographicCenterPosition.longitude);
+            var centerPositionLat = CesiumMath.toDegrees(cartographicCenterPosition.latitude);
+
+            var vectPos = [centerPositionLng, centerPositionLat];
+            array.push(vectPos);
+        }
+
+        jsonPolylineGeometry.coordinates.push(array);
+        featurePolylines.geometry = jsonPolylineGeometry;
+        featurePolylines.properties = geoJsonDataSource.properties;
+        //  featurePolylines.properties.segment = "D = "+ distTrunc + " m";
+
+        return featurePolylines;
+
+    }
+
+    function createPointGeoJsonObect() {
+
+    }
+
+
     function saveData(that, container) {
 
         // obtention de TOUTES les primitives  (polylines, labels et cerlces et autres objets)
@@ -365,11 +711,6 @@ define([
                             var coordLastPoint = [lastPositionLng, lastPositionLat];
                             polygonsPoints.push(coordLastPoint);
                         }
-
-
-                        // on introduit le vecteur line dans la propriété "coordinates" de l'objet geoJsonPolyline  
-                        /*   geoJsonPolygons.coordinates.push(line);
-                         featurePolygons.geometry = geoJsonPolygons;*/
                     }
 
                     geoJsonPolygons.coordinates.push(polygonsPoints);
@@ -387,25 +728,34 @@ define([
         // on verifie si il y a des données déja chargées
         if (that._viewer.geoJsonData) {
 
-            // Si oui, alors on recupere ces données
-            var geoJsonData = that._viewer.geoJsonData.features;
-            var dimGeoJsonData = geoJsonData.length;
+            // Si oui, alors on recupere ces données IL FAUT GENERALISER LA PROCEDURE A L'ENSEMBLE DES DATASOURCES En REMPLAANT
+            // [0] par [i] ET METTRE UNE BOUCLE FOR A CE NIVEAU (ICI)
+            var geoJsonDataSource = that._viewer.dataSources._dataSources[0].entities.values;
+
+            // var geoJsonData = that._viewer.geoJsonData.features;
+            var dimGeoJsonDataSource = geoJsonDataSource.length;
 
             // On parcours ces données et on verifie de quel type sont ces données
-            for (var l = 0; l < dimGeoJsonData; l++) {
+            for (var l = 0; l < dimGeoJsonDataSource; l++) {
+
+                var geoJsonData = geoJsonDataSource[l];
 
                 // on recupere le type des données
-                var geomType = geoJsonData[l].geometry.type;
+                var dataType = ["ellipse", "polyline", "point", "polygon"];
 
-                if (geomType === "Polygon" || geomType === "LineString" || geomType === "MultiLineString" || geomType === "MultiPoint") {
-                    geoJsonObject.features.push(geoJsonData[l]);
-                }
+                var geomType;
 
-                if (geomType === "Point") {
-                    if (geoJsonData[l].properties.radius) {
-                        geoJsonObject.features.push(geoJsonData[l]);
+                for (var m = 0; m < dataType.length; m++) {
+
+                    if (geoJsonData[dataType[m]]) {
+                        geomType = dataType[m];
+                        break;
                     }
                 }
+                var savefunction = saveGeoJsondataSourcesObject[geomType];
+                var resObject = savefunction(that, geoJsonData);
+
+                geoJsonObject.features.push(resObject);
             }
         }
 
@@ -461,7 +811,6 @@ define([
             }
         }
     }
-
 
     /**
      * The view model for {@link subMenu}.
@@ -545,17 +894,28 @@ define([
                 this._isflagCommandActive = false;
                 if (this._handlerLeft)
                     this._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerCtrlLeft)
+                    this._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK, KeyboardEventModifier.CTRL);
+                if (this._handlerAltLeft)
+                    this._handlerAltLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK, KeyboardEventModifier.ALT);
+                if (this._handlerCtrlRight)
+                    this._handlerLeft.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK, KeyboardEventModifier.CTRL);
                 if (this._handlerRight)
                     this._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
                 if (this._handlerMiddle)
                     this._handlerMiddle.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-
             }
         },
         removeAllHandlers: {
             get: function () {
                 if (this._handlerLeft)
                     this._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                if (this._handlerCtrlLeft)
+                    this._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK, KeyboardEventModifier.CTRL);
+                if (this._handlerAltLeft)
+                    this._handlerAltLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK, KeyboardEventModifier.ALT);
+                if (this._handlerCtrlRight)
+                    this._handlerLeft.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK, KeyboardEventModifier.CTRL);
                 if (this._handlerRight)
                     this._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
                 if (this._handlerMiddle)
@@ -572,6 +932,12 @@ define([
 
         if (that._handlerLeft)
             that._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        if (that._handlerCtrlLeft)
+            that._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK, KeyboardEventModifier.CTRL);
+        if (that._handlerAltLeft)
+            that._handlerAltLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK, KeyboardEventModifier.ALT);
+        if (that._handlerCtrlRight)
+            that._handlerLeft.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK, KeyboardEventModifier.CTRL);
         if (that._handlerRight)
             that._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
         if (that._handlerMiddle)

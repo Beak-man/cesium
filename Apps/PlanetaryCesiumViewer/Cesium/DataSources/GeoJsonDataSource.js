@@ -1,7 +1,9 @@
 /*global define*/
 define([
     '../Core/Cartesian3',
+    '../Core/CircleGeometry',
     '../Core/Color',
+    '../Core/ColorGeometryInstanceAttribute',
     './CoordinatesReferenceSystems', /* *** NEW *** */
     '../Core/createGuid',
     '../Core/defaultValue',
@@ -11,6 +13,7 @@ define([
     '../Core/DeveloperError',
     '../Core/Event',
     '../Core/Ellipsoid', /* *** NEW *** */
+    '../Core/GeometryInstance',
     '../Core/getFilenameFromUri',
     '../Core/loadJson',
     '../Core/PinBuilder',
@@ -22,6 +25,7 @@ define([
     './BillboardGraphics',
     './CallbackProperty',
     './ColorMaterialProperty',
+    '../Scene/PerInstanceColorAppearance',
     './ConstantPositionProperty',
     './ConstantProperty',
     './DataSource',
@@ -31,7 +35,9 @@ define([
     './PolylineGraphics'
 ], function (
         Cartesian3,
+        CircleGeometry,
         Color,
+        ColorGeometryInstanceAttribute,
         CoordinatesReferenceSystems, /* *** NEW *** */
         createGuid,
         defaultValue,
@@ -41,6 +47,7 @@ define([
         DeveloperError,
         Event,
         Ellipsoid, /* *** NEW *** */
+        GeometryInstance,
         getFilenameFromUri,
         loadJson,
         PinBuilder,
@@ -52,6 +59,7 @@ define([
         BillboardGraphics,
         CallbackProperty,
         ColorMaterialProperty,
+        PerInstanceColorAppearance,
         ConstantPositionProperty,
         ConstantProperty,
         DataSource,
@@ -325,12 +333,28 @@ define([
                 position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
             }
 
+
+            /*  var circleGeometry = new CircleGeometry({
+             center: position,
+             radius: radius,
+             ellipsoid: defaultValue(GeoJsonDataSource._ellipsoid, Ellipsoid.WGS84),
+             vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT
+             });
+             
+             var circle = new GeometryInstance({
+             geometry: circleGeometry,
+             attributes: {color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.3))}
+             });*/
+
+
+
             var circle = new EllipseGraphics();
 
             circle.outline = new ConstantProperty(true);
             circle.semiMajorAxis = radius;
             circle.semiMinorAxis = radius;
             circle.outline = true;
+            circle.fill = true;
             circle.outlineColor = Color.YELLOW;
             circle.outlineWidth = 1.0;
 
@@ -341,12 +365,14 @@ define([
                     circle.material = new Color(1.0, 0.0, 0.0, 0.3);
                 } else if (geoJson.properties.status == "Discuss") {
                     circle.material = new Color(1.0, 0.5, 0.0, 0.3);
+                } else if (geoJson.properties.status == "Ghost") {
+                    circle.material = new Color(1.0, 0.0784, 0.576, 0.5);
+                } else if (geoJson.properties.status == "Add valid") {
+                    circle.material = new Color(0.0, 0.0, 1.0, 0.3);
                 }
             } else {
-                 circle.material = new Color(1.0, 1.0, 0.0, 0.3);
+                circle.material = new Color(1.0, 1.0, 0.0, 0.3);
             }
-
-
 
             if (!GeoJsonDataSource._ellipsoid) {
                 position = new ConstantPositionProperty(crsFunction(coordinates));
