@@ -5,5 +5,5 @@ require({
         domReady : '../../ThirdParty/requirejs-2.1.9/domReady',
         Cesium : '../../Source',
     }
-}, ['PlanetaryCesiumViewerStartup'], function() {
+}, ['PlanetaryCesiumViewer'], function() {
 });

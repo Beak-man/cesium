@@ -1,0 +1,61 @@
+.cesium-modificationsToolbar-button-hidden{
+    visibility : hidden;
+    opacity : 0;
+    z-index : 0;	
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    transition-property: opacity;
+    transition:  0.2s;
+}
+
+.cesium-modificationsToolbar-button-visible{
+    visibility : visible;
+    z-index : 1;
+    opacity : 1;
+
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    transition-property: opacity;
+    transition:  1.0s;
+}
+
+
+.cesium-modificationsToolbar-button {
+    margin-top : 5px;
+    margin-left : 10px;
+    display: inline-block;
+}
+
+.cesium-modificationsToolbar-button:active {
+    box-shadow: 0px 0px 0px;
+}
+
+/* ======================================================================================= */
+/* ===================================== SECOND MENU ===================================== */
+/* ======================================================================================= */
+
+.cesium-DrawLinesMenu{
+    position: absolute;
+    height : 100px;
+    width : 34px;
+    top : 37px;
+    left : 0px;
+    opacity : 1;
+    /*border : #ffffff thin solid;*/
+}
+
+.cesium-DrawLinesMenu-show{
+    visibility : visible;
+    z-index : 5;
+    opacity : 1;
+
+    transition-property: opacity;
+    transition:  1.0s;
+}
+
+.cesium-DrawLinesMenu-show:focus{
+    visibility : visible;
+    z-index : 5;
+    opacity : 1;
+    border : #ffffff;
+}
