@@ -37,7 +37,7 @@ define([
         } catch (e) {
         }
 
-        that._subMenu = new SubMenu(that._IconsContainer, that._viewer);
+        that._subMenu = new SubMenu(that._IconsContainer, that._viewerContainer, that._viewer);
     }
 
     /**
@@ -45,7 +45,7 @@ define([
      * @alias EditDrawingViewModel
      * @constructor
      */
-    var EditDrawingViewModel = function (IconsContainer, wrapperPanel, viewer) {
+    var EditDrawingViewModel = function (IconsContainer, wrapperPanel, viewerContainer, viewer) {
 
 
         console.log("dans EditDrawingViewModel");
@@ -55,6 +55,8 @@ define([
         this._viewer = viewer;
         this._isPanelToolVisibleEdit = false;
         this._isDrawEditActive = false;
+        this._viewerContainer = viewerContainer;
+        this._subMenu = null;
 
         var that = this;
         this._editCommand = createCommand(function () {

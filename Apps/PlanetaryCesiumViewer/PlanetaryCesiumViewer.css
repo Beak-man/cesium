@@ -9,6 +9,8 @@
 @import url(../../Source/Widgets/CustomObject/CustomObject.css);
 @import url(../../Source/Widgets/EditDrawing/EditDrawing.css);
 @import url(../../Source/Widgets/ShowGrid/ShowGrid.css);
+@import url(../../Source/Widgets/EditDrawing/SubMenu/ColorPicker/ColorPicker.css);
+
 /*@import url(../Sandcastle/templates/bucket.css);
 @import url(./Cesium/Widgets/ShowSystems/ShowSystems.css);
 @import url(./Cesium/Widgets/InfoBox/InfoBoxDescription.css);

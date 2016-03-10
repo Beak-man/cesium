@@ -521,7 +521,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         drawLines = new DrawLines(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
 
         var editDrawing;
-        editDrawing = new EditDrawing(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
+        editDrawing = new EditDrawing(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, viewerContainer, this);
 
         var showGrid;
         showGrid = new ShowGrid(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);

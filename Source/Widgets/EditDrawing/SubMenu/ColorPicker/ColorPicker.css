@@ -1,0 +1,50 @@
+.cesium-ColorPickerContainer{
+    position: absolute;
+    top: 30%;
+    left: 80%;
+    width: 200px;
+    height: 300px;
+    background: #303336; 
+    border: 1px solid #444;
+    z-index: 1;
+}
+
+.cesium-buttonColor{
+    display: inline-block;
+    position: relative;
+    border: 1px solid #444;
+    border-radius: 0px;
+    padding: 5px 6px;
+    margin: 2px 3px;
+    cursor: pointer;
+    overflow: hidden;
+    background: chartreuse;
+    
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.cesium-buttonColor-selected{
+    position: absolute;
+    top: 85%;
+    left: 2.5%;
+    border: 1px solid #444;
+    border-radius: 0px;
+    width: 50px;
+    height: 30px;
+}
+
+.cesium-buttonColor-selected-text{
+    
+    position: absolute;
+    top: 86%;
+    left: 32.5%;
+    border: 1px solid #444;
+    border-radius: 0px;
+    width: 128px;
+    height: 20px;
+    text-align: center;
+    
+}

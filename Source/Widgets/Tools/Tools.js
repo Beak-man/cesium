@@ -70,8 +70,8 @@ define([
      * @constructor
      *
      * @param {Element|String} container The DOM element or ID that will contain the widget.
+     * @param {Element|String} wrapper.
      * @param {Object} Viewer.
-     * @exception {DeveloperError} Element with id "container" does not exist in the document.
      */
     var Tools = function (container, wrapper, viewer) {
 

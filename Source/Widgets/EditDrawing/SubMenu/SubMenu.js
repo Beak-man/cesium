@@ -29,7 +29,7 @@ define([
 		C86.331,24.635,85.633,23.937,84.772,23.937z"/></g>';
 
 
-   var moveIcon = '<g><path d="M0 499.968l171.864 -171.864l0 119.133l275.373 0l0 -275.373l-119.133 0l171.864 -171.864 171.864 171.864l-119.133 0l0 275.373l275.373 0l0 -119.133l171.864 171.864 -171.864 171.864l0 -119.133l-275.373 0l0 275.373l119.133 0l-171.864 171.864 -171.864 -171.864l119.133 0l0 -275.373l-275.373 0l0 119.133z"/></g>'
+    var moveIcon = '<g><path d="M0 499.968l171.864 -171.864l0 119.133l275.373 0l0 -275.373l-119.133 0l171.864 -171.864 171.864 171.864l-119.133 0l0 275.373l275.373 0l0 -119.133l171.864 171.864 -171.864 171.864l0 -119.133l-275.373 0l0 275.373l119.133 0l-171.864 171.864 -171.864 -171.864l119.133 0l0 -275.373l-275.373 0l0 119.133z"/></g>'
 
     var saveIcon = '<g><path d="M340.969,0H12.105C5.423,0,0,5.423,0,12.105v328.863c0,6.68,5.423,12.105,12.105,12.105h328.864\
 		c6.679,0,12.104-5.426,12.104-12.105V12.105C353.073,5.423,347.647,0,340.969,0z M67.589,18.164h217.895v101.884H67.589V18.164z\
@@ -58,7 +58,7 @@ define([
      * @param {Object} Scene.
      * @exception {DeveloperError} Element with id "container" does not exist in the document.
      */
-    var SubMenu = function (IconsContainer, viewer) {
+    var SubMenu = function (IconsContainer, viewerContainer, viewer) {
 
         var wrapperMenu = document.createElement('span');
         wrapperMenu.className = 'cesium-DrawLinesMenu';
@@ -70,14 +70,14 @@ define([
         flagButton.setAttribute('data-bind', 'attr  : { title: "Flag entity" }, event : {click : flagCommand}');
         wrapperMenu.appendChild(flagButton);
 
-     /*   var moveButton = document.createElement('div');
-        moveButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show ';
-        moveButton.innerHTML = '<svg width="30" height="30" viewBox="0 0 100 100">' + moveIcon + ' </svg>';
-        moveButton.setAttribute('data-bind', 'attr  : { title: "Move entity" }, event : {click : moveCommand}');
-        wrapperMenu.appendChild(moveButton);*/
-        
+        /*   var moveButton = document.createElement('div');
+         moveButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show ';
+         moveButton.innerHTML = '<svg width="30" height="30" viewBox="0 0 100 100">' + moveIcon + ' </svg>';
+         moveButton.setAttribute('data-bind', 'attr  : { title: "Move entity" }, event : {click : moveCommand}');
+         wrapperMenu.appendChild(moveButton);*/
+
         var wrapperSaveButtonMenu = document.createElement('span');
-        wrapperSaveButtonMenu.className =  "cesium-subMenu-saveButtonWrapper";
+        wrapperSaveButtonMenu.className = "cesium-subMenu-saveButtonWrapper";
         wrapperMenu.appendChild(wrapperSaveButtonMenu);
 
         var saveButton = document.createElement('div');
@@ -85,12 +85,12 @@ define([
         saveButton.innerHTML = '<svg width="40" height="40" viewBox="-50 -50 640 640">' + saveIcon + ' </svg>';
         saveButton.setAttribute('data-bind', 'attr  : { title: "Create file" }, event : {click : saveCommand}');
         wrapperSaveButtonMenu.appendChild(saveButton);
-        
-      /*  var infosButton = document.createElement('div');
-        infosButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
-        infosButton.innerHTML = 'i';
-        infosButton.setAttribute('data-bind', 'attr  : { title: "infos sur Primitives" }, event : {click : infosCommand}');
-        wrapperMenu.appendChild(infosButton);*/
+
+        /*  var infosButton = document.createElement('div');
+         infosButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
+         infosButton.innerHTML = 'i';
+         infosButton.setAttribute('data-bind', 'attr  : { title: "infos sur Primitives" }, event : {click : infosCommand}');
+         wrapperMenu.appendChild(infosButton);*/
 
         var closeButton = document.createElement('div');
         closeButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
@@ -98,11 +98,12 @@ define([
         closeButton.setAttribute('data-bind', 'attr  : { title: "Close menu" }, event : {click : closeSubMenu}');
         wrapperMenu.appendChild(closeButton);
 
-        var viewModel = new SubMenuViewModel(viewer, wrapperSaveButtonMenu);
+        var viewModel = new SubMenuViewModel(viewer, wrapperSaveButtonMenu, viewerContainer);
 
         this._IconsContainer = IconsContainer;
         this._wrapperMenu = wrapperMenu;
         this._viewModel = viewModel;
+        this._viewer = viewer;
 
         knockout.applyBindings(viewModel, wrapperMenu);
     };
@@ -119,7 +120,6 @@ define([
                 return this._container;
             }
         },
-        
         /**
          * Gets the view model.
          * @memberof SubMenu.prototype
@@ -136,10 +136,16 @@ define([
                 try {
                     knockout.cleanNode(this._wrapperMenu);
                     this._IconsContainer.removeChild(this._wrapperMenu);
-                    return true;
                 } catch (e) {
-                    return false;
                 }
+
+                try {
+                    this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
+                    console.log(this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer);
+                } catch (e) {
+                    console.log(e);
+                }
+
             }
         },
     });

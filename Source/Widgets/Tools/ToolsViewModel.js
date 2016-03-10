@@ -17,6 +17,9 @@ define([
 
     var cursor;
 
+    // container : Element that contain the widget (i.e modificationsToolbar)
+    // wrapper : modificationsToolbarWrapper
+    
     function moveIcon(that, container, wrapper) {
 
 
@@ -80,7 +83,6 @@ define([
 
         }, ScreenSpaceEventType.MIDDLE_UP);
     }
-    ;
 
     function showPanel(that) {
 
@@ -97,19 +99,26 @@ define([
             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
             that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = that._isPanelVisible;
 
-            if (that._handlerDownClick)
-                that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-            if (that._handlerMove)
-                that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+            if (that._handlerDownClick) that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+            if (that._handlerMove) that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
             try {
                 that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+            } catch (e) {
+            }
+            
+            try {
                 that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
             }
 
             try {
                 that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu;
+            } catch (e) {
+                 console.log(e);
+            }
+            
+            try {
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
             }
@@ -132,13 +141,23 @@ define([
             if (that._handlerMove)
                 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
-            try {
+             try {
                 that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+            } catch (e) {
+            }
+            
+            try {
                 that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
             }
+
             try {
                 that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu;
+            } catch (e) {
+                console.log(e);
+            }
+            
+            try {
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
             }

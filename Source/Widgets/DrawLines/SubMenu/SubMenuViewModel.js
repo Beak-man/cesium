@@ -1696,8 +1696,6 @@ define([
         featureCircleGeometry.properties = geoJsonDataSource.properties;
 
         return featureCircleGeometry;
-
-
     }
 
     function saveData(that, container) {
@@ -1717,8 +1715,6 @@ define([
 
             // Si la primitive est un polyline alors ...
             if (primitives[i].associatedObject === "polylines" && primitives[i]._polylines.length > 0) {
-
-                console.log(primitives[i]);
 
                 // Declaration de l'objet featureObject contenant un ensemble de lignes continues
                 var featurePolylines = {};
@@ -1740,8 +1736,6 @@ define([
 
                 // on extrait de l'objet label l'information sur la distance totale
                 var totalLengthPath = labels[labels.length - 1]._text;
-
-                console.log(totalLengthPath);
 
                 // Si il y a des lignes alors...
                 if (polylines.length > 0) {
@@ -1789,8 +1783,6 @@ define([
                 // Ici, circles est un tableau d'objet. Chaque composante du tableau
                 // représente un circle
                 var circles = primitives[i]._primitives;
-                
-                console.log( primitives[i]);
 
                 if (circles.length > 0) {
 
@@ -1801,11 +1793,6 @@ define([
                         var circleRadius = circles[j]._boundingSpheres[0].radius;
                         var circleSurface = CesiumMath.PI * circleRadius * circleRadius;
                         
-                        var material =  circles[j].attributes.color;
-                        
-                        console.log(circles[j]);
-                        console.log(material);
-
                         var cartographicCenterPosition = that._ellipsoid.cartesianToCartographic(centerCoordinates);
                         var centerPositionLng = CesiumMath.toDegrees(cartographicCenterPosition.longitude);
                         var centerPositionLat = CesiumMath.toDegrees(cartographicCenterPosition.latitude);
@@ -1824,8 +1811,7 @@ define([
                             Center_lng: centerPositionLng.toFixed(3) + " deg",
                             Center_lat: centerPositionLat.toFixed(3) + " deg",
                             Radius: circleRadius.toFixed(3) + " m",
-                            Surface: circleSurface + " m2",
-                            Color : material.color.value
+                            Surface: circleSurface + " m2"
                         };
                         geoJsonObject.features.push(featureCircle);
                     }
@@ -1858,9 +1844,6 @@ define([
 
                         // On récupere la ligne [j]
                         var positions = polylines[j]._positions;
-                        var material  =  polylines[j].material;
-                        
-                        console.log(polylines[j]);
 
                         // On recupere le point de départ et d'arrivé de la ligne
                         var firstPosition = positions[0];
@@ -1897,7 +1880,6 @@ define([
                     featurePolygons.geometry = geoJsonPolygons;
                     featurePolygons.properties = {
                         Name: "Polygons",
-                        Color : material.color.value
                     }
 
                     // Une fois l'ensemble des coordonnées récupérées, on introduit

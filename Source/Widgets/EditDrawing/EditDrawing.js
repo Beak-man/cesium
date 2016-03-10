@@ -35,9 +35,9 @@ define([
      * @param {Object} Scene.
      * @exception {DeveloperError} Element with id "container" does not exist in the document.
      */
-    var EditDrawing = function (IconsContainer, wrapperPanel, viewer) {
+    var EditDrawing = function (IconsContainer, wrapperPanel, viewerContainer, viewer) {
 
-        var viewModel = new EditDrawingViewModel(IconsContainer, wrapperPanel, viewer);
+        var viewModel = new EditDrawingViewModel(IconsContainer, wrapperPanel, viewerContainer,  viewer);
 
         var icone = '<g><path d="M14,23c0-4.973,4.027-9,9-9l0,0c4.971,0,8.998,4.027,9,9l0,0c-0.002,4.971-4.029,8.998-9,9l0,0   C18.027,31.998,14,27.971,14,23L14,23z M16.116,23c0.008,3.799,3.083,6.874,6.884,6.883l0,0c3.799-0.009,6.874-3.084,6.883-6.883   l0,0c-0.009-3.801-3.084-6.876-6.883-6.885l0,0C19.199,16.124,16.124,19.199,16.116,23L16.116,23z"/><polygon points="22,27 19,27 19,24  "/><rect height="4.243" transform="matrix(-0.7071 0.7071 -0.7071 -0.7071 56.5269 20.5858)" width="7.071" x="20.464" y="19.879"/></g>';
         viewModel._icone = icone;
