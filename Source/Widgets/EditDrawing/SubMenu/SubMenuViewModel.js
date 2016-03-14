@@ -514,7 +514,7 @@ define([
                     id = pickedObject.id.id;
                 }
 
-                objectId.ellipse.material.color = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
+                //  objectId.ellipse.material.color = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
 
                 if (pickedObject.id) {
 
@@ -524,26 +524,51 @@ define([
                             var objectType = objectId[that._propertiesNames[i]];
 
                             try {
-                                objectType.material.color = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
+                                var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
+                                
+                                var colorObjectN = getColorObject.normalizedColor;
+                                var colorObject = getColorObject.color;
+                                var colorProperty = getColorObject.property;
 
-                                var colorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
-                                var rgba = colorObject.red + ", " + colorObject.green + ", " + colorObject.blue + ", " + colorObject.alpha;
+                                objectType.material.color = colorObjectN;
+
+                                var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
+                                console.log(rgba);
                                 objectId.properties.flagColor = rgba;
+                                console.log(colorProperty);
+                                objectId.properties[colorProperty.propertyName] = colorProperty.propertyValue;
+                                console.log( objectId.properties);
 
                                 break;
                             } catch (e) {
-                                objectType.color = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
-                                objectType.outlineColor._value = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
+                                var colorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
+                                var colorObjectN = getColorObject.normalizedColor;
+                                var colorObject = getColorObject.color;
+                                var colorProperty = getColorObject.property;
+                                
+                                objectType.color = colorObjectN;
+                                objectType.outlineColor._value = colorObjectN;
                                 objectType.outlineWidth._value = 3;
                                 
-                                var colorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
-                                var rgba = colorObject.red + ", " + colorObject.green + ", " + colorObject.blue + ", " + colorObject.alpha;
+                                var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
+                                console.log(rgba);
                                 objectId.properties.flagColor = rgba;
-                                
+                                objectId.properties[colorProperty.PropertyName] = colorProperty.PropertyValue;
+
                                 break;
                             }
                         }
                     }
+                } else {
+
+                    var objectPrimitive = pickedObject.primitive;
+
+                    var appearance = new MaterialAppearance({
+                        material: Material.fromType('Color', {color: that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor}),
+                        faceForward: true
+                    })
+                    objectPrimitive.appearance = appearance;
+
                 }
 
                 that._isflagCommandActive = true;

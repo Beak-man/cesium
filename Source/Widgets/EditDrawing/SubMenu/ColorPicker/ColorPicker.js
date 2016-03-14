@@ -111,18 +111,66 @@ define([
         var selectedColorContainer = document.createElement('div');
         selectedColorContainer.className = 'cesium-buttonColor-selected';
         ColorPickerContainer.appendChild(selectedColorContainer);
-        
+
         var selectedColorTextContainer = document.createElement('input');
         selectedColorTextContainer.type = 'text';
         selectedColorTextContainer.className = 'cesium-buttonColor-selected-text';
         ColorPickerContainer.appendChild(selectedColorTextContainer);
 
 
-        var viewModel = new ColorPickerViewModel(viewerContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, viewer);
+        /* =====================================================================
+         ===================== ASSIGN PROPERTY CONTAINER =======================
+         ======================================================================= */
+
+        var assignPropertyToColorContainer = document.createElement('div');
+        assignPropertyToColorContainer.className = 'cesium-Color-assignProperty';
+        viewerContainer.appendChild(assignPropertyToColorContainer);
+
+        var assignPropertyToColorContainerLeft = document.createElement('div');
+        assignPropertyToColorContainerLeft.className = 'cesium-Color-assignProperty-left';
+        assignPropertyToColorContainer.appendChild(assignPropertyToColorContainerLeft);
+
+        var assignPropertyToColorContainerRight = document.createElement('div');
+        assignPropertyToColorContainerRight.className = 'cesium-Color-assignProperty-right';
+        assignPropertyToColorContainer.appendChild(assignPropertyToColorContainerRight);
+
+        var propertyNameTitleContainer = document.createElement('div');
+        propertyNameTitleContainer.innerHTML = 'Property name : ';
+        propertyNameTitleContainer.className = 'cesium-Color-propertyNameTitle-input';
+        assignPropertyToColorContainerRight.appendChild(propertyNameTitleContainer);
+
+        var propertyNameContainer = document.createElement('input');
+        propertyNameContainer.type = 'text';
+        propertyNameContainer.className = 'cesium-Color-propertyName-input';
+        assignPropertyToColorContainerRight.appendChild(propertyNameContainer);
+
+
+        var propertyValueTitleContainer = document.createElement('div');
+        propertyValueTitleContainer.innerHTML = 'Property value : ';
+        propertyValueTitleContainer.className = 'cesium-Color-propertyValueTitle-input';
+        assignPropertyToColorContainerRight.appendChild(propertyValueTitleContainer);
+
+
+        var propertyValueContainer = document.createElement('input');
+        propertyValueContainer.type = 'text';
+        propertyValueContainer.className = 'cesium-Color-propertyValue-input';
+        assignPropertyToColorContainerRight.appendChild(propertyValueContainer);
+
+        var propertyAssignButton = document.createElement('BUTTON');
+        propertyAssignButton.innerHTML = 'Assign';
+        propertyAssignButton.className = 'cesium-Color-propertyAssign-button';
+        propertyAssignButton.setAttribute('data-bind', 'attr  : { title: "Pick this color" }, event : {click : colorAssignationCommand}');
+        assignPropertyToColorContainerRight.appendChild(propertyAssignButton);
+
+
+// attr : {title: "Assign this property to the selected color"}, 
+
+        var viewModel = new ColorPickerViewModel(viewerContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, propertyNameContainer, propertyValueContainer, viewer);
         this._viewerContainer = viewerContainer;
         this._ColorPickerContainer = ColorPickerContainer;
         this._viewModel = viewModel;
         knockout.applyBindings(viewModel, ColorPickerContainer);
+        knockout.applyBindings(viewModel, assignPropertyToColorContainer);
     };
     defineProperties(ColorPicker.prototype, {
         /**
@@ -151,10 +199,7 @@ define([
             get: function () {
                 try {
                     this._viewerContainer.removeChild(this._ColorPickerContainer);
-                    return true;
                 } catch (e) {
-                    return false;
-                    console.log(e)
                 }
             }
         },

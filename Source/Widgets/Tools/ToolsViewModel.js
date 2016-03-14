@@ -115,7 +115,6 @@ define([
             try {
                 that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu;
             } catch (e) {
-                 console.log(e);
             }
             
             try {

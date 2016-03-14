@@ -27,76 +27,76 @@ define([
 
 
         // Must be modified if the element is not in the right node
-      //  var element = document.body.childNodes[1].firstChild.childNodes[8]; // <div.cesium-ColorPickerContainer>
+        //  var element = document.body.childNodes[1].firstChild.childNodes[8]; // <div.cesium-ColorPickerContainer>
 
-        that._handlerDownClick = new ScreenSpaceEventHandler(ColorPickerContainer);
-        that._handlerMove = new ScreenSpaceEventHandler(ColorPickerContainer);
-        that._handlerUpClick = new ScreenSpaceEventHandler(ColorPickerContainer);
-
-        var sizePageX = document.documentElement.clientWidth;
-        var sizePageY = document.documentElement.clientHeight;
-        
-        console.log(ColorPickerContainer);
-        
+        /*    that._handlerDownClick = new ScreenSpaceEventHandler(ColorPickerContainer);
+         that._handlerMove = new ScreenSpaceEventHandler(ColorPickerContainer);
+         that._handlerUpClick = new ScreenSpaceEventHandler(ColorPickerContainer);
+         
+         var sizePageX = document.documentElement.clientWidth;
+         var sizePageY = document.documentElement.clientHeight;
+         
+         console.log(ColorPickerContainer);
+         
          that._handlerDownClick.setInputAction(function () {
+         
+         document.onmousemove = getPosition;
+         var cursorPosition = cursor;    
+         
+         that._handlerMove.setInputAction(function (mouvement) {
+         
+         console.log(mouvement);
+         
+         var cursorPosition = cursor;
+         
+         //  var offsetY = cursorPosition.y - (wrapper.children[1].offsetHeight / 2) - (wrapper.children[0].offsetHeight);
+         //  var offsetX = cursorPosition.x - (wrapper.children[1].offsetWidth / 2);
+         
+         console.log(cursorPosition.x);
+         
+         /*      if (cursorPosition.x > sizePageX - ColorPickerContainer.offsetWidth / 2 - 3) {
+         
+         ColorPickerContainer.style.left = sizePageX - ColorPickerContainer.offsetWidth - 3 + "px";
+         
+         } else if (cursorPosition.x < ColorPickerContainer.offsetWidth / 2 || cursorPosition.x < 0) {
+         
+         ColorPickerContainer.style.left = "0px";
+         
+         } else if (cursorPosition.x >= ColorPickerContainer.offsetWidth / 2 && cursorPosition.x <= sizePageX -ColorPickerContainer.offsetWidth / 2) {
+         
+         ColorPickerContainer.style.left = cursorPosition.x - (ColorPickerContainer.offsetWidth / 2) + "px";
+         }
+         
+         if (cursorPosition.y > sizePageY - 2 * ColorPickerContainer.offsetHeight) { // for bottom case
+         
+         ColorPickerContainer.style.top = sizePageY - 2 * ColorPickerContainer.offsetHeight + "px";
+         
+         } else if (cursorPosition.y < ColorPickerContainer.offsetHeight / 2 || cursorPosition.y < 0) { // for top case
+         
+         ColorPickerContainer.style.top = "0px";
+         
+         } else if (cursorPosition.y >= ColorPickerContainer.offsetHeight / 2 && cursorPosition.y <= sizePageY - ColorPickerContainer.offsetHeight / 2) {
+         ColorPickerContainer.style.top = cursorPosition.y - (ColorPickerContainer.offsetHeight / 2) + "px";
+         
+         }*\
+         
+         }, ScreenSpaceEventType.MOUSE_MOVE);
+         }, ScreenSpaceEventType.MIDDLE_DOWN); */
 
-            document.onmousemove = getPosition;
-            var cursorPosition = cursor;    
-            
-          that._handlerMove.setInputAction(function (mouvement) {
-              
-              console.log(mouvement);
-
-                var cursorPosition = cursor;
-
-                //  var offsetY = cursorPosition.y - (wrapper.children[1].offsetHeight / 2) - (wrapper.children[0].offsetHeight);
-                //  var offsetX = cursorPosition.x - (wrapper.children[1].offsetWidth / 2);
-                
-                console.log(cursorPosition.x);
-
-          /*      if (cursorPosition.x > sizePageX - ColorPickerContainer.offsetWidth / 2 - 3) {
-
-                    ColorPickerContainer.style.left = sizePageX - ColorPickerContainer.offsetWidth - 3 + "px";
-
-                } else if (cursorPosition.x < ColorPickerContainer.offsetWidth / 2 || cursorPosition.x < 0) {
-
-                    ColorPickerContainer.style.left = "0px";
-
-                } else if (cursorPosition.x >= ColorPickerContainer.offsetWidth / 2 && cursorPosition.x <= sizePageX -ColorPickerContainer.offsetWidth / 2) {
-
-                    ColorPickerContainer.style.left = cursorPosition.x - (ColorPickerContainer.offsetWidth / 2) + "px";
-                }
-
-                if (cursorPosition.y > sizePageY - 2 * ColorPickerContainer.offsetHeight) { // for bottom case
-
-                    ColorPickerContainer.style.top = sizePageY - 2 * ColorPickerContainer.offsetHeight + "px";
-
-                } else if (cursorPosition.y < ColorPickerContainer.offsetHeight / 2 || cursorPosition.y < 0) { // for top case
-
-                    ColorPickerContainer.style.top = "0px";
-
-                } else if (cursorPosition.y >= ColorPickerContainer.offsetHeight / 2 && cursorPosition.y <= sizePageY - ColorPickerContainer.offsetHeight / 2) {
-                    ColorPickerContainer.style.top = cursorPosition.y - (ColorPickerContainer.offsetHeight / 2) + "px";
-
-                }*/
-
-            }, ScreenSpaceEventType.MOUSE_MOVE);
-        }, ScreenSpaceEventType.MIDDLE_DOWN);
-
-      /*  that._handlerUpClick.setInputAction(function () {
-
-            if (that._handlerDownClick)
-                that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-            if (that._handlerMove)
-                that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-
-        }, ScreenSpaceEventType.MIDDLE_UP);*/
+        /*  that._handlerUpClick.setInputAction(function () {
+         
+         if (that._handlerDownClick)
+         that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+         if (that._handlerMove)
+         that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+         
+         }, ScreenSpaceEventType.MIDDLE_UP);*/
 
 
     }
 
 
-    function  InitializeDrawEdit(that, color) {
+    function  pickColor(that, color) {
 
         that._selectedColorContainer.style.background = color;
         that._selectedColorTextContainer.value = color;
@@ -105,19 +105,83 @@ define([
         var RStringTab = colorStringTab[0];
         var RSplit = RStringTab.split("(");
 
-        var R = parseInt(RSplit[1]) / 255.0;
-        var G = parseInt(colorStringTab[1]) / 255.0;
-        var B = parseInt(colorStringTab[2]) / 255.0;
+        var R = parseInt(RSplit[1]);
+        var G = parseInt(colorStringTab[1]);
+        var B = parseInt(colorStringTab[2]);
 
-        that._selectedColor = new Color(R, G, B, 0.5);
+        var RN = parseInt(RSplit[1]) / 255;
+        var GN = parseInt(colorStringTab[1]) / 255;
+        var BN = parseInt(colorStringTab[2]) / 255;
+
+        var RInt = parseInt(RSplit[1]);
+        var GInt = parseInt(colorStringTab[1]);
+        var BInt = parseInt(colorStringTab[2]);
+
+        that._colorProperty = "R" + RInt + "G" + GInt + "B" + BInt;
+
+        console.log(that._viewer);
+
+        console.log(that._viewer.colorAssignation[that._colorProperty]);
+
+        if (!that._viewer.colorAssignation[that._colorProperty]) {
+            that._propertyValueContainer.value = "";
+            that._assignPropertyToColorContainer.style.visibility = "visible";
+        }
+
+        that._selectedColor = {
+            red: R,
+            green: G,
+            blue: B,
+            alpha: 1.0
+        };
+
+        that._colorObjectN = new Color(RN, GN, BN, 0.5);
     }
+
+
+    function  colorAssignationFunction(that) {
+
+        if (that._viewer.colorAssignation) {
+            
+            
+
+            for (var color in that._viewer.colorAssignation) {
+
+                var propertyColor = document.createElement('div');
+                propertyColor.className = 'cesium-buttonColor';
+                propertyColor.style.background = that._viewer.colorAssignation[color].color;
+
+                var propertyName = document.createElement('div');
+                propertyName.innerHTML = that._viewer.colorAssignation[color].propertyValue;
+                propertyName.className = 'cesium-Color-propertyNameTitle-input';
+            }
+        }
+
+        if (that._propertyNameContainer.value != "" && that._propertyValueContainer.value != "") {
+
+            that._viewer.colorAssignation[that._colorProperty] = {
+                propertyName: that._propertyNameContainer.value,
+                propertyValue: that._propertyValueContainer.value,
+                color :  that._selectedColor
+            }
+
+            console.log(that._viewer.colorAssignation);
+            that._assignPropertyToColorContainer.style.visibility = "hidden";
+
+
+        } else if (that._propertyNameContainer.value == "" || that._propertyValueContainer.value == "") {
+            alert("Please, fill all fields");
+        }
+
+    }
+
 
     /**
      * The view model for {@link ColorPicker}.
      * @alias ColorPickerViewModel
      * @constructor
      */
-    var ColorPickerViewModel = function (viewerContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, viewer) {
+    var ColorPickerViewModel = function (viewerContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, propertyNameContainer, propertyValueContainer, viewer) {
 
         this._viewer = viewer;
         this._viewerContainer = viewerContainer;
@@ -125,12 +189,27 @@ define([
         this._selectedColorContainer = selectedColorContainer;
         this._selectedColorTextContainer = selectedColorTextContainer;
         this._ColorPickerContainer = ColorPickerContainer;
+        this._assignPropertyToColorContainer = assignPropertyToColorContainer;
+        this._propertyNameContainer = propertyNameContainer;
+        this._propertyValueContainer = propertyValueContainer;
+
+        this._colorProperty = null;
+
+        // this.colorAssignation = {};
+
+        if (!this._viewer.colorAssignation)
+            this._viewer.colorAssignation = {};
+
         selectedColorContainer.style.background = 'rgba(255, 255, 0, 0.3)';
         selectedColorTextContainer.value = 'rgba(255, 255, 0, 0.3)';
 
         var that = this;
         this._selectColorCommand = createCommand(function (color) {
-            InitializeDrawEdit(that, color);
+            pickColor(that, color);
+        });
+
+        this._colorAssignationCommand = createCommand(function () {
+            colorAssignationFunction(that);
         });
 
         this._moveContainerCommand = createCommand(function (data, event) {
@@ -153,16 +232,32 @@ define([
                 return this._selectColorCommand;
             }
         },
-        
         selectedColor: {
             get: function () {
-                return this._selectedColor;
+
+
+                var colorProperty = "R" + this._selectedColor.red + "G" + this._selectedColor.green + "B" + this._selectedColor.blue;
+
+                var colorProperty = this._viewer.colorAssignation[colorProperty];
+
+                var returnObject = {
+                    color: this._selectedColor,
+                    normalizedColor: this._colorObjectN,
+                    property: colorProperty
+                }
+
+
+                return returnObject;
             }
         },
-        
         moveContainerCommand: {
             get: function () {
                 return this._moveContainerCommand;
+            }
+        },
+        colorAssignationCommand: {
+            get: function () {
+                return this._colorAssignationCommand;
             }
         },
     });
@@ -188,8 +283,6 @@ define([
             that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
         if (that._handlerUpClick)
             that._handlerUpClick.removeInputAction(ScreenSpaceEventType.MIDDLE_UP);
-        if (that._handlerMove)
-            that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
     }
 
 

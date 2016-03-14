@@ -319,5 +319,6 @@ body {
     top   : 5px;
     left    : 500px;
     height   : 30px;
+    z-index: 5;
     /*border : #ffffff thin solid;*/
 }

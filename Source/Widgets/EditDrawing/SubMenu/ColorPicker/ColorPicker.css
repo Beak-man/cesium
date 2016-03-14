@@ -1,3 +1,7 @@
+/*============================================================================== */
+/*=========================== COLOR PICKER CONTAINER =========================== */
+/*============================================================================== */
+
 .cesium-ColorPickerContainer{
     position: absolute;
     top: 30%;
@@ -6,8 +10,10 @@
     height: 300px;
     background: #303336; 
     border: 1px solid #444;
-    z-index: 1;
+    z-index: 0;
 }
+
+/*============================= COLOR BUTTONS ================================== */
 
 .cesium-buttonColor{
     display: inline-block;
@@ -19,12 +25,14 @@
     cursor: pointer;
     overflow: hidden;
     background: chartreuse;
-    
+
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
+
+/*========================== SELECTED COLOR CONTAINER ========================== */
 
 .cesium-buttonColor-selected{
     position: absolute;
@@ -36,8 +44,9 @@
     height: 30px;
 }
 
+/*======================== SELECTED COLOR TEXT CONTAINER ======================= */
+
 .cesium-buttonColor-selected-text{
-    
     position: absolute;
     top: 86%;
     left: 32.5%;
@@ -46,5 +55,70 @@
     width: 128px;
     height: 20px;
     text-align: center;
-    
+}
+
+/*============================================================================== */
+/*======================= ASSIGN PROPERTY CONTAINER  =========================== */
+/*============================================================================== */
+
+.cesium-Color-assignProperty{
+    position: absolute;
+    top: 40%;
+    left: 32.5%;
+    width: 400px;
+    height: 130px;
+    background: #303336; 
+    border: 1px solid #444;
+    visibility: hidden;
+}
+
+/*======================= RIGHT AND LEFT SUB-CONTAINER ========================= */
+
+.cesium-Color-assignProperty-left{
+    width: 30%;
+    height: 100%;
+    display: inline-block;
+    border-right: 1px solid #444;
+}
+
+.cesium-Color-assignProperty-right{
+    width: 59%;
+    height: 100%;
+    display: inline-block;
+}
+
+/*=============================== PROPERTY NAME ================================ */
+
+.cesium-Color-propertyName-input{
+    position : absolute;
+    top : 25%;
+    left : 60%;
+}
+
+.cesium-Color-propertyNameTitle-input{
+    position : absolute;
+    top : 25%;
+    left : 31%;
+}
+
+/*=============================== PROPERTY VALUE ================================ */
+
+.cesium-Color-propertyValue-input{
+    position : absolute;
+    top : 50%;
+    left : 60%;
+}
+
+.cesium-Color-propertyValueTitle-input{
+    position : absolute;
+    top : 50%;
+    left : 31%;
+}
+
+/*=============================== ASSIGN BUTTON ================================ */
+
+.cesium-Color-propertyAssign-button{
+    position : absolute;
+    top : 73%;
+    left : 81.5%;
 }
