@@ -121,6 +121,13 @@ define([
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
             }
+            
+            try {
+                that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
+                that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.removeHandlers;
+            } catch (e) {
+            }
+            
 
         } else if (that._isPanelVisible === true) {
 
@@ -153,12 +160,18 @@ define([
             try {
                 that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu;
             } catch (e) {
-                console.log(e);
             }
             
             try {
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
+            }
+            
+            try {
+                that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
+                that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.removeHandlers;
+            } catch (e) {
+                console.log(e);
             }
         }
     }

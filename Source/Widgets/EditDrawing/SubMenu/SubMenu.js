@@ -141,7 +141,7 @@ define([
 
                 try {
                     this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
-                    console.log(this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer);
+                   // console.log(this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer);
                 } catch (e) {
                     console.log(e);
                 }

@@ -16,6 +16,17 @@ define([
         ) {
     "use strict";
 
+    var closeIcon = '<path d="M84.707,68.752L65.951,49.998l18.75-18.752c0.777-0.777,0.777-2.036,0-2.813L71.566,15.295\
+	c-0.777-0.777-2.037-0.777-2.814,0L49.999,34.047l-18.75-18.752c-0.746-0.747-2.067-0.747-2.814,0L15.297,28.431\
+	c-0.373,0.373-0.583,0.88-0.583,1.407c0,0.527,0.21,1.034,0.583,1.407L34.05,49.998L15.294,68.753\
+	c-0.373,0.374-0.583,0.88-0.583,1.407c0,0.528,0.21,1.035,0.583,1.407l13.136,13.137c0.373,0.373,0.881,0.583,1.41,0.583\
+	c0.525,0,1.031-0.21,1.404-0.583l18.755-18.755l18.756,18.754c0.389,0.388,0.896,0.583,1.407,0.583c0.511,0,1.019-0.195,1.408-0.583\
+	l13.138-13.137C85.484,70.789,85.484,69.53,84.707,68.752z"/>';
+
+    var minusIcon = '<path d="M88.447,38.528H11.554c-1.118,0-2.024,0.907-2.024,2.024v18.896c0,1.118,0.907,2.024,2.024,2.024h76.892\
+	c1.117,0,2.023-0.907,2.023-2.024V40.552C90.47,39.435,89.564,38.528,88.447,38.528z"/>';
+
+
     /**
      * A widget to show the colorPicker widget.
      *
@@ -27,10 +38,113 @@ define([
      */
     var ColorPicker = function (viewerContainer, viewer) {
 
+        var mainContainer = document.createElement('DIV');
+        mainContainer.className = 'cesium-MainColorPickerContainer';
+        viewerContainer.appendChild(mainContainer);
+
+        /* =====================================================================
+         =====================  BUTTONS MENU CONTAINER =========================
+         ======================================================================= */
+
+        var barMenuContainer = document.createElement('DIV');
+        barMenuContainer.className = 'cesium-BarMenuContainer';
+        mainContainer.appendChild(barMenuContainer);
+        
+        var barMenuContainerLeft = document.createElement('DIV');
+        barMenuContainerLeft.className = 'cesium-titleMenuLeft';
+        barMenuContainer.appendChild(barMenuContainerLeft);
+        
+        var barMenuContainerRight = document.createElement('DIV');
+        barMenuContainerRight.className = 'cesium-titleMenuRight';
+        barMenuContainer.appendChild(barMenuContainerRight);
+
+        var closeContainerBox = document.createElement('div');
+        closeContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
+        closeContainerBox.innerHTML = '<svg width="14" height="14" viewBox="20 10 110 100">' + closeIcon + ' </svg>';
+        closeContainerBox.setAttribute('data-bind', 'attr  : { title: "close panel" }, event : {click : closePanelCommand}');
+        barMenuContainerLeft.appendChild(closeContainerBox);
+
+        var minimizeContainerBox = document.createElement('div');
+        minimizeContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
+        minimizeContainerBox.innerHTML = '<svg width="14" height="14" viewBox="20 -10 110 100">' + minusIcon + ' </svg>';
+        minimizeContainerBox.setAttribute('data-bind', 'attr  : { title: "minimize panel" }, event : {click : minimizePanelCommand}');
+        barMenuContainerLeft.appendChild(minimizeContainerBox);
+
+        var ContainerTitleBox = document.createElement('div');
+        ContainerTitleBox.className = 'cesium-titleMenu';
+        ContainerTitleBox.innerHTML = 'Color picker Panel';
+        barMenuContainerRight.appendChild(ContainerTitleBox);
+        
+        /* =====================================================================
+         ========================  LEGEND CONTAINER ============================
+         ======================================================================= */
+       
+       
+       /* ============================ Main containers ========================= */
+       
+        var legendContainer = document.createElement('DIV');
+        legendContainer.className = 'cesium-legendContainer';
+        viewerContainer.appendChild(legendContainer);
+        
+        var legendContainerTop = document.createElement('DIV');
+        legendContainerTop.className = 'cesium-legendContainerTop';
+        legendContainer.appendChild(legendContainerTop);
+        
+        var legendContainerMiddle = document.createElement('DIV');
+        legendContainerMiddle.className = 'cesium-legendContainerMiddle';
+        legendContainer.appendChild(legendContainerMiddle);
+        
+        var legendContainerBottom = document.createElement('DIV');
+        legendContainerBottom.className = 'cesium-legendContainerBottom';
+        legendContainer.appendChild(legendContainerBottom);
+        
+        
+        var legendObject = {
+            container : legendContainer,
+            top : legendContainerTop,
+            middle : legendContainerMiddle,
+            bottom : legendContainerBottom
+        }
+        
+        /* ======================= Menu bar buttons ============================ */
+        
+        var barMenuLegendContainer = legendContainerTop;
+        
+        var barMenuLegendContainerLeft = document.createElement('DIV');
+        barMenuLegendContainerLeft.className = 'cesium-titleMenuLeft';
+        barMenuLegendContainer.appendChild(barMenuLegendContainerLeft);
+        
+        var barMenuLegendContainerRight = document.createElement('DIV');
+        barMenuLegendContainerRight.className = 'cesium-titleMenuRight';
+        barMenuLegendContainer.appendChild(barMenuLegendContainerRight);
+
+        var closeLegendContainerBox = document.createElement('div');
+        closeLegendContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
+        closeLegendContainerBox.innerHTML = '<svg width="14" height="14" viewBox="20 10 110 100">' + closeIcon + ' </svg>';
+      //  closeLegendContainerBox.setAttribute('data-bind', 'attr  : { title: "close panel" }, event : {click : closePanelCommand}');
+        barMenuLegendContainerLeft.appendChild(closeLegendContainerBox);
+
+        var minimizeLegendContainerBox = document.createElement('div');
+        minimizeLegendContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
+        minimizeLegendContainerBox.innerHTML = '<svg width="14" height="14" viewBox="20 -10 110 100">' + minusIcon + ' </svg>';
+        minimizeLegendContainerBox.setAttribute('data-bind', 'attr  : { title: "minimize panel" }, event : {click : minimizeLegendPanelCommand}');
+        barMenuLegendContainerLeft.appendChild(minimizeLegendContainerBox);
+
+        var legendContainerTitleBox = document.createElement('div');
+        legendContainerTitleBox.className = 'cesium-titleMenu';
+        legendContainerTitleBox.innerHTML = 'Color legend Panel';
+        barMenuLegendContainerRight.appendChild(legendContainerTitleBox);
+        
+        
+        
+        
+        /* =====================================================================
+         ======================== COLOR BOXES CONTAINER ========================
+         ======================================================================= */
+
         var ColorPickerContainer = document.createElement('DIV');
         ColorPickerContainer.className = 'cesium-ColorPickerContainer';
-        ColorPickerContainer.setAttribute('data-bind', ' event : {mousedown : moveContainerCommand}');
-        viewerContainer.appendChild(ColorPickerContainer);
+        mainContainer.appendChild(ColorPickerContainer);
 
         for (var i = 0; i < 120; i++) {
 
@@ -98,7 +212,6 @@ define([
 
                 var B = parseInt((255 / 10) * (i + 1 - 110));
                 color = "rgba(255," + B + ",0, 1)";
-
             }
 
             var colorButton = document.createElement('div');
@@ -144,12 +257,10 @@ define([
         propertyNameContainer.className = 'cesium-Color-propertyName-input';
         assignPropertyToColorContainerRight.appendChild(propertyNameContainer);
 
-
         var propertyValueTitleContainer = document.createElement('div');
         propertyValueTitleContainer.innerHTML = 'Property value : ';
         propertyValueTitleContainer.className = 'cesium-Color-propertyValueTitle-input';
         assignPropertyToColorContainerRight.appendChild(propertyValueTitleContainer);
-
 
         var propertyValueContainer = document.createElement('input');
         propertyValueContainer.type = 'text';
@@ -162,15 +273,22 @@ define([
         propertyAssignButton.setAttribute('data-bind', 'attr  : { title: "Pick this color" }, event : {click : colorAssignationCommand}');
         assignPropertyToColorContainerRight.appendChild(propertyAssignButton);
 
+        var propertyAssignButton = document.createElement('BUTTON');
+        propertyAssignButton.innerHTML = 'Cancel';
+        propertyAssignButton.className = 'cesium-Color-propertyAssign-button-cancel';
+        propertyAssignButton.setAttribute('data-bind', 'attr  : { title: "Pick this color" }, event : {click : cancelAssignationCommand}');
+        assignPropertyToColorContainerRight.appendChild(propertyAssignButton);
 
-// attr : {title: "Assign this property to the selected color"}, 
-
-        var viewModel = new ColorPickerViewModel(viewerContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, propertyNameContainer, propertyValueContainer, viewer);
+        var viewModel = new ColorPickerViewModel(viewerContainer, mainContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, assignPropertyToColorContainerLeft, propertyNameContainer, propertyValueContainer, legendObject, viewer);
+        
         this._viewerContainer = viewerContainer;
-        this._ColorPickerContainer = ColorPickerContainer;
+        this._mainContainer = mainContainer;
+        this._legendContainer = legendContainer;
         this._viewModel = viewModel;
-        knockout.applyBindings(viewModel, ColorPickerContainer);
+        
+        knockout.applyBindings(viewModel, mainContainer);
         knockout.applyBindings(viewModel, assignPropertyToColorContainer);
+        knockout.applyBindings(viewModel, legendContainer);
     };
     defineProperties(ColorPicker.prototype, {
         /**
@@ -198,9 +316,15 @@ define([
         destroyColorPickerContainer: {
             get: function () {
                 try {
-                    this._viewerContainer.removeChild(this._ColorPickerContainer);
+                    this._viewerContainer.removeChild(this._mainContainer);
                 } catch (e) {
                 }
+                
+                 try {
+                    this._viewerContainer.removeChild(this._legendContainer);
+                } catch (e) {
+                }
+                
             }
         },
     });

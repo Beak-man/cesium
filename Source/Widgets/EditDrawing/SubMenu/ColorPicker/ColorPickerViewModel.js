@@ -119,13 +119,17 @@ define([
 
         that._colorProperty = "R" + RInt + "G" + GInt + "B" + BInt;
 
-        console.log(that._viewer);
-
-        console.log(that._viewer.colorAssignation[that._colorProperty]);
-
         if (!that._viewer.colorAssignation[that._colorProperty]) {
             that._propertyValueContainer.value = "";
             that._assignPropertyToColorContainer.style.visibility = "visible";
+            buildLegend(that);
+        }
+        
+        if (that._viewer.colorAssignation[that._colorProperty]) {
+            that._propertyValueContainer.value = that._viewer.colorAssignation[that._colorProperty].propertyValue;
+            that._propertyNameContainer.value = that._viewer.colorAssignation[that._colorProperty].propertyName;
+            that._assignPropertyToColorContainer.style.visibility = "visible";
+            buildLegend(that);
         }
 
         that._selectedColor = {
@@ -138,31 +142,14 @@ define([
         that._colorObjectN = new Color(RN, GN, BN, 0.5);
     }
 
-
     function  colorAssignationFunction(that) {
-
-        if (that._viewer.colorAssignation) {
-            
-            
-
-            for (var color in that._viewer.colorAssignation) {
-
-                var propertyColor = document.createElement('div');
-                propertyColor.className = 'cesium-buttonColor';
-                propertyColor.style.background = that._viewer.colorAssignation[color].color;
-
-                var propertyName = document.createElement('div');
-                propertyName.innerHTML = that._viewer.colorAssignation[color].propertyValue;
-                propertyName.className = 'cesium-Color-propertyNameTitle-input';
-            }
-        }
 
         if (that._propertyNameContainer.value != "" && that._propertyValueContainer.value != "") {
 
             that._viewer.colorAssignation[that._colorProperty] = {
                 propertyName: that._propertyNameContainer.value,
                 propertyValue: that._propertyValueContainer.value,
-                color :  that._selectedColor
+                color: that._selectedColor
             }
 
             console.log(that._viewer.colorAssignation);
@@ -173,32 +160,143 @@ define([
             alert("Please, fill all fields");
         }
 
+        buildLegend(that);
+
+    }
+
+    function buildLegend(that) {
+
+        try {
+            that._legendContainerMiddle.removeChild(that._tableListLegend);
+        } catch (e) {
+        }
+
+        var dimObject = countPropertiesFunction(that._viewer.colorAssignation);
+
+        if (that._viewer.colorAssignation) {
+
+            /* ====================== table declaration ======================== */
+
+            that._tableListLegend = document.createElement('TABLE');
+            that._tableListLegend.className = 'cesium-tableLegand';
+            that._legendContainerMiddle.appendChild(that._tableListLegend);
+
+            /* ======================== table header =========================== */
+
+            var tableLineLegendHeader = document.createElement('TR');
+
+            var colomn1LegendHeader = document.createElement('TH');
+            var headerColumn1 = document.createElement('div');
+            headerColumn1.innerHTML = 'Color';
+
+            colomn1LegendHeader.appendChild(headerColumn1);
+            tableLineLegendHeader.appendChild(colomn1LegendHeader);
+
+            var colomn2LegendHeader = document.createElement('TH');
+            var headerColumn2 = document.createElement('div');
+            headerColumn2.innerHTML = 'Value';
+
+            colomn2LegendHeader.appendChild(headerColumn2);
+            tableLineLegendHeader.appendChild(colomn2LegendHeader);
+
+            var colomn3LegendHeader = document.createElement('TH');
+            var headerColumn3 = document.createElement('div');
+            headerColumn3.innerHTML = 'Name';
+
+            colomn3LegendHeader.appendChild(headerColumn3);
+            tableLineLegendHeader.appendChild(colomn3LegendHeader);
+
+            that._tableListLegend.appendChild(tableLineLegendHeader);
+
+            /* ========================== table Body =========================== */
+
+            for (var color in that._viewer.colorAssignation) {
+
+                var tableLineLegend = document.createElement('TR');
+
+                that._tableListLegend.appendChild(tableLineLegend);
+
+                var colomn1Legend = document.createElement('TD');
+                tableLineLegend.appendChild(colomn1Legend);
+
+                var propertyColor = document.createElement('div');
+                propertyColor.className = 'cesium-buttonColor';
+
+                var clr = that._viewer.colorAssignation[color].color;
+
+                var backgroundColor = "rgba(" + clr.red + "," + clr.green + "," + clr.blue + "," + clr.alpha + ")";
+
+                propertyColor.style.background = backgroundColor;
+                colomn1Legend.appendChild(propertyColor);
+
+                var colomn2Legend = document.createElement('TD');
+                tableLineLegend.appendChild(colomn2Legend);
+
+                var propertyValue = document.createElement('div');
+                propertyValue.innerHTML = that._viewer.colorAssignation[color].propertyValue;
+
+                colomn2Legend.appendChild(propertyValue);
+
+                var colomn3Legend = document.createElement('TD');
+                tableLineLegend.appendChild(colomn3Legend);
+
+                var propertyName = document.createElement('div');
+                propertyName.innerHTML = that._viewer.colorAssignation[color].propertyName;
+                colomn3Legend.appendChild(propertyName);
+            }
+        }
+
     }
 
 
+    function countPropertiesFunction(colorAssignation) {
+
+        var count = 0;
+
+        for (var color in colorAssignation) {
+            count++;
+        }
+
+        return count;
+
+    }
     /**
      * The view model for {@link ColorPicker}.
      * @alias ColorPickerViewModel
      * @constructor
      */
-    var ColorPickerViewModel = function (viewerContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, propertyNameContainer, propertyValueContainer, viewer) {
+    var ColorPickerViewModel = function (viewerContainer, mainContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, assignPropertyToColorContainerLeft, propertyNameContainer, propertyValueContainer, legendObject, viewer) {
 
         this._viewer = viewer;
         this._viewerContainer = viewerContainer;
         this._selectedColor = new Color(1.0, 0.5, 0, 0.5);
         this._selectedColorContainer = selectedColorContainer;
         this._selectedColorTextContainer = selectedColorTextContainer;
+        this._mainContainer = mainContainer;
         this._ColorPickerContainer = ColorPickerContainer;
         this._assignPropertyToColorContainer = assignPropertyToColorContainer;
         this._propertyNameContainer = propertyNameContainer;
         this._propertyValueContainer = propertyValueContainer;
+        this._assignPropertyToColorContainerLeft = assignPropertyToColorContainerLeft;
+
+        this._legendContainerMiddle = legendObject.middle;
+        this._legendObject = legendObject;
+        
+        console.log(this._legendObject.container);
+
+        this._isPanelminimized = false;
+        this._isLegendPanelminimized = false;
 
         this._colorProperty = null;
+        this._tableList = null;
 
-        // this.colorAssignation = {};
+        console.log("dans colorPicker");
 
-        if (!this._viewer.colorAssignation)
+        if (!this._viewer.colorAssignation) {
             this._viewer.colorAssignation = {};
+        } else if (this._viewer.colorAssignation) {
+            buildLegend(this);
+        }
 
         selectedColorContainer.style.background = 'rgba(255, 255, 0, 0.3)';
         selectedColorTextContainer.value = 'rgba(255, 255, 0, 0.3)';
@@ -212,9 +310,61 @@ define([
             colorAssignationFunction(that);
         });
 
+        this._cancelAssignationCommand = createCommand(function () {
+            that._assignPropertyToColorContainer.style.visibility = "hidden";
+            that._propertyValueContainer.value = "";
+        });
+
         this._moveContainerCommand = createCommand(function (data, event) {
             removeHandlers(that);
             movePanel(that, that._ColorPickerContainer, that._viewer);
+        });
+
+        this._closePanelCommand = createCommand(function () {
+
+        });
+
+        this._minimizePanelCommand = createCommand(function () {
+
+            if (!that._isPanelminimized) {
+
+                that._mainContainer.style.height = "20px";
+                that._mainContainer.className = "cesium-MainColorPickerContainer-transition";
+                that._ColorPickerContainer.style.visibility = "hidden";
+                that._isPanelminimized = true;
+            } else if (that._isPanelminimized) {
+
+                that._mainContainer.style.height = "320px";
+                that._mainContainer.className = "cesium-MainColorPickerContainer-transition";
+                setTimeout(function () {
+                    that._ColorPickerContainer.style.visibility = "visible";
+                }, 200);
+
+                that._isPanelminimized = false;
+            }
+        });
+
+        this._minimizeLegendPanelCommand = createCommand(function () {
+
+            if (!that._isLegendPanelminimized) {
+
+                that._legendObject.container.style.height = "20px";
+                that._legendObject.container.className = "cesium-legendContainer-transition";
+                that._legendObject.middle.style.visibility = "hidden";
+                that._legendObject.bottom.style.visibility = "hidden";
+                that._isLegendPanelminimized = true;
+
+            } else if (that._isLegendPanelminimized) {
+
+                that._legendObject.container.style.height = "250px";
+                that._legendObject.container.className = "cesium-legendContainer-transition";
+                setTimeout(function () {
+                    that._legendObject.middle.style.visibility = "visible";
+                    that._legendObject.bottom.style.visibility = "visible";
+                }, 200);
+
+                that._isLegendPanelminimized = false;
+            }
         });
 
         // knockout.track(this, ['']);
@@ -234,10 +384,7 @@ define([
         },
         selectedColor: {
             get: function () {
-
-
                 var colorProperty = "R" + this._selectedColor.red + "G" + this._selectedColor.green + "B" + this._selectedColor.blue;
-
                 var colorProperty = this._viewer.colorAssignation[colorProperty];
 
                 var returnObject = {
@@ -245,8 +392,6 @@ define([
                     normalizedColor: this._colorObjectN,
                     property: colorProperty
                 }
-
-
                 return returnObject;
             }
         },
@@ -258,6 +403,34 @@ define([
         colorAssignationCommand: {
             get: function () {
                 return this._colorAssignationCommand;
+            }
+        },
+        cancelAssignationCommand: {
+            get: function () {
+                return this._cancelAssignationCommand;
+            }
+        },
+        closePanelCommand: {
+            get: function () {
+                return this._closePanelCommand;
+            }
+        },
+        minimizePanelCommand: {
+            get: function () {
+                return this._minimizePanelCommand;
+            }
+        },
+        minimizeLegendPanelCommand: {
+            get: function () {
+                return this._minimizeLegendPanelCommand;
+            }
+        },
+        removeHandlers: {
+            get: function () {
+                if (this._handlerDownClick)
+                    this._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+                if (this._handlerUpClick)
+                    this._handlerUpClick.removeInputAction(ScreenSpaceEventType.MIDDLE_UP);
             }
         },
     });

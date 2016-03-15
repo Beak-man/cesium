@@ -491,7 +491,6 @@ define([
 
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
-
             /*==================================================================
              ========================= Valid (VERT) ============================
              =================================================================== */
@@ -525,7 +524,7 @@ define([
 
                             try {
                                 var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
-                                
+
                                 var colorObjectN = getColorObject.normalizedColor;
                                 var colorObject = getColorObject.color;
                                 var colorProperty = getColorObject.property;
@@ -533,11 +532,8 @@ define([
                                 objectType.material.color = colorObjectN;
 
                                 var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
-                                console.log(rgba);
                                 objectId.properties.flagColor = rgba;
-                                console.log(colorProperty);
                                 objectId.properties[colorProperty.propertyName] = colorProperty.propertyValue;
-                                console.log( objectId.properties);
 
                                 break;
                             } catch (e) {
@@ -545,13 +541,12 @@ define([
                                 var colorObjectN = getColorObject.normalizedColor;
                                 var colorObject = getColorObject.color;
                                 var colorProperty = getColorObject.property;
-                                
+
                                 objectType.color = colorObjectN;
                                 objectType.outlineColor._value = colorObjectN;
                                 objectType.outlineWidth._value = 3;
-                                
+
                                 var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
-                                console.log(rgba);
                                 objectId.properties.flagColor = rgba;
                                 objectId.properties[colorProperty.PropertyName] = colorProperty.PropertyValue;
 
@@ -643,7 +638,6 @@ define([
         }
 
         return featurePolygons;
-
     }
 
     function createPolylineGeoJsonObect(that, geoJsonDataSource) {
@@ -679,7 +673,6 @@ define([
         //  featurePolylines.properties.segment = "D = "+ distTrunc + " m";
 
         return featurePolylines;
-
     }
 
     function createPointGeoJsonObect() {
@@ -809,7 +802,6 @@ define([
                         geoJsonObject.features.push(featureCircle);
                     }
                 }
-
             }
 
             // Si la primitive est un polygonsGeomtry alors ...
@@ -982,7 +974,7 @@ define([
         this._isflagCommandActive = false;
         this._ellipsoid = viewer.scene.globe.ellipsoid;
         this._propertiesNames = ['point', 'ellipse', 'polygon', 'polyline'];
-        this._colorPicker = null;
+       
 
         var that = this;
 
@@ -1019,8 +1011,6 @@ define([
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
             } catch (e) {
             }
-
-
         });
         // knockout.track(this, []);
 
