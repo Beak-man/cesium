@@ -39,422 +39,22 @@ define([
         ) {
     "use strict";
 
-    /*  function flagFunction(that, viewer) {
-     
-     var undo = [];
-     var currentObjet = [];
-     
-     try {
-     that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
-     } catch (e) {
-     }
-     
-     if (!that._isflagCommandActive) {
-     
-     that._handlerLeft = new ScreenSpaceEventHandler(viewer.scene.canvas);
-     that._handlerCtrlLeft = new ScreenSpaceEventHandler(viewer.scene.canvas);
-     that._handlerAltLeft = new ScreenSpaceEventHandler(viewer.scene.canvas);
-     that._handlerRight = new ScreenSpaceEventHandler(viewer.scene.canvas);
-     that._handlerCtrlRight = new ScreenSpaceEventHandler(viewer.scene.canvas);
-     that._handlerMiddle = new ScreenSpaceEventHandler(viewer.scene.canvas);
-     that._handlerCtrlMiddle = new ScreenSpaceEventHandler(viewer.scene.canvas);
-     
-     /*==================================================================
-     ====================== Add Valid (BLEUE) ==========================
-     =================================================================== *\
-     
-     that._handlerCtrlLeft.setInputAction(function (click) {
-     
-     var ellipsoid = viewer.scene.globe.ellipsoid;
-     
-     var pickedObject = null;
-     
-     // on capture un objet avec le click de la souris
-     pickedObject = viewer.scene.pick(click.position);
-     
-     console.log(pickedObject);
-     
-     var objectProperties;
-     var objectId;
-     var id;
-     var objectPrimitive;
-     
-     if (pickedObject.id) {
-     objectProperties = pickedObject.id.properties;
-     objectId = pickedObject.id;
-     //   undo.push(objectId);
-     } else {
-     
-     objectPrimitive = pickedObject.primitive;
-     }
-     
-     if (pickedObject.id) {
-     
-     for (var i = 0; i < that._propertiesNames.length; i++) {
-     
-     if (objectId[that._propertiesNames[i]]) {
-     var objectType = objectId[that._propertiesNames[i]];
-     
-     try {
-     objectType.material.color = new Color(0.0, 0.0, 1.0, 0.5);
-     break;
-     } catch (e) {
-     objectType.color = new Color(0.0, 0.0, 1.0, 0.5);
-     objectType.outlineColor._value = new Color(0.0, 0.0, 1.0, 0.5);
-     objectType.outlineWidth._value = 3;
-     break;
-     }
-     }
-     }
-     objectId.properties.status = "Add valid";
-     
-     }/* else {
-     
-     //  console.log(objectPrimitive);
-     
-     var appearance = new MaterialAppearance({
-     material: Material.fromType('Color', {color: new Color(0.0, 0.0, 1.0, 0.3)}),
-     faceForward: true
-     })
-     objectPrimitive.appearance = appearance;
-     
-     }*\
-     
-     that._isflagCommandActive = true;
-     console.log("add valid");
-     
-     }, ScreenSpaceEventType.LEFT_CLICK, KeyboardEventModifier.CTRL);
-     
-     /*==================================================================
-     ============================= UNDO ================================
-     =================================================================== *\
-     
-     
-     that._handlerAltLeft.setInputAction(function (click) {
-     
-     var dimUndo = undo.length;
-     console.log(dimUndo);
-     
-     /*   if (dimUndo > 0) {
-     
-     var lastObject = undo[dimUndo - 1];
-     var lastModifiedObject = currentObjet[dimUndo - 1];
-     
-     lastModifiedObject.entityCollection.remove(lastModifiedObject);
-     lastObject.ellipse.material.color = Color.YELLOW;
-     lastObject.entityCollection.add(lastObject);
-     
-     console.log(lastModifiedObject);
-     console.log(lastObject);
-     
-     that._isflagCommandActive = true;
-     }*\
-     
-     console.log("undo");
-     }, ScreenSpaceEventType.LEFT_CLICK, KeyboardEventModifier.ALT);
-     
-     /*==================================================================
-     ========================== GOHST (ROSE) ===========================
-     =================================================================== *\
-     
-     that._handlerCtrlMiddle.setInputAction(function (click) {
-     
-     var ellipsoid = viewer.scene.globe.ellipsoid;
-     
-     var pickedObject = null;
-     
-     // on capture un objet avec le click de la souris
-     pickedObject = viewer.scene.pick(click.position);
-     
-     var objectProperties = pickedObject.id.properties;
-     
-     var objectId;
-     var id;
-     
-     if (pickedObject.id) {
-     objectId = pickedObject.id;
-     }
-     
-     if (pickedObject.id) {
-     
-     for (var i = 0; i < that._propertiesNames.length; i++) {
-     
-     if (objectId[that._propertiesNames[i]]) {
-     var objectType = objectId[that._propertiesNames[i]];
-     
-     try {
-     objectType.material.color = new Color(1.0, 0.0784, 0.576, 0.5);
-     objectId.properties.status = "Ghost";
-     break;
-     } catch (e) {
-     objectType.color = new Color(1.0, 0.0784, 0.576, 0.5);
-     objectType.outlineColor._value = new Color(1.0, 0.0784, 0.576, 0.5);
-     objectType.outlineWidth._value = 3;
-     objectId.properties.status = "Ghost";
-     break;
-     }
-     }
-     }
-     }
-     
-     /*  for (var i = 0; i < that._propertiesNames.length; i++) {
-     
-     objectId.ellipse.material.color = new Color(1.0, 0.0784, 0.576, 0.5);
-     
-     objectId.properties.status = "Ghost";
-     
-     }*\
-     
-     that._isflagCommandActive = true;
-     console.log("tag ghost");
-     
-     }, ScreenSpaceEventType.MIDDLE_CLICK, KeyboardEventModifier.CTRL);
-     
-     /*==================================================================
-     ====================== SUPRESSION DE L'OBJET ======================
-     =================================================================== *\
-     
-     that._handlerCtrlRight.setInputAction(function (click) {
-     
-     var ellipsoid = viewer.scene.globe.ellipsoid;
-     
-     var pickedObject = null;
-     
-     // on capture un objet avec le click de la souris
-     pickedObject = viewer.scene.pick(click.position);
-     
-     var objectProperties = pickedObject.id.properties;
-     var objectPrimitive = pickedObject.primitive;
-     
-     var objectId;
-     var id;
-     
-     if (pickedObject.id) {
-     objectId = pickedObject.id;
-     id = pickedObject.id.id;
-     }
-     
-     if (objectProperties.radius) {
-     
-     try {
-     var radiusString = objectProperties.radius;
-     var stringSplit = radiusString.split(" ");
-     var radius = parseFloat(stringSplit[0]);
-     } catch (e) {
-     var radiusString = objectProperties.radius;
-     var radius = parseFloat(radiusString);
-     }
-     }
-     
-     var objectPosition = pickedObject.position;
-     console.log(objectId);
-     
-     objectId.entityCollection.remove(objectId);
-     
-     that._isflagCommandActive = true;
-     console.log("tag suppression");
-     
-     }, ScreenSpaceEventType.RIGHT_CLICK, KeyboardEventModifier.CTRL);
-     
-     
-     /*==================================================================
-     ========================= Valid (VERT) ============================
-     =================================================================== *\
-     
-     that._handlerLeft.setInputAction(function (click) {
-     
-     // on recupere l'ellipsoid
-     var ellipsoid = viewer.scene.globe.ellipsoid;
-     
-     var pickedObject = null;
-     
-     // on capture un objet avec le click de la souris
-     pickedObject = viewer.scene.pick(click.position);
-     
-     var objectId;
-     var id;
-     
-     if (pickedObject.id) {
-     objectId = pickedObject.id;
-     id = pickedObject.id.id;
-     }
-     
-     //   if (!objectId.properties.status) {
-     
-     //   objectId.ellipse.material.color = new Color(0.0, 1.0, 0.0, 0.5);
-     //   objectId.properties.status = "Valid";
-     
-     //   } else if (objectId.properties.status) {
-     
-     var status = "Valid";
-     
-     /*   console.log(that._viewer);
-     var HTMLTable = that._viewer.infoBox.frame.contentDocument.all;
-     var dimTable = HTMLTable.length;
-     
-     for (var k = 0; k < dimTable; k++) {
-     if (HTMLTable[k].innerHTML === "status") {
-     HTMLTable[k + 1].innerHTML = status;
-     break;
-     }
-     }
-     
-     console.log(that._viewer.dataSources._dataSources[0].entities.values);
-     
-     objectId.ellipse.material.color = new Color(0.0, 1.0, 0.0, 0.5);
-     objectId.properties.status = status;
-     //   }*\
-     
-     
-     if (pickedObject.id) {
-     
-     for (var i = 0; i < that._propertiesNames.length; i++) {
-     
-     if (objectId[that._propertiesNames[i]]) {
-     var objectType = objectId[that._propertiesNames[i]];
-     
-     try {
-     // objectType.material.color = new Color(0.0, 1.0, 0.0, 0.5);
-     objectType.material.color = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
-     objectId.properties.status = "Valid";
-     
-     // console.log(that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor);
-     
-     break;
-     } catch (e) {
-     // objectType.color = new Color(0.0, 1.0, 0.0, 0.5);
-     //  objectType.outlineColor._value = new Color(0.0, 1.0, 0.0, 0.5);
-     objectType.color =that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
-     objectType.outlineColor._value =that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
-     objectType.outlineWidth._value = 3;
-     objectId.properties.status = "Valid";
-     break;
-     }
-     }
-     }
-     }
-     
-     that._isflagCommandActive = true;
-     console.log("tag valid");
-     
-     }, ScreenSpaceEventType.LEFT_CLICK);
-     
-     /*==================================================================
-     ======================= DISCUSS (ORANGE) ==========================
-     =================================================================== *\
-     
-     that._handlerMiddle.setInputAction(function (click) {
-     
-     // on recupere l'ellipsoid
-     var ellipsoid = viewer.scene.globe.ellipsoid;
-     
-     var pickedObject = null;
-     
-     // on capture un objet avec le click de la souris
-     pickedObject = viewer.scene.pick(click.position);
-     
-     var objectId;
-     var id;
-     
-     if (pickedObject.id) {
-     objectId = pickedObject.id;
-     id = pickedObject.id.id;
-     }
-     
-     if (pickedObject.id) {
-     
-     for (var i = 0; i < that._propertiesNames.length; i++) {
-     
-     if (objectId[that._propertiesNames[i]]) {
-     var objectType = objectId[that._propertiesNames[i]];
-     
-     try {
-     objectType.material.color = new Color(1.0, 0.5, 0.0, 0.5);
-     objectId.properties.status = "Discuss";
-     break;
-     } catch (e) {
-     objectType.color = new Color(1.0, 0.5, 0.0, 0.5);
-     objectType.outlineColor._value = new Color(1.0, 0.5, 0.0, 0.5);
-     objectType.outlineWidth._value = 3;
-     objectId.properties.status = "Discuss";
-     break;
-     }
-     }
-     }
-     }
-     
-     /*objectId.ellipse.material.color = new Color(1.0, 0.5, 0.0, 0.5);
-     objectId.properties.status = "Discuss";*\
-     
-     that._isflagCommandActive = true;
-     console.log("tag Discuss");
-     
-     }, ScreenSpaceEventType.MIDDLE_CLICK);
-     
-     
-     /*==================================================================
-     ========================== REMOVE (RED) ===========================
-     =================================================================== *\
-     
-     that._handlerRight.setInputAction(function (click) {
-     
-     // on recupere l'ellipsoid
-     var ellipsoid = viewer.scene.globe.ellipsoid;
-     
-     var pickedObject = null;
-     
-     // on capture un objet avec le click de la souris
-     pickedObject = viewer.scene.pick(click.position);
-     
-     var objectId;
-     var id;
-     
-     if (pickedObject.id) {
-     objectId = pickedObject.id;
-     id = pickedObject.id.id;
-     }
-     
-     if (pickedObject.id) {
-     
-     for (var i = 0; i < that._propertiesNames.length; i++) {
-     
-     if (objectId[that._propertiesNames[i]]) {
-     var objectType = objectId[that._propertiesNames[i]];
-     
-     try {
-     objectType.material.color = new Color(1.0, 0.0, 0.0, 0.6);
-     objectId.properties.status = "Remove";
-     break;
-     } catch (e) {
-     objectType.color = new Color(1.0, 0.0, 0.0, 0.6);
-     objectType.outlineColor._value = new Color(1.0, 0.0, 0.0, 0.6);
-     objectType.outlineWidth._value = 3;
-     objectId.properties.status = "Remove";
-     break;
-     }
-     }
-     }
-     }
-     
-     /*   objectId.ellipse.material.color = new Color(1.0, 0.0, 0.0, 0.6);
-     objectId.properties.status = "Remove";*\
-     
-     that._isflagCommandActive = true;
-     console.log("tag remove");
-     
-     }, ScreenSpaceEventType.RIGHT_CLICK);
-     
-     } else {
-     that._isflagCommandActive = false;
-     }
-     }
-     
-     */
-
     function flagFunctionV2(that, viewer) {
 
         try {
             that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+        } catch (e) {
+            console.log(e);
+        }
+
+        try {
+            that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
+        } catch (e) {
+        }
+
+        try {
+
+            that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.removeHandlers;
         } catch (e) {
         }
 
@@ -485,8 +85,6 @@ define([
                 }
 
                 objectId.entityCollection.remove(objectId);
-
-                that._isflagCommandActive = true;
                 console.log("suppression done");
 
             }, ScreenSpaceEventType.RIGHT_CLICK);
@@ -523,7 +121,7 @@ define([
                             var objectType = objectId[that._propertiesNames[i]];
 
                             try {
-                                var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
+                                var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
 
                                 var colorObjectN = getColorObject.normalizedColor;
                                 var colorObject = getColorObject.color;
@@ -537,7 +135,8 @@ define([
 
                                 break;
                             } catch (e) {
-                                var colorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor;
+                                console.log(that._viewer.editDrawing.viewModel.subMenu.viewModel);
+                                var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
                                 var colorObjectN = getColorObject.normalizedColor;
                                 var colorObject = getColorObject.color;
                                 var colorProperty = getColorObject.property;
@@ -559,20 +158,19 @@ define([
                     var objectPrimitive = pickedObject.primitive;
 
                     var appearance = new MaterialAppearance({
-                        material: Material.fromType('Color', {color: that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.selectedColor}),
+                        material: Material.fromType('Color', {color: that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.getColorObject.selectedColor}),
                         faceForward: true
                     })
                     objectPrimitive.appearance = appearance;
 
                 }
 
-                that._isflagCommandActive = true;
                 console.log("flag done");
 
             }, ScreenSpaceEventType.LEFT_CLICK);
 
-        } else {
-            that._isflagCommandActive = false;
+            that._isflagCommandActive = true;
+
         }
     }
 
@@ -974,13 +572,13 @@ define([
         this._isflagCommandActive = false;
         this._ellipsoid = viewer.scene.globe.ellipsoid;
         this._propertiesNames = ['point', 'ellipse', 'polygon', 'polyline'];
-       
 
         var that = this;
 
         viewer.infoBox.viewModel.showInfo = false;
 
         this._flagCommand = createCommand(function () {
+
             flagFunctionV2(that, that._viewer);
             that._colorPicker = new ColorPicker(that._viewerContainer, that._viewer);
         });
@@ -1058,7 +656,7 @@ define([
         },
         removeAllCommands: {
             get: function () {
-                this._isflagCommandActive = false;
+                //  this._isflagCommandActive = false;
                 if (this._handlerLeft)
                     this._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
                 /*   if (this._handlerCtrlLeft)

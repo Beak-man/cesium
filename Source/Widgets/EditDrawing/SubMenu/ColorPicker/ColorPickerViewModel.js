@@ -6,7 +6,8 @@ define([
     '../../../../Core/defineProperties',
     '../../../../Core/ScreenSpaceEventHandler',
     '../../../../Core/ScreenSpaceEventType',
-    '../../../../ThirdParty/knockout'
+    '../../../../ThirdParty/knockout',
+    './TableViewModel'
 ], function (
         Color,
         createCommand,
@@ -14,7 +15,8 @@ define([
         defineProperties,
         ScreenSpaceEventHandler,
         ScreenSpaceEventType,
-        knockout
+        knockout,
+        TableViewModel
         ) {
     "use strict";
 
@@ -119,12 +121,14 @@ define([
 
         that._colorProperty = "R" + RInt + "G" + GInt + "B" + BInt;
 
+        console.log("picked color : " + that._colorProperty);
+
         if (!that._viewer.colorAssignation[that._colorProperty]) {
             that._propertyValueContainer.value = "";
             that._assignPropertyToColorContainer.style.visibility = "visible";
             buildLegend(that);
         }
-        
+
         if (that._viewer.colorAssignation[that._colorProperty]) {
             that._propertyValueContainer.value = that._viewer.colorAssignation[that._colorProperty].propertyValue;
             that._propertyNameContainer.value = that._viewer.colorAssignation[that._colorProperty].propertyName;
@@ -161,7 +165,6 @@ define([
         }
 
         buildLegend(that);
-
     }
 
     function buildLegend(that) {
@@ -171,17 +174,30 @@ define([
         } catch (e) {
         }
 
+        try {
+            knockout.removeNode(that._tableListLegend);
+            knockout.cleanNode(that._tableListLegend);
+
+
+        } catch (e) {
+        }
+
+        try {
+            that._legendObject.bottom.removeChild(that._tableButtonsLegend);
+        } catch (e) {
+        }
+
         var dimObject = countPropertiesFunction(that._viewer.colorAssignation);
 
         if (that._viewer.colorAssignation) {
 
-            /* ====================== table declaration ======================== */
+            /* ====================== tables declaration ======================= */
 
             that._tableListLegend = document.createElement('TABLE');
-            that._tableListLegend.className = 'cesium-tableLegand';
+            that._tableListLegend.className = 'cesium-tableLegend';
             that._legendContainerMiddle.appendChild(that._tableListLegend);
 
-            /* ======================== table header =========================== */
+            /* ===================== Middle table header ======================= */
 
             var tableLineLegendHeader = document.createElement('TR');
 
@@ -208,26 +224,31 @@ define([
 
             that._tableListLegend.appendChild(tableLineLegendHeader);
 
-            /* ========================== table Body =========================== */
+            /* ========================== tables Body =========================== */
 
             for (var color in that._viewer.colorAssignation) {
 
-                var tableLineLegend = document.createElement('TR');
+                // *** creation de la ligne du tableau ***
 
+                var tableLineLegend = document.createElement('TR');
                 that._tableListLegend.appendChild(tableLineLegend);
+
+                // *** 1ere colonne :  la couleur selectionnée ***
 
                 var colomn1Legend = document.createElement('TD');
                 tableLineLegend.appendChild(colomn1Legend);
 
-                var propertyColor = document.createElement('div');
-                propertyColor.className = 'cesium-buttonColor';
+                var propertyColorBox = document.createElement('div');
+                propertyColorBox.className = 'cesium-buttonColor';
 
                 var clr = that._viewer.colorAssignation[color].color;
-
                 var backgroundColor = "rgba(" + clr.red + "," + clr.green + "," + clr.blue + "," + clr.alpha + ")";
 
-                propertyColor.style.background = backgroundColor;
-                colomn1Legend.appendChild(propertyColor);
+                propertyColorBox.style.background = backgroundColor;
+                propertyColorBox.setAttribute('data-bind', 'attr  : { title: "Pick this color" }, event : {click : pickSelectColorCommand.bind($data,"' + backgroundColor + '")}');
+                colomn1Legend.appendChild(propertyColorBox);
+
+                // *** 2eme ligne : la valeur de la propriété ***
 
                 var colomn2Legend = document.createElement('TD');
                 tableLineLegend.appendChild(colomn2Legend);
@@ -237,15 +258,61 @@ define([
 
                 colomn2Legend.appendChild(propertyValue);
 
+                // *** 3eme ligne : Le nom de la propriété ***
+
                 var colomn3Legend = document.createElement('TD');
                 tableLineLegend.appendChild(colomn3Legend);
 
                 var propertyName = document.createElement('div');
                 propertyName.innerHTML = that._viewer.colorAssignation[color].propertyName;
                 colomn3Legend.appendChild(propertyName);
+
+                knockout.cleanNode(propertyColorBox);
+                knockout.applyBindings(that._tableViewModel, propertyColorBox);
             }
+
+            /* ========================== buttons ============================== */
+
+            /*  console.log("avant");
+             knockout.applyBindings(that._tableViewModel, that._tableListLegend);
+             console.log("apres");*/
         }
 
+        that._tableButtonsLegend = document.createElement('TABLE');
+        that._tableButtonsLegend.className = 'cesium-tableLegend';
+        that._legendObject.bottom.appendChild(that._tableButtonsLegend);
+
+        var tableButtonsLineLegend = document.createElement('TR');
+        that._tableButtonsLegend.appendChild(tableButtonsLineLegend);
+
+        var colomn1LegendButton = document.createElement('TD');
+        tableButtonsLineLegend.appendChild(colomn1LegendButton);
+
+        var colomn2LegendButton = document.createElement('TD');
+        tableButtonsLineLegend.appendChild(colomn2LegendButton);
+
+        if (dimObject > 0) {
+
+            var geoJsonData = JSON.stringify(that._viewer.colorAssignation);
+            var blob = new Blob([geoJsonData], {
+                type: "application/octet-stream",
+                endings: "native"
+            });
+            var url = URL.createObjectURL(blob);
+            var fileName = "LegendFile.legendjson";
+
+            var linkDownload = document.createElement("a");
+            linkDownload.innerHTML = "<BUTTON>Save</BUTTON>";
+            linkDownload.href = url;
+            linkDownload.download = fileName || 'unknown';
+            colomn2LegendButton.appendChild(linkDownload);
+
+        } else if (dimObject == 0) {
+
+            /* var saveLegendButton = document.createElement('BUTTON');
+             saveLegendButton.innerHTML = 'Save';
+             colomn2LegendButton.appendChild(saveLegendButton);*/
+        }
     }
 
 
@@ -281,8 +348,6 @@ define([
 
         this._legendContainerMiddle = legendObject.middle;
         this._legendObject = legendObject;
-        
-        console.log(this._legendObject.container);
 
         this._isPanelminimized = false;
         this._isLegendPanelminimized = false;
@@ -290,7 +355,9 @@ define([
         this._colorProperty = null;
         this._tableList = null;
 
-        console.log("dans colorPicker");
+        this._tableViewModel = new TableViewModel(this, this._viewer);
+
+        //  buildLegend(this);
 
         if (!this._viewer.colorAssignation) {
             this._viewer.colorAssignation = {};
@@ -321,6 +388,10 @@ define([
         });
 
         this._closePanelCommand = createCommand(function () {
+
+        });
+
+        this._readConfigFileCommand = createCommand(function (d, e) {
 
         });
 
@@ -373,7 +444,7 @@ define([
     defineProperties(ColorPickerViewModel.prototype, {
         /**
          * Gets the Command that is executed when the button is clicked.
-         * @memberof DrawLinesViewModel.prototype
+         * @memberof ColorPickerViewModel.prototype
          *
          * @type {Command}
          */
@@ -382,19 +453,23 @@ define([
                 return this._selectColorCommand;
             }
         },
-        selectedColor: {
-            get: function () {
-                var colorProperty = "R" + this._selectedColor.red + "G" + this._selectedColor.green + "B" + this._selectedColor.blue;
-                var colorProperty = this._viewer.colorAssignation[colorProperty];
-
-                var returnObject = {
-                    color: this._selectedColor,
-                    normalizedColor: this._colorObjectN,
-                    property: colorProperty
-                }
-                return returnObject;
-            }
-        },
+        /* selectedColor: {
+         get: function () {
+         var colorProperty = "R" + this._selectedColor.red + "G" + this._selectedColor.green + "B" + this._selectedColor.blue;
+         
+         var selectedColorToReturn = this._selectedColor;
+         var colorObjectNToReturn =  this._colorObjectN;
+         var colorPropertyToReturn =  this._viewer.colorAssignation[colorProperty];
+         
+         
+         var returnObject = {
+         color: this._selectedColor,
+         normalizedColor: this._colorObjectN,
+         property: colorProperty
+         }
+         return returnObject;
+         },
+         },*/
         moveContainerCommand: {
             get: function () {
                 return this._moveContainerCommand;
@@ -425,6 +500,21 @@ define([
                 return this._minimizeLegendPanelCommand;
             }
         },
+        tableViewModel: {
+            get: function () {
+                return this._tableViewModel;
+            }
+        },
+        readConfigFileCommand: {
+            get: function () {
+                return this._readConfigFileCommand;
+            }
+        },
+        buildLegend: {
+            get: function () {
+                buildLegend(this);
+            }
+        },
         removeHandlers: {
             get: function () {
                 if (this._handlerDownClick)
@@ -448,7 +538,6 @@ define([
 
             return cursor;
         }
-
     }
 
     function removeHandlers(that) {

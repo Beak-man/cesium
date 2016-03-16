@@ -357,10 +357,10 @@ define([
 
                     var rgbaString = geoJson.properties.flagColor;
                     var rgbaStringTab = rgbaString.split(", ");
-                    var R = parseFloat(rgbaStringTab[0]);
-                    var G = parseFloat(rgbaStringTab[1]);
-                    var B = parseFloat(rgbaStringTab[2]);
-                    var A = parseFloat(rgbaStringTab[3]);
+                    var R = parseFloat(rgbaStringTab[0])/255.;
+                    var G = parseFloat(rgbaStringTab[1])/255.;
+                    var B = parseFloat(rgbaStringTab[2])/255.;
+                    var A = parseFloat(rgbaStringTab[3])/2.5;
 
                     circle.material = new Color(R, G, B, A);
 
@@ -420,10 +420,10 @@ define([
                     
                     var rgbaString = geoJson.properties.flagColor;
                     var rgbaStringTab = rgbaString.split(", ");
-                    var R = parseFloat(rgbaStringTab[0]);
-                    var G = parseFloat(rgbaStringTab[1]);
-                    var B = parseFloat(rgbaStringTab[2]);
-                    var A = parseFloat(rgbaStringTab[3]);
+                    var R = parseFloat(rgbaStringTab[0])/255;
+                    var G = parseFloat(rgbaStringTab[1])/255;
+                    var B = parseFloat(rgbaStringTab[2])/255;
+                    var A = parseFloat(rgbaStringTab[3])/2.5;
                     
                     point.color = new Color(R, G, B, A);
                     point.outlineColor._value = new Color(R, G, B, A);

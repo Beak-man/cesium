@@ -70,12 +70,6 @@ define([
         flagButton.setAttribute('data-bind', 'attr  : { title: "Flag entity" }, event : {click : flagCommand}');
         wrapperMenu.appendChild(flagButton);
 
-        /*   var moveButton = document.createElement('div');
-         moveButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show ';
-         moveButton.innerHTML = '<svg width="30" height="30" viewBox="0 0 100 100">' + moveIcon + ' </svg>';
-         moveButton.setAttribute('data-bind', 'attr  : { title: "Move entity" }, event : {click : moveCommand}');
-         wrapperMenu.appendChild(moveButton);*/
-
         var wrapperSaveButtonMenu = document.createElement('span');
         wrapperSaveButtonMenu.className = "cesium-subMenu-saveButtonWrapper";
         wrapperMenu.appendChild(wrapperSaveButtonMenu);
@@ -140,6 +134,7 @@ define([
                 }
 
                 try {
+                    console.log(this._viewer.editDrawing.viewModel.subMenu.viewModel);
                     this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
                    // console.log(this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer);
                 } catch (e) {

@@ -250,10 +250,17 @@ define([
                         sourceUri : fileName
                     });
                 } else if (/\.geojson$/i.test(fileName) || /\.json$/i.test(fileName) || /\.topojson$/i.test(fileName)) {
+                    
                     loadPromise = GeoJsonDataSource.load(JSON.parse(evt.target.result), {
                         sourceUri : fileName, 
 			view      : viewer						
                     });
+
+                } else if (/\.legendjson$/i.test(fileName)) {
+                    
+                   var legendConfig =  JSON.parse(evt.target.result);
+                   viewer.colorAssignation = legendConfig;
+
 
                 } else if (/\.(kml|kmz)$/i.test(fileName)) {
                     loadPromise = KmlDataSource.load(file, {
