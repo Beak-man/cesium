@@ -25,6 +25,7 @@ define([
     '../../Core/Matrix4',
     '../../Core/Occluder',
     '../../Core/ScreenSpaceEventType',
+    '../VOData/VOData',
     '../../Scene/WebMapServiceImageryProvider',
     '../../Core/WebMercatorProjection',
     '../../Core/WebMercatorTilingScheme'
@@ -52,6 +53,7 @@ define([
         Matrix4,
         Occluder,
         ScreenSpaceEventType,
+        VOData,
         WebMapServiceImageryProvider,
         WebMercatorProjection,
         WebMercatorTilingScheme
@@ -301,8 +303,8 @@ define([
 
                     var colomn3 = document.createElement('TD');
                     tableLineFinal.appendChild(colomn3)
-                    
-                     colomn3.appendChild(document.createTextNode(labelHideData));
+
+                    colomn3.appendChild(document.createTextNode(labelHideData));
 
 
 
@@ -633,6 +635,8 @@ define([
         this.previousIndex = null;
         this._windowsMove = '-470px';
 
+        this._voData = null;
+
         this._solarSystemSize = getObjectSize(solarSystem);
 
         for (var i = 0; i < this._solarSystemSize; i++) {
@@ -644,6 +648,14 @@ define([
         var xhr = getRequest();
 
         this._command = createCommand(function (planetName, planetIndex, satelliteIndex, vectorDimensionsString) {
+
+            try {
+                that._viewer.showSystems.viewModel.voData.destroyWrapperMenu
+            } catch (e) {
+
+            }
+
+            that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
 
             var stringVectorTab = vectorDimensionsString.split(',');
 
@@ -761,6 +773,11 @@ define([
         hideCommand: {
             get: function () {
                 return this._hideCommand;
+            }
+        },
+        voData: {
+            get: function () {
+                return this._voData;
             }
         },
         hidePanel: {

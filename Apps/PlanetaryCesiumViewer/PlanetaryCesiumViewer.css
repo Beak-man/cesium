@@ -9,6 +9,7 @@
 @import url(../../Source/Widgets/CustomObject/CustomObject.css);
 @import url(../../Source/Widgets/EditDrawing/EditDrawing.css);
 @import url(../../Source/Widgets/ShowGrid/ShowGrid.css);
+@import url(../../Source/Widgets/VOData/VOData.css);
 @import url(../../Source/Widgets/EditDrawing/SubMenu/ColorPicker/ColorPicker.css);
 
 /*@import url(../Sandcastle/templates/bucket.css);
@@ -319,6 +320,5 @@ body {
     top   : 5px;
     left    : 500px;
     height   : 30px;
-    z-index: 5;
     /*border : #ffffff thin solid;*/
 }

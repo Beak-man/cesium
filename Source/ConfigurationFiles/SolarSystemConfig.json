@@ -1,7 +1,7 @@
 {
 	"solarSystem" : {	
 		"mercury" : [""],
-		"venus"   : [""],
+		"venus"   : ["venus"],
 		"earth"   : ["", ""],
 		"mars"    : ["mars"],
 		"jupiter" : ["", "", "", "", ""],

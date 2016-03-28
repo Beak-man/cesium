@@ -2152,7 +2152,7 @@ define([
 		//	console.log(ellipsoid);
         }
         duration = defaultValue(duration, 2.0);
-        this._transitioner.morphToColumbusView(duration, ellipsoid);
+      this._transitioner.morphToColumbusView(duration, ellipsoid);
     };
 
     /**
