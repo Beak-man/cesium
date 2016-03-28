@@ -7,7 +7,7 @@ span.cesium-sceneModePicker-wrapper {
 }
 
 .cesium-sceneModePicker-visible {
-    visibility: hidden;
+    visibility: visible;
     opacity: 1;
     transition: opacity 0.25s linear;
     -webkit-transition: opacity 0.25s linear;

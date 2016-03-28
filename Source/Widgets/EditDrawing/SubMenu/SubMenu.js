@@ -44,9 +44,6 @@ define([
 				l13.138-13.137C85.484,70.789,85.484,69.53,84.707,68.752z"/></svg>';
 
 
-
-
-
     /**
      * A widget to show the subMenu of the draw polylines widget.
      *

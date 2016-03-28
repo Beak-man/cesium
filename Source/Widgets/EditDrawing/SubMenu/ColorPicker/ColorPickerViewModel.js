@@ -174,13 +174,11 @@ define([
         } catch (e) {
         }
 
-        try {
-            knockout.removeNode(that._tableListLegend);
-            knockout.cleanNode(that._tableListLegend);
-
-
-        } catch (e) {
-        }
+        /*     try {
+         knockout.removeNode(that._tableListLegend);
+         knockout.cleanNode(that._tableListLegend);
+         } catch (e) {
+         }*/
 
         try {
             that._legendObject.bottom.removeChild(that._tableButtonsLegend);
@@ -189,7 +187,11 @@ define([
 
         var dimObject = countPropertiesFunction(that._viewer.colorAssignation);
 
-        if (that._viewer.colorAssignation) {
+        console.log(that._viewer.colorAssignation);
+
+        // if (that._viewer.colorAssignation) {
+
+        if (dimObject > 0) {
 
             /* ====================== tables declaration ======================= */
 
@@ -240,6 +242,8 @@ define([
 
                 var propertyColorBox = document.createElement('div');
                 propertyColorBox.className = 'cesium-buttonColor';
+                var propertyColorBoxId = 'id_' + color;
+                propertyColorBox.setAttribute('id', propertyColorBoxId);
 
                 var clr = that._viewer.colorAssignation[color].color;
                 var backgroundColor = "rgba(" + clr.red + "," + clr.green + "," + clr.blue + "," + clr.alpha + ")";
@@ -325,7 +329,6 @@ define([
         }
 
         return count;
-
     }
     /**
      * The view model for {@link ColorPicker}.

@@ -84,7 +84,7 @@ define([
         var x = cartographic.longitude * semimajorAxis;
         var y = cartographic.latitude * semimajorAxis;
         var z = cartographic.height;
-
+        
         if (!defined(result)) {
             return new Cartesian3(x, y, z);
         }

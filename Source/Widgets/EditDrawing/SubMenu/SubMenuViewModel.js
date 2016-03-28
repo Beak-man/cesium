@@ -103,6 +103,8 @@ define([
                 // on capture un objet avec le click de la souris
                 pickedObject = viewer.scene.pick(click.position);
 
+                console.log(pickedObject);
+
                 var objectId;
                 var id;
 
@@ -157,11 +159,26 @@ define([
 
                     var objectPrimitive = pickedObject.primitive;
 
+
+                    var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
+                    var colorObjectN = getColorObject.normalizedColor;
+                    var colorObject = getColorObject.color;
+                    var colorProperty = getColorObject.property;
+
                     var appearance = new MaterialAppearance({
-                        material: Material.fromType('Color', {color: that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.getColorObject.selectedColor}),
+                        material: Material.fromType('Color', {color: colorObjectN}),
                         faceForward: true
                     })
-                    objectPrimitive.appearance = appearance;
+
+                    if (objectPrimitive.material) { // for polylines
+
+                        console.log(objectPrimitive.material);
+                        objectPrimitive.material.uniforms.color = colorObjectN;
+
+                    } else {
+
+                        objectPrimitive.appearance = appearance; // for circles and polygons
+                    }
 
                 }
 

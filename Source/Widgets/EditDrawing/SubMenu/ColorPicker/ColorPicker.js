@@ -49,11 +49,11 @@ define([
         var barMenuContainer = document.createElement('DIV');
         barMenuContainer.className = 'cesium-BarMenuContainer';
         mainContainer.appendChild(barMenuContainer);
-        
+
         var barMenuContainerLeft = document.createElement('DIV');
         barMenuContainerLeft.className = 'cesium-titleMenuLeft';
         barMenuContainer.appendChild(barMenuContainerLeft);
-        
+
         var barMenuContainerRight = document.createElement('DIV');
         barMenuContainerRight.className = 'cesium-titleMenuRight';
         barMenuContainer.appendChild(barMenuContainerRight);
@@ -74,46 +74,46 @@ define([
         ContainerTitleBox.className = 'cesium-titleMenu';
         ContainerTitleBox.innerHTML = 'Color picker Panel';
         barMenuContainerRight.appendChild(ContainerTitleBox);
-        
+
         /* =====================================================================
          ========================  LEGEND CONTAINER ============================
          ======================================================================= */
-       
-       
-       /* ============================ Main containers ========================= */
-       
+
+
+        /* ============================ Main containers ========================= */
+
         var legendContainer = document.createElement('DIV');
         legendContainer.className = 'cesium-legendContainer';
         viewerContainer.appendChild(legendContainer);
-        
+
         var legendContainerTop = document.createElement('DIV');
         legendContainerTop.className = 'cesium-legendContainerTop';
         legendContainer.appendChild(legendContainerTop);
-        
+
         var legendContainerMiddle = document.createElement('DIV');
         legendContainerMiddle.className = 'cesium-legendContainerMiddle';
         legendContainer.appendChild(legendContainerMiddle);
-        
+
         var legendContainerBottom = document.createElement('DIV');
         legendContainerBottom.className = 'cesium-legendContainerBottom';
         legendContainer.appendChild(legendContainerBottom);
-        
-        
+
+
         var legendObject = {
-            container : legendContainer,
-            top : legendContainerTop,
-            middle : legendContainerMiddle,
-            bottom : legendContainerBottom
+            container: legendContainer,
+            top: legendContainerTop,
+            middle: legendContainerMiddle,
+            bottom: legendContainerBottom
         }
-        
+
         /* ======================= Menu bar buttons ============================ */
-        
+
         var barMenuLegendContainer = legendContainerTop;
-        
+
         var barMenuLegendContainerLeft = document.createElement('DIV');
         barMenuLegendContainerLeft.className = 'cesium-titleMenuLeft';
         barMenuLegendContainer.appendChild(barMenuLegendContainerLeft);
-        
+
         var barMenuLegendContainerRight = document.createElement('DIV');
         barMenuLegendContainerRight.className = 'cesium-titleMenuRight';
         barMenuLegendContainer.appendChild(barMenuLegendContainerRight);
@@ -121,7 +121,7 @@ define([
         var closeLegendContainerBox = document.createElement('div');
         closeLegendContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
         closeLegendContainerBox.innerHTML = '<svg width="14" height="14" viewBox="20 10 110 100">' + closeIcon + ' </svg>';
-      //  closeLegendContainerBox.setAttribute('data-bind', 'attr  : { title: "close panel" }, event : {click : closePanelCommand}');
+        //  closeLegendContainerBox.setAttribute('data-bind', 'attr  : { title: "close panel" }, event : {click : closePanelCommand}');
         barMenuLegendContainerLeft.appendChild(closeLegendContainerBox);
 
         var minimizeLegendContainerBox = document.createElement('div');
@@ -134,10 +134,10 @@ define([
         legendContainerTitleBox.className = 'cesium-titleMenu';
         legendContainerTitleBox.innerHTML = 'Color legend Panel';
         barMenuLegendContainerRight.appendChild(legendContainerTitleBox);
-        
-        
-        
-        
+
+
+
+
         /* =====================================================================
          ======================== COLOR BOXES CONTAINER ========================
          ======================================================================= */
@@ -280,15 +280,17 @@ define([
         assignPropertyToColorContainerRight.appendChild(propertyAssignButton);
 
         var viewModel = new ColorPickerViewModel(viewerContainer, mainContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, assignPropertyToColorContainerLeft, propertyNameContainer, propertyValueContainer, legendObject, viewer);
-        
+
         this._viewerContainer = viewerContainer;
         this._mainContainer = mainContainer;
         this._legendContainer = legendContainer;
         this._viewModel = viewModel;
-        
+
         knockout.applyBindings(viewModel, mainContainer);
         knockout.applyBindings(viewModel, assignPropertyToColorContainer);
-        knockout.applyBindings(viewModel, legendContainer);
+        knockout.applyBindings(viewModel, closeLegendContainerBox);
+        knockout.applyBindings(viewModel, minimizeLegendContainerBox);
+        //  knockout.applyBindings(viewModel, legendContainer);
     };
     defineProperties(ColorPicker.prototype, {
         /**
@@ -319,12 +321,12 @@ define([
                     this._viewerContainer.removeChild(this._mainContainer);
                 } catch (e) {
                 }
-                
-                 try {
+
+                try {
                     this._viewerContainer.removeChild(this._legendContainer);
                 } catch (e) {
                 }
-                
+
             }
         },
     });

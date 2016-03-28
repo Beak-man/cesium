@@ -76,10 +76,7 @@ define([
             console.log(event);
         });
 
-
-
         // knockout.track(this, ['']);
-
     };
 
     defineProperties(TableViewModel.prototype, {
