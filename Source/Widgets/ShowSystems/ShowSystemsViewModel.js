@@ -600,12 +600,6 @@ define([
         var footerViewModel = new FooterViewModel(that._footerToolbar, configContainer, that._btnShowPanel);
         knockout.applyBindings(footerViewModel, that._btnShowPanel);
     }
-
-    function testFunction() {
-        console.log("test ok");
-        return true;
-    }
-
     /* ================================================================================================================== */
     /* ================================================ Main functions ================================================== */
     /* ================================================================================================================== */
@@ -650,12 +644,19 @@ define([
         this._command = createCommand(function (planetName, planetIndex, satelliteIndex, vectorDimensionsString) {
 
             try {
-                that._viewer.showSystems.viewModel.voData.destroyWrapperMenu
+                that._viewer.showSystems.viewModel.voData.destroyWrapperMenu;
             } catch (e) {
 
             }
+            
+            try{
+                 that._voData.viewModel.hidePanel;
+            }catch (e){
+                
+            }
 
             that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
+            
 
             var stringVectorTab = vectorDimensionsString.split(',');
 

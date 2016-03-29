@@ -47,7 +47,8 @@ define([
     '../DrawLines/DrawLines', /* *** NEW *** */
     '../CustomObject/CustomObject', /* *** NEW *** */
     '../EditDrawing/EditDrawing', /* *** NEW *** */
-    '../ShowGrid/ShowGrid'/* *** NEW *** */
+    '../ShowGrid/ShowGrid', /* *** NEW *** */
+    '../PointCircleSwitch/PointCircleSwitch' /* *** NEW *** */
 ], function (
         BoundingSphere,
         Cartesian3,
@@ -96,7 +97,8 @@ define([
         DrawLines, /* *** NEW *** */
         CustomObject, /* *** NEW *** */
         EditDrawing, /* *** NEW *** */
-        ShowGrid  /* *** NEW *** */) {
+        ShowGrid, /* *** NEW *** */
+        PointCircleSwitch /* *** NEW *** */) {
     "use strict";
 
     var boundingSphereScratch = new BoundingSphere();
@@ -525,6 +527,9 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         var showGrid;
         showGrid = new ShowGrid(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
+        
+        var pointCircleSwitch;
+        pointCircleSwitch = new PointCircleSwitch(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, viewerContainer, this);
 
 
         /* *******************************************************************************************************************************
@@ -655,6 +660,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         this._customObject = customObject;     /* *** NEW *** */
         this._editDrawing = editDrawing;  /* *** NEW *** */
         this._showGrid = showGrid;  /* *** NEW *** */
+        this._pointCircleSwitch = pointCircleSwitch; /* *** NEW *** */
         this._sceneModePicker = sceneModePicker;
         this._baseLayerPicker = baseLayerPicker;
         this._navigationHelpButton = navigationHelpButton;
@@ -819,6 +825,11 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         customObject: {
             get: function () {
                 return this._customObject;
+            }
+        },
+        pointCircleSwitch: {
+            get: function () {
+                return this._pointCircleSwitch;
             }
         },
         /**

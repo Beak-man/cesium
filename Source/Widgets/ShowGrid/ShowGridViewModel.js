@@ -99,7 +99,7 @@ define([
      */
     var ShowGridViewModel = function (IconsContainer, wrapperPanel, viewer) {
 
-        console.log("dans ShowGridViewModel");
+      //  console.log("dans ShowGridViewModel");
 
         this._IconsContainer = IconsContainer;
         this._wrapperPanel = wrapperPanel;

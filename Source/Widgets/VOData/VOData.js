@@ -62,11 +62,15 @@ define([
 
         var title = document.createElement('div');
         title.className = 'cesium-voData-configContainer-title';
-        title.innerHTML = "Virtual Observatory data";
+        title.innerHTML = "VO paris-cdpp VVEX";
         configContainer.appendChild(title);
+        
+        /* ============================= TABLE ================================= */
 
         var tableCoord = document.createElement('TABLE');
         configContainer.appendChild(tableCoord);
+
+        /* --------------------------- 1st LINE -------------------------------- */
 
         var tableLine1 = document.createElement('TR');
         tableCoord.appendChild(tableLine1);
@@ -99,6 +103,7 @@ define([
         lngMaxInput.className = 'cesium-voData-input';
         colomn14.appendChild(lngMaxInput);
 
+       /* --------------------------- 2nd LINE --------------------------------- */
 
         var tableLine2 = document.createElement('TR');
         tableCoord.appendChild(tableLine2);
@@ -131,32 +136,50 @@ define([
         latMaxInput.className = 'cesium-voData-input';
         colomn24.appendChild(latMaxInput);
 
+        /* ========================== BUTTONS ================================= */
 
         var btnContainer = document.createElement('div');
         btnContainer.className = 'cesium-voData-btnContainer';
         configContainer.appendChild(btnContainer);
-        
-        var sendQueryBtn = document.createElement('BUTTON');
-         sendQueryBtn.className = 'cesium-voData-configContainer-button cesium-button-planet';
-         sendQueryBtn.innerHTML = 'Send Query';
-         sendQueryBtn.setAttribute('data-bind', 'click: getDataCommand');
-         btnContainer.appendChild(sendQueryBtn);
 
-       /*  var btnHide = document.createElement('BUTTON');
+        var sendQueryBtn = document.createElement('BUTTON');
+        sendQueryBtn.className = 'cesium-voData-configContainer-button cesium-button-planet';
+        sendQueryBtn.innerHTML = 'Send Query';
+        sendQueryBtn.setAttribute('data-bind', 'click: getDataCommand');
+        btnContainer.appendChild(sendQueryBtn);
+
+        /*  var btnHide = document.createElement('BUTTON');
          btnHide.className = 'cesium-voData-configContainer-button cesium-button-planet';
          btnHide.innerHTML = 'Hide';
          btnHide.setAttribute('data-bind', 'click: hideCommand');
          btnContainer.appendChild(btnHide);*/
 
+           var inputObjects = {
+         lngMin : lngMinInput,
+         lngMax : lngMaxInput,
+         latMin : latMinInput,
+         latMax : latMaxInput
+         }
 
-        var viewModel = new VODataViewModel(viewer, planetName, configContainer, listContainer, btnContainer);
+
+        var viewModel = new VODataViewModel(viewer, planetName, configContainer, listContainer, btnContainer, inputObjects);
 
         this._mainContainer = mainContainer;
         this._wrapperMenu = wrapperMenu;
         this._viewModel = viewModel;
 
         knockout.applyBindings(viewModel, wrapperMenu);
+        knockout.applyBindings(viewModel, sendQueryBtn);
     };
+
+
+      
+
+
+
+
+
+
 
     defineProperties(VOData.prototype, {
         /**

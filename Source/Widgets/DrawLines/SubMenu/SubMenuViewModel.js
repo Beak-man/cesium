@@ -1586,8 +1586,10 @@ define([
     }
 
     function createEllipseGeoJsonObect(that, geoJsonDataSource) {
+        
+       // console.log(geoJsonDataSource);
 
-        var centerCoordinates = geoJsonDataSource.position._value;
+        var centerCoordinates = geoJsonDataSource._position._value;
 
         var circleRadius = geoJsonDataSource.ellipse.semiMajorAxis;
         var circleSurface = CesiumMath.PI * circleRadius * circleRadius;
@@ -1792,7 +1794,7 @@ define([
                         var centerCoordinates = circles[j]._boundingSpheres[0].center;
                         var circleRadius = circles[j]._boundingSpheres[0].radius;
                         var circleSurface = CesiumMath.PI * circleRadius * circleRadius;
-                        
+
                         var cartographicCenterPosition = that._ellipsoid.cartesianToCartographic(centerCoordinates);
                         var centerPositionLng = CesiumMath.toDegrees(cartographicCenterPosition.longitude);
                         var centerPositionLat = CesiumMath.toDegrees(cartographicCenterPosition.latitude);
@@ -1894,6 +1896,8 @@ define([
             // Si oui, alors on recupere ces données
             var geoJsonDataSource = that._viewer.dataSources._dataSources[0].entities.values;
 
+          //  console.log(geoJsonDataSource);
+
             // var geoJsonData = that._viewer.geoJsonData.features;
             var dimGeoJsonDataSource = geoJsonDataSource.length;
 
@@ -1916,12 +1920,16 @@ define([
                         break;
                     }
                 }
-                var savefunction = saveGeoJsondataSourcesObject[geomType];
-                var resObject = savefunction(that, geoJsonData);
 
-                // console.log(resObject);
+                if (geomType) {
 
-                geoJsonObject.features.push(resObject);
+                    var savefunction = saveGeoJsondataSourcesObject[geomType];
+                    var resObject = savefunction(that, geoJsonData);
+
+                    // console.log(resObject);
+
+                    geoJsonObject.features.push(resObject);
+                }
             }
         }
 
@@ -1956,7 +1964,7 @@ define([
                 that._linkDownload.href = url;
                 that._linkDownload.download = fileName || 'unknown';
                 that._linkDownload.onclick = function () {
-                    console.log(this);
+                   // console.log(this);
                     this.parentElement.removeChild(this);
                     that._wrapperSaveSubMenu.parentElement.removeChild(that._wrapperSaveSubMenu);
                     that._isSaveButtonActivate = false;
@@ -2023,7 +2031,7 @@ define([
 
         this._circleFromTwoPointsCommand = createCommand(function () {
 
-            console.log(that);
+         //   console.log(that);
 
             that.isPolyLineActive = false;
             that.isCircleActive = false;
@@ -2073,8 +2081,8 @@ define([
 
             if (that._viewer.scene.primitives.length > 0) {
 
-                console.log(that._viewer);
-                console.log(that._viewer._dataSourceCollection);
+              // console.log(that._viewer);
+              // console.log(that._viewer._dataSourceCollection);
 
                 try {
                     that._viewer._dataSourceCollection.removeAll();
@@ -2106,7 +2114,7 @@ define([
         });
 
         this._saveCommand = createCommand(function () {
-            console.log(that._viewer.scene.primitives);
+         //   console.log(that._viewer.scene.primitives);
             saveData(that, that._container);
         });
 
@@ -2265,7 +2273,7 @@ define([
 
         var primitives = that._viewer.scene.primitives._primitives;
 
-        console.log(primitives);
+       // console.log(primitives);
 
         if (primitives.length === 0) {
 
@@ -2315,7 +2323,7 @@ define([
 
             for (var i = 0; i < primitives.length; i++) {
 
-                console.log(i);
+              //  console.log(i);
 
                 if (primitives[i].associatedObject === "polylines") {
 
@@ -2399,7 +2407,7 @@ define([
 
                 if (i === primitives.length - 1) {
 
-                    console.log(statusFindpolyLines);
+               /*     console.log(statusFindpolyLines);
                     console.log(statusFindpolyLinesTmps);
                     console.log(statusFindcircle);
                     console.log(statusFindCirclesLabels);
@@ -2408,7 +2416,7 @@ define([
                     console.log(statusFindPolygons);
                     console.log(statusFindPolygonsLabels);
                     console.log(statusFindpolyLinesTmpPolygons);
-                    console.log(statusFindpolyLinesLabelsTmpPolygons);
+                    console.log(statusFindpolyLinesLabelsTmpPolygons);*/
 
                     if (!statusFindpolyLines) {
                         polyLines = that._viewer.scene.primitives.add(new PolylineCollection());
@@ -2507,7 +2515,7 @@ define([
         that._polyLinesTmpPolygons = collectionsObject.polyLinesTmpPolygons;
         that._polyLinesLabelsTmpPolygons = collectionsObject.polyLinesLabelsTmpPolygons;
 
-        console.log(that);
+       // console.log(that);
 
         return collectionsObject;
     }
@@ -2541,25 +2549,6 @@ define([
         } catch (e) {
             console.log(e);
         }
-        //  collectionsInitialization(that);
-
-        /*  if (!that._polyLinesCollectionTmps) {
-         var polyLinesTmps = that._viewer.scene.primitives.add(new PolylineCollection());
-         polyLinesTmps.associatedObject = 'polyLinesTmps';
-         that._polyLinesCollectionTmps = polyLinesTmps;
-         }
-         
-         if (!that._polyLinesLabelsCollectionTmps) {
-         var polyLinesLabelsTmps = that._viewer.scene.primitives.add(new LabelCollection());
-         polyLinesLabelsTmps.associatedObject = 'polyLinesLabelsTmps';
-         that._polyLinesLabelsCollectionTmps = polyLinesLabelsTmps;
-         }
-         
-         if (!that._polyLinesTmpPolygons) {
-         var polyLinesTmpPolygons = that._viewer.scene.primitives.add(new PolylineCollection());
-         polyLinesTmpPolygons.associatedObject = 'polylinesTmpPolygons';
-         that._polyLinesTmpPolygons = polyLinesTmpPolygons;
-         }*/
 
         console.log('all handlers remeved');
     }

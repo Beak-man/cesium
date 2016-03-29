@@ -28,6 +28,7 @@ define([
         that._viewer.drawLines.viewModel.isPanelToolVisible = false;
         that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
         that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;
+        that._viewer.pointCircleSwitch.viewModel.isPanelToolVisibleSwitch = false;
 
         // Activate the sub-menu of the drawLines widget
 

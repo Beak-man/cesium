@@ -19,7 +19,7 @@ define([
 
     // container : Element that contain the widget (i.e modificationsToolbar)
     // wrapper : modificationsToolbarWrapper
-    
+
     function moveIcon(that, container, wrapper) {
 
 
@@ -98,15 +98,18 @@ define([
             that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
             that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = that._isPanelVisible;
+            that._viewer.pointCircleSwitch.viewModel.isPanelToolVisibleSwitch = that._isPanelVisible;
 
-            if (that._handlerDownClick) that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-            if (that._handlerMove) that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+            if (that._handlerDownClick)
+                that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+            if (that._handlerMove)
+                that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
             try {
                 that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
             } catch (e) {
             }
-            
+
             try {
                 that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
@@ -116,22 +119,19 @@ define([
                 that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu;
             } catch (e) {
             }
-            
+
             try {
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
             }
-            
+
             try {
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.removeHandlers;
             } catch (e) {
             }
-            
 
         } else if (that._isPanelVisible === true) {
-
-
 
             that._wrapper.children[0].classeName = "";
             that._wrapper.children[0].className = 'cesium-Tools-wrapperPanel-transition-hide';
@@ -141,17 +141,18 @@ define([
             that._viewer.drawLines.viewModel.isPanelToolVisible = that._isPanelVisible;
             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
             that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = that._isPanelVisible;
+            that._viewer.pointCircleSwitch.viewModel.isPanelToolVisibleSwitch = that._isPanelVisible;
 
             if (that._handlerDownClick)
                 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
             if (that._handlerMove)
                 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
-             try {
+            try {
                 that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
             } catch (e) {
             }
-            
+
             try {
                 that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
@@ -161,12 +162,12 @@ define([
                 that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu;
             } catch (e) {
             }
-            
+
             try {
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands;
             } catch (e) {
             }
-            
+
             try {
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.removeHandlers;
@@ -175,7 +176,6 @@ define([
             }
         }
     }
-    ;
 
     /**
      * The view model for {@link Tools}.
@@ -255,7 +255,6 @@ define([
         ;
 
     }
-
 
     function removeHandlers(that) {
         if (that._handlerDownClick)

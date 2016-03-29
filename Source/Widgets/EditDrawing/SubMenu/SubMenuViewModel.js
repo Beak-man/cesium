@@ -120,45 +120,56 @@ define([
                     for (var i = 0; i < that._propertiesNames.length; i++) {
 
                         if (objectId[that._propertiesNames[i]]) {
-                            var objectType = objectId[that._propertiesNames[i]];
 
-                            try {
-                                var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
+                             var objectType = objectId[that._propertiesNames[i]];
 
-                                var colorObjectN = getColorObject.normalizedColor;
-                                var colorObject = getColorObject.color;
-                                var colorProperty = getColorObject.property;
+                            if (that._propertiesNames[i] == "ellipse" || that._propertiesNames[i] == 'point') {
 
-                                objectType.material.color = colorObjectN;
+                                var objectTypeEllipse = objectId['ellipse'];
+                                var objectTypePoint = objectId['point'];
 
-                                var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
-                                objectId.properties.flagColor = rgba;
-                                objectId.properties[colorProperty.propertyName] = colorProperty.propertyValue;
+                                try {
+                                    var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
 
-                                break;
-                            } catch (e) {
-                                console.log(that._viewer.editDrawing.viewModel.subMenu.viewModel);
-                                var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
-                                var colorObjectN = getColorObject.normalizedColor;
-                                var colorObject = getColorObject.color;
-                                var colorProperty = getColorObject.property;
+                                    var colorObjectN = getColorObject.normalizedColor;
+                                    var colorObject = getColorObject.color;
+                                    var colorProperty = getColorObject.property;
 
-                                objectType.color = colorObjectN;
-                                objectType.outlineColor._value = colorObjectN;
-                                objectType.outlineWidth._value = 3;
+                                    objectTypeEllipse.material.color = colorObjectN;
 
-                                var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
-                                objectId.properties.flagColor = rgba;
-                                objectId.properties[colorProperty.PropertyName] = colorProperty.PropertyValue;
+                                    objectTypePoint.color = colorObjectN;
+                                    objectTypePoint.outlineColor._value = colorObjectN;
+                                    objectTypePoint.outlineWidth._value = 3;
 
-                                break;
+
+                                    var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
+                                    objectId.properties.flagColor = rgba;
+                                    objectId.properties[colorProperty.propertyName] = colorProperty.propertyValue;
+
+                                    break;
+                                } catch (e) {
+                                    //console.log(that._viewer.editDrawing.viewModel.subMenu.viewModel);
+                                    var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
+                                    var colorObjectN = getColorObject.normalizedColor;
+                                    var colorObject = getColorObject.color;
+                                    var colorProperty = getColorObject.property;
+
+                                    objectType.color = colorObjectN;
+                                    objectType.outlineColor._value = colorObjectN;
+                                    objectType.outlineWidth._value = 3;
+
+                                    var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
+                                    objectId.properties.flagColor = rgba;
+                                    objectId.properties[colorProperty.PropertyName] = colorProperty.PropertyValue;
+
+                                    break;
+                                }
                             }
                         }
                     }
                 } else {
 
                     var objectPrimitive = pickedObject.primitive;
-
 
                     var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
                     var colorObjectN = getColorObject.normalizedColor;
@@ -179,7 +190,6 @@ define([
 
                         objectPrimitive.appearance = appearance; // for circles and polygons
                     }
-
                 }
 
                 console.log("flag done");
@@ -187,7 +197,6 @@ define([
             }, ScreenSpaceEventType.LEFT_CLICK);
 
             that._isflagCommandActive = true;
-
         }
     }
 
@@ -200,7 +209,7 @@ define([
 
     function createEllipseGeoJsonObect(that, geoJsonDataSource) {
 
-        var centerCoordinates = geoJsonDataSource.position._value;
+        var centerCoordinates = geoJsonDataSource._position._value;
 
         var circleRadius = geoJsonDataSource.ellipse.semiMajorAxis;
         var circleSurface = CesiumMath.PI * circleRadius * circleRadius;
@@ -232,7 +241,7 @@ define([
         geoJsonPolygons.type = "Polygon";
         geoJsonPolygons.coordinates = [];
 
-        console.log(geoJsonDataSource);
+      //  console.log(geoJsonDataSource);
 
         var positions = geoJsonDataSource.polygon.hierarchy._value.positions;
         var array = [];
@@ -290,10 +299,30 @@ define([
         return featurePolylines;
     }
 
-    function createPointGeoJsonObect() {
+    function createPointGeoJsonObect(that, geoJsonDataSource) {
 
+        var centerCoordinates = geoJsonDataSource.position._value;
+
+        /* var circleRadius = geoJsonDataSource.point.semiMajorAxis;
+         var circleSurface = CesiumMath.PI * circleRadius * circleRadius;*/
+
+        var cartographicCenterPosition = that._ellipsoid.cartesianToCartographic(centerCoordinates);
+        var centerPositionLng = CesiumMath.toDegrees(cartographicCenterPosition.longitude);
+        var centerPositionLat = CesiumMath.toDegrees(cartographicCenterPosition.latitude);
+
+        var centerPosition = [centerPositionLng, centerPositionLat];
+
+        var jsonCircleGeoJson = {};
+        jsonCircleGeoJson.type = "Point";
+        jsonCircleGeoJson.coordinates = centerPosition;
+
+        var featureCircleGeometry = {};
+        featureCircleGeometry.type = "Feature";
+        featureCircleGeometry.geometry = jsonCircleGeoJson;
+        featureCircleGeometry.properties = geoJsonDataSource.properties;
+
+        return featureCircleGeometry;
     }
-
 
     function saveData(that, container) {
 
@@ -313,7 +342,7 @@ define([
             // Si la primitive est un polyline alors ...
             if (primitives[i].associatedObject === "polylines" && primitives[i]._polylines.length > 0) {
 
-                console.log(primitives[i]);
+              //  console.log(primitives[i]);
 
                 // Declaration de l'objet featureObject contenant un ensemble de lignes continues
                 var featurePolylines = {};
@@ -336,7 +365,7 @@ define([
                 // on extrait de l'objet label l'information sur la distance totale
                 var totalLengthPath = labels[labels.length - 1]._text;
 
-                console.log(totalLengthPath);
+              //  console.log(totalLengthPath);
 
                 // Si il y a des lignes alors...
                 if (polylines.length > 0) {
@@ -516,10 +545,13 @@ define([
                         break;
                     }
                 }
-                var savefunction = saveGeoJsondataSourcesObject[geomType];
-                var resObject = savefunction(that, geoJsonData);
 
-                geoJsonObject.features.push(resObject);
+                if (geomType) {
+                    var savefunction = saveGeoJsondataSourcesObject[geomType];
+                    var resObject = savefunction(that, geoJsonData);
+
+                    geoJsonObject.features.push(resObject);
+                }
             }
         }
 

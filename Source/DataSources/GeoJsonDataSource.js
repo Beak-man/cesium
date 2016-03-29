@@ -71,7 +71,9 @@ define([
     "use strict";
 
     var crsNames = {};
-    var crsFunctionType = {}
+    var crsFunctionType = {};
+    var counter = 0;
+    var flaggedCounter = 0;
 
     // if the request is used
 
@@ -310,9 +312,11 @@ define([
 
     function createPoint(dataSource, geoJson, crsFunction, coordinates, options) {
 
-        options.circle = true;
+        options.circle = false;
 
         if (geoJson.properties.radius || geoJson.properties.Radius) {
+            
+            counter = counter + 1;
 
             var radius;
             var position;
@@ -330,7 +334,7 @@ define([
 
             }
 
-            if (options.circle) {
+          //  if (options.circle) {
 
                 var circle = new EllipseGraphics();
 
@@ -343,17 +347,6 @@ define([
                 circle.outlineWidth = 1.0;
 
                 if (geoJson.properties.flagColor) {
-                    /* if (geoJson.properties.status == "Valid") {
-                     circle.material = new Color(0.0, 1.0, 0.0, 0.3);
-                     } else if (geoJson.properties.status == "Remove") {
-                     circle.material = new Color(1.0, 0.0, 0.0, 0.3);
-                     } else if (geoJson.properties.status == "Discuss") {
-                     circle.material = new Color(1.0, 0.5, 0.0, 0.3);
-                     } else if (geoJson.properties.status == "Ghost") {
-                     circle.material = new Color(1.0, 0.0784, 0.576, 0.5);
-                     } else if (geoJson.properties.status == "Add valid") {
-                     circle.material = new Color(0.0, 0.0, 1.0, 0.3);
-                     }*/
 
                     var rgbaString = geoJson.properties.flagColor;
                     var rgbaStringTab = rgbaString.split(", ");
@@ -376,12 +369,12 @@ define([
                     position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
                 }
 
-                var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
+              //  var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
 
-                entity.position = position;
-                entity.ellipse = circle;
+              //  entity.position = position;
+               // entity.ellipse = circle;
 
-            } else if (!options.circle || options.circle === 'undefined') {
+          //  } else if (!options.circle || options.circle === 'undefined') { //
 
 
 
@@ -396,38 +389,20 @@ define([
                 point.outlineWidth = 1.0;
 
                 if (geoJson.properties.flagColor) {
-                /*    if (geoJson.properties.status == "Valid") {
-                        point.color = new Color(0.0, 1.0, 0.0, 1.0);
-                        point.outlineColor._value = new Color(0.0, 1.0, 0.0, 1.0);
-                        point.outlineWidth._value = 2;
-                    } else if (geoJson.properties.status == "Remove") {
-                        point.color = new Color(1.0, 0.0, 0.0, 0.3);
-                        point.outlineColor._value = new Color(1.0, 0.0, 0.0, 1.0);
-                        point.outlineWidth._value = 2;
-                    } else if (geoJson.properties.status == "Discuss") {
-                        point.color = new Color(1.0, 0.5, 0.0, 0.3);
-                        point.outlineColor._value = new Color(1.0, 0.5, 0.0, 1.0);
-                        point.outlineWidth._value = 2;
-                    } else if (geoJson.properties.status == "Ghost") {
-                        point.color = new Color(1.0, 0.0784, 0.576, 0.5);
-                        point.outlineColor._value = new Color(1.0, 0.0784, 0.576, 1.0);
-                        point.outlineWidth._value = 2;
-                    } else if (geoJson.properties.status == "Add valid") {
-                        point.color = new Color(0.0, 0.0, 1.0, 1.0);
-                        point.outlineColor._value = new Color(0.0, 0.0, 1.0, 1.0);
-                        point.outlineWidth._value = 2;
-                    }*/
                     
                     var rgbaString = geoJson.properties.flagColor;
                     var rgbaStringTab = rgbaString.split(", ");
+                    
                     var R = parseFloat(rgbaStringTab[0])/255;
                     var G = parseFloat(rgbaStringTab[1])/255;
                     var B = parseFloat(rgbaStringTab[2])/255;
-                    var A = parseFloat(rgbaStringTab[3])/2.5;
+                    var A = parseFloat(rgbaStringTab[3]);
                     
                     point.color = new Color(R, G, B, A);
                     point.outlineColor._value = new Color(R, G, B, A);
                     point.outlineWidth._value = 2;
+                    
+                    flaggedCounter = flaggedCounter + 1;
                     
                 } else {
                     point.color = new Color(1.0, 1.0, 0.0, 1.0);
@@ -443,9 +418,18 @@ define([
                 }
 
                 var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
+                
                 entity.position = position;
+                entity.ellipse = circle;
+                entity.ellipse.show = false;
                 entity.point = point;
-            }
+
+                GeoJsonDataSource.flaggedCounter = flaggedCounter;
+                GeoJsonDataSource.counter = counter;
+                
+                
+                
+           // } //
 
         } else {
 
@@ -995,6 +979,9 @@ define([
          console.log("***********************************************************************");*/
 
         options.view.geoJsonData = data;
+        
+         counter = 0;
+         flaggedCounter = 0;
 
         GeoJsonDataSource._viewer = options.view;
 

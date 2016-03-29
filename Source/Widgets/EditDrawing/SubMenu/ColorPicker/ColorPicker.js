@@ -5,6 +5,7 @@ define([
     '../../../../Core/DeveloperError',
     '../../../../ThirdParty/knockout',
     '../../../getElement',
+    '../../../FlagCounter/FlagCounter',
     './ColorPickerViewModel'
 ], function (
         defineProperties,
@@ -12,6 +13,7 @@ define([
         DeveloperError,
         knockout,
         getElement,
+        FlagCounter,
         ColorPickerViewModel
         ) {
     "use strict";
@@ -279,6 +281,18 @@ define([
         propertyAssignButton.setAttribute('data-bind', 'attr  : { title: "Pick this color" }, event : {click : cancelAssignationCommand}');
         assignPropertyToColorContainerRight.appendChild(propertyAssignButton);
 
+        /* =====================================================================
+         ============================ FLAG COUNTER =============================
+         ======================================================================= */
+
+
+         var flagCounter = new FlagCounter(viewerContainer, viewer);
+
+
+        /* =====================================================================
+         ============================== VIEW MODEL =============================
+         ======================================================================= */
+
         var viewModel = new ColorPickerViewModel(viewerContainer, mainContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, assignPropertyToColorContainerLeft, propertyNameContainer, propertyValueContainer, legendObject, viewer);
 
         this._viewerContainer = viewerContainer;
@@ -329,6 +343,13 @@ define([
 
             }
         },
+        
+        flagCoutner: {
+            get: function () {
+                return this._flagCoutner;
+            }
+        },
+        
     });
     return ColorPicker;
 });
