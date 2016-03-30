@@ -166,7 +166,7 @@ define([
                     var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
 
                     var capability = data.getElementsByTagName("Capability");
-                    var layers = capability[0].getElementsByTagName("Layer");
+                    var layersIni = capability[0].getElementsByTagName("Layer");
 
                     var names = [];
                     var title = []
@@ -193,14 +193,25 @@ define([
                     var tableList = document.createElement('TABLE');
                     listShow.appendChild(tableList);
 
+                    //  var dimLayers = layersIni.length;
+                    var layers = [];
+
+                    for (var i = 0; i < layersIni.length; i++) {
+
+                        if (layersIni[i].getAttribute('queryable')) {
+                            layers.push(layersIni[i]);
+                        }
+                    }
+
+                    crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
                     var dimLayers = layers.length;
+
                     for (var i = 0; i < layers.length; i++) {
 
                         names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                         layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                         title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
                         abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
-                        crs = layers[0].getElementsByTagName("CRS")[0].textContent;
                         bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
 
                         var nameLowCase = names[i].toLowerCase();
@@ -216,7 +227,6 @@ define([
                                 finalLayerName += nameLowCaseTab[j] + ' ';
                             }
                         }
-                        ;
 
                         var bboxString = bBox[i].attributes[2].value + ',' + bBox[i].attributes[1].value + ',' + bBox[i].attributes[4].value + ',' + bBox[i].attributes[3].value;
                         var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fjpeg' + '&' + 'LAYERS=' + layer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
@@ -254,7 +264,7 @@ define([
 
                         var colomn3 = document.createElement('TD');
                         colomn3.className = "cesium-showSystems-configContainer-colomn3";
-                        tableLine.appendChild(colomn3)
+                        tableLine.appendChild(colomn3);
 
                         var inputRange = document.createElement('INPUT');
                         inputRange.type = 'range';
@@ -273,7 +283,6 @@ define([
                             enablePickFeatures: false
                         });
                     }
-                    ;
 
 
                     var tableLineFinal = document.createElement('TR');
@@ -305,8 +314,6 @@ define([
                     tableLineFinal.appendChild(colomn3)
 
                     colomn3.appendChild(document.createTextNode(labelHideData));
-
-
 
                     var listViewModel = new ListViewModel(viewer, dimLayers, layerName, imageryProvidersTab, btnHide);
                     knockout.applyBindings(listViewModel, listContainer2);
@@ -356,7 +363,7 @@ define([
                 var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
 
                 var capability = data.getElementsByTagName("Capability");
-                var layers = capability[0].getElementsByTagName("Layer");
+                var layersIni = capability[0].getElementsByTagName("Layer");
 
 
                 /* ==== declaration of variables ==== */
@@ -372,94 +379,108 @@ define([
 
                 /* ==== get informations from tables previously built ==== */
 
+                var layers = [];
+
+                for (var i = 0; i < layersIni.length; i++) {
+
+                    if (layersIni[i].getAttribute('queryable')) {
+                        layers.push(layersIni[i]);
+                    }
+                }
+
+                crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
                 var dimLayers = layers.length;
+
                 for (var i = 0; i < layers.length; i++) {
-                    names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
-                    title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
-                    abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
-                    layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
-                    crs = layers[0].getElementsByTagName("CRS")[0].textContent;
-                    bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
 
-                    /* === transform the first case to UpperCase (for the vizualiation only : not Important) === */
+                    if (layers[i].getAttribute('queryable')) {
 
-                    var nameLowerCase = names[i].toLowerCase();
-                    var nameLowerCaseTab = nameLowerCase.split("_");
-                    var finalLayerName = '';
+                        names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
+                        title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
+                        abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
+                        layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
+                        bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
 
-                    for (var j = 0; j < nameLowerCaseTab.length; j++) {
-                        if (j == 0) {
-                            var MajName = nameLowerCaseTab[j].replace(nameLowerCaseTab[j].charAt(0), nameLowerCaseTab[j].charAt(0).toUpperCase())
-                            finalLayerName += MajName + ' ';
+                        /* === transform the first case to UpperCase (for the vizualiation only : not Important) === */
 
-                        } else {
-                            finalLayerName += nameLowerCaseTab[j] + ' ';
+                        var nameLowerCase = names[i].toLowerCase();
+                        var nameLowerCaseTab = nameLowerCase.split("_");
+                        var finalLayerName = '';
+
+                        for (var j = 0; j < nameLowerCaseTab.length; j++) {
+                            if (j == 0) {
+                                var MajName = nameLowerCaseTab[j].replace(nameLowerCaseTab[j].charAt(0), nameLowerCaseTab[j].charAt(0).toUpperCase())
+                                finalLayerName += MajName + ' ';
+
+                            } else {
+                                finalLayerName += nameLowerCaseTab[j] + ' ';
+                            }
                         }
-                    }
-                    ;
+                        ;
 
-                    /* === set the imagery request parameters (WMS) === */
+                        /* === set the imagery request parameters (WMS) === */
 
-                    var bboxString = bBox[i].attributes[2].value + ',' + bBox[i].attributes[1].value + ',' + bBox[i].attributes[4].value + ',' + bBox[i].attributes[3].value;
-                    var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fjpeg' + '&' + 'LAYERS=' + layer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
+                        var bboxString = bBox[i].attributes[2].value + ',' + bBox[i].attributes[1].value + ',' + bBox[i].attributes[4].value + ',' + bBox[i].attributes[3].value;
+                        var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fjpeg' + '&' + 'LAYERS=' + layer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
 
-                    var objRequest = {
-                        onlineResource: onlineResource,
-                        imageryRequestParam: imageryRequestParam,
-                        paramCesiumRequest: {
-                            planetName: pn,
-                            satelliteName: sn,
-                            naifCode: naifCode[0] + ',' + naifCode[1]
+                        var objRequest = {
+                            onlineResource: onlineResource,
+                            imageryRequestParam: imageryRequestParam,
+                            paramCesiumRequest: {
+                                planetName: pn,
+                                satelliteName: sn,
+                                naifCode: naifCode[0] + ',' + naifCode[1]
+                            }
                         }
+
+                        var satellN = objRequest.paramCesiumRequest.planetName;
+                        var naif = objRequest.paramCesiumRequest.naifCode;
+                        var onlineResUrl = objRequest.onlineResource;
+                        var finalUrl = onlineResUrl + '&' + imageryRequestParam;
+
+                        /* ==== set HTML containers for the vizualition in table form ==== */
+
+                        var tableLine = document.createElement('TR');
+                        tableList.appendChild(tableLine);
+
+                        var colomn1 = document.createElement('TD');
+                        tableLine.appendChild(colomn1);
+
+                        var btnShowLayer = document.createElement('INPUT');
+                        btnShowLayer.type = 'checkbox';
+                        btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
+                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstract[i] + '"}, checked : show_' + i);
+                        colomn1.appendChild(btnShowLayer);
+
+                        var colomn2 = document.createElement('TD');
+                        tableLine.appendChild(colomn2);
+
+                        colomn2.appendChild(document.createTextNode(finalLayerName));
+
+                        var colomn3 = document.createElement('TD');
+                        tableLine.appendChild(colomn3)
+
+                        /* ==== set the range type of the input HTML tag ==== */
+
+                        var inputRange = document.createElement('INPUT');
+                        inputRange.type = 'range';
+                        inputRange.min = '0';
+                        inputRange.max = '1';
+                        inputRange.step = '0.05';
+                        inputRange.setAttribute('data-bind', 'value: alpha_' + i + ', valueUpdate: "input"');
+                        colomn3.appendChild(inputRange);
+
+                        /* ==== set the imageryProvider ==== */
+
+                        layerName[i] = finalLayerName;
+                        imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                            url: finalUrl,
+                            layers: layer[i],
+                            credit: 'USGS @ planetarymaps.usgs.gov',
+                            ellipsoid: that._ellipsoid,
+                            enablePickFeatures: false
+                        });
                     }
-
-                    var satellN = objRequest.paramCesiumRequest.planetName;
-                    var naif = objRequest.paramCesiumRequest.naifCode;
-                    var onlineResUrl = objRequest.onlineResource;
-                    var finalUrl = onlineResUrl + '&' + imageryRequestParam;
-
-                    /* ==== set HTML containers for the vizualition in table form ==== */
-
-                    var tableLine = document.createElement('TR');
-                    tableList.appendChild(tableLine);
-
-                    var colomn1 = document.createElement('TD');
-                    tableLine.appendChild(colomn1);
-
-                    var btnShowLayer = document.createElement('INPUT');
-                    btnShowLayer.type = 'checkbox';
-                    btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                    btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstract[i] + '"}, checked : show_' + i);
-                    colomn1.appendChild(btnShowLayer);
-
-                    var colomn2 = document.createElement('TD');
-                    tableLine.appendChild(colomn2);
-
-                    colomn2.appendChild(document.createTextNode(finalLayerName));
-
-                    var colomn3 = document.createElement('TD');
-                    tableLine.appendChild(colomn3)
-
-                    /* ==== set the range type of the input HTML tag ==== */
-
-                    var inputRange = document.createElement('INPUT');
-                    inputRange.type = 'range';
-                    inputRange.min = '0';
-                    inputRange.max = '1';
-                    inputRange.step = '0.05';
-                    inputRange.setAttribute('data-bind', 'value: alpha_' + i + ', valueUpdate: "input"');
-                    colomn3.appendChild(inputRange);
-
-                    /* ==== set the imageryProvider ==== */
-
-                    layerName[i] = finalLayerName;
-                    imageryProvidersTab[i] = new WebMapServiceImageryProvider({
-                        url: finalUrl,
-                        layers: layer[i],
-                        credit: 'USGS @ planetarymaps.usgs.gov',
-                        ellipsoid: that._ellipsoid,
-                        enablePickFeatures: false
-                    });
                 }
                 ;
 
@@ -648,15 +669,15 @@ define([
             } catch (e) {
 
             }
-            
-            try{
-                 that._voData.viewModel.hidePanel;
-            }catch (e){
-                
+
+            try {
+                that._voData.viewModel.hidePanel;
+            } catch (e) {
+
             }
 
             that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
-            
+
 
             var stringVectorTab = vectorDimensionsString.split(',');
 

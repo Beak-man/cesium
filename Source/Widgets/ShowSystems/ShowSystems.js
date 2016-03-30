@@ -191,11 +191,10 @@ define([
         var that = this;
         var xhr = getXMLHttpRequest();
         // var url = 'Cesium/Widgets/ShowSystems/SolarSystemConfig.json';
-        var url = '../../Source/ConfigurationFiles/SolarSystemConfig.json';
+        var url = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
 
         getDataSolarSystem(xhr, 'GET', url, true, viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, that);
     }
-
 
     defineProperties(ShowSystems.prototype, {
         viewModel: {

@@ -102,7 +102,7 @@ define([
                 // on capture un objet avec le click de la souris
                 pickedObject = viewer.scene.pick(click.position);
 
-              //  console.log(pickedObject);
+                //  console.log(pickedObject);
 
                 var objectId;
                 var id;
@@ -146,6 +146,10 @@ define([
                                         var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
                                         objectId.properties.flagColor = rgba;
                                         objectId.properties[colorProperty.propertyName] = colorProperty.propertyValue;
+
+
+                                        var entities = objectId.entityCollection._entities._array;
+                                        that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.flagCounter.viewModel.counterUpdate = entities;
 
                                         break;
 
@@ -535,36 +539,45 @@ define([
 
             // Si oui, alors on recupere ces données IL FAUT GENERALISER LA PROCEDURE A L'ENSEMBLE DES DATASOURCES En REMPLAANT
             // [0] par [i] ET METTRE UNE BOUCLE FOR A CE NIVEAU (ICI)
-            var geoJsonDataSource = that._viewer.dataSources._dataSources[0].entities.values;
 
-            // var geoJsonData = that._viewer.geoJsonData.features;
-            var dimGeoJsonDataSource = geoJsonDataSource.length;
 
-            // On parcours ces données et on verifie de quel type sont ces données
-            for (var l = 0; l < dimGeoJsonDataSource; l++) {
+            var dataSources = that._viewer.dataSources._dataSources;
 
-                var geoJsonData = geoJsonDataSource[l];
+            for (var k = 0; k < dataSources.length; k++) {
 
-                // on recupere le type des données
-                var dataType = ["ellipse", "polyline", "point", "polygon"];
+                var geoJsonDataSource = that._viewer.dataSources._dataSources[k].entities.values;
 
-                var geomType;
+                // var geoJsonData = that._viewer.geoJsonData.features;
+                var dimGeoJsonDataSource = geoJsonDataSource.length;
 
-                for (var m = 0; m < dataType.length; m++) {
+                // On parcours ces données et on verifie de quel type sont ces données
+                for (var l = 0; l < dimGeoJsonDataSource; l++) {
 
-                    if (geoJsonData[dataType[m]]) {
-                        geomType = dataType[m];
-                        break;
+                    var geoJsonData = geoJsonDataSource[l];
+
+                    // on recupere le type des données
+                    var dataType = ["ellipse", "polyline", "point", "polygon"];
+
+                    var geomType;
+
+                    for (var m = 0; m < dataType.length; m++) {
+
+                        if (geoJsonData[dataType[m]]) {
+                            geomType = dataType[m];
+                            break;
+                        }
+                    }
+
+                    if (geomType) {
+                        var savefunction = saveGeoJsondataSourcesObject[geomType];
+                        var resObject = savefunction(that, geoJsonData);
+
+                        geoJsonObject.features.push(resObject);
                     }
                 }
 
-                if (geomType) {
-                    var savefunction = saveGeoJsondataSourcesObject[geomType];
-                    var resObject = savefunction(that, geoJsonData);
-
-                    geoJsonObject.features.push(resObject);
-                }
             }
+
         }
 
         if (geoJsonObject.features.length > 0) {

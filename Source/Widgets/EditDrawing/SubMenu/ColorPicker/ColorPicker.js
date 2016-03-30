@@ -285,9 +285,7 @@ define([
          ============================ FLAG COUNTER =============================
          ======================================================================= */
 
-
          var flagCounter = new FlagCounter(viewerContainer, viewer);
-
 
         /* =====================================================================
          ============================== VIEW MODEL =============================
@@ -298,7 +296,9 @@ define([
         this._viewerContainer = viewerContainer;
         this._mainContainer = mainContainer;
         this._legendContainer = legendContainer;
+        this._assignPropertyToColorContainer = assignPropertyToColorContainer;
         this._viewModel = viewModel;
+        this._flagCounter = flagCounter;
 
         knockout.applyBindings(viewModel, mainContainer);
         knockout.applyBindings(viewModel, assignPropertyToColorContainer);
@@ -340,13 +340,23 @@ define([
                     this._viewerContainer.removeChild(this._legendContainer);
                 } catch (e) {
                 }
+                
+                try {
+                    this._viewerContainer.removeChild(this._assignPropertyToColorContainer);
+                } catch (e) {
+                }
+                
+                try {
+                    this._flagCounter.destroyCounterContainer;
+                } catch (e) {
+                }
 
             }
         },
         
-        flagCoutner: {
+        flagCounter: {
             get: function () {
-                return this._flagCoutner;
+                return this._flagCounter;
             }
         },
         

@@ -393,8 +393,8 @@ define([
                 var that = this;
                 var xhr = getXMLHttpRequest();
                 var xhrPlanetarySystem = getXMLHttpRequest();
-                var urlServer = '../../Source/ConfigurationFiles/serverList.json';
-                var urlPlanetarySystem = '../../Source/ConfigurationFiles/SolarSystemConfig.json';
+                var urlServer = '../../Source/Widgets/ConfigurationFiles/serverList.json';
+                var urlPlanetarySystem = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
 
                 getServerData(xhr, xhrPlanetarySystem, 'GET', urlServer, urlPlanetarySystem, true, viewerContainer, customToolbar, viewer, that);
             }

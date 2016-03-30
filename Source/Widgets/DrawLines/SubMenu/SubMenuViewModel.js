@@ -1586,8 +1586,8 @@ define([
     }
 
     function createEllipseGeoJsonObect(that, geoJsonDataSource) {
-        
-       // console.log(geoJsonDataSource);
+
+        // console.log(geoJsonDataSource);
 
         var centerCoordinates = geoJsonDataSource._position._value;
 
@@ -1894,41 +1894,47 @@ define([
         if (that._viewer.geoJsonData) {
 
             // Si oui, alors on recupere ces données
-            var geoJsonDataSource = that._viewer.dataSources._dataSources[0].entities.values;
 
-          //  console.log(geoJsonDataSource);
+            var dataSources = that._viewer.dataSources._dataSources;
 
-            // var geoJsonData = that._viewer.geoJsonData.features;
-            var dimGeoJsonDataSource = geoJsonDataSource.length;
+            for (var k = 0; k < dataSources.length; k++) {
 
-            // On parcours ces données et on verifie de quel type sont ces données
-            for (var l = 0; l < dimGeoJsonDataSource; l++) {
+                var geoJsonDataSource = that._viewer.dataSources._dataSources[k].entities.values;
 
-                var geoJsonData = geoJsonDataSource[l];
-                //  console.log(geoJsonData);
+                //  console.log(geoJsonDataSource);
 
-                // on recupere le type des données
-                var dataType = ["ellipse", "polyline", "point", "polygon"];
+                // var geoJsonData = that._viewer.geoJsonData.features;
+                var dimGeoJsonDataSource = geoJsonDataSource.length;
 
-                var geomType;
+                // On parcours ces données et on verifie de quel type sont ces données
+                for (var l = 0; l < dimGeoJsonDataSource; l++) {
 
-                for (var m = 0; m < dataType.length; m++) {
+                    var geoJsonData = geoJsonDataSource[l];
+                    //  console.log(geoJsonData);
 
-                    if (geoJsonData[dataType[m]]) {
-                        geomType = dataType[m];
-                        //  console.log(geomType);
-                        break;
+                    // on recupere le type des données
+                    var dataType = ["ellipse", "polyline", "point", "polygon"];
+
+                    var geomType;
+
+                    for (var m = 0; m < dataType.length; m++) {
+
+                        if (geoJsonData[dataType[m]]) {
+                            geomType = dataType[m];
+                            //  console.log(geomType);
+                            break;
+                        }
                     }
-                }
 
-                if (geomType) {
+                    if (geomType) {
 
-                    var savefunction = saveGeoJsondataSourcesObject[geomType];
-                    var resObject = savefunction(that, geoJsonData);
+                        var savefunction = saveGeoJsondataSourcesObject[geomType];
+                        var resObject = savefunction(that, geoJsonData);
 
-                    // console.log(resObject);
+                        // console.log(resObject);
 
-                    geoJsonObject.features.push(resObject);
+                        geoJsonObject.features.push(resObject);
+                    }
                 }
             }
         }
@@ -1964,7 +1970,7 @@ define([
                 that._linkDownload.href = url;
                 that._linkDownload.download = fileName || 'unknown';
                 that._linkDownload.onclick = function () {
-                   // console.log(this);
+                    // console.log(this);
                     this.parentElement.removeChild(this);
                     that._wrapperSaveSubMenu.parentElement.removeChild(that._wrapperSaveSubMenu);
                     that._isSaveButtonActivate = false;
@@ -2031,16 +2037,13 @@ define([
 
         this._circleFromTwoPointsCommand = createCommand(function () {
 
-         //   console.log(that);
+            //   console.log(that);
 
             that.isPolyLineActive = false;
             that.isCircleActive = false;
             that.isPolygonsActive = false;
             that.isCircleFromTwoPointsActive = true;
             that.isCircleFromThreePointsActive = false;
-
-
-
 
             removeHandlers(that);
             drawCircleFromTwoPointsFunction(that, that._viewer, that._ellipsoid, that._circleCollection, that._circlesLabelsCollection, that._polyLinesCollectionTmps, that._polyLinesLabelsCollectionTmps);
@@ -2081,8 +2084,8 @@ define([
 
             if (that._viewer.scene.primitives.length > 0) {
 
-              // console.log(that._viewer);
-              // console.log(that._viewer._dataSourceCollection);
+                // console.log(that._viewer);
+                // console.log(that._viewer._dataSourceCollection);
 
                 try {
                     that._viewer._dataSourceCollection.removeAll();
@@ -2114,7 +2117,7 @@ define([
         });
 
         this._saveCommand = createCommand(function () {
-         //   console.log(that._viewer.scene.primitives);
+            //   console.log(that._viewer.scene.primitives);
             saveData(that, that._container);
         });
 
@@ -2273,7 +2276,7 @@ define([
 
         var primitives = that._viewer.scene.primitives._primitives;
 
-       // console.log(primitives);
+        // console.log(primitives);
 
         if (primitives.length === 0) {
 
@@ -2323,7 +2326,7 @@ define([
 
             for (var i = 0; i < primitives.length; i++) {
 
-              //  console.log(i);
+                //  console.log(i);
 
                 if (primitives[i].associatedObject === "polylines") {
 
@@ -2407,16 +2410,16 @@ define([
 
                 if (i === primitives.length - 1) {
 
-               /*     console.log(statusFindpolyLines);
-                    console.log(statusFindpolyLinesTmps);
-                    console.log(statusFindcircle);
-                    console.log(statusFindCirclesLabels);
-                    console.log(statusFindpolyLinesLabels);
-                    console.log(statusFindpolyLinesLabelsTmps);
-                    console.log(statusFindPolygons);
-                    console.log(statusFindPolygonsLabels);
-                    console.log(statusFindpolyLinesTmpPolygons);
-                    console.log(statusFindpolyLinesLabelsTmpPolygons);*/
+                    /*     console.log(statusFindpolyLines);
+                     console.log(statusFindpolyLinesTmps);
+                     console.log(statusFindcircle);
+                     console.log(statusFindCirclesLabels);
+                     console.log(statusFindpolyLinesLabels);
+                     console.log(statusFindpolyLinesLabelsTmps);
+                     console.log(statusFindPolygons);
+                     console.log(statusFindPolygonsLabels);
+                     console.log(statusFindpolyLinesTmpPolygons);
+                     console.log(statusFindpolyLinesLabelsTmpPolygons);*/
 
                     if (!statusFindpolyLines) {
                         polyLines = that._viewer.scene.primitives.add(new PolylineCollection());
@@ -2515,7 +2518,7 @@ define([
         that._polyLinesTmpPolygons = collectionsObject.polyLinesTmpPolygons;
         that._polyLinesLabelsTmpPolygons = collectionsObject.polyLinesLabelsTmpPolygons;
 
-       // console.log(that);
+        // console.log(that);
 
         return collectionsObject;
     }

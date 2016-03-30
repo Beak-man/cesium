@@ -186,7 +186,7 @@ define([
                 this._query = null;
                 this._format = "json";
 
-                this._serverUrl = '../../Source/ConfigurationFiles/serverList.json';
+                this._serverUrl = '../../Source/Widgets/ConfigurationFiles/serverList.json';
 
                 this._isVOPanelActive = false;
 
