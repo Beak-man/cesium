@@ -1,5 +1,0 @@
-
-	"server1" : {	
-		"name" : "Planetary maps (USGS)",
-		"url"  : "http://planetarymaps.usgs.gov/cgi-bin/mapserv"
-	    }

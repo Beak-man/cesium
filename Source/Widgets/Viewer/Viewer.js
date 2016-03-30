@@ -496,8 +496,8 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
          * ******************************************************** NEW WIDGETS **********************************************************
          * ******************************************************************************************************************************* */
 
-        var homePlanetButton;
-        homePlanetButton = new HomePlanetButton(toolbar, cesiumWidget.scene);
+      /*  var homePlanetButton;
+        homePlanetButton = new HomePlanetButton(toolbar, cesiumWidget.scene);*/
 
         // longitude and latitude 
         var lngLat;

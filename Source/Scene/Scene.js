@@ -366,7 +366,6 @@ define([
 
 
         // ========================= Map Projection ICI ==================================
-        console.log(this._mapProjection);
 
 
         this._mapProjection = defined(options.mapProjection) ? options.mapProjection : new GeographicProjection();

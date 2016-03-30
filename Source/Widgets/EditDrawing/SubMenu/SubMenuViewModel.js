@@ -44,7 +44,6 @@ define([
         try {
             that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
         } catch (e) {
-            console.log(e);
         }
 
         try {
@@ -103,7 +102,7 @@ define([
                 // on capture un objet avec le click de la souris
                 pickedObject = viewer.scene.pick(click.position);
 
-                console.log(pickedObject);
+              //  console.log(pickedObject);
 
                 var objectId;
                 var id;
@@ -121,7 +120,7 @@ define([
 
                         if (objectId[that._propertiesNames[i]]) {
 
-                             var objectType = objectId[that._propertiesNames[i]];
+                            var objectType = objectId[that._propertiesNames[i]];
 
                             if (that._propertiesNames[i] == "ellipse" || that._propertiesNames[i] == 'point') {
 
@@ -131,38 +130,46 @@ define([
                                 try {
                                     var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
 
-                                    var colorObjectN = getColorObject.normalizedColor;
-                                    var colorObject = getColorObject.color;
-                                    var colorProperty = getColorObject.property;
+                                    if (getColorObject != null) {
 
-                                    objectTypeEllipse.material.color = colorObjectN;
+                                        var colorObjectN = getColorObject.normalizedColor;
+                                        var colorObject = getColorObject.color;
+                                        var colorProperty = getColorObject.property;
 
-                                    objectTypePoint.color = colorObjectN;
-                                    objectTypePoint.outlineColor._value = colorObjectN;
-                                    objectTypePoint.outlineWidth._value = 3;
+                                        objectTypeEllipse.material.color = colorObjectN;
+
+                                        objectTypePoint.color = colorObjectN;
+                                        objectTypePoint.outlineColor._value = colorObjectN;
+                                        objectTypePoint.outlineWidth._value = 3;
 
 
-                                    var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
-                                    objectId.properties.flagColor = rgba;
-                                    objectId.properties[colorProperty.propertyName] = colorProperty.propertyValue;
+                                        var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
+                                        objectId.properties.flagColor = rgba;
+                                        objectId.properties[colorProperty.propertyName] = colorProperty.propertyValue;
 
-                                    break;
+                                        break;
+
+                                    }
                                 } catch (e) {
                                     //console.log(that._viewer.editDrawing.viewModel.subMenu.viewModel);
                                     var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
-                                    var colorObjectN = getColorObject.normalizedColor;
-                                    var colorObject = getColorObject.color;
-                                    var colorProperty = getColorObject.property;
 
-                                    objectType.color = colorObjectN;
-                                    objectType.outlineColor._value = colorObjectN;
-                                    objectType.outlineWidth._value = 3;
+                                    if (getColorObject != null) {
 
-                                    var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
-                                    objectId.properties.flagColor = rgba;
-                                    objectId.properties[colorProperty.PropertyName] = colorProperty.PropertyValue;
+                                        var colorObjectN = getColorObject.normalizedColor;
+                                        var colorObject = getColorObject.color;
+                                        var colorProperty = getColorObject.property;
 
-                                    break;
+                                        objectType.color = colorObjectN;
+                                        objectType.outlineColor._value = colorObjectN;
+                                        objectType.outlineWidth._value = 3;
+
+                                        var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
+                                        objectId.properties.flagColor = rgba;
+                                        objectId.properties[colorProperty.PropertyName] = colorProperty.PropertyValue;
+
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -172,23 +179,28 @@ define([
                     var objectPrimitive = pickedObject.primitive;
 
                     var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
-                    var colorObjectN = getColorObject.normalizedColor;
-                    var colorObject = getColorObject.color;
-                    var colorProperty = getColorObject.property;
 
-                    var appearance = new MaterialAppearance({
-                        material: Material.fromType('Color', {color: colorObjectN}),
-                        faceForward: true
-                    })
+                    if (getColorObject != null) {
 
-                    if (objectPrimitive.material) { // for polylines
+                        var colorObjectN = getColorObject.normalizedColor;
+                        var colorObject = getColorObject.color;
+                        var colorProperty = getColorObject.property;
 
-                        console.log(objectPrimitive.material);
-                        objectPrimitive.material.uniforms.color = colorObjectN;
+                        var appearance = new MaterialAppearance({
+                            material: Material.fromType('Color', {color: colorObjectN}),
+                            faceForward: true
+                        })
 
-                    } else {
+                        if (objectPrimitive.material) { // for polylines
 
-                        objectPrimitive.appearance = appearance; // for circles and polygons
+                            console.log(objectPrimitive.material);
+                            objectPrimitive.material.uniforms.color = colorObjectN;
+
+                        } else {
+
+                            objectPrimitive.appearance = appearance; // for circles and polygons
+                        }
+
                     }
                 }
 
@@ -241,7 +253,7 @@ define([
         geoJsonPolygons.type = "Polygon";
         geoJsonPolygons.coordinates = [];
 
-      //  console.log(geoJsonDataSource);
+        //  console.log(geoJsonDataSource);
 
         var positions = geoJsonDataSource.polygon.hierarchy._value.positions;
         var array = [];
@@ -342,7 +354,7 @@ define([
             // Si la primitive est un polyline alors ...
             if (primitives[i].associatedObject === "polylines" && primitives[i]._polylines.length > 0) {
 
-              //  console.log(primitives[i]);
+                //  console.log(primitives[i]);
 
                 // Declaration de l'objet featureObject contenant un ensemble de lignes continues
                 var featurePolylines = {};
@@ -365,7 +377,7 @@ define([
                 // on extrait de l'objet label l'information sur la distance totale
                 var totalLengthPath = labels[labels.length - 1]._text;
 
-              //  console.log(totalLengthPath);
+                //  console.log(totalLengthPath);
 
                 // Si il y a des lignes alors...
                 if (polylines.length > 0) {

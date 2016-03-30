@@ -183,9 +183,16 @@ define([
         function handleDrop(event) {
             stop(event);
 
-            if (clearOnDrop) {
-                viewer.entities.removeAll();
-                viewer.dataSources.removeAll();
+            var legendFname = event.dataTransfer.files[0].name;
+
+            // don't clear if the legend color is loaded
+
+            if (/\.legendjson$/i.test(legendFname) == false) { 
+
+                if (clearOnDrop) {
+                    viewer.entities.removeAll();
+                    viewer.dataSources.removeAll();
+                }
             }
 
             var files = event.dataTransfer.files;

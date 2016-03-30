@@ -107,6 +107,9 @@ define([
         
         selectedColor: {
             get: function () {
+                
+                if (this._selectedColor){
+                
                 var colorPropertyString = "R" + this._selectedColor.red + "G" + this._selectedColor.green + "B" + this._selectedColor.blue;
                 var colorProperty = this._viewer.colorAssignation[colorPropertyString];
 
@@ -116,6 +119,12 @@ define([
                     property: colorProperty
                 }
                 return returnObject;
+                
+                } else {
+                    
+                    return null;
+                    
+                }
             }
         },
     });

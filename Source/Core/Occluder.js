@@ -146,7 +146,6 @@ define([
         }
 
         if (!defined(result)) {
-			console.log('2eme occluder');
             return new Occluder(occluderBoundingSphere, cameraPosition);
         }
 

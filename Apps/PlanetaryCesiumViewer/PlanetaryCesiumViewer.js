@@ -238,8 +238,6 @@ define([//  Definition des d�pendances
         return;
     }
 
- console.log(viewer.scene.globe);
-
     viewer.extend(viewerDragDropMixin);
     if (endUserOptions.inspector) {
         viewer.extend(viewerCesiumInspectorMixin);
