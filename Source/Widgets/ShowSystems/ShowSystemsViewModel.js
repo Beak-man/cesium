@@ -148,7 +148,7 @@ define([
 
         var ajaxRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + ps + '_simp_cyl.map&service=WMS&request=GetCapabilities';
         var ajaxDataRequestNomen = 'http://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + ps + '_nomen_wms.map&service=WMS&request=GetCapabilities';
-        
+
         getXmlDataSatellite(that, viewer, xhr, xhrNomen, 'post', ajaxRequest, ajaxDataRequestNomen, true, listContainer, pn, ps, naifCode);
     }
 
@@ -305,9 +305,9 @@ define([
 
                     xhrNomen.onreadystatechange = function () {
                         if (xhrNomen.readyState == 4 && xhrNomen.status == 200 || xhrNomen.status == 0) {
-                            
+
                             var data = xhrNomen.responseXML;
-                            
+
                             try {
 
                                 var nomenNames = [];
@@ -462,17 +462,19 @@ define([
                                 knockout.applyBindings(listViewModel, listContainer2);
 
                             } catch (e) {
-                                //   console.log(e);
+                                var listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
+                                knockout.applyBindings(listViewModel, listContainer2);
                             }
                         }
                     }
-                } catch (e) {}
+                } catch (e) {
+                }
             }
         }
     }
 
 
-    function getXmlDataSatellite(that, viewer, xhr, method, url, async, listContainer, pn, sn, naifCode) {
+    function getXmlDataSatellite(that, viewer, xhr, xhrNomen, method, url, urlNomen, async, listContainer, pn, sn, naifCode) {
 
         xhr.open(method, url, async);
         xhr.withCredentials = false;
@@ -501,162 +503,316 @@ define([
             if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
                 var data = xhr.responseXML;
 
-                /* ==== get informations from the XML file ==== */
+                try {
 
-                var service = data.getElementsByTagName("Service");
-                var serviceName = service[0].getElementsByTagName("Name")[0].textContent;
-                var widthMax = service[0].getElementsByTagName("MaxWidth")[0].textContent;
-                var heightMax = service[0].getElementsByTagName("MaxHeight")[0].textContent;
-                var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+                    /* ==== get informations from the XML file ==== */
 
-                var capability = data.getElementsByTagName("Capability");
-                var layersIni = capability[0].getElementsByTagName("Layer");
+                    var service = data.getElementsByTagName("Service");
+                    var serviceName = service[0].getElementsByTagName("Name")[0].textContent;
+                    var widthMax = service[0].getElementsByTagName("MaxWidth")[0].textContent;
+                    var heightMax = service[0].getElementsByTagName("MaxHeight")[0].textContent;
+                    var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+
+                    var capability = data.getElementsByTagName("Capability");
+                    var layersIni = capability[0].getElementsByTagName("Layer");
 
 
-                /* ==== declaration of variables ==== */
+                    /* ==== declaration of variables ==== */
 
-                var names = [];
-                var title = [];
-                var abstract = [];
-                var layerName = [];
-                var layer = [];
-                var bBox = [];
-                var crs;
-                var imageryProvidersTab = [];
+                    var names = [];
+                    var title = [];
+                    var abstract = [];
+                    var layerName = [];
+                    var layer = [];
+                    var bBox = [];
+                    var crs;
+                    var imageryProvidersTab = [];
 
-                /* ==== get informations from tables previously built ==== */
+                    /* ==== get informations from tables previously built ==== */
 
-                var layers = [];
+                    var layers = [];
 
-                for (var i = 0; i < layersIni.length; i++) {
+                    for (var i = 0; i < layersIni.length; i++) {
 
-                    if (layersIni[i].getAttribute('queryable')) {
-                        layers.push(layersIni[i]);
+                        if (layersIni[i].getAttribute('queryable')) {
+                            layers.push(layersIni[i]);
+                        }
                     }
-                }
 
-                crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
-                var dimLayers = layers.length;
+                    crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
+                    var dimLayers = layers.length;
 
-                for (var i = 0; i < layers.length; i++) {
+                    for (var i = 0; i < layers.length; i++) {
 
-                    if (layers[i].getAttribute('queryable')) {
+                        if (layers[i].getAttribute('queryable')) {
 
-                        names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
-                        title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
-                        abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
-                        layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
-                        bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
+                            names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
+                            title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
+                            abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
+                            layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
+                            bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
 
-                        /* === transform the first case to UpperCase (for the vizualiation only : not Important) === */
+                            /* === transform the first case to UpperCase (for the vizualiation only : not Important) === */
 
-                        var nameLowerCase = names[i].toLowerCase();
-                        var nameLowerCaseTab = nameLowerCase.split("_");
-                        var finalLayerName = '';
+                            var nameLowerCase = names[i].toLowerCase();
+                            var nameLowerCaseTab = nameLowerCase.split("_");
+                            var finalLayerName = '';
 
-                        for (var j = 0; j < nameLowerCaseTab.length; j++) {
-                            if (j == 0) {
-                                var MajName = nameLowerCaseTab[j].replace(nameLowerCaseTab[j].charAt(0), nameLowerCaseTab[j].charAt(0).toUpperCase())
-                                finalLayerName += MajName + ' ';
+                            for (var j = 0; j < nameLowerCaseTab.length; j++) {
+                                if (j == 0) {
+                                    var MajName = nameLowerCaseTab[j].replace(nameLowerCaseTab[j].charAt(0), nameLowerCaseTab[j].charAt(0).toUpperCase())
+                                    finalLayerName += MajName + ' ';
 
-                            } else {
-                                finalLayerName += nameLowerCaseTab[j] + ' ';
+                                } else {
+                                    finalLayerName += nameLowerCaseTab[j] + ' ';
+                                }
+                            }
+                            ;
+
+                            /* === set the imagery request parameters (WMS) === */
+
+                            var bboxString = bBox[i].attributes[2].value + ',' + bBox[i].attributes[1].value + ',' + bBox[i].attributes[4].value + ',' + bBox[i].attributes[3].value;
+                            var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fjpeg' + '&' + 'LAYERS=' + layer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
+
+                            var objRequest = {
+                                onlineResource: onlineResource,
+                                imageryRequestParam: imageryRequestParam,
+                                paramCesiumRequest: {
+                                    planetName: pn,
+                                    satelliteName: sn,
+                                    naifCode: naifCode[0] + ',' + naifCode[1]
+                                }
+                            }
+
+                            var satellN = objRequest.paramCesiumRequest.planetName;
+                            var naif = objRequest.paramCesiumRequest.naifCode;
+                            var onlineResUrl = objRequest.onlineResource;
+                            var finalUrl = onlineResUrl + '&' + imageryRequestParam;
+
+                            /* ==== set HTML containers for the vizualition in table form ==== */
+
+                            var tableLine = document.createElement('TR');
+                            tableList.appendChild(tableLine);
+
+                            var colomn1 = document.createElement('TD');
+                            tableLine.appendChild(colomn1);
+
+                            var btnShowLayer = document.createElement('INPUT');
+                            btnShowLayer.type = 'checkbox';
+                            btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
+                            btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstract[i] + '"}, checked : show_' + i);
+                            colomn1.appendChild(btnShowLayer);
+
+                            var colomn2 = document.createElement('TD');
+                            tableLine.appendChild(colomn2);
+
+                            colomn2.appendChild(document.createTextNode(finalLayerName));
+
+                            var colomn3 = document.createElement('TD');
+                            tableLine.appendChild(colomn3)
+
+                            /* ==== set the range type of the input HTML tag ==== */
+
+                            var inputRange = document.createElement('INPUT');
+                            inputRange.type = 'range';
+                            inputRange.min = '0';
+                            inputRange.max = '1';
+                            inputRange.step = '0.05';
+                            inputRange.setAttribute('data-bind', 'value: alpha_' + i + ', valueUpdate: "input"');
+                            colomn3.appendChild(inputRange);
+
+                            /* ==== set the imageryProvider ==== */
+
+                            layerName[i] = finalLayerName;
+                            imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                                url: finalUrl,
+                                layers: layer[i],
+                                credit: 'USGS @ planetarymaps.usgs.gov',
+                                ellipsoid: that._ellipsoid,
+                                enablePickFeatures: false
+                            });
+                        }
+                    }
+
+
+
+                    /* ========================================================= 
+                     =================== NOMENCLATURE LAYERS =================== 
+                     =========================================================== */
+
+                    xhrNomen.open(method, urlNomen, async);
+                    xhrNomen.withCredentials = false;
+                    xhrNomen.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhrNomen.send();
+
+                    xhrNomen.onreadystatechange = function () {
+                        if (xhrNomen.readyState == 4 && xhrNomen.status == 200 || xhrNomen.status == 0) {
+
+                            var data = xhrNomen.responseXML;
+
+                            try {
+
+                                var nomenNames = [];
+                                var nomenTitle = []
+                                var nomenAbstract = [];
+                                var nomenLayerName = [];
+                                var nomenLayer = [];
+                                var nomenBBox = [];
+                                var nomenImageryProvidersTab = [];
+
+                                var layerNomenCount = 0;
+
+                                // on requere les principaux blocs du fichier XML 
+
+                                var service = data.getElementsByTagName("Service");
+                                var serviceName = service[0].getElementsByTagName("Name")[0].textContent;
+                                var widthMax = service[0].getElementsByTagName("MaxWidth")[0].textContent;
+                                var heightMax = service[0].getElementsByTagName("MaxHeight")[0].textContent;
+                                var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+
+                                var capability = data.getElementsByTagName("Capability");
+                                var layersIni = capability[0].getElementsByTagName("Layer");
+
+                                // on  ne requere quye les layers qui possèdent l'attribut 'queryable'
+
+                                var nomenclatureLayers = [];
+
+                                for (var i = 0; i < layersIni.length; i++) {
+
+                                    if (layersIni[i].getAttribute('queryable')) {
+                                        nomenclatureLayers.push(layersIni[i]);
+                                    }
+                                }
+
+                                var dimNomenLayers = nomenclatureLayers.length;
+
+                                // On recupere le layer i et on extrait les informations pour la fabrication de l'url
+
+                                for (var i = 0; i < nomenclatureLayers.length; i++) {
+
+                                    // on recupere le nom le titre,l'abstract et le BBox de chaque layer
+
+                                    nomenNames[i] = nomenclatureLayers[i].getElementsByTagName("Name")[0].textContent;
+                                    nomenLayer[i] = nomenclatureLayers[i].getElementsByTagName("Name")[0].textContent;
+                                    nomenTitle[i] = nomenclatureLayers[i].getElementsByTagName("Title")[0].textContent;
+                                    nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName("Abstract")[0].textContent;
+                                    nomenBBox[i] = nomenclatureLayers[i].getElementsByTagName("BoundingBox")[0];
+
+                                    // // On met la premiere lettre du name en Majuscule
+
+                                    if (nomenNames[i] == "NOMENCLATURE_180") {
+
+                                        var nameLowCase = nomenNames[i].toLowerCase();
+                                        var nameLowCaseTab = nameLowCase.split("_");
+                                        var finalNomenLayerName = '';
+
+                                        for (var j = 0; j < nameLowCaseTab.length; j++) {
+                                            if (j == 0) {
+                                                var MajName = nameLowCaseTab[j].replace(nameLowCaseTab[j].charAt(0), nameLowCaseTab[j].charAt(0).toUpperCase())
+                                                finalNomenLayerName += MajName + ' ';
+
+                                            } else {
+                                                finalNomenLayerName += nameLowCaseTab[j] + ' ';
+                                            }
+                                        }
+
+                                        // construction de la requete. le BBox est forcé
+
+                                        var bboxString = "-180,-90,180,90";
+                                        var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fpng' + '&' + 'LAYERS=' + nomenLayer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
+
+                                        var objRequest = {
+                                            onlineResource: onlineResource,
+                                            imageryRequestParam: imageryRequestParam,
+                                            paramCesiumRequest: {
+                                                planetName: pn,
+                                                satelliteName: sn,
+                                                naifCode: naifCode[0] + ',' + naifCode[1]
+                                            }
+                                        }
+
+                                        var onlineResUrl = objRequest.onlineResource;
+
+                                        // requete finale 
+
+                                        var finalNomenUrl = onlineResUrl + '&' + imageryRequestParam;
+
+                                        // creation de la ligne pour la nomenclature dans le tableau;
+
+                                        var tableLine = document.createElement('TR');
+                                        tableList.appendChild(tableLine);
+
+                                        // la chekbox
+
+                                        var colomn1 = document.createElement('TD');
+                                        tableLine.appendChild(colomn1);
+
+                                        layerNomenCount = layerNomenCount + 1;
+                                        var showIndex = dimLayers + layerNomenCount - 1;
+
+                                        var btnShowLayer = document.createElement('INPUT');
+                                        btnShowLayer.type = 'checkbox';
+                                        btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
+                                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + nomenAbstract[i] + '"},checked : show_' + showIndex);
+                                        colomn1.appendChild(btnShowLayer);
+
+                                        // Le nom de la layer
+
+                                        var colomn2 = document.createElement('TD');
+                                        tableLine.appendChild(colomn2);
+
+                                        colomn2.appendChild(document.createTextNode(finalNomenLayerName));
+
+                                        // le range pour gerer l'opacité
+
+                                        var colomn3 = document.createElement('TD');
+                                        colomn3.className = "cesium-showSystems-configContainer-colomn3";
+                                        tableLine.appendChild(colomn3);
+
+                                        var inputRange = document.createElement('INPUT');
+                                        inputRange.type = 'range';
+                                        inputRange.min = '0';
+                                        inputRange.max = '1';
+                                        inputRange.step = '0.05';
+                                        inputRange.setAttribute('data-bind', 'value: alpha_' + showIndex + ', valueUpdate: "input"');
+                                        colomn3.appendChild(inputRange);
+
+                                        // Creation du layer
+
+                                        var nomenImageryProvider = new WebMapServiceImageryProvider({
+                                            url: finalNomenUrl,
+                                            layers: nomenLayer[i],
+                                            credit: 'USGS @ wms.wr.usgs.gov',
+                                            ellipsoid: that._ellipsoid,
+                                            enablePickFeatures: false
+                                        });
+
+                                        nomenLayerName.push(finalNomenLayerName);
+                                        nomenImageryProvidersTab.push(nomenImageryProvider);
+                                    }
+                                }
+
+                                // incorporation des nomenclature layers dans les imageryproviders
+
+                                for (var k = 0; k < nomenLayerName.length; k++) {
+                                    layerName.push(nomenLayerName[k]);
+                                    imageryProvidersTab.push(nomenImageryProvidersTab[k]);
+                                }
+
+                                //  Creation du model et binding
+
+                                var listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
+                                knockout.applyBindings(listViewModel, listContainer2);
+
+                            } catch (e) {
+                                var listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
+                                knockout.applyBindings(listViewModel, listContainer2);
                             }
                         }
-                        ;
-
-                        /* === set the imagery request parameters (WMS) === */
-
-                        var bboxString = bBox[i].attributes[2].value + ',' + bBox[i].attributes[1].value + ',' + bBox[i].attributes[4].value + ',' + bBox[i].attributes[3].value;
-                        var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fjpeg' + '&' + 'LAYERS=' + layer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
-
-                        var objRequest = {
-                            onlineResource: onlineResource,
-                            imageryRequestParam: imageryRequestParam,
-                            paramCesiumRequest: {
-                                planetName: pn,
-                                satelliteName: sn,
-                                naifCode: naifCode[0] + ',' + naifCode[1]
-                            }
-                        }
-
-                        var satellN = objRequest.paramCesiumRequest.planetName;
-                        var naif = objRequest.paramCesiumRequest.naifCode;
-                        var onlineResUrl = objRequest.onlineResource;
-                        var finalUrl = onlineResUrl + '&' + imageryRequestParam;
-
-                        /* ==== set HTML containers for the vizualition in table form ==== */
-
-                        var tableLine = document.createElement('TR');
-                        tableList.appendChild(tableLine);
-
-                        var colomn1 = document.createElement('TD');
-                        tableLine.appendChild(colomn1);
-
-                        var btnShowLayer = document.createElement('INPUT');
-                        btnShowLayer.type = 'checkbox';
-                        btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstract[i] + '"}, checked : show_' + i);
-                        colomn1.appendChild(btnShowLayer);
-
-                        var colomn2 = document.createElement('TD');
-                        tableLine.appendChild(colomn2);
-
-                        colomn2.appendChild(document.createTextNode(finalLayerName));
-
-                        var colomn3 = document.createElement('TD');
-                        tableLine.appendChild(colomn3)
-
-                        /* ==== set the range type of the input HTML tag ==== */
-
-                        var inputRange = document.createElement('INPUT');
-                        inputRange.type = 'range';
-                        inputRange.min = '0';
-                        inputRange.max = '1';
-                        inputRange.step = '0.05';
-                        inputRange.setAttribute('data-bind', 'value: alpha_' + i + ', valueUpdate: "input"');
-                        colomn3.appendChild(inputRange);
-
-                        /* ==== set the imageryProvider ==== */
-
-                        layerName[i] = finalLayerName;
-                        imageryProvidersTab[i] = new WebMapServiceImageryProvider({
-                            url: finalUrl,
-                            layers: layer[i],
-                            credit: 'USGS @ planetarymaps.usgs.gov',
-                            ellipsoid: that._ellipsoid,
-                            enablePickFeatures: false
-                        });
                     }
+                } catch (e) {
+
                 }
-                ;
-
-                var tableLineFinal = document.createElement('TR');
-                tableList.appendChild(tableLineFinal);
-
-                var colomn1 = document.createElement('TD');
-                tableLine.appendChild(colomn1);
-
-                var hideDataLayer = document.createElement('INPUT');
-                hideDataLayer.type = 'checkbox';
-                hideDataLayer.className = 'cesium-showSystems-configContainer-button-send';
-                //  hideDataLayer.setAttribute('data-bind', 'attr: { title:"' + abstract[i] + '"}, checked : show_' + i);
-                colomn1.appendChild(hideDataLayer);
-
-                var colomn2 = document.createElement('TD');
-                tableLine.appendChild(colomn2);
-
-                var labelHideData = "Hide vectorial data";
-
-                colomn1.appendChild(document.createTextNode(labelHideData));
-
-                console.log(tableList);
-
-
-                /* ==== call of the model ==== */
-
-                var listViewModel = new ListViewModel(viewer, dimLayers, layerName, imageryProvidersTab);
-                knockout.applyBindings(listViewModel, listContainer2);
             }
         }
     }
@@ -879,7 +1035,7 @@ define([
 
             GeoJsonDataSource.crsModification = obj;
 
-            showSatelliteView(that, that._viewer, planetName, satelliteName, that._configContainer, that._listContainer, that._btnContainer, xhr, naifCode);
+            showSatelliteView(that, that._viewer, planetName, satelliteName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, naifCode);
             removeButtons(that);
         });
 
