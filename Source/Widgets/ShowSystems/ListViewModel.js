@@ -70,7 +70,7 @@ define([
         ;
     }
 
-    var ListViewModel = function (viewer, dimLayers, layerName, imageryProvidersTab, btnHide) {
+    var ListViewModel = function (viewer, dimLayers, layerName, imageryProvidersTab) {
 
         viewer.imageryLayers.removeAll(true);
 
@@ -92,12 +92,12 @@ define([
 
         this._changeRangeValue = createCommand(function () {
 
-            console.log("trdt");
+         //   console.log("trdt");
 
         });
 
 
-       this._hideDataCommand = createCommand(function () {
+    /*   this._hideDataCommand = createCommand(function () {
 
             var booleanShow = false;
 
@@ -116,7 +116,7 @@ define([
        }
            
 
-        });
+        });*/
 
 
         /** Gets or sets the tooltip.  This property is observable.
@@ -140,11 +140,11 @@ define([
            }
         },
         
-        hideDataCommand : {
+       /* hideDataCommand : {
             get: function () {
                 return this._hideDataCommand;
            }
-        },
+        },*/
         
         
     });

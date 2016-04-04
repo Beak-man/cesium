@@ -160,7 +160,13 @@ define([
         btnHide.setAttribute('data-bind', 'click: hideCommand');
         btnContainer.appendChild(btnHide);
 
-        var viewModel = new ShowSystemsViewModel(viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, solarSystem);
+        var btnHideVectorialData = document.createElement('BUTTON');
+        btnHideVectorialData.className = 'cesium-showSystems-configContainer-button cesium-button-planet';
+        btnHideVectorialData.innerHTML = 'Hide vectorial data';
+        btnHideVectorialData.setAttribute('data-bind', 'click: hideDataCommand');
+        btnContainer.appendChild(btnHideVectorialData);
+
+        var viewModel = new ShowSystemsViewModel(viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem);
         that._viewModel = viewModel;
 
         knockout.applyBindings(viewModel, PlanetsToolbar);
