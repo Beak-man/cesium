@@ -60,11 +60,11 @@ define([
         barMenuContainerRight.className = 'cesium-titleMenuRight';
         barMenuContainer.appendChild(barMenuContainerRight);
 
-        var closeContainerBox = document.createElement('div');
-        closeContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
-        closeContainerBox.innerHTML = '<svg width="14" height="14" viewBox="20 10 110 100">' + closeIcon + ' </svg>';
-        closeContainerBox.setAttribute('data-bind', 'attr  : { title: "close panel" }, event : {click : closePanelCommand}');
-        barMenuContainerLeft.appendChild(closeContainerBox);
+        var moveContainerBox = document.createElement('div');
+        moveContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
+        moveContainerBox.innerHTML = '<svg width="14" height="14" viewBox="20 10 110 100">' + closeIcon + ' </svg>';
+        moveContainerBox.setAttribute('data-bind', 'attr  : { title: "move panel" }, event : {mousedown : moveContainerCommand}');
+        barMenuContainerLeft.appendChild(moveContainerBox);
 
         var minimizeContainerBox = document.createElement('div');
         minimizeContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
@@ -100,7 +100,6 @@ define([
         legendContainerBottom.className = 'cesium-legendContainerBottom';
         legendContainer.appendChild(legendContainerBottom);
 
-
         var legendObject = {
             container: legendContainer,
             top: legendContainerTop,
@@ -120,11 +119,11 @@ define([
         barMenuLegendContainerRight.className = 'cesium-titleMenuRight';
         barMenuLegendContainer.appendChild(barMenuLegendContainerRight);
 
-        var closeLegendContainerBox = document.createElement('div');
-        closeLegendContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
-        closeLegendContainerBox.innerHTML = '<svg width="14" height="14" viewBox="20 10 110 100">' + closeIcon + ' </svg>';
-        //  closeLegendContainerBox.setAttribute('data-bind', 'attr  : { title: "close panel" }, event : {click : closePanelCommand}');
-        barMenuLegendContainerLeft.appendChild(closeLegendContainerBox);
+        var moveLegendContainerBox = document.createElement('div');
+        moveLegendContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
+        moveLegendContainerBox.innerHTML = '<svg width="14" height="14" viewBox="20 10 110 100">' + closeIcon + ' </svg>';
+        moveLegendContainerBox.setAttribute('data-bind', 'attr  : { title: "close panel" }, event : {mousedown : movePanelCommand}');
+        barMenuLegendContainerLeft.appendChild(moveLegendContainerBox);
 
         var minimizeLegendContainerBox = document.createElement('div');
         minimizeLegendContainerBox.className = 'cesium-button cesium-toolbar-button cesium-boxMenuButton';
@@ -136,9 +135,6 @@ define([
         legendContainerTitleBox.className = 'cesium-titleMenu';
         legendContainerTitleBox.innerHTML = 'Color legend Panel';
         barMenuLegendContainerRight.appendChild(legendContainerTitleBox);
-
-
-
 
         /* =====================================================================
          ======================== COLOR BOXES CONTAINER ========================
@@ -291,7 +287,7 @@ define([
          ============================== VIEW MODEL =============================
          ======================================================================= */
 
-        var viewModel = new ColorPickerViewModel(viewerContainer, mainContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, assignPropertyToColorContainerLeft, propertyNameContainer, propertyValueContainer, legendObject, viewer);
+        var viewModel = new ColorPickerViewModel(viewerContainer, mainContainer, ColorPickerContainer, moveLegendContainerBox, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, assignPropertyToColorContainerLeft, propertyNameContainer, propertyValueContainer, legendObject, viewer);
 
         this._viewerContainer = viewerContainer;
         this._mainContainer = mainContainer;
@@ -302,7 +298,7 @@ define([
 
         knockout.applyBindings(viewModel, mainContainer);
         knockout.applyBindings(viewModel, assignPropertyToColorContainer);
-        knockout.applyBindings(viewModel, closeLegendContainerBox);
+        knockout.applyBindings(viewModel, moveLegendContainerBox);
         knockout.applyBindings(viewModel, minimizeLegendContainerBox);
         //  knockout.applyBindings(viewModel, legendContainer);
     };
@@ -361,5 +357,6 @@ define([
         },
         
     });
+   
     return ColorPicker;
 });

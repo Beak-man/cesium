@@ -25,78 +25,90 @@ define([
     // container : Element that contains the panel
 
 
-    function movePanel(that, ColorPickerContainer, viewer) {
+    function movePanel(that, container, viewer) {
 
 
         // Must be modified if the element is not in the right node
         //  var element = document.body.childNodes[1].firstChild.childNodes[8]; // <div.cesium-ColorPickerContainer>
 
-        /*    that._handlerDownClick = new ScreenSpaceEventHandler(ColorPickerContainer);
-         that._handlerMove = new ScreenSpaceEventHandler(ColorPickerContainer);
-         that._handlerUpClick = new ScreenSpaceEventHandler(ColorPickerContainer);
-         
-         var sizePageX = document.documentElement.clientWidth;
-         var sizePageY = document.documentElement.clientHeight;
-         
-         console.log(ColorPickerContainer);
-         
-         that._handlerDownClick.setInputAction(function () {
-         
-         document.onmousemove = getPosition;
-         var cursorPosition = cursor;    
-         
-         that._handlerMove.setInputAction(function (mouvement) {
-         
-         console.log(mouvement);
-         
-         var cursorPosition = cursor;
-         
-         //  var offsetY = cursorPosition.y - (wrapper.children[1].offsetHeight / 2) - (wrapper.children[0].offsetHeight);
-         //  var offsetX = cursorPosition.x - (wrapper.children[1].offsetWidth / 2);
-         
-         console.log(cursorPosition.x);
-         
-         /*      if (cursorPosition.x > sizePageX - ColorPickerContainer.offsetWidth / 2 - 3) {
-         
-         ColorPickerContainer.style.left = sizePageX - ColorPickerContainer.offsetWidth - 3 + "px";
-         
-         } else if (cursorPosition.x < ColorPickerContainer.offsetWidth / 2 || cursorPosition.x < 0) {
-         
-         ColorPickerContainer.style.left = "0px";
-         
-         } else if (cursorPosition.x >= ColorPickerContainer.offsetWidth / 2 && cursorPosition.x <= sizePageX -ColorPickerContainer.offsetWidth / 2) {
-         
-         ColorPickerContainer.style.left = cursorPosition.x - (ColorPickerContainer.offsetWidth / 2) + "px";
-         }
-         
-         if (cursorPosition.y > sizePageY - 2 * ColorPickerContainer.offsetHeight) { // for bottom case
-         
-         ColorPickerContainer.style.top = sizePageY - 2 * ColorPickerContainer.offsetHeight + "px";
-         
-         } else if (cursorPosition.y < ColorPickerContainer.offsetHeight / 2 || cursorPosition.y < 0) { // for top case
-         
-         ColorPickerContainer.style.top = "0px";
-         
-         } else if (cursorPosition.y >= ColorPickerContainer.offsetHeight / 2 && cursorPosition.y <= sizePageY - ColorPickerContainer.offsetHeight / 2) {
-         ColorPickerContainer.style.top = cursorPosition.y - (ColorPickerContainer.offsetHeight / 2) + "px";
-         
-         }*\
-         
-         }, ScreenSpaceEventType.MOUSE_MOVE);
-         }, ScreenSpaceEventType.MIDDLE_DOWN); */
 
-        /*  that._handlerUpClick.setInputAction(function () {
-         
-         if (that._handlerDownClick)
-         that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
-         if (that._handlerMove)
-         that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-         
-         }, ScreenSpaceEventType.MIDDLE_UP);*/
+        console.log(container);
 
 
+        that._handlerDownClick = new ScreenSpaceEventHandler(container);
+        that._handlerMove = new ScreenSpaceEventHandler(container);
+        that._handlerUpClick = new ScreenSpaceEventHandler(container);
+
+        var sizePageX = document.documentElement.clientWidth;
+        var sizePageY = document.documentElement.clientHeight;
+
+        console.log(sizePageX);
+        console.log(sizePageY);
+
+        that._handlerDownClick.setInputAction(function () {
+
+            document.onmousemove = getPosition;
+            var cursorPosition = cursor;
+
+            that._handlerMove.setInputAction(function (mouvement) {
+
+                var cursorPosition = cursor;
+
+                if (cursorPosition.x > sizePageX - container.offsetWidth) { // Bloque le container à droite
+
+                    container.style.left = sizePageX - container.offsetWidth + "px";
+
+                } else if (cursorPosition.x < container.offsetWidth / 2 || cursorPosition.x < 0) { // Bloque le container à gauche
+
+                    container.style.left = "0px";
+
+                } else if (cursorPosition.x >= container.offsetWidth / 2 && cursorPosition.x <= sizePageX - container.offsetWidth / 2) { // déplacement du container
+
+                    //    container.style.left = cursorPosition.x - (container.offsetWidth / 11) + "px";
+                    container.style.left = cursorPosition.x - 6 + "px";
+                }
+
+
+                // ===================== Déplacement en Y ======================
+
+
+                if (cursorPosition.y >= 6 && cursorPosition.y <= sizePageY - container.offsetHeight) {
+                    container.style.top = cursorPosition.y - 6 + "px";
+                }
+
+
+
+                /* if (cursorPosition.y > sizePageY - 2 * container.offsetHeight) { // for bottom case
+                 
+                 container.style.top = sizePageY - 2 * container.offsetHeight + "px";
+                 
+                 } else if (cursorPosition.y < container.offsetHeight / 2 || cursorPosition.y < 0) { // for top case
+                 
+                 container.style.top = "0px";
+                 
+                 } /*else if (cursorPosition.y >= container.offsetHeight / 2 && cursorPosition.y <= sizePageY - container.offsetHeight / 2) {
+                 container.style.top = cursorPosition.y - (container.offsetHeight / 2) + "px";
+                 
+                 }*\
+                 
+                 else  {
+                 container.style.top = cursorPosition.y - (container.offsetHeight / 2) + "px";
+                 console.log(cursorPosition.y);
+                 
+                 }*/
+
+            }, ScreenSpaceEventType.MOUSE_MOVE);
+        }, ScreenSpaceEventType.LEFT_DOWN);
+
+        that._handlerUpClick.setInputAction(function () {
+
+            if (that._handlerDownClick)
+                that._handlerDownClick.removeInputAction(ScreenSpaceEventType.LEFT_DOWN);
+            if (that._handlerMove)
+                that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+
+        }, ScreenSpaceEventType.LEFT_UP);
     }
-
 
     function  pickColor(that, color) {
 
@@ -174,12 +186,6 @@ define([
         } catch (e) {
         }
 
-        /*     try {
-         knockout.removeNode(that._tableListLegend);
-         knockout.cleanNode(that._tableListLegend);
-         } catch (e) {
-         }*/
-
         try {
             that._legendObject.bottom.removeChild(that._tableButtonsLegend);
         } catch (e) {
@@ -188,8 +194,6 @@ define([
         var dimObject = countPropertiesFunction(that._viewer.colorAssignation);
 
         console.log(that._viewer.colorAssignation);
-
-        // if (that._viewer.colorAssignation) {
 
         if (dimObject > 0) {
 
@@ -335,7 +339,7 @@ define([
      * @alias ColorPickerViewModel
      * @constructor
      */
-    var ColorPickerViewModel = function (viewerContainer, mainContainer, ColorPickerContainer, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, assignPropertyToColorContainerLeft, propertyNameContainer, propertyValueContainer, legendObject, viewer) {
+    var ColorPickerViewModel = function (viewerContainer, mainContainer, ColorPickerContainer, moveLegendContainerBox, selectedColorContainer, selectedColorTextContainer, assignPropertyToColorContainer, assignPropertyToColorContainerLeft, propertyNameContainer, propertyValueContainer, legendObject, viewer) {
 
         this._viewer = viewer;
         this._viewerContainer = viewerContainer;
@@ -344,6 +348,7 @@ define([
         this._selectedColorTextContainer = selectedColorTextContainer;
         this._mainContainer = mainContainer;
         this._ColorPickerContainer = ColorPickerContainer;
+        this._moveLegendContainerBox = moveLegendContainerBox;
         this._assignPropertyToColorContainer = assignPropertyToColorContainer;
         this._propertyNameContainer = propertyNameContainer;
         this._propertyValueContainer = propertyValueContainer;
@@ -387,11 +392,12 @@ define([
 
         this._moveContainerCommand = createCommand(function (data, event) {
             removeHandlers(that);
-            movePanel(that, that._ColorPickerContainer, that._viewer);
+            movePanel(that, that._mainContainer, that._viewer);
         });
 
-        this._closePanelCommand = createCommand(function () {
-
+        this._movePanelCommand = createCommand(function () {
+            removeHandlers(that);
+            movePanel(that, that._legendObject.container, viewer)
         });
 
         this._readConfigFileCommand = createCommand(function (d, e) {
@@ -488,9 +494,9 @@ define([
                 return this._cancelAssignationCommand;
             }
         },
-        closePanelCommand: {
+        movePanelCommand: {
             get: function () {
-                return this._closePanelCommand;
+                return this._movePanelCommand;
             }
         },
         minimizePanelCommand: {
@@ -521,9 +527,11 @@ define([
         removeHandlers: {
             get: function () {
                 if (this._handlerDownClick)
-                    this._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+                    this._handlerDownClick.removeInputAction(ScreenSpaceEventType.LEFT_DOWN);
                 if (this._handlerUpClick)
-                    this._handlerUpClick.removeInputAction(ScreenSpaceEventType.MIDDLE_UP);
+                    this._handlerUpClick.removeInputAction(ScreenSpaceEventType.LEFT_UP);
+                if (this._handlerMove)
+                    this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
             }
         },
     });
@@ -545,9 +553,11 @@ define([
 
     function removeHandlers(that) {
         if (that._handlerDownClick)
-            that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+            that._handlerDownClick.removeInputAction(ScreenSpaceEventType.LEFT_DOWN);
         if (that._handlerUpClick)
-            that._handlerUpClick.removeInputAction(ScreenSpaceEventType.MIDDLE_UP);
+            that._handlerUpClick.removeInputAction(ScreenSpaceEventType.LEFT_UP);
+        if (that._handlerMove)
+            that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
     }
 
 
