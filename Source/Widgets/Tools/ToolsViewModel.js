@@ -68,20 +68,21 @@ define([
 
                 } else if (cursorPosition.y >= wrapper.children[1].offsetHeight / 2 && cursorPosition.y <= sizePageY - wrapper.children[1].offsetHeight / 2) {
                     container.style.top = cursorPosition.y - (wrapper.children[1].offsetHeight / 2) + "px";
-
                 }
 
             }, ScreenSpaceEventType.MOUSE_MOVE);
-        }, ScreenSpaceEventType.MIDDLE_DOWN);
+        }, ScreenSpaceEventType.LEFT_DOWN);
+
+
 
         that._handlerUpClick.setInputAction(function () {
 
             if (that._handlerDownClick)
-                that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
+                that._handlerDownClick.removeInputAction(ScreenSpaceEventType.LEFT_DOWN);
             if (that._handlerMove)
                 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
 
-        }, ScreenSpaceEventType.MIDDLE_UP);
+        }, ScreenSpaceEventType.LEFT_UP);
     }
 
     function showPanel(that) {
@@ -217,6 +218,7 @@ define([
                 return this._moveIconCommand;
             }
         },
+        
         showToolPanel: {
             get: function () {
                 return this._showToolPanel;

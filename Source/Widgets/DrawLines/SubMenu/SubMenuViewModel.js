@@ -75,38 +75,72 @@ define([
 
         if (that.isPolyLineActive) {
 
+            // ====================== HANDLERS DECLARATION =====================
+
             that._handlerLeftClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerMiddleClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerRightClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerDblLeftClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
             that._handlerMove = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
+            // ====================== ARRAYS INITIALIZATION =====================
+
             var arrayRadians = [];
             var middlePoint = {};
             var oldLabel;
+
+            // ============ ACTION TO PERFORM FOR THE LEFT CLICK ===============
+
+            // Left clic is used to selection a position on the globe in order to
+            // draw the line. This action is associted to the move mouse Event in
+            // order to create an animation of the drawn line
 
             that._handlerLeftClick.setInputAction(function (click) {
                 that._undoIsactivated = false;
                 var newPolyLine;
 
+                // get the current ellipsoid
+
                 var ellipsoid = viewer.scene.globe.ellipsoid;
+
+                // get the coordinates of the clicked position on the ellipsoid
+
                 var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
 
+                // Check if the clicked position is on the canvas and on the globe
+
                 if (cartesian && targetMouse === "[object HTMLCanvasElement]") {
+
+                    // From (x,y,z) coordinates (in m) to (lng, lat) coordinates (in radians)
+
                     var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+
+                    // if the undo option is not activated, then introduce the clicked postion in the arrayRadians
 
                     if (!that._undoIsactivated) {
                         arrayRadians.push(cartographic.longitude);
                         arrayRadians.push(cartographic.latitude);
                     }
 
+                    // ======== ACTION TO PERFORM FOR THE CURSOR SHIFT =========
+
                     that._handlerMove.setInputAction(function (mouvement) {
+
+                        // When the cursor is shifted, we get the coordinate of the each position
 
                         var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
 
+                        // Check if the position is on the canvas and on the globe
+
                         if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
 
+                            // From (x,y,z) coordinates (in m) to (lng, lat) coordinates (in radians)
+
                             var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
+
+                            // we need only 2 points to draw a line ==> 4 components for the arrayRadians (lng_1, lat_1, lng_2, lat_2) (in radians).
+                            // if lng_2, lat_2 already exist, then we change it with the new coordinates. 
+                            // if lng_2, lat_2 doesn't exist, we introduce the coordinate in the arrays
 
                             if (arrayRadians[2] && arrayRadians[3]) {
                                 arrayRadians[2] = cartographicMovePosition.longitude;
@@ -117,7 +151,11 @@ define([
                             }
                         }
 
+                        // If we have our 2 points (i.e 4 components in arrayRadians), then
+
                         if (arrayRadians.length === 4) {
+
+                            // create an object which contains parameters to draw a line
 
                             newPolyLine = {
                                 positions: PolylinePipeline.generateCartesianArc({
@@ -131,16 +169,14 @@ define([
 
                             };
 
+                            // Compute the distance between the 2 points
+
                             var startPoint = Cartesian3.fromRadians(arrayRadians[0], arrayRadians[1], cartographic.height, ellipsoid);
                             var endPoint = Cartesian3.fromRadians(arrayRadians[2], arrayRadians[3], cartographicMovePosition.height, ellipsoid);
                             var distance = Cartesian3.distance(endPoint, startPoint);
                             var distanceTrunc = distance.toFixed(2);
 
-                            /*    middlePoint = {
-                             x : (cartesianMovePosition.x + cartesian.x)/2.0,
-                             y : (cartesianMovePosition.y + cartesian.y)/2.0,
-                             z : (cartesianMovePosition.z + cartesian.z)/2.0,
-                             }*/
+                            // create the label associated to the line
 
                             var newLabelPolyline = {
                                 position: cartesianMovePosition,
@@ -155,14 +191,27 @@ define([
                                 translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0)
                             };
 
+                            // Add the line to the polyline Collection (draw it)
+
                             polyLines.add(newPolyLine);
 
+                            // *************************************************  
+                            // ** remove the old line to create the animation **
+                            // ************************************************* 
+
+                            // get the number of lines in the polyLine Collection
+
                             var dim = polyLines._polylines.length;
+
+                            // If there is more than 1 line in the collection, 
+                            // wer remove the before last one
 
                             if (dim > 1) {
                                 var polyline = polyLines._polylines[dim - 2];
                                 polyLines.remove(polyline);
                             }
+
+                            // Idem for the label
 
                             if (oldLabel) {
                                 var dimLabel = polyLinesLabels._labels.length;
@@ -170,7 +219,16 @@ define([
                                 polyLinesLabels.remove(primitiveLabel);
                             }
 
+                            // we add the created label in the Label collection
+
                             polyLinesLabels.add(newLabelPolyline);
+
+                            // we prepare arrayRadians for the next move of the mouse
+
+
+                            // if the undo option is not actived, then we clean the
+                            // arrayRadians array and we push in it the last selected
+                            // coordinate in order to create an unbroken line 
 
                             if (!that._undoIsactivated) {
                                 arrayRadians = [];
@@ -187,31 +245,58 @@ define([
 
                     }, ScreenSpaceEventType.MOUSE_MOVE);
 
+                    // we definitively add the last created line and the label
+                    // assiciated with.
+
                     polyLines.add(newPolyLine);
                     polyLinesLabels.add(oldLabel);
                 }
 
             }, ScreenSpaceEventType.LEFT_CLICK);
 
+
+            // ========= ACTTION TO PERFORM FOR THE MIDDLE CLICK ===============
+
+            // Middle click is used to cut the line when the user has finished to
+            // draw it
+
+
             that._handlerMiddleClick.setInputAction(function () {
 
+                // arrayRadians is cleaned
+
                 arrayRadians = [];
+
+                // Get the number of the of lines and labels in the line and label
+                // collections
 
                 var dim = polyLines._polylines.length;
                 var dimLabel = polyLinesLabels._labels.length;
 
+                // Get the last line and the last label
+
                 var polyline = polyLines._polylines[dim - 1];
                 var polylineLabel = polyLinesLabels._labels[dimLabel - 1];
+
+                // remove the last line and the last label
 
                 polyLines.remove(polyline);
                 polyLinesLabels.remove(polylineLabel);
 
+                // destroy the move Handler event and initialize it again for the 
+                // the next use
+
                 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
                 that._handlerMove = new ScreenSpaceEventHandler(viewer.scene.canvas);
+
+                // ********* COMPUTE THE TOTAL DISTANCE OF THE LINE ************
 
                 var dimSegment = polyLines._polylines.length;
 
                 var smumDistance = 0;
+
+                // get the first and last point of each line and compute the distance
+                // between them and perform the sum
 
                 for (var j = 0; j < dimSegment - 1; j++) {
                     var dimSeg = polyLines._polylines[j]._actualPositions.length;
@@ -224,11 +309,15 @@ define([
                 var smumDistanceTrunc = smumDistance.toFixed(2);
                 var beforeLastpolylineLabel = polyLinesLabels._labels[dimLabel - 2];
 
+                // fix the position of the label for the Total distance
+
                 var finalLabelPolylinePosition = {
                     x: beforeLastpolylineLabel._position.x,
                     y: beforeLastpolylineLabel._position.y,
                     z: beforeLastpolylineLabel._position.z
                 }
+
+                // create the label for the total distance
 
                 var finalLabelPolyline = {
                     position: finalLabelPolylinePosition,
@@ -243,48 +332,89 @@ define([
                     translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0)
                 };
 
+                // add the final label to the label collection
+
                 polyLinesLabels.add(finalLabelPolyline);
+
+                // create en new collection to draw a new line
 
                 polyLines = viewer.scene.primitives.add(new PolylineCollection());
                 polyLines.associatedObject = 'polylines';
+
+                // create a new collection for the labels associated to the new line
 
                 polyLinesLabels = that._viewer.scene.primitives.add(new LabelCollection());
                 polyLinesLabels.associatedObject = 'polyLinesLabels';
 
             }, ScreenSpaceEventType.MIDDLE_CLICK);
 
+            // ============ ACTION TO PERFORM FOR THE RIGHT CLICK ==============
+
+            // the right click is used to perform and undo
+
             that._handlerRightClick.setInputAction(function () {
 
+                // set that._undoIsactivated to true (i.e the undo action is activated)
+
                 that._undoIsactivated = true;
-                var dim = polyLines._polylines.length;
+
+                // get number of line and labels in the line and labels collections
+
+                var dimPoly = polyLines._polylines.length;
                 var dimLabel = polyLinesLabels._labels.length;
 
-                if (dim > 1) {
+                console.log(polyLines._polylines);
 
-                    var polyline = polyLines._polylines[dim - 1];
-                    var polylineLabel = polyLinesLabels._labels[dimLabel - 1];
+                // if there is at least one
 
+                if (dimPoly > 1) {
+
+
+                    console.log("dans dimPloy > 1");
+
+                    var ua = navigator.userAgent;
+                    var pattern = /Firefox/g;
+                   
+                   var beforeLastPolyline = polyLines._polylines[dimPoly - 2];
+
+                    if (pattern.test(ua)) {
+
+                        var polylineToRemove1 = polyLines._polylines[dimPoly - 1];
+                        var polylineLabelToRemove = polyLinesLabels._labels[dimLabel - 1];
+
+                        polyLines.remove(polylineToRemove1);
+                        polyLinesLabels.remove(polylineLabelToRemove);
+
+                    } else {
+
+                        var polylineToRemove1 = polyLines._polylines[dimPoly - 1];
+                        var polylineToRemove2 = polyLines._polylines[dimPoly - 2];
+                        var polylineLabelToRemove = polyLinesLabels._labels[dimLabel - 1];
+
+                        polyLines.remove(polylineToRemove1);
+                        polyLines.remove(polylineToRemove2);
+                        polyLinesLabels.remove(polylineLabelToRemove);
+                    }
 
                     try {
-                        var beforeLastPolyline = polyLines._polylines[dim - 2];
+                        //  var beforeLastPolyline = polyLines._polylines[dimPoly - 2];
                         var cartesianPosition = beforeLastPolyline._actualPositions[0];
                         that._coordFirstPosition = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesianPosition);
                     } catch (e) {
+                        console.log(e);
                     }
 
                     arrayRadians = [];
                     arrayRadians.push(that._coordFirstPosition.longitude);
                     arrayRadians.push(that._coordFirstPosition.latitude);
 
-                    polyLines.remove(polyline);
-                    polyLinesLabels.remove(polylineLabel);
-
                     //  console.log(polyLines);
 
-                } else if (dim == 1) {
+                } else if (dimPoly == 1) {
 
-                    var polyline = polyLines._polylines[dim - 1];
+                    var polyline = polyLines._polylines[dimPoly - 1];
                     var polylineLabel = polyLinesLabels._labels[dimLabel - 1];
+
                     polyLines.remove(polyline);
                     polyLinesLabels.remove(polylineLabel);
 
@@ -293,7 +423,7 @@ define([
 
                     arrayRadians = [];
 
-                } else if (dim == 0) {
+                } else if (dimPoly == 0) {
 
                     arrayRadians = [];
 
@@ -2550,7 +2680,7 @@ define([
         try {
             that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands;
         } catch (e) {
-            console.log(e);
+            //  console.log(e);
         }
 
         console.log('all handlers remeved');

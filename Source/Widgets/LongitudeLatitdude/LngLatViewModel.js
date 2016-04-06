@@ -103,6 +103,7 @@ define([
                *
                * @type {String}
                */
+              
                this.tooltip = 'Coordinates';
                knockout.track(this, ['tooltip']);
            };

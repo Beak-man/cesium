@@ -19,6 +19,7 @@ define([
 
                 var viewModel   = new LngLatPanelViewModel(container, mainContainer, scene);	
                 this._viewModel = viewModel;
+                
                 container       = getElement(container); 
 
                 var element           = document.createElement('div');                              
@@ -29,7 +30,7 @@ define([
                 element.setAttribute('data-bind', 'attr: { title: tooltip }, click: command'); 
                 container.appendChild(element); 
 
-                knockout.applyBindings(viewModel, element);
+               knockout.applyBindings(viewModel, element);
             }
 			
 			defineProperties(LngLat.prototype, {
