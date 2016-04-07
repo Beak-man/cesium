@@ -91,7 +91,7 @@ define([
                                         var jsonData = JSON.parse(data);
                                         var server = jsonData[serverName];
                                         
-                                        console.log(jsonData);
+                                      //  console.log(jsonData);
 
                                         var queryPart1 = server.url + "?REQUEST=doQuery&LANG=ADQL&";
 

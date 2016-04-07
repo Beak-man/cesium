@@ -21,15 +21,19 @@ define([
     function  InitializeDrawEdit(that) {
 
         that._isDrawEditActive = true;
+        
+        // Here, we set severval parameters to false in order to hide butons in the tool panel
 
         that._wrapperPanel.className = '';
         that._wrapperPanel.className = 'cesium-Tools-wrapperPanel-transition-hide';
-        
+
         that._viewer.tools.viewModel._isPanelVisible = false;
         that._viewer.drawLines.viewModel.isPanelToolVisible = false;
         that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = false;
         that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;
         that._viewer.pointCircleSwitch.viewModel.isPanelToolVisibleSwitch = false;
+        that._viewer.lngLat.viewModel.isPanelToolVisibleLngLat = false;
+        that._viewer.markerMove.viewModel.isPanelToolVisibleMarkerMove = false;
 
         // Activate the sub-menu of the drawLines widget
 

@@ -60,12 +60,12 @@ define([
                 // si on a capturé un objet, alors...
                 if (pickedObject) {
 
-                    
+
                     entity = pickedObject.primitive.id;
                     entity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
 
-                //    console.log(viewer.infoBox.frame.contentDocument.all);
-                //    console.log(viewer);
+                    //    console.log(viewer.infoBox.frame.contentDocument.all);
+                    //    console.log(viewer);
 
                     /* *************** COMMANDE A UTILISER POUR MODIFIER LE CONTENU DU INFOBOX *************** */
 
@@ -196,6 +196,8 @@ define([
         this._toolbar = toolbar;
         this._container = container;
         this._viewer = viewer;
+        
+        this._isPanelToolVisibleMarkerMove = false;
 
         /**
          * Gets or sets whether the button drop-down is currently visible.  This property is observable.
@@ -247,7 +249,7 @@ define([
         this.tooltip2 = 'Create file';
         this.selectedTooltip = 'Marker edit';
 
-        knockout.track(this, ['tooltip', 'tooltip2', 'selectedTooltip', 'dropDownVisible', 'isActive', 'destroyLink']);
+        knockout.track(this, ['tooltip', 'tooltip2', 'selectedTooltip', 'dropDownVisible', 'isActive', 'destroyLink', 'isPanelToolVisibleMarkerMove']);
     };
 
     defineProperties(MarkerMoveViewModel.prototype, {
@@ -308,7 +310,12 @@ define([
                 set: function (bool) {
                     this.dropDownVisible = bool;
                 }
-            }
+            },
+            isPanelToolVisibleMarkerMove: {
+                get: function () {
+                    return this._isPanelToolVisibleMarkerMove;
+                },
+            },
         },
     });
 

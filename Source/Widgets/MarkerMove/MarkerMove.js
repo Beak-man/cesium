@@ -47,18 +47,18 @@ define([
         container = getElement(toolbar);
 
         var wrapper = document.createElement('span');
-        wrapper.className = 'cesium-sceneModePicker-wrapper cesium-toolbar-button';
+      //  wrapper.className = 'cesium-sceneModePicker-wrapper cesium-toolbar-button';
         wrapper.setAttribute('id', 'wrapper');
         container.appendChild(wrapper);
 
         var modifbutton = document.createElement('div');
-        modifbutton.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
-        modifbutton.style.cssText = 'font-family : Arial; position:relative; top:-3px;';
-
-        modifbutton.setAttribute('data-bind', 'css: { "cesium-sceneModePicker-selected": dropDownVisible },\
-				                                   attr: { title: tooltip },\
-												   click: command, \
-												   cesiumSvgPath: { path: _pencil, width: 110, height: 110}');
+        modifbutton.className = 'cesium-button cesium-toolbar-button cesium-modificationsToolbar-button';
+        modifbutton.setAttribute('data-bind',   'css: { "cesium-sceneModePicker-selected": dropDownVisible, \
+                                                        "cesium-drawEdit-button-hidden"  : !isPanelToolVisibleMarkerMove,\
+                                                        "cesium-drawEdit-button-visible" : isPanelToolVisibleMarkerMove},\
+				                attr: { title: tooltip },\
+					        click: command, \
+						 cesiumSvgPath: { path: _pencil, width: 110, height: 110}');
         modifbutton.setAttribute('id', 'xxPrimeSave');
         wrapper.appendChild(modifbutton);
 

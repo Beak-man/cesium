@@ -1,6 +1,7 @@
 /*global define*/
 define([
     '../createCommand',
+    '../../Core/Cartesian3',
     '../../Core/defined',
     '../../Core/defineProperties',
     '../../Core/ScreenSpaceEventHandler',
@@ -9,6 +10,7 @@ define([
     '../../DataSources/GeoJsonDataSource'
 ], function (
         createCommand,
+        Cartesian3,
         defined,
         defineProperties,
         ScreenSpaceEventHandler,
@@ -57,10 +59,22 @@ define([
                 if (!entities[j].properties.flagColor) {
                     var position = entities[j].position._value;
 
-                    // console.log(position);
+                    var ellipsoid = that._viewer.scene.globe.ellipsoid;
+                    var cartographic = ellipsoid.cartesianToCartographic(position);
+
+                    var longitude = cartographic.longitude * (180.0 / Math.PI);
+                    var latitude = cartographic.latitude * (180.0 / Math.PI);
+
+                    console.log(ellipsoid);
+
+
+                    /*   that._viewer.camera.flyTo({
+                     destination: position,
+                     duration: 1.0,
+                     });*/
 
                     that._viewer.camera.flyTo({
-                        destination: position,
+                        destination: Cartesian3.fromDegrees(longitude, latitude, 7000.0, ellipsoid),
                         duration: 1.0,
                     });
 
@@ -94,8 +108,8 @@ define([
                 countFlagged = countFlagged + 1;
             }
         }
-        
-        that._totalEntities =  entities.length;
+
+        that._totalEntities = entities.length;
         that._flaggedEntities = countFlagged;
 
         that.str = countFlagged + " / " + entities.length;

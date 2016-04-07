@@ -496,16 +496,16 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
          * ******************************************************** NEW WIDGETS **********************************************************
          * ******************************************************************************************************************************* */
 
-      /*  var homePlanetButton;
-        homePlanetButton = new HomePlanetButton(toolbar, cesiumWidget.scene);*/
+        /*  var homePlanetButton;
+         homePlanetButton = new HomePlanetButton(toolbar, cesiumWidget.scene);*/
 
         // longitude and latitude 
-        var lngLat;
-        lngLat = new LngLat(toolbar, container, cesiumWidget.scene);
+     /*   var lngLat;
+        lngLat = new LngLat(modificationsToolbarWrapperPanel, container, cesiumWidget.scene);*/
 
         // Markers move
-        var markerMove;
-        markerMove = new MarkerMove(toolbar, container, cesiumWidget.scene, this);
+      /*  var markerMove;
+        markerMove = new MarkerMove(modificationsToolbarWrapperPanel, container, cesiumWidget.scene, this);*/
 
         // show planets
         var showSystems;
@@ -527,9 +527,17 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         var showGrid;
         showGrid = new ShowGrid(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
-        
+
         var pointCircleSwitch;
         pointCircleSwitch = new PointCircleSwitch(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, viewerContainer, this);
+
+        // longitude and latitude 
+        var lngLat;
+        lngLat = new LngLat(modificationsToolbarWrapperPanel, container, cesiumWidget.scene);
+        
+        // Markers move
+        var markerMove;
+        markerMove = new MarkerMove(modificationsToolbarWrapperPanel, container, cesiumWidget.scene, this);
 
 
         /* *******************************************************************************************************************************

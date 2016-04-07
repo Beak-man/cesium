@@ -108,7 +108,8 @@ define([
         gridButton.innerHTML = '<svg width="28" height="28" viewBox="-8 -8 280 280">' + icone + ' </svg>';
         gridButton.setAttribute('data-bind', 'attr  : { title: "Display the grid" },\
 		                                          css   : { "cesium-showGrid-button-hidden"  : !isPanelToolVisibleGrid,\
-						                    "cesium-showGrid-button-visible" : isPanelToolVisibleGrid },\
+						                    "cesium-showGrid-button-visible" : isPanelToolVisibleGrid ,\
+                                                                    "cesium-subMenu-focus": isGridActive},\
 							             event : {click : showGridCommand}');
         wrapperPanel.appendChild(gridButton);
         knockout.applyBindings(viewModel, gridButton);

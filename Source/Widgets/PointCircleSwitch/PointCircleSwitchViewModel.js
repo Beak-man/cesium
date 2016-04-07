@@ -30,9 +30,7 @@ define([
                     entity.point.show = that._switchBoolean;
                     entity.ellipse.show = !that._switchBoolean;
                 }
-
             }
-
         }
 
         that._switchBoolean = !that._switchBoolean;
@@ -50,13 +48,14 @@ define([
         this._wrapperPanel = wrapperPanel;
         this._viewer = viewer;
         this._isPanelToolVisibleSwitch = false;
-        this._isSwitchActive = false;
+        this.isSwitchActive = false;
         this._viewerContainer = viewerContainer;
         
         this._switchBoolean = false;
 
         var that = this;
         this._switchCommand = createCommand(function () {
+             that.isSwitchActive = !that.isSwitchActive;
             Initialize(that);
         });
 

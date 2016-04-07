@@ -100,6 +100,8 @@ define([
             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
             that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = that._isPanelVisible;
             that._viewer.pointCircleSwitch.viewModel.isPanelToolVisibleSwitch = that._isPanelVisible;
+            that._viewer.lngLat.viewModel.isPanelToolVisibleLngLat = that._isPanelVisible;
+            that._viewer.markerMove.viewModel.isPanelToolVisibleMarkerMove = that._isPanelVisible;
 
             if (that._handlerDownClick)
                 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
@@ -143,6 +145,8 @@ define([
             that._viewer.editDrawing.viewModel.isPanelToolVisibleEdit = that._isPanelVisible;
             that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = that._isPanelVisible;
             that._viewer.pointCircleSwitch.viewModel.isPanelToolVisibleSwitch = that._isPanelVisible;
+            that._viewer.lngLat.viewModel.isPanelToolVisibleLngLat = that._isPanelVisible;
+            that._viewer.markerMove.viewModel.isPanelToolVisibleMarkerMove = that._isPanelVisible;
 
             if (that._handlerDownClick)
                 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
@@ -218,7 +222,6 @@ define([
                 return this._moveIconCommand;
             }
         },
-        
         showToolPanel: {
             get: function () {
                 return this._showToolPanel;

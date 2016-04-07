@@ -105,6 +105,7 @@ define([
         this._wrapperPanel = wrapperPanel;
         this._viewer = viewer;
         this._isShowGridActive = false;
+        this.isGridActive = false;
 
         //  var imageryLayers = viewer.imageryLayers;
 
@@ -119,10 +120,11 @@ define([
 
         this._showGridCommand = createCommand(function () {
             that._isShowGridActive = !that._isShowGridActive;
+            that.isGridActive =  that._isShowGridActive;
             showGridFunction(that);
         });
 
-        knockout.track(this, ['isPanelToolVisibleGrid', 'isShowGridActive', 'show', 'alpha']);
+        knockout.track(this, ['isPanelToolVisibleGrid', 'isShowGridActive', 'isGridActive', 'show', 'alpha']);
 
     };
     defineProperties(ShowGridViewModel.prototype, {

@@ -86,7 +86,7 @@ define([
         toolButton.setAttribute('data-bind', 'attr: { title: "tools" },  event : {mousedown : moveIconCommand, click:showToolPanel}');
         wrapper.appendChild(toolButton);
 
-        knockout.applyBindings(viewModel, wrapper);
+        knockout.applyBindings(viewModel, toolButton);
 
 
     };

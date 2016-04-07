@@ -59,7 +59,8 @@ define([
         switchButton.innerHTML = '<svg width="28" height="28" viewBox="0 0  279.881  279.881">' + icone + ' </svg>';
         switchButton.setAttribute('data-bind', 'attr  : { title: "Switch between points and circles" },\
 		                                          css   : { "cesium-drawEdit-button-hidden"  : !isPanelToolVisibleSwitch,\
-						                    "cesium-drawEdit-button-visible" : isPanelToolVisibleSwitch },\
+						                    "cesium-drawEdit-button-visible" : isPanelToolVisibleSwitch,\
+                                                                    "cesium-subMenu-focus": isSwitchActive },\
 							             event : {click : switchCommand}');
         wrapperPanel.appendChild(switchButton);
 
