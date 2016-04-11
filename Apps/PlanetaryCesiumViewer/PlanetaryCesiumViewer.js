@@ -135,11 +135,16 @@ define([//  Definition des d�pendances
     var mapProjectionParam;      /* *** NEW *** */
     var terrainProviderParam;    /* *** NEW *** */
     var ellipsoidImageryParam;   /* *** NEW *** */
+    var urlMap;
 
     if (typeof endUserOptions.ellipsoidType !== 'undefined') {
 
         /*  if (typeof endUserOptions.ellipsoidSize !== 'undefined'){ 
          Ellipsoid.modify(Ellipsoid, endUserOptions);
+         }; */
+    
+     /*   if (typeof endUserOptions.imageryProvider !== 'undefined'){ 
+         urlMap = endUserOptions.imageryProvider.toString();
          }; */
 
         Ellipsoid.modify(Ellipsoid, endUserOptions);
@@ -199,15 +204,17 @@ define([//  Definition des d�pendances
      };
      };
      var urlMap = onlineResUrl.replace('--', '=') + '&' +  urlParam;
+*/
      
-     imageryProvider = new WebMapServiceImageryProvider({
+  /*   imageryProvider = new WebMapServiceImageryProvider({
      // url     : 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map&SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000',
      url       : urlMap,
-     layers    : paramObject.LAYERS,
+    // layers    : paramObject.LAYERS,
+     layers    : 'THEMIS',
      credit    : 'USGS @ planetarymaps.usgs.gov',
      ellipsoid : ellipsoidImageryParam
      });
-     };*/
+    // };*/
 
     var loadingIndicator = document.getElementById('loadingIndicator');
 
