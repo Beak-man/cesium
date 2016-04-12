@@ -156,6 +156,9 @@ define([
 
         viewer.tools.viewModel.removeAllCommands;
 
+        var listViewModel;
+        var listContainer2;
+
         xhr.open(method, url, async);
         xhr.withCredentials = false;
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -189,7 +192,7 @@ define([
 
                     var PlanetName = pn.replace(pn.charAt(0), pn.charAt(0).toUpperCase())
 
-                    var listContainer2 = document.createElement('div');
+                    listContainer2 = document.createElement('div');
                     listContainer2.setAttribute('id', 'listId');
                     listContainer.appendChild(listContainer2);
 
@@ -216,12 +219,28 @@ define([
                     //   crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
                     var dimLayers = layers.length;
 
+
+                    // ========================================================== 
+                    // ==================== CODE A FACTORISER ===================
+                    // ========================================================== 
+
+
                     for (var i = 0; i < layers.length; i++) {
 
                         names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                         layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                         title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
                         abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
+                        
+                        var abstr =  abstract[i].toString();
+                        
+                        // ======================= test for "\n" ==========================
+                        
+                        var testReg = new RegExp("\n");
+                        
+                        if (testReg.test(abstr)) {
+                           var abstr =  abstract[i].replace(/\n/g, " "); 
+                        }
 
                         //  bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
 
@@ -238,6 +257,11 @@ define([
                                 finalLayerName += nameLowCaseTab[j] + ' ';
                             }
                         }
+
+                        // ========================================================== 
+                        // ==========================================================
+                        // ========================================================== 
+
 
                         /*  var bboxString = bBox[i].attributes[2].value + ',' + bBox[i].attributes[1].value + ',' + bBox[i].attributes[4].value + ',' + bBox[i].attributes[3].value;
                          var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fjpeg' + '&' + 'LAYERS=' + layer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
@@ -265,7 +289,7 @@ define([
                         var btnShowLayer = document.createElement('INPUT');
                         btnShowLayer.type = 'checkbox';
                         btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstract[i] + '"},checked : show_' + i);
+                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstr + '"},checked : show_' + i);
                         colomn1.appendChild(btnShowLayer);
 
                         var colomn2 = document.createElement('TD');
@@ -476,19 +500,28 @@ define([
 
                                 //  Creation du model et binding
 
-                                var listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
+                                listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
+                                knockout.cleanNode(listContainer2);
                                 knockout.applyBindings(listViewModel, listContainer2);
 
                             } catch (e) {
 
-                                /*   console.log(data);
-                                 
-                                 var listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
-                                 knockout.applyBindings(listViewModel, listContainer2);*/
+                                listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
+                                knockout.cleanNode(listContainer2);
+                                knockout.applyBindings(listViewModel, listContainer2);
                             }
                         }
                     }
+
+
+                    /*  var listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
+                     knockout.applyBindings(listViewModel, listContainer2);*/
+
                 } catch (e) {
+
+                    console.log(e);
+
+
                 }
             }
         }
@@ -564,6 +597,10 @@ define([
                     //   crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
                     var dimLayers = layers.length;
 
+                    // ========================================================== 
+                    // ==================== CODE A FACTORISER ===================
+                    // ========================================================== 
+
                     for (var i = 0; i < layers.length; i++) {
 
                         if (layers[i].getAttribute('queryable')) {
@@ -590,6 +627,11 @@ define([
                                     finalLayerName += nameLowerCaseTab[j] + ' ';
                                 }
                             }
+
+                            // ========================================================== 
+                            // ==========================================================
+                            // ========================================================== 
+
 
                             /* === set the imagery request parameters (WMS) === */
 
@@ -663,6 +705,9 @@ define([
                                 ellipsoid: that._ellipsoid,
                                 enablePickFeatures: false
                             });
+
+
+
                         }
                     }
 
@@ -824,12 +869,12 @@ define([
                                         var nomenImageryProvider = new WebMapServiceImageryProvider({
                                             //  url: finalNomenUrl,
                                             url: onlineResource,
-                                            layers: layer[i],
+                                             parameters: {format: 'image/png'},
+                                            layers: nomenLayer[i],
                                             credit: 'USGS @ wms.wr.usgs.gov',
                                             ellipsoid: that._ellipsoid,
                                             enablePickFeatures: false
                                         });
-
 
 
                                         nomenLayerName.push(finalNomenLayerName);
@@ -847,10 +892,12 @@ define([
                                 //  Creation du model et binding
 
                                 var listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
+                                knockout.cleanNode(listContainer2);
                                 knockout.applyBindings(listViewModel, listContainer2);
 
                             } catch (e) {
                                 var listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
+                                knockout.cleanNode(listContainer2);
                                 knockout.applyBindings(listViewModel, listContainer2);
                             }
                         }
@@ -1021,13 +1068,13 @@ define([
                 that._voData.viewModel.hidePanel;
             } catch (e) {
             }
-            
+
             /* ================================================================= 
              ========================= VO WIDGET CALL ==========================
              =================================================================== */
 
-           // that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
-            
+            // that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
+
             /* ================================================================= 
              ===================================================================
              =================================================================== */
@@ -1062,7 +1109,7 @@ define([
              } */
 
             /* to remove all butons of the planetToolBar from the view*/
-            
+
             removeButtons(that);
         });
 

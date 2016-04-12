@@ -1,13 +1,13 @@
 {
 	"solarSystem" : {	
-		"mercury" : ["mercury"],
+		"mercury" : [""],
 		"venus"   : ["venus"],
-		"earth"   : ["earth", "moon"],
-		"mars"    : ["mars", "deimos", "phobos"],
-		"jupiter" : ["jupiter", "ganymede", "callisto", "io", "europa"],
-		"saturn"  : ["saturn", "titan", "rhea", "lapetus", "dione", "tethys", "enceladus", "mimas"],
-		"uranus"  : ["uranus", "titania", "oberon", "umbriel", "ariel", "miranda"],
-		"neptune" : ["neptune", "triton"]
+		"earth"   : ["", ""],
+		"mars"    : ["mars"],
+		"jupiter" : ["", "", "", "", ""],
+		"saturn"  : ["", "", "", "", "", "", "", ""],
+		"uranus"  : ["", "", "", "", "", ""],
+		"neptune" : ["", ""]
 	},
 	
 	"systemsDimensions" : {
@@ -21,9 +21,9 @@
 				
 				"venusSystem" : {
 							"venus" : {
-									"x" : 7051000.8,
-									"y" : 7051000.8,
-									"z" : 7051000.8 
+									"x" : 6051000.8,
+									"y" : 6051000.8,
+									"z" : 6051000.8 
 							}
 				},
 				
