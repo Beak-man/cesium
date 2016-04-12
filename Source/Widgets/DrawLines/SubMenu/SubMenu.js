@@ -157,11 +157,11 @@ define([
         saveButton.setAttribute('data-bind', 'attr  : { title: "Create file" }, event : {click : saveCommand}');
         wrapperSaveButtonMenu.appendChild(saveButton);
         
-        var infosButton = document.createElement('div');
+      /*  var infosButton = document.createElement('div');
         infosButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         infosButton.innerHTML = 'i';
         infosButton.setAttribute('data-bind', 'attr  : { title: "infos sur Primitives" }, event : {click : infosCommand}');
-        wrapperMenu.appendChild(infosButton);
+        wrapperMenu.appendChild(infosButton);*/
 
         var closeButton = document.createElement('div');
         closeButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
