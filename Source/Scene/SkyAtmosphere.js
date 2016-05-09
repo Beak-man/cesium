@@ -70,7 +70,7 @@ define([
          * @type {Boolean}
          * @default true
          */
-        this.show = true;
+        this.show = false;
 
         this._ellipsoid = ellipsoid;
         this._command = new DrawCommand({

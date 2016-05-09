@@ -1,10 +1,12 @@
 /*global define*/
 define([
+        '../createCommand',  
         '../../Core/defined',
         '../../Core/defineProperties',
         '../../Core/Event',
         '../../ThirdParty/knockout'
     ], function(
+	    createCommand,
         defined,
         defineProperties,
         Event,
@@ -21,7 +23,7 @@ define([
      */
     function InfoBoxViewModel() {
         this._cameraClicked = new Event();
-        this._closeClicked = new Event();
+        this._closeClicked = new Event();  
 
         /**
          * Gets or sets the maximum height of the info box in pixels.  This property is observable.
@@ -101,6 +103,7 @@ define([
                 return this._cameraClicked;
             }
         },
+		
         /**
          * Gets an {@link Event} that is fired when the user closes the info box.
          * @memberof InfoBoxViewModel.prototype

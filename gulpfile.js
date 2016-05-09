@@ -1142,9 +1142,9 @@ var sandcastleJsHintOptions = ' + JSON.stringify(primary, null, 4) + ';';
 }
 
 function buildCesiumViewer() {
-    var cesiumViewerOutputDirectory = 'Build/Apps/CesiumViewer';
-    var cesiumViewerStartup = path.join(cesiumViewerOutputDirectory, 'CesiumViewerStartup.js');
-    var cesiumViewerCss = path.join(cesiumViewerOutputDirectory, 'CesiumViewer.css');
+    var cesiumViewerOutputDirectory = 'Build/Apps/PlanetaryCesiumViewer';
+    var cesiumViewerStartup = path.join(cesiumViewerOutputDirectory, 'PlanetaryCesiumViewerStartup.js');
+    var cesiumViewerCss = path.join(cesiumViewerOutputDirectory, 'PlanetaryCesiumViewer.css');
     mkdirp.sync(cesiumViewerOutputDirectory);
 
     var promise = Promise.join(
@@ -1156,8 +1156,8 @@ function buildCesiumViewer() {
                 debug : false
             },
             optimize : 'uglify2',
-            mainConfigFile : 'Apps/CesiumViewer/CesiumViewerStartup.js',
-            name : 'CesiumViewerStartup',
+            mainConfigFile : 'Apps/PlanetaryCesiumViewer/PlanetaryCesiumViewerStartup.js',
+            name : 'PlanetaryCesiumViewerStartup',
             out : cesiumViewerStartup
         }),
         requirejsOptimize('CesiumViewer CSS', {
@@ -1167,7 +1167,7 @@ function buildCesiumViewer() {
             pragmas : {
                 debug : false
             },
-            cssIn : 'Apps/CesiumViewer/CesiumViewer.css',
+            cssIn : 'Apps/PlanetaryCesiumViewer/PlanetaryCesiumViewer.css',
             out : cesiumViewerCss
         })
     );
@@ -1184,13 +1184,13 @@ function buildCesiumViewer() {
             gulp.src(cesiumViewerCss)
                 .pipe(gulpReplace('../../Source', '.')),
 
-            gulp.src(['Apps/CesiumViewer/index.html'])
+            gulp.src(['Apps/PlanetaryCesiumViewer/index.html'])
                 .pipe(gulpReplace('../../ThirdParty/requirejs-2.1.20', '.')),
 
-            gulp.src(['Apps/CesiumViewer/**',
-                      '!Apps/CesiumViewer/index.html',
-                      '!Apps/CesiumViewer/**/*.js',
-                      '!Apps/CesiumViewer/**/*.css']),
+            gulp.src(['Apps/PlanetaryCesiumViewer/**',
+                      '!Apps/PlanetaryCesiumViewer/index.html',
+                      '!Apps/PlanetaryCesiumViewer/**/*.js',
+                      '!Apps/PlanetaryCesiumViewer/**/*.css']),
 
             gulp.src(['ThirdParty/requirejs-2.1.20/require.min.js'])
                 .pipe(gulpRename('require.js')),

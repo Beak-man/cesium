@@ -1,0 +1,10 @@
+solarSystem = {
+				mercury : ['mercury'],
+				venus   : ['venus'],
+				earth   : ['earth', 'moon'],
+				mars    : ['mars', 'deimos', 'phobos'],
+				jupiter : ['jupiter', 'ganymede', 'callisto', 'io', 'europa'],
+				saturn  : ['saturn', 'titan', 'rhea', 'lapetus', 'dione', 'tethys', 'enceladus', 'mimas'],
+				uranus  : ['uranus', 'titania', 'oberon', 'umbriel', 'Ariel', 'miranda'],
+				neptune : ['neptune', 'triton']
+			}

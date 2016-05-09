@@ -263,7 +263,7 @@ define([
 
             configureCameraFrustum(this);
 
-            var ellipsoid = defaultValue(scene.mapProjection.ellipsoid, Ellipsoid.WGS84);
+            this._ellipsoid = defaultValue(scene.mapProjection.ellipsoid, Ellipsoid.WGS84);
             var creditDisplay = scene.frameState.creditDisplay;
 
             var cesiumCredit = new Credit('Cesium', cesiumLogoData, 'http://cesiumjs.org/');
@@ -271,7 +271,7 @@ define([
 
             var globe = options.globe;
             if (!defined(globe)) {
-                globe = new Globe(ellipsoid);
+                globe = new Globe(this._ellipsoid);
             }
             if (globe !== false) {
                 scene.globe = globe;
@@ -299,7 +299,7 @@ define([
             // Blue sky, and the glow around the Earth's limb.
             var skyAtmosphere = options.skyAtmosphere;
             if (!defined(skyAtmosphere)) {
-                skyAtmosphere = new SkyAtmosphere(ellipsoid);
+                skyAtmosphere = new SkyAtmosphere(this._ellipsoid);
             }
             if (skyAtmosphere !== false) {
                 scene.skyAtmosphere = skyAtmosphere;
@@ -404,6 +404,15 @@ define([
         scene : {
             get : function() {
                 return this._scene;
+            },
+            set : function(scene) {
+                  this._scene = scene;
+            },
+        },
+
+        ellipsoid :  {
+            set : function(ellipsoid) {
+                this._ellipsoid = ellipsoid ;
             }
         },
 
