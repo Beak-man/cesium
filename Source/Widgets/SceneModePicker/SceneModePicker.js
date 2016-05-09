@@ -1,14 +1,15 @@
+
 /*global define*/
 define([
-        '../../Core/defined',
-        '../../Core/defineProperties',
-        '../../Core/destroyObject',
-        '../../Core/DeveloperError',
-        '../../Core/FeatureDetection',
-        '../../ThirdParty/knockout',
-        '../getElement',
-        './SceneModePickerViewModel'
-    ], function(
+    '../../Core/defined',
+    '../../Core/defineProperties',
+    '../../Core/destroyObject',
+    '../../Core/DeveloperError',
+    '../../Core/FeatureDetection',
+    '../../ThirdParty/knockout',
+    '../getElement',
+    './SceneModePickerViewModel'
+], function (
         defined,
         defineProperties,
         destroyObject,
@@ -81,7 +82,7 @@ define([
 css: { "cesium-sceneModePicker-button2D": sceneMode === _sceneMode.SCENE2D,\
        "cesium-sceneModePicker-button3D": sceneMode === _sceneMode.SCENE3D,\
        "cesium-sceneModePicker-buttonColumbusView": sceneMode === _sceneMode.COLUMBUS_VIEW,\
-       "cesium-sceneModePicker-selected": dropDownVisible },\
+       "cesium-sceneModePicker-selected": dropDownVisibleS },\
 attr: { title: selectedTooltip },\
 click: toggleDropDown');
         button.innerHTML = '\
@@ -94,9 +95,9 @@ click: toggleDropDown');
         morphTo3DButton.type = 'button';
         morphTo3DButton.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
         morphTo3DButton.setAttribute('data-bind', '\
-css: { "cesium-sceneModePicker-visible" : (dropDownVisible && (sceneMode !== _sceneMode.SCENE3D)) || (!dropDownVisible && (sceneMode === _sceneMode.SCENE3D)),\
+css: { "cesium-sceneModePicker-visible" : (dropDownVisibleS && (sceneMode !== _sceneMode.SCENE3D)) || (!dropDownVisibleS && (sceneMode === _sceneMode.SCENE3D)),\
        "cesium-sceneModePicker-none" : sceneMode === _sceneMode.SCENE3D,\
-       "cesium-sceneModePicker-hidden" : !dropDownVisible },\
+       "cesium-sceneModePicker-hidden" : !dropDownVisibleS },\
 attr: { title: tooltip3D },\
 click: morphTo3D,\
 cesiumSvgPath: { path: _globePath, width: 64, height: 64 }');
@@ -106,9 +107,9 @@ cesiumSvgPath: { path: _globePath, width: 64, height: 64 }');
         morphTo2DButton.type = 'button';
         morphTo2DButton.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
         morphTo2DButton.setAttribute('data-bind', '\
-css: { "cesium-sceneModePicker-visible" : (dropDownVisible && (sceneMode !== _sceneMode.SCENE2D)),\
+css: { "cesium-sceneModePicker-visible" : (dropDownVisibleS && (sceneMode !== _sceneMode.SCENE2D)),\
        "cesium-sceneModePicker-none" : sceneMode === _sceneMode.SCENE2D,\
-       "cesium-sceneModePicker-hidden" : !dropDownVisible },\
+       "cesium-sceneModePicker-hidden" : !dropDownVisibleS},\
 attr: { title: tooltip2D },\
 click: morphTo2D,\
 cesiumSvgPath: { path: _flatMapPath, width: 64, height: 64 }');
@@ -118,9 +119,9 @@ cesiumSvgPath: { path: _flatMapPath, width: 64, height: 64 }');
         morphToCVButton.type = 'button';
         morphToCVButton.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
         morphToCVButton.setAttribute('data-bind', '\
-css: { "cesium-sceneModePicker-visible" : (dropDownVisible && (sceneMode !== _sceneMode.COLUMBUS_VIEW)) || (!dropDownVisible && (sceneMode === _sceneMode.COLUMBUS_VIEW)),\
+css: { "cesium-sceneModePicker-visible" : (dropDownVisibleS && (sceneMode !== _sceneMode.COLUMBUS_VIEW)) || (!dropDownVisibleS && (sceneMode === _sceneMode.COLUMBUS_VIEW)),\
        "cesium-sceneModePicker-none" : sceneMode === _sceneMode.COLUMBUS_VIEW,\
-       "cesium-sceneModePicker-hidden" : !dropDownVisible},\
+       "cesium-sceneModePicker-hidden" : !dropDownVisibleS},\
 attr: { title: tooltipColumbusView },\
 click: morphToColumbusView,\
 cesiumSvgPath: { path: _columbusViewPath, width: 64, height: 64 }');
@@ -132,7 +133,7 @@ cesiumSvgPath: { path: _columbusViewPath, width: 64, height: 64 }');
         this._container = container;
         this._wrapper = wrapper;
 
-        this._closeDropDown = function(e) {
+        this._closeDropDown = function (e) {
             if (!wrapper.contains(e.target)) {
                 viewModel.dropDownVisible = false;
             }
@@ -152,20 +153,19 @@ cesiumSvgPath: { path: _columbusViewPath, width: 64, height: 64 }');
          *
          * @type {Element}
          */
-        container : {
-            get : function() {
+        container: {
+            get: function () {
                 return this._container;
             }
         },
-
         /**
          * Gets the view model.
          * @memberof SceneModePicker.prototype
          *
          * @type {SceneModePickerViewModel}
          */
-        viewModel : {
-            get : function() {
+        viewModel: {
+            get: function () {
                 return this._viewModel;
             }
         }
@@ -174,7 +174,7 @@ cesiumSvgPath: { path: _columbusViewPath, width: 64, height: 64 }');
     /**
      * @returns {Boolean} true if the object has been destroyed, false otherwise.
      */
-    SceneModePicker.prototype.isDestroyed = function() {
+    SceneModePicker.prototype.isDestroyed = function () {
         return false;
     };
 
@@ -182,7 +182,7 @@ cesiumSvgPath: { path: _columbusViewPath, width: 64, height: 64 }');
      * Destroys the widget.  Should be called if permanently
      * removing the widget from layout.
      */
-    SceneModePicker.prototype.destroy = function() {
+    SceneModePicker.prototype.destroy = function () {
         this._viewModel.destroy();
 
         if (FeatureDetection.supportsPointerEvents()) {

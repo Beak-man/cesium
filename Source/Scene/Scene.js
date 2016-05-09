@@ -381,8 +381,11 @@ define([
 
         this._mode = SceneMode.SCENE3D;
 
-        this._mapProjection = defined(options.mapProjection) ? options.mapProjection : new GeographicProjection();
 
+        // ========================= Map Projection ICI ==================================
+
+
+        this._mapProjection = defined(options.mapProjection) ? options.mapProjection : new GeographicProjection();
         this._transitioner = new SceneTransitioner(this, this._mapProjection.ellipsoid);
 
         /**
@@ -759,7 +762,13 @@ define([
         mapProjection : {
             get: function() {
                 return this._mapProjection;
-            }
+            },
+			
+			/* ***** NEW ***** */
+			
+			set : function(mapProj){
+				this._mapProjection = mapProj;
+			}
         },
 
         /**
@@ -1053,9 +1062,12 @@ define([
         // TODO: The occluder is the top-level globe. When we add
         //       support for multiple central bodies, this should be the closest one.
         var globe = scene.globe;
+		
         if (scene._mode === SceneMode.SCENE3D && defined(globe)) {
             var ellipsoid = globe.ellipsoid;
+			
             scratchOccluderBoundingSphere.radius = ellipsoid.minimumRadius;
+			
             scratchOccluder = Occluder.fromBoundingSphere(scratchOccluderBoundingSphere, scene._camera.positionWC, scratchOccluder);
             return scratchOccluder;
         }
@@ -1074,7 +1086,7 @@ define([
         var frameState = scene._frameState;
         frameState.commandList.length = 0;
         frameState.mode = scene._mode;
-        frameState.morphTime = scene.morphTime;
+        frameState.morphTime = scene.morphTime;		
         frameState.mapProjection = scene.mapProjection;
         frameState.frameNumber = frameNumber;
         frameState.time = JulianDate.clone(time, frameState.time);
@@ -1229,6 +1241,7 @@ define([
                     }
 
                     distances = boundingVolume.computePlaneDistances(position, direction, distances);
+
                     near = Math.min(near, distances.start);
                     far = Math.max(far, distances.stop);
                 } else {
@@ -1363,6 +1376,9 @@ define([
             var center = Cartesian3.clone(boundingVolume.center);
             if (frameState.mode !== SceneMode.SCENE3D) {
                 center = Matrix4.multiplyByPoint(transformFrom2D, center, center);
+				
+				//console.log(frameState.mapProjection);
+				
                 var projection = frameState.mapProjection;
                 var centerCartographic = projection.unproject(center);
                 center = projection.ellipsoid.cartographicToCartesian(centerCartographic);
@@ -2411,8 +2427,12 @@ define([
         var globe = this.globe;
         if (defined(globe)) {
             ellipsoid = globe.ellipsoid;
+		//	console.log("============ dans Scene 2127 ==============");
+		//	console.log(ellipsoid);
         } else {
             ellipsoid = this.mapProjection.ellipsoid;
+		//console.log("============ dans Scene 2131 ==============");
+		//	console.log(ellipsoid);
         }
         duration = defaultValue(duration, 2.0);
         this._transitioner.morphTo2D(duration, ellipsoid);
@@ -2427,11 +2447,15 @@ define([
         var globe = this.globe;
         if (defined(globe)) {
             ellipsoid = globe.ellipsoid;
+		//	console.log("============ dans Scene 2147 ==============");
+		//	console.log(ellipsoid);
         } else {
             ellipsoid = this.mapProjection.ellipsoid;
+		//	console.log("============ dans Scene 2151 ==============");
+		//	console.log(ellipsoid);
         }
         duration = defaultValue(duration, 2.0);
-        this._transitioner.morphToColumbusView(duration, ellipsoid);
+      this._transitioner.morphToColumbusView(duration, ellipsoid);
     };
 
     /**

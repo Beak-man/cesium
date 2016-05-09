@@ -1,13 +1,13 @@
 /*global define*/
 define([
-        './Cartesian3',
-        './Cartographic',
-        './defaultValue',
-        './defined',
-        './defineProperties',
-        './DeveloperError',
-        './Ellipsoid'
-    ], function(
+    './Cartesian3',
+    './Cartographic',
+    './defaultValue',
+    './defined',
+    './defineProperties',
+    './DeveloperError',
+    './Ellipsoid'
+], function (
         Cartesian3,
         Cartographic,
         defaultValue,
@@ -31,6 +31,12 @@ define([
      * @see WebMercatorProjection
      */
     function GeographicProjection(ellipsoid) {
+
+        /*	console.log("************* Ellipsoid depuis GeographicProjection *********************");
+         console.log(ellipsoid);
+         console.log("*************************************************************************");
+         */
+
         this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84);
         this._semimajorAxis = this._ellipsoid.maximumRadius;
         this._oneOverSemimajorAxis = 1.0 / this._semimajorAxis;
@@ -45,10 +51,16 @@ define([
          * @type {Ellipsoid}
          * @readonly
          */
-        ellipsoid : {
-            get : function() {
+        ellipsoid: {
+            get: function () {
                 return this._ellipsoid;
-            }
+            },
+            /* ************************************************* NEW ***************************************************** */
+
+            set: function (ellipsoid) {
+                this._ellipsoid = ellipsoid;
+            },
+            /* *********************************************************************************************************** */
         }
     });
 
@@ -64,12 +76,36 @@ define([
      *          coordinates are copied there and that instance is returned.  Otherwise, a new instance is
      *          created and returned.
      */
-    GeographicProjection.prototype.project = function(cartographic, result) {
+    GeographicProjection.prototype.project = function (cartographic, result) {
         // Actually this is the special case of equidistant cylindrical called the plate carree
         var semimajorAxis = this._semimajorAxis;
-        var x = cartographic.longitude * semimajorAxis;
-        var y = cartographic.latitude * semimajorAxis;
-        var z = cartographic.height;
+
+        //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
+
+          var x = cartographic.longitude * semimajorAxis;
+          var y = cartographic.latitude * semimajorAxis;
+          var z = cartographic.height;
+
+        //  =======================================================================
+
+    /*    var radeg = 180.0 / Math.PI;
+
+        var theta = cartographic.latitude;
+        var phi = cartographic.longitude;
+        
+      //  console.log(theta+" "+phi);
+
+        /* var angle = ((90.0 / radeg) - theta) / 2.0;
+
+        var R = Math.tan(angle) * semimajorAxis;
+
+        var x = R * Math.sin(phi);
+        var y = -R * Math.cos(phi);*\      
+        
+        var x = theta*Math.cos(phi)* semimajorAxis;
+        var y = phi* semimajorAxis;        
+        
+        var z = cartographic.height;*/
 
         if (!defined(result)) {
             return new Cartesian3(x, y, z);
@@ -78,6 +114,9 @@ define([
         result.x = x;
         result.y = y;
         result.z = z;
+        
+      //  console.log(result);
+        
         return result;
     };
 
@@ -93,7 +132,7 @@ define([
      *          coordinates are copied there and that instance is returned.  Otherwise, a new instance is
      *          created and returned.
      */
-    GeographicProjection.prototype.unproject = function(cartesian, result) {
+    GeographicProjection.prototype.unproject = function (cartesian, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(cartesian)) {
             throw new DeveloperError('cartesian is required');
@@ -101,9 +140,31 @@ define([
         //>>includeEnd('debug');
 
         var oneOverEarthSemimajorAxis = this._oneOverSemimajorAxis;
-        var longitude = cartesian.x * oneOverEarthSemimajorAxis;
-        var latitude = cartesian.y * oneOverEarthSemimajorAxis;
+
+        //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
+
+          var longitude = cartesian.x * oneOverEarthSemimajorAxis;
+          var latitude = cartesian.y * oneOverEarthSemimajorAxis;
+          var height = cartesian.z;
+
+        //  =======================================================================
+
+       /* console.log("inverse");
+       /* var radeg = 180.0 / Math.PI;
+    
         var height = cartesian.z;
+
+        var x = cartesian.x;
+        var y = cartesian.y;
+
+        var R = Math.sqrt(x * x + y * y);
+        var latitude = (90.0 / radeg - 2.0 * Math.atan2(2, R))* oneOverEarthSemimajorAxis;
+        var longitude = (Math.atan2(x, -y))* oneOverEarthSemimajorAxis;*\
+        
+         
+         var longitude = cartesian.y * oneOverEarthSemimajorAxis;
+         var latitude = (cartesian.x/Math.cos(longitude)) * oneOverEarthSemimajorAxis;
+         var height = cartesian.z; */
 
         if (!defined(result)) {
             return new Cartographic(longitude, latitude, height);
@@ -112,6 +173,7 @@ define([
         result.longitude = longitude;
         result.latitude = latitude;
         result.height = height;
+        
         return result;
     };
 

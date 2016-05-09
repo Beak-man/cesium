@@ -72,6 +72,9 @@ define([
         var terrainProvider = new EllipsoidTerrainProvider({
             ellipsoid : ellipsoid
         });
+		
+		// console.log(ellipsoid);
+		
         var imageryLayerCollection = new ImageryLayerCollection();
 
         this._ellipsoid = ellipsoid;
@@ -201,6 +204,12 @@ define([
         ellipsoid : {
             get : function() {
                 return this._ellipsoid;
+            }
+        },
+		
+		 occluder : {
+            set : function(occluder) {
+                return this._occluder;
             }
         },
         /**
