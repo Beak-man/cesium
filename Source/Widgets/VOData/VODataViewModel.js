@@ -81,6 +81,9 @@ define([
                             function (resolve, reject) {
 
                                 xhr.open('GET', serverUrl, true);
+                                
+                                // test
+                                
                                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                                 xhr.send();
                                 xhr.onload = function () {
