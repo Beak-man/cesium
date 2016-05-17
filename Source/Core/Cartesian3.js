@@ -11,7 +11,7 @@ define([
         DeveloperError,
         freezeObject,
         CesiumMath) {
-    "use strict";
+    'use strict';
 
     /**
      * A 3D Cartesian point.
@@ -795,7 +795,7 @@ define([
         //>>includeEnd('debug');
 
         var lon = CesiumMath.toRadians(longitude);
-        var lat = CesiumMath.toRadians(latitude);
+        var lat = CesiumMath.toRadians(latitude);        
         return Cartesian3.fromRadians(lon, lat, height, ellipsoid, result);
     };
 

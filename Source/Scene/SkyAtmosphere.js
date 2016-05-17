@@ -41,7 +41,7 @@ define([
         BlendingState,
         CullFace,
         SceneMode) {
-    "use strict";
+    'use strict';
 
     /**
      * An atmosphere drawn around the limb of the provided ellipsoid.  Based on
@@ -70,7 +70,7 @@ define([
          * @type {Boolean}
          * @default true
          */
-        this.show = true;
+        this.show = false;
 
         this._ellipsoid = ellipsoid;
         this._command = new DrawCommand({

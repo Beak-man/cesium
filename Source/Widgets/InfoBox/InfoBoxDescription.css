@@ -4,6 +4,35 @@ body {
     padding: 0;
 }
 
+.cesium-infoBox-title {
+    display: block;
+    height: 20px;
+    padding: 5px 30px 5px 25px;
+  /*  background: rgba(84, 84, 84, 1.0);*/
+    border-top-left-radius: 0px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+.cesium-infoBox-titleTool{
+    background: rgba(84, 84, 84, 1.0);
+    border-top-left-radius: 7px;
+	display : inline-block;
+	width : 15%;
+}
+
+.cesium-infoBox-titleText{
+	background: rgba(84, 84, 84, 1.0);
+	display : inline-block;
+	width : 85%;
+}
+
+
 .cesium-infoBox-description {
     font-family: sans-serif;
     font-size: 13px;

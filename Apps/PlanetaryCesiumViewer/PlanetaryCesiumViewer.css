@@ -1,6 +1,19 @@
 @import url(../../Source/Widgets/widgets.css);
 @import url(../../Source/Widgets/lighter.css);
 @import url(../Sandcastle/templates/bucket.css);
+@import url(../../Source/Widgets/ShowSystems/ShowSystems.css);
+@import url(../../Source/Widgets/InfoBox/InfoBoxDescription.css);
+@import url(../../Source/Widgets/Tools/Tools.css);
+@import url(../../Source/Widgets/DrawLines/DrawLines.css);
+@import url(../../Source/Widgets/DrawLines/SubMenu/SubMenu.css);
+@import url(../../Source/Widgets/CustomObject/CustomObject.css);
+@import url(../../Source/Widgets/EditDrawing/EditDrawing.css);
+@import url(../../Source/Widgets/ShowGrid/ShowGrid.css);
+@import url(../../Source/Widgets/VOData/VOData.css);
+@import url(../../Source/Widgets/EditDrawing/SubMenu/ColorPicker/ColorPicker.css);
+@import url(../../Source/Widgets/FlagCounter/FlagCounter.css);
+
+/*@import url(../Sandcastle/templates/bucket.css);
 @import url(./Cesium/Widgets/ShowSystems/ShowSystems.css);
 @import url(./Cesium/Widgets/InfoBox/InfoBoxDescription.css);
 @import url(./Cesium/Widgets/Tools/Tools.css);
@@ -8,6 +21,7 @@
 @import url(./Cesium/Widgets/DrawLines/SubMenu/SubMenu.css);
 @import url(./Cesium/Widgets/CustomObject/CustomObject.css);
 @import url(./Cesium/Widgets/EditDrawing/EditDrawing.css);
+@import url(./Cesium/Widgets/ShowGrid/ShowGrid.css);*/
 
 html {
     height: 100%;
@@ -305,7 +319,7 @@ body {
     display  : block;
     position : absolute;
     top   : 5px;
-    left    : 900px;
+    left    : 800px;
     height   : 30px;
     /*border : #ffffff thin solid;*/
 }

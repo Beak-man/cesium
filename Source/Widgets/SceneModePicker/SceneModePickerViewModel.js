@@ -19,7 +19,7 @@ define([
         SceneMode,
         knockout,
         createCommand) {
-    "use strict";
+    'use strict';
 
     /**
      * The view model for {@link SceneModePicker}.
@@ -42,7 +42,7 @@ define([
 
         var morphStart = function(transitioner, oldMode, newMode, isMorphing) {
             that.sceneMode = newMode;
-            that.dropDownVisible = false;
+            that.dropDownVisibleS = false;
         };
 
         this._eventHelper = new EventHelper();
@@ -61,7 +61,7 @@ define([
          * @type {Boolean}
          * @default false
         */
-        this.dropDownVisible = false;
+        this.dropDownVisibleS = false;
 
         /**
          * Gets or sets the 2D tooltip.  This property is observable.
@@ -84,7 +84,7 @@ define([
         */
         this.tooltipColumbusView = 'Columbus View';
 
-        knockout.track(this, ['sceneMode', 'dropDownVisible', 'tooltip2D', 'tooltip3D', 'tooltipColumbusView']);
+        knockout.track(this, ['sceneMode', 'dropDownVisibleS', 'tooltip2D', 'tooltip3D', 'tooltipColumbusView']);
 
         /**
          * Gets the currently active tooltip.  This property is observable.
@@ -103,7 +103,7 @@ define([
         });
 
         this._toggleDropDown = createCommand(function() {
-            that.dropDownVisible = !that.dropDownVisible;
+            that.dropDownVisibleS = !that.dropDownVisibleS;
         });
 
         this._morphTo2D = createCommand(function() {

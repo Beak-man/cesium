@@ -1,16 +1,16 @@
 /*global define*/
 define([
-        '../../Core/defaultValue',
-        '../../Core/defined',
-        '../../Core/defineProperties',
-        '../../Core/DeveloperError',
-        '../../Core/Event',
-        '../../Core/wrapFunction',
-        '../../DataSources/CzmlDataSource',
-        '../../DataSources/GeoJsonDataSource',
-        '../../DataSources/KmlDataSource',
-        '../getElement'
-    ], function(
+    '../../Core/defaultValue',
+    '../../Core/defined',
+    '../../Core/defineProperties',
+    '../../Core/DeveloperError',
+    '../../Core/Event',
+    '../../Core/wrapFunction',
+    '../../DataSources/CzmlDataSource',
+    '../../DataSources/GeoJsonDataSource',
+    '../../DataSources/KmlDataSource',
+    '../getElement'
+], function (
         defaultValue,
         defined,
         defineProperties,
@@ -21,7 +21,7 @@ define([
         GeoJsonDataSource,
         KmlDataSource,
         getElement) {
-    "use strict";
+    'use strict';
 
     /**
      * A mixin which adds default drag and drop support for CZML files to the Viewer widget.
@@ -74,6 +74,7 @@ define([
 
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
 
+
         //Local variables to be closed over by defineProperties.
         var dropEnabled = true;
         var flyToOnDrop = true;
@@ -90,12 +91,12 @@ define([
              * @memberof viewerDragDropMixin.prototype
              * @type {Element}
              */
-            dropTarget : {
+            dropTarget: {
                 //TODO See https://github.com/AnalyticalGraphicsInc/cesium/issues/832
-                get : function() {
+                get: function () {
                     return dropTarget;
                 },
-                set : function(value) {
+                set: function (value) {
                     //>>includeStart('debug', pragmas.debug);
                     if (!defined(value)) {
                         throw new DeveloperError('value is required.');
@@ -107,17 +108,16 @@ define([
                     subscribe(dropTarget, handleDrop);
                 }
             },
-
             /**
              * Gets or sets a value indicating if drag and drop support is enabled.
              * @memberof viewerDragDropMixin.prototype
              * @type {Element}
              */
-            dropEnabled : {
-                get : function() {
+            dropEnabled: {
+                get: function () {
                     return dropEnabled;
                 },
-                set : function(value) {
+                set: function (value) {
                     if (value !== dropEnabled) {
                         if (value) {
                             subscribe(dropTarget, handleDrop);
@@ -128,56 +128,52 @@ define([
                     }
                 }
             },
-
             /**
              * Gets the event that will be raised when an error is encountered during drop processing.
              * @memberof viewerDragDropMixin.prototype
              * @type {Event}
              */
-            dropError : {
-                get : function() {
+            dropError: {
+                get: function () {
                     return dropError;
                 }
             },
-
             /**
              * Gets or sets a value indicating if existing data sources should be cleared before adding the newly dropped sources.
              * @memberof viewerDragDropMixin.prototype
              * @type {Boolean}
              */
-            clearOnDrop : {
-                get : function() {
+            clearOnDrop: {
+                get: function () {
                     return clearOnDrop;
                 },
-                set : function(value) {
+                set: function (value) {
                     clearOnDrop = value;
                 }
             },
-
             /**
              * Gets or sets a value indicating if the camera should fly to the data source after it is loaded.
              * @memberof viewerDragDropMixin.prototype
              * @type {Boolean}
              */
-            flyToOnDrop : {
-                get : function() {
+            flyToOnDrop: {
+                get: function () {
                     return flyToOnDrop;
                 },
-                set : function(value) {
+                set: function (value) {
                     flyToOnDrop = value;
                 }
             },
-
             /**
              * Gets or sets the proxy to be used for KML.
              * @memberof viewerDragDropMixin.prototype
              * @type {DefaultProxy}
              */
-            proxy : {
-                get : function() {
+            proxy: {
+                get: function () {
                     return proxy;
                 },
-                set : function(value) {
+                set: function (value) {
                     proxy = value;
                 }
             }
@@ -186,9 +182,16 @@ define([
         function handleDrop(event) {
             stop(event);
 
-            if (clearOnDrop) {
-                viewer.entities.removeAll();
-                viewer.dataSources.removeAll();
+            var legendFname = event.dataTransfer.files[0].name;
+
+            // don't clear if the legend color is loaded
+
+            if (/\.legendjson$/i.test(legendFname) == false) { 
+
+                if (clearOnDrop) {
+                    viewer.entities.removeAll();
+                    viewer.dataSources.removeAll();
+                }
             }
 
             var files = event.dataTransfer.files;
@@ -206,7 +209,7 @@ define([
         subscribe(dropTarget, handleDrop);
 
         //Wrap the destroy function to make sure all events are unsubscribed from
-        viewer.destroy = wrapFunction(viewer, viewer.destroy, function() {
+        viewer.destroy = wrapFunction(viewer, viewer.destroy, function () {
             viewer.dropEnabled = false;
         });
 
@@ -237,6 +240,7 @@ define([
     }
 
     function createOnLoadCallback(viewer, file, proxy) {
+        var scene = viewer.scene;
         return function(evt) {
             var fileName = file.name;
             try {
@@ -244,16 +248,31 @@ define([
 
                 if (/\.czml$/i.test(fileName)) {
                     loadPromise = CzmlDataSource.load(JSON.parse(evt.target.result), {
-                        sourceUri : fileName
+                        sourceUri: fileName
                     });
                 } else if (/\.geojson$/i.test(fileName) || /\.json$/i.test(fileName) || /\.topojson$/i.test(fileName)) {
+
                     loadPromise = GeoJsonDataSource.load(JSON.parse(evt.target.result), {
-                        sourceUri : fileName
+                        sourceUri: fileName,
+                        view: viewer
                     });
+
+                } else if (/\.legendjson$/i.test(fileName)) {
+
+                    var legendConfig = JSON.parse(evt.target.result);
+                    viewer.colorAssignation = legendConfig;
+
+                    try {
+                        viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.buildLegend;
+                    } catch (e) {
+                    }
+
                 } else if (/\.(kml|kmz)$/i.test(fileName)) {
                     loadPromise = KmlDataSource.load(file, {
                         sourceUri : fileName,
-                        proxy : proxy
+                        proxy : proxy,
+                        camera : scene.camera,
+                        canvas : scene.canvas
                     });
                 } else {
                     viewer.dropError.raiseEvent(viewer, fileName, 'Unrecognized file: ' + fileName);
@@ -261,11 +280,11 @@ define([
                 }
 
                 if (defined(loadPromise)) {
-                    viewer.dataSources.add(loadPromise).then(function(dataSource) {
+                    viewer.dataSources.add(loadPromise).then(function (dataSource) {
                         if (viewer.flyToOnDrop) {
                             viewer.flyTo(dataSource);
                         }
-                    }).otherwise(function(error) {
+                    }).otherwise(function (error) {
                         viewer.dropError.raiseEvent(viewer, fileName, error);
                     });
                 }
@@ -276,7 +295,7 @@ define([
     }
 
     function createDropErrorCallback(viewer, file) {
-        return function(evt) {
+        return function (evt) {
             viewer.dropError.raiseEvent(viewer, file.name, evt.target.error);
         };
     }

@@ -55,7 +55,7 @@ define([
         ImageryLayerCollection,
         QuadtreePrimitive,
         SceneMode) {
-    "use strict";
+    'use strict';
 
     /**
      * The globe rendered in the scene, including its terrain ({@link Globe#terrainProvider})
@@ -72,6 +72,9 @@ define([
         var terrainProvider = new EllipsoidTerrainProvider({
             ellipsoid : ellipsoid
         });
+		
+		// console.log(ellipsoid);
+		
         var imageryLayerCollection = new ImageryLayerCollection();
 
         this._ellipsoid = ellipsoid;
@@ -201,6 +204,12 @@ define([
         ellipsoid : {
             get : function() {
                 return this._ellipsoid;
+            }
+        },
+		
+		 occluder : {
+            set : function(occluder) {
+                return this._occluder;
             }
         },
         /**
@@ -401,16 +410,8 @@ define([
     /**
      * @private
      */
-    Globe.prototype.update = function(frameState) {
+    Globe.prototype.beginFrame = function(frameState) {
         if (!this.show) {
-            return;
-        }
-
-        var context = frameState.context;
-        var width = context.drawingBufferWidth;
-        var height = context.drawingBufferHeight;
-
-        if (width === 0 || height === 0) {
             return;
         }
 
@@ -434,7 +435,7 @@ define([
 
                     that._oceanNormalMap = that._oceanNormalMap && that._oceanNormalMap.destroy();
                     that._oceanNormalMap = new Texture({
-                        context : context,
+                        context : frameState.context,
                         source : image
                     });
                 });
@@ -465,11 +466,40 @@ define([
             tileProvider.oceanNormalMap = this._oceanNormalMap;
             tileProvider.enableLighting = this.enableLighting;
 
+            surface.beginFrame(frameState);
+        }
+    };
+
+    /**
+     * @private
+     */
+    Globe.prototype.update = function(frameState) {
+        if (!this.show) {
+            return;
+        }
+
+        var surface = this._surface;
+        var pass = frameState.passes;
+
+        if (pass.render) {
             surface.update(frameState);
         }
 
         if (pass.pick) {
             surface.update(frameState);
+        }
+    };
+
+    /**
+     * @private
+     */
+    Globe.prototype.endFrame = function(frameState) {
+        if (!this.show) {
+            return;
+        }
+
+        if (frameState.passes.render) {
+            this._surface.endFrame(frameState);
         }
     };
 
@@ -502,7 +532,7 @@ define([
      *
      * @example
      * globe = globe && globe.destroy();
-     * 
+     *
      * @see Globe#isDestroyed
      */
     Globe.prototype.destroy = function() {

@@ -19,7 +19,7 @@ define([
         GeographicProjection,
         CesiumMath,
         Rectangle) {
-    "use strict";
+    'use strict';
 
     /**
      * A tiling scheme for geometry referenced to a simple {@link GeographicProjection} where
@@ -40,7 +40,6 @@ define([
      */
     function GeographicTilingScheme(options) {
         options = defaultValue(options, {});
-
         this._ellipsoid = defaultValue(options.ellipsoid, Ellipsoid.WGS84);
         this._rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE);
         this._projection = new GeographicProjection(this._ellipsoid);

@@ -1,14 +1,15 @@
+
 /*global define*/
 define([
-        '../../Core/defined',
-        '../../Core/defineProperties',
-        '../../Core/destroyObject',
-        '../../Core/DeveloperError',
-        '../../Core/FeatureDetection',
-        '../../ThirdParty/knockout',
-        '../getElement',
-        './SceneModePickerViewModel'
-    ], function(
+    '../../Core/defined',
+    '../../Core/defineProperties',
+    '../../Core/destroyObject',
+    '../../Core/DeveloperError',
+    '../../Core/FeatureDetection',
+    '../../ThirdParty/knockout',
+    '../getElement',
+    './SceneModePickerViewModel'
+], function (
         defined,
         defineProperties,
         destroyObject,
@@ -17,7 +18,7 @@ define([
         knockout,
         getElement,
         SceneModePickerViewModel) {
-    "use strict";
+    'use strict';
 
     var globePath = 'm 32.401392,4.9330437 c -7.087603,0 -14.096095,2.884602 -19.10793,7.8946843 -5.0118352,5.010083 -7.9296167,11.987468 -7.9296167,19.072999 0,7.085531 2.9177815,14.097848 7.9296167,19.107931 4.837653,4.835961 11.541408,7.631372 18.374354,7.82482 0.05712,0.01231 0.454119,0.139729 0.454119,0.139729 l 0.03493,-0.104797 c 0.08246,7.84e-4 0.162033,0.03493 0.244525,0.03493 0.08304,0 0.161515,-0.03414 0.244526,-0.03493 l 0.03493,0.104797 c 0,0 0.309474,-0.129487 0.349323,-0.139729 6.867765,-0.168094 13.582903,-2.965206 18.444218,-7.82482 2.558195,-2.5573 4.551081,-5.638134 5.903547,-8.977584 1.297191,-3.202966 2.02607,-6.661489 2.02607,-10.130347 0,-6.237309 -2.366261,-12.31219 -6.322734,-17.116794 -0.0034,-0.02316 0.0049,-0.04488 0,-0.06986 -0.01733,-0.08745 -0.104529,-0.278855 -0.104797,-0.279458 -5.31e-4,-0.0012 -0.522988,-0.628147 -0.523984,-0.62878 \
         -3.47e-4,-2.2e-4 -0.133444,-0.03532 -0.244525,-0.06987 C 51.944299,13.447603 51.751076,13.104317 51.474391,12.827728 46.462556,7.8176457 39.488996,4.9330437 32.401392,4.9330437 z m -2.130866,3.5281554 0.104797,9.6762289 c -4.111695,-0.08361 -7.109829,-0.423664 -9.257041,-0.943171 1.198093,-2.269271 2.524531,-4.124404 3.91241,-5.414496 2.167498,-2.0147811 3.950145,-2.8540169 5.239834,-3.3185619 z m 2.794579,0 c 1.280302,0.4754953 3.022186,1.3285948 5.065173,3.2486979 1.424667,1.338973 2.788862,3.303645 3.982275,5.728886 -2.29082,0.403367 -5.381258,0.621049 -8.942651,0.698645 L 33.065105,8.4611991 z m 5.728886,0.2445256 c 4.004072,1.1230822 7.793098,3.1481363 10.724195,6.0782083 0.03468,0.03466 0.07033,0.06991 0.104797,0.104797 -0.45375,0.313891 -0.923054,0.663002 -1.956205,1.082899 -0.647388,0.263114 -1.906242,0.477396 -2.829511,0.733577 -1.382296,-2.988132 \
@@ -81,7 +82,7 @@ define([
 css: { "cesium-sceneModePicker-button2D": sceneMode === _sceneMode.SCENE2D,\
        "cesium-sceneModePicker-button3D": sceneMode === _sceneMode.SCENE3D,\
        "cesium-sceneModePicker-buttonColumbusView": sceneMode === _sceneMode.COLUMBUS_VIEW,\
-       "cesium-sceneModePicker-selected": dropDownVisible },\
+       "cesium-sceneModePicker-selected": dropDownVisibleS },\
 attr: { title: selectedTooltip },\
 click: toggleDropDown');
         button.innerHTML = '\
@@ -94,9 +95,9 @@ click: toggleDropDown');
         morphTo3DButton.type = 'button';
         morphTo3DButton.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
         morphTo3DButton.setAttribute('data-bind', '\
-css: { "cesium-sceneModePicker-visible" : (dropDownVisible && (sceneMode !== _sceneMode.SCENE3D)) || (!dropDownVisible && (sceneMode === _sceneMode.SCENE3D)),\
+css: { "cesium-sceneModePicker-visible" : (dropDownVisibleS && (sceneMode !== _sceneMode.SCENE3D)) || (!dropDownVisibleS && (sceneMode === _sceneMode.SCENE3D)),\
        "cesium-sceneModePicker-none" : sceneMode === _sceneMode.SCENE3D,\
-       "cesium-sceneModePicker-hidden" : !dropDownVisible },\
+       "cesium-sceneModePicker-hidden" : !dropDownVisibleS },\
 attr: { title: tooltip3D },\
 click: morphTo3D,\
 cesiumSvgPath: { path: _globePath, width: 64, height: 64 }');
@@ -106,9 +107,9 @@ cesiumSvgPath: { path: _globePath, width: 64, height: 64 }');
         morphTo2DButton.type = 'button';
         morphTo2DButton.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
         morphTo2DButton.setAttribute('data-bind', '\
-css: { "cesium-sceneModePicker-visible" : (dropDownVisible && (sceneMode !== _sceneMode.SCENE2D)),\
+css: { "cesium-sceneModePicker-visible" : (dropDownVisibleS && (sceneMode !== _sceneMode.SCENE2D)),\
        "cesium-sceneModePicker-none" : sceneMode === _sceneMode.SCENE2D,\
-       "cesium-sceneModePicker-hidden" : !dropDownVisible },\
+       "cesium-sceneModePicker-hidden" : !dropDownVisibleS},\
 attr: { title: tooltip2D },\
 click: morphTo2D,\
 cesiumSvgPath: { path: _flatMapPath, width: 64, height: 64 }');
@@ -118,9 +119,9 @@ cesiumSvgPath: { path: _flatMapPath, width: 64, height: 64 }');
         morphToCVButton.type = 'button';
         morphToCVButton.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
         morphToCVButton.setAttribute('data-bind', '\
-css: { "cesium-sceneModePicker-visible" : (dropDownVisible && (sceneMode !== _sceneMode.COLUMBUS_VIEW)) || (!dropDownVisible && (sceneMode === _sceneMode.COLUMBUS_VIEW)),\
+css: { "cesium-sceneModePicker-visible" : (dropDownVisibleS && (sceneMode !== _sceneMode.COLUMBUS_VIEW)) || (!dropDownVisibleS && (sceneMode === _sceneMode.COLUMBUS_VIEW)),\
        "cesium-sceneModePicker-none" : sceneMode === _sceneMode.COLUMBUS_VIEW,\
-       "cesium-sceneModePicker-hidden" : !dropDownVisible},\
+       "cesium-sceneModePicker-hidden" : !dropDownVisibleS},\
 attr: { title: tooltipColumbusView },\
 click: morphToColumbusView,\
 cesiumSvgPath: { path: _columbusViewPath, width: 64, height: 64 }');
@@ -132,7 +133,7 @@ cesiumSvgPath: { path: _columbusViewPath, width: 64, height: 64 }');
         this._container = container;
         this._wrapper = wrapper;
 
-        this._closeDropDown = function(e) {
+        this._closeDropDown = function (e) {
             if (!wrapper.contains(e.target)) {
                 viewModel.dropDownVisible = false;
             }
@@ -152,20 +153,19 @@ cesiumSvgPath: { path: _columbusViewPath, width: 64, height: 64 }');
          *
          * @type {Element}
          */
-        container : {
-            get : function() {
+        container: {
+            get: function () {
                 return this._container;
             }
         },
-
         /**
          * Gets the view model.
          * @memberof SceneModePicker.prototype
          *
          * @type {SceneModePickerViewModel}
          */
-        viewModel : {
-            get : function() {
+        viewModel: {
+            get: function () {
                 return this._viewModel;
             }
         }
@@ -174,7 +174,7 @@ cesiumSvgPath: { path: _columbusViewPath, width: 64, height: 64 }');
     /**
      * @returns {Boolean} true if the object has been destroyed, false otherwise.
      */
-    SceneModePicker.prototype.isDestroyed = function() {
+    SceneModePicker.prototype.isDestroyed = function () {
         return false;
     };
 
@@ -182,7 +182,7 @@ cesiumSvgPath: { path: _columbusViewPath, width: 64, height: 64 }');
      * Destroys the widget.  Should be called if permanently
      * removing the widget from layout.
      */
-    SceneModePicker.prototype.destroy = function() {
+    SceneModePicker.prototype.destroy = function () {
         this._viewModel.destroy();
 
         if (FeatureDetection.supportsPointerEvents()) {
