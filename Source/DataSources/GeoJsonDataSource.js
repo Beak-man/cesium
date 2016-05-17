@@ -1,37 +1,36 @@
 /*global define*/
 define([
-        '../Core/Cartesian3',
-        '../Core/Color',
-        '../Core/createGuid',
-        '../Core/defaultValue',
-        '../Core/defined',
-        '../Core/defineProperties',
-        '../Core/DeveloperError',
-        '../Core/Event',
-        '../Core/Ellipsoid', /* *** NEW *** */
-        '../Core/getFilenameFromUri',
-        '../Core/loadJson',
-        '../Core/PinBuilder',
-        '../Core/PolygonHierarchy',
-        '../Core/RuntimeError',
-        '../Scene/VerticalOrigin',
-        '../ThirdParty/topojson',
-        '../ThirdParty/when',
-        './BillboardGraphics',
-        './CallbackProperty',
-        './ColorMaterialProperty',
-        './ConstantPositionProperty',
-        './ConstantProperty',
-        './CoordinatesReferenceSystems', /* *** NEW *** */
-        './DataSource',
-        './EllipseGraphics',
-        './EntityCollection',
-        './PolygonGraphics',
-        './PolylineGraphics'
-    ], function(
+    '../Core/Cartesian3',
+    '../Core/Color',
+    '../Core/createGuid',
+    '../Core/defaultValue',
+    '../Core/defined',
+    '../Core/defineProperties',
+    '../Core/DeveloperError',
+    '../Core/Event',
+    '../Core/Ellipsoid', /* *** NEW *** */
+    '../Core/getFilenameFromUri',
+    '../Core/loadJson',
+    '../Core/PinBuilder',
+    '../Core/PolygonHierarchy',
+    '../Core/RuntimeError',
+    '../Scene/VerticalOrigin',
+    '../ThirdParty/topojson',
+    '../ThirdParty/when',
+    './BillboardGraphics',
+    './CallbackProperty',
+    './ColorMaterialProperty',
+    './ConstantPositionProperty',
+    './ConstantProperty',
+    './CoordinatesReferenceSystems', /* *** NEW *** */
+    './DataSource',
+    './EllipseGraphics',
+    './EntityCollection',
+    './PolygonGraphics',
+    './PolylineGraphics'
+], function (
         Cartesian3,
         Color,
-        CoordinatesReferenceSystems, /* *** NEW *** */
         createGuid,
         defaultValue,
         defined,
@@ -52,6 +51,7 @@ define([
         ColorMaterialProperty,
         ConstantPositionProperty,
         ConstantProperty,
+        CoordinatesReferenceSystems, /* *** NEW *** */
         DataSource,
         EllipseGraphics,
         EntityCollection,
@@ -72,7 +72,10 @@ define([
 
     function crsChange(obj) {
 
+        console.log("dans crsChange");
+
         GeoJsonDataSource._ellipsoid = obj.ellipsoid;
+
         var naifCodes = obj.naifCodes;
 
         crsNames = {};
@@ -103,6 +106,8 @@ define([
     var simpleStyleIdentifiers = ['title', 'description', //
         'marker-size', 'marker-symbol', 'marker-color', 'stroke', //
         'stroke-opacity', 'stroke-width', 'fill', 'fill-opacity'];
+    
+    var stringifyScratch = new Array(4);
 
     function defaultDescribe(properties, nameProperty) {
 
@@ -294,19 +299,16 @@ define([
 
     function createPoint(dataSource, geoJson, crsFunction, coordinates, options) {
 
-        var properties = geoJson.properties;
-        if (defined(properties)) {
+        options.circle = false;
 
-            options.circle = false;
-
-            if (properties.radius || properties.Radius) {
+        if (geoJson.properties.radius || geoJson.properties.Radius) {
 
                 counter = counter + 1;
 
                 var radius;
                 var position;
 
-                var radii = properties.radius ? properties.radius : properties.Radius;
+                var radii = geoJson.properties.radius ? geoJson.properties.radius : geoJson.properties.Radius;
 
 
                 try {
@@ -314,7 +316,7 @@ define([
                     var stringSplit = radiusString.split(" ");
                     radius = parseFloat(stringSplit[0]);
                 } catch (e) {
-                    var radiusString = properties.radius;
+                    var radiusString = geoJson.properties.radius;
                     radius = parseFloat(radiusString);
                 }
 
@@ -370,9 +372,9 @@ define([
                 point.outlineColor = Color.YELLOW;
                 point.outlineWidth = 1.0;
 
-                if (properties.flagColor) {
+                if (geoJson.properties.flagColor) {
 
-                    var rgbaString = properties.flagColor;
+                    var rgbaString = geoJson.properties.flagColor;
                     var rgbaStringTab = rgbaString.split(", ");
 
                     var R = parseFloat(rgbaStringTab[0]) / 255;
@@ -418,7 +420,6 @@ define([
                     GeoJsonDataSource._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.flagCounter.viewModel.counterUpdateOnLoad = countObject;
                 } catch (e) {
                 }
-            }
 
         } else {
 
@@ -427,15 +428,15 @@ define([
             var size = options.markerSize;
 
             var properties = geoJson.properties;
-            if (definedNotNull(properties)) {
+            if (defined(properties)) {
                 var cssColor = properties['marker-color'];
-                if (definedNotNull(cssColor)) {
+                if (defined(cssColor)) {
                     color = Color.fromCssColorString(cssColor);
                 }
 
                 size = defaultValue(sizes[properties['marker-size']], size);
                 var markerSymbol = properties['marker-symbol'];
-                if (definedNotNull(markerSymbol)) {
+                if (defined(markerSymbol)) {
                     symbol = markerSymbol;
                 }
             }
@@ -684,7 +685,7 @@ define([
      *   markerSymbol: '?'
      * }));
      */
-    function GeoJsonDataSource(name) {
+    var GeoJsonDataSource = function (name) {
         this._name = name;
         this._changed = new Event();
         this._error = new Event();
@@ -938,11 +939,11 @@ define([
          * @memberof GeoJsonDataSource.prototype
          * @type {Boolean}
          */
-        show : {
-            get : function() {
+        show: {
+            get: function () {
                 return this._entityCollection.show;
             },
-            set : function(value) {
+            set: function (value) {
                 this._entityCollection.show = value;
             }
         }

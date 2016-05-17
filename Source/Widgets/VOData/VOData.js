@@ -21,7 +21,7 @@ define([
     "use strict";
 
     /**
-     * A widget to show VO data.
+     * A widget to show VO data. Called from ShowSystemViewModel.js (main function)
      *
      * @alias VOData
      * @constructor
@@ -171,14 +171,6 @@ define([
         knockout.applyBindings(viewModel, wrapperMenu);
         knockout.applyBindings(viewModel, sendQueryBtn);
     };
-
-
-      
-
-
-
-
-
 
 
     defineProperties(VOData.prototype, {

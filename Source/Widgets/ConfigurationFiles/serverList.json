@@ -13,21 +13,12 @@
 		"dir"       : "/maps/",
 		"extension" : "_simp_cyl_quads.map",
 		"format"    : "png"
-	    },		
-		
-	/*"server3" : {	
-		"name"      : "IAS u-psud (Mars only)",
-		"url"       : "http://idoc-wmsmars.ias.u-psud.fr/cgi-bin/mapserv",
-		"dir"       : "/home/cnes/",
-		"extension" : ".map"
-	    },	*/	
-		
+	    },				
 	
 	"serverVOVenus" : {
 	"name"      : "voparis-cdpp",
 	"url"       : "http://voparis-cdpp.obspm.fr/__system__/tap/run/tap/sync",
 	"dir"       : "./",
 	"extension" : ".epn_core" 
-	}	
-		
+	}
 }

@@ -24,7 +24,7 @@ define(['../Core/Cartesian3',
         return Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2], ellipsoid);
     }
 
-    var CoordinatesReferenceSystems = function (crsNames, crsFunctionType, naifCodes) {
+    var CoordinatesReferenceSystems = function CoordinatesReferenceSystems(crsNames, crsFunctionType, naifCodes) {
 
         if (!naifCodes) {
 

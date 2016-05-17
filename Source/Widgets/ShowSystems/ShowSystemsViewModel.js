@@ -322,6 +322,7 @@ define([
                         imageryProvidersTab[i] = new WebMapServiceImageryProvider({
                             //  url: finalNomenUrl,
                             url: onlineResource,
+                            parameters: {format: 'image/png'},
                             layers: layer[i],
                             credit: 'USGS @ wms.wr.usgs.gov',
                             ellipsoid: that._ellipsoid,
@@ -1073,7 +1074,7 @@ define([
              ========================= VO WIDGET CALL ==========================
              =================================================================== */
 
-            // that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
+             that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
 
             /* ================================================================= 
              ===================================================================

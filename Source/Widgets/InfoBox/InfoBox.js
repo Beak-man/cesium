@@ -107,7 +107,7 @@ define([
         frame.setAttribute('allowfullscreen', true);
         infoElement.appendChild(frame);
 
-        var viewModel = new InfoBoxViewModel(viewer);
+        var viewModel = new InfoBoxViewModel();
         knockout.applyBindings(viewModel, infoElement);
 
         this._container = container;

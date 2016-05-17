@@ -88,10 +88,13 @@ define([
                                     if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
 
                                         var data = xhr.responseText;
+                                        
+                                        console.log(data);
+                                        
                                         var jsonData = JSON.parse(data);
                                         var server = jsonData[serverName];
                                         
-                                      //  console.log(jsonData);
+                                        console.log(jsonData);
 
                                         var queryPart1 = server.url + "?REQUEST=doQuery&LANG=ADQL&";
 
@@ -138,14 +141,12 @@ define([
                         }
             }
 
-
             function getVOData(query) {
 
                 var xhr = getRequest();
 
                 xhr.open('GET', query, true);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.withCredentials = false;
                 xhr.send();
                 xhr.onreadystatechange = function () {
 
@@ -186,7 +187,7 @@ define([
                 this._btnContainer = btnContainer;
                 this._inputObjects = inputObjects;
                 this._query = null;
-                this._format = "json";
+                this._format = "html";
 
                 this._serverUrl = '../../Source/Widgets/ConfigurationFiles/serverList.json';
 

@@ -1,14 +1,13 @@
 .cesium-voData{
     position : absolute;
     top:5px;
-    left:300px;
+    left:675px;
 }
 
 .cesium-voData-button{
     width: 100px;
     height: 25px;
     text-align: center;
-    
 }
 
 .cesium-voData-configContainer {

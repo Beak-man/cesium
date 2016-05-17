@@ -42,7 +42,6 @@ define([
         '../subscribeAndEvaluate',
         '../Timeline/Timeline',
         '../VRButton/VRButton',
-        '../HomePlanetButton/HomePlanetButton',
         '../LongitudeLatitdude/LngLat', /* *** NEW *** */
         '../MarkerMove/MarkerMove', /* *** NEW *** */
         '../ShowSystems/ShowSystems', /* *** NEW *** */
@@ -88,7 +87,6 @@ define([
         Geocoder,
         getElement,
         HomeButton,
-        HomePlanetButton,
         InfoBox,
         NavigationHelpButton,
         SceneModePicker,
