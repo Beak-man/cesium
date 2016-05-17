@@ -23,7 +23,7 @@ define([//  Definition des d�pendances
     'Cesium/DataSources/KmlDataSource',
     'Cesium/DataSources/LabelGraphics',
     'Cesium/Scene/ImageryLayer',
-    'Cesium/Scene/TileMapServiceImageryProvider',
+    'Cesium/Scene/createTileMapServiceImageryProvider',
     //'Cesium/Scene/IIPImageryProvider',
     'Cesium/Scene/GridImageryProvider',
     'Cesium/Scene/WebMapServiceImageryProvider',
@@ -37,8 +37,6 @@ define([//  Definition des d�pendances
     'Cesium/Widgets/Viewer/viewerCesiumInspectorMixin',
     'Cesium/Widgets/Viewer/viewerDragDropMixin',
     'Cesium/Widgets/createCommand',
-    //'RLayerMenu/RLayerMenu',
-    //'RLayerMenu/RLayerMenuViewModel',
     'Cesium/ThirdParty/knockout',
     'Cesium/ThirdParty/when',
 ], function (
@@ -65,7 +63,7 @@ define([//  Definition des d�pendances
         ImageryLayer,
         KmlDataSource,
         LabelGraphics,
-        TileMapServiceImageryProvider,
+        createTileMapServiceImageryProvider,
         GridImageryProvider,
         WebMapServiceImageryProvider,
         WebMapTileServiceImageryProvider,
@@ -171,7 +169,7 @@ define([//  Definition des d�pendances
     var paramObject = {};
 
     /* if (endUserOptions.tmsImageryUrl) {
-     imageryProvider = new TileMapServiceImageryProvider({
+     imageryProvider = new createTileMapServiceImageryProvider({
      url: endUserOptions.tmsImageryUrl
      });
      

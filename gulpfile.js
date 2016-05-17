@@ -43,7 +43,7 @@ var travisDeployUrl = "http://cesium-dev.s3-website-us-east-1.amazonaws.com/cesi
 var taskName = process.argv[2];
 var noDevelopmentGallery = taskName === 'release' || taskName === 'makeZipFile';
 var buildingRelease = noDevelopmentGallery;
-var minifyShaders = taskName === 'minify' || taskName === 'minifyRelease' || taskName === 'release' || taskName === 'makeZipFile' || taskName === 'buildApps';
+var minifyShaders = taskName === 'minify' || taskName === 'minifyRelease' || taskName === 'release' || taskName === 'makeZipFile' || taskName === 'buildApps' || taskName === 'buildPlApps';
 
 //travis reports 32 cores but only has 3GB of memory, which causes the VM to run out.  Limit to 8 cores instead.
 var concurrency = Math.min(os.cpus().length, 8);
@@ -121,6 +121,10 @@ gulp.task('build-watch', function() {
 
 gulp.task('buildApps', function() {
     return buildCesiumViewer();
+});
+
+gulp.task('buildPlApps', function() {
+    return buildPlanetaryCesiumViewer();
 });
 
 gulp.task('clean', function(done) {
@@ -1142,6 +1146,83 @@ var sandcastleJsHintOptions = ' + JSON.stringify(primary, null, 4) + ';';
 }
 
 function buildCesiumViewer() {
+    var cesiumViewerOutputDirectory = 'Build/Apps/CesiumViewer';
+    var cesiumViewerStartup = path.join(cesiumViewerOutputDirectory, 'CesiumViewerStartup.js');
+    var cesiumViewerCss = path.join(cesiumViewerOutputDirectory, 'CesiumViewer.css');
+    mkdirp.sync(cesiumViewerOutputDirectory);
+
+    var promise = Promise.join(
+        requirejsOptimize('CesiumViewer', {
+            wrap : true,
+            useStrict : true,
+            optimizeCss : 'standard',
+            pragmas : {
+                debug : false
+            },
+            optimize : 'uglify2',
+            mainConfigFile : 'Apps/CesiumViewer/CesiumViewerStartup.js',
+            name : 'CesiumViewerStartup',
+            out : cesiumViewerStartup
+        }),
+        requirejsOptimize('CesiumViewer CSS', {
+            wrap : true,
+            useStrict : true,
+            optimizeCss : 'standard',
+            pragmas : {
+                debug : false
+            },
+            cssIn : 'Apps/CesiumViewer/PlanetaryCesiumViewer.css',
+            out : cesiumViewerCss
+        })
+    );
+
+    promise = promise.then(function() {
+        var copyrightHeader = fs.readFileSync(path.join('Source', 'copyrightHeader.js'));
+
+        var stream = eventStream.merge(
+            gulp.src(cesiumViewerStartup)
+                .pipe(gulpInsert.prepend(copyrightHeader))
+                .pipe(gulpReplace('../../Source', '.'))
+                .pipe(gulpReplace('../../ThirdParty/requirejs-2.1.20', '.')),
+
+            gulp.src(cesiumViewerCss)
+                .pipe(gulpReplace('../../Source', '.')),
+
+            gulp.src(['Apps/CesiumViewer/index.html'])
+                .pipe(gulpReplace('../../ThirdParty/requirejs-2.1.20', '.')),
+
+            gulp.src(['Apps/CesiumViewer/**',
+                      '!Apps/CesiumViewer/index.html',
+                      '!Apps/CesiumViewer/**/*.js',
+                      '!Apps/CesiumViewer/**/*.css']),
+
+            gulp.src(['ThirdParty/requirejs-2.1.20/require.min.js'])
+                .pipe(gulpRename('require.js')),
+
+            gulp.src(['Build/Cesium/Assets/**',
+                      'Build/Cesium/Workers/**',
+                      'Build/Cesium/ThirdParty/Workers/**',
+                      'Build/Cesium/Widgets/**',
+                      '!Build/Cesium/Widgets/**/*.css'],
+                {
+                    base : 'Build/Cesium',
+                    nodir : true
+                }),
+
+            gulp.src(['Build/Cesium/Widgets/InfoBox/InfoBoxDescription.css'], {
+                base : 'Build/Cesium'
+            }),
+
+            gulp.src(['web.config'])
+        );
+
+        return streamToPromise(stream.pipe(gulp.dest(cesiumViewerOutputDirectory)));
+    });
+
+    return promise;
+}
+
+function buildPlanetaryCesiumViewer() {
     var cesiumViewerOutputDirectory = 'Build/Apps/PlanetaryCesiumViewer';
     var cesiumViewerStartup = path.join(cesiumViewerOutputDirectory, 'PlanetaryCesiumViewerStartup.js');
     var cesiumViewerCss = path.join(cesiumViewerOutputDirectory, 'PlanetaryCesiumViewer.css');
