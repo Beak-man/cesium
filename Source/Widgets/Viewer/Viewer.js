@@ -391,6 +391,9 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         //>>includeEnd('debug')
 
         var that = this;
+        var configuration = options.configuration;
+        
+        console.log(configuration);
 
         var viewerContainer = document.createElement('div');
         viewerContainer.className = 'cesium-viewer';
@@ -426,7 +429,8 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             showRenderLoopErrors : options.showRenderLoopErrors,
             creditContainer : defined(options.creditContainer) ? options.creditContainer : bottomContainer,
             scene3DOnly : scene3DOnly,
-            terrainExaggeration : options.terrainExaggeration
+            terrainExaggeration : options.terrainExaggeration,
+            configuration : options.configuration
         });
 
         var dataSourceCollection = options.dataSources;
@@ -568,7 +572,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         // show planets
         var showSystems;
-        showSystems = new ShowSystems(viewerContainer, planetsToolbar, footerToolbar, cesiumWidget.scene, this);
+        showSystems = new ShowSystems(viewerContainer, planetsToolbar, footerToolbar, cesiumWidget.scene, this, configuration);
 
         // build custom objects
         var customObject;

@@ -173,6 +173,11 @@ define([
 
                     var service = data.getElementsByTagName("Service");
                     var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+
+                    /*  var serviceName = service[0].getElementsByTagName("Name")[0].textContent;
+                     var widthMax = service[0].getElementsByTagName("MaxWidth")[0].textContent;
+                     var heightMax = service[0].getElementsByTagName("MaxHeight")[0].textContent;*/
+
                     var capability = data.getElementsByTagName("Capability");
                     var layersIni = capability[0].getElementsByTagName("Layer");
 
@@ -181,6 +186,8 @@ define([
                     var abstract = [];
                     var layerName = [];
                     var layer = [];
+                    //   var crs;
+                    //    var bBox = [];
                     var imageryProvidersTab = [];
 
                     var PlanetName = pn.replace(pn.charAt(0), pn.charAt(0).toUpperCase())
@@ -199,6 +206,7 @@ define([
                     var tableList = document.createElement('TABLE');
                     listShow.appendChild(tableList);
 
+                    //  var dimLayers = layersIni.length;
                     var layers = [];
 
                     for (var i = 0; i < layersIni.length; i++) {
@@ -207,6 +215,8 @@ define([
                             layers.push(layersIni[i]);
                         }
                     }
+
+                    //   crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
                     var dimLayers = layers.length;
 
 
@@ -214,22 +224,25 @@ define([
                     // ==================== CODE A FACTORISER ===================
                     // ========================================================== 
 
+
                     for (var i = 0; i < layers.length; i++) {
 
                         names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                         layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
                         title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
                         abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
-
-                        var abstr = abstract[i].toString();
-
+                        
+                        var abstr =  abstract[i].toString();
+                        
                         // ======================= test for "\n" ==========================
-
+                        
                         var testReg = new RegExp("\n");
-
+                        
                         if (testReg.test(abstr)) {
-                            var abstr = abstract[i].replace(/\n/g, " ");
+                           var abstr =  abstract[i].replace(/\n/g, " "); 
                         }
+
+                        //  bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
 
                         var nameLowCase = names[i].toLowerCase();
                         var nameLowCaseTab = nameLowCase.split("_");
@@ -248,6 +261,24 @@ define([
                         // ========================================================== 
                         // ==========================================================
                         // ========================================================== 
+
+
+                        /*  var bboxString = bBox[i].attributes[2].value + ',' + bBox[i].attributes[1].value + ',' + bBox[i].attributes[4].value + ',' + bBox[i].attributes[3].value;
+                         var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fjpeg' + '&' + 'LAYERS=' + layer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
+                         
+                         var objRequest = {
+                         onlineResource: onlineResource,
+                         imageryRequestParam: imageryRequestParam,
+                         paramCesiumRequest: {
+                         planetName: pn,
+                         naifCode: naifCode[0] + ',' + naifCode[1]
+                         }
+                         }
+                         
+                         var planetN = objRequest.paramCesiumRequest.planetName;
+                         var naif = objRequest.paramCesiumRequest.naifCode;
+                         var onlineResUrl = objRequest.onlineResource;
+                         var finalUrl = onlineResUrl + '&' + imageryRequestParam;*/
 
                         var tableLine = document.createElement('TR');
                         tableList.appendChild(tableLine);
@@ -280,7 +311,16 @@ define([
 
                         layerName[i] = finalLayerName;
 
+                        /*  imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                         url: finalUrl,
+                         layers: layer[i],
+                         credit: 'USGS @ planetarymaps.usgs.gov',
+                         ellipsoid: that._ellipsoid,
+                         enablePickFeatures: false
+                         });*/
+
                         imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                            //  url: finalNomenUrl,
                             url: onlineResource,
                             parameters: {format: 'image/png; mode=8bit'},
                             layers: layer[i],
@@ -288,6 +328,7 @@ define([
                             ellipsoid: that._ellipsoid,
                             enablePickFeatures: false
                         });
+
                     }
 
                     /* ========================================================= 
@@ -311,6 +352,7 @@ define([
                                 var nomenAbstract = [];
                                 var nomenLayerName = [];
                                 var nomenLayer = [];
+                                //  var nomenBBox = [];
                                 var nomenImageryProvidersTab = [];
 
                                 var layerNomenCount = 0;
@@ -319,6 +361,13 @@ define([
 
                                 var service = data.getElementsByTagName("Service");
                                 var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+
+
+                                /*  var serviceName = service[0].getElementsByTagName("Name")[0].textContent;
+                                 var widthMax = service[0].getElementsByTagName("MaxWidth")[0].textContent;
+                                 var heightMax = service[0].getElementsByTagName("MaxHeight")[0].textContent;*/
+
+
                                 var capability = data.getElementsByTagName("Capability");
                                 var layersIni = capability[0].getElementsByTagName("Layer");
 
@@ -333,6 +382,8 @@ define([
                                     }
                                 }
 
+                                // var dimNomenLayers = nomenclatureLayers.length;
+
                                 // On recupere le layer i et on extrait les informations pour la fabrication de l'url
 
                                 for (var i = 0; i < nomenclatureLayers.length; i++) {
@@ -343,6 +394,8 @@ define([
                                     nomenLayer[i] = nomenclatureLayers[i].getElementsByTagName("Name")[0].textContent;
                                     nomenTitle[i] = nomenclatureLayers[i].getElementsByTagName("Title")[0].textContent;
                                     nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName("Abstract")[0].textContent;
+
+                                    //   nomenBBox[i] = nomenclatureLayers[i].getElementsByTagName("BoundingBox")[0];
 
                                     // // On met la premiere lettre du name en Majuscule
 
@@ -361,6 +414,26 @@ define([
                                                 finalNomenLayerName += nameLowCaseTab[j] + ' ';
                                             }
                                         }
+
+                                        /* construction de la requete. le BBox est forcé
+                                         
+                                         //   var bboxString = "-180,-90,180,90";
+                                         //    var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fpng' + '&' + 'LAYERS=' + nomenLayer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
+                                         
+                                         /*   var objRequest = {
+                                         onlineResource: onlineResource,
+                                         imageryRequestParam: imageryRequestParam,
+                                         paramCesiumRequest: {
+                                         planetName: pn,
+                                         naifCode: naifCode[0] + ',' + naifCode[1]
+                                         }
+                                         }
+                                         
+                                         //   var onlineResUrl = objRequest.onlineResource;
+                                         
+                                         // requete finale 
+                                         
+                                         //  var finalNomenUrl = onlineResUrl + '&' + imageryRequestParam;*/
 
                                         // creation de la ligne pour la nomenclature dans le tableau;
 
@@ -440,12 +513,21 @@ define([
                             }
                         }
                     }
+
+
+                    /*  var listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
+                     knockout.applyBindings(listViewModel, listContainer2);*/
+
                 } catch (e) {
+
                     console.log(e);
+
+
                 }
             }
         }
     }
+
 
     function getXmlDataSatellite(that, viewer, xhr, xhrNomen, method, url, urlNomen, async, listContainer, pn, sn, naifCode) {
 
@@ -482,6 +564,11 @@ define([
 
                     var service = data.getElementsByTagName("Service");
                     var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+
+                    /*  var serviceName = service[0].getElementsByTagName("Name")[0].textContent;
+                     var widthMax = service[0].getElementsByTagName("MaxWidth")[0].textContent;
+                     var heightMax = service[0].getElementsByTagName("MaxHeight")[0].textContent;*/
+
                     var capability = data.getElementsByTagName("Capability");
                     var layersIni = capability[0].getElementsByTagName("Layer");
 
@@ -493,6 +580,8 @@ define([
                     var abstract = [];
                     var layerName = [];
                     var layer = [];
+                    //   var bBox = [];
+                    //   var crs;
                     var imageryProvidersTab = [];
 
                     /* ==== get informations from tables previously built ==== */
@@ -506,6 +595,7 @@ define([
                         }
                     }
 
+                    //   crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
                     var dimLayers = layers.length;
 
                     // ========================================================== 
@@ -520,6 +610,8 @@ define([
                             title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
                             abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
                             layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
+
+                            //   bBox[i] = layers[i].getElementsByTagName("BoundingBox")[0];
 
                             /* === transform the first case to UpperCase (for the vizualiation only : not Important) === */
 
@@ -540,6 +632,27 @@ define([
                             // ========================================================== 
                             // ==========================================================
                             // ========================================================== 
+
+
+                            /* === set the imagery request parameters (WMS) === */
+
+                            /*   var bboxString = bBox[i].attributes[2].value + ',' + bBox[i].attributes[1].value + ',' + bBox[i].attributes[4].value + ',' + bBox[i].attributes[3].value;
+                             var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fjpeg' + '&' + 'LAYERS=' + layer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
+                             
+                             var objRequest = {
+                             onlineResource: onlineResource,
+                             imageryRequestParam: imageryRequestParam,
+                             paramCesiumRequest: {
+                             planetName: pn,
+                             satelliteName: sn,
+                             naifCode: naifCode[0] + ',' + naifCode[1]
+                             }
+                             }*\
+                             
+                             /*  var satellN = objRequest.paramCesiumRequest.planetName;
+                             var naif = objRequest.paramCesiumRequest.naifCode;
+                             var onlineResUrl = objRequest.onlineResource;
+                             var finalUrl = onlineResUrl + '&' + imageryRequestParam;*/
 
                             /* ==== set HTML containers for the vizualition in table form ==== */
 
@@ -577,6 +690,14 @@ define([
 
                             layerName[i] = finalLayerName;
 
+                            /*    imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                             url: finalUrl,
+                             layers: layer[i],
+                             credit: 'USGS @ planetarymaps.usgs.gov',
+                             ellipsoid: that._ellipsoid,
+                             enablePickFeatures: false
+                             });*/
+
                             imageryProvidersTab[i] = new WebMapServiceImageryProvider({
                                 //  url: finalNomenUrl,
                                 url: onlineResource,
@@ -585,6 +706,9 @@ define([
                                 ellipsoid: that._ellipsoid,
                                 enablePickFeatures: false
                             });
+
+
+
                         }
                     }
 
@@ -620,6 +744,11 @@ define([
 
                                 var service = data.getElementsByTagName("Service");
                                 var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+
+                                /*   var serviceName = service[0].getElementsByTagName("Name")[0].textContent;
+                                 var widthMax = service[0].getElementsByTagName("MaxWidth")[0].textContent;
+                                 var heightMax = service[0].getElementsByTagName("MaxHeight")[0].textContent;*/
+
                                 var capability = data.getElementsByTagName("Capability");
                                 var layersIni = capability[0].getElementsByTagName("Layer");
 
@@ -647,6 +776,8 @@ define([
                                     nomenTitle[i] = nomenclatureLayers[i].getElementsByTagName("Title")[0].textContent;
                                     nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName("Abstract")[0].textContent;
 
+                                    //  nomenBBox[i] = nomenclatureLayers[i].getElementsByTagName("BoundingBox")[0];
+
                                     // // On met la premiere lettre du name en Majuscule
 
                                     if (nomenNames[i] == "NOMENCLATURE_180") {
@@ -664,6 +795,27 @@ define([
                                                 finalNomenLayerName += nameLowCaseTab[j] + ' ';
                                             }
                                         }
+
+                                        // construction de la requete. le BBox est forcé
+
+                                        /*   var bboxString = "-180,-90,180,90";
+                                         var imageryRequestParam = 'SERVICE=' + serviceName + '&' + 'VERSION=1.1.1' + '&' + 'SRS=' + crs + '&' + 'STYLES=' + '' + '&' + 'REQUEST=GetMap' + '&' + 'FORMAT=image%2Fpng' + '&' + 'LAYERS=' + nomenLayer[i] + '&' + 'BBOX=' + bboxString + '&' + 'WIDTH=' + widthMax + '&' + 'HEIGHT=' + heightMax;
+                                         
+                                         var objRequest = {
+                                         onlineResource: onlineResource,
+                                         imageryRequestParam: imageryRequestParam,
+                                         paramCesiumRequest: {
+                                         planetName: pn,
+                                         satelliteName: sn,
+                                         naifCode: naifCode[0] + ',' + naifCode[1]
+                                         }
+                                         }
+                                         
+                                         var onlineResUrl = objRequest.onlineResource;
+                                         
+                                         // requete finale 
+                                         
+                                         var finalNomenUrl = onlineResUrl + '&' + imageryRequestParam; */
 
                                         // creation de la ligne pour la nomenclature dans le tableau;
 
@@ -707,9 +859,18 @@ define([
 
                                         // Creation du layer
 
+                                        /*  var nomenImageryProvider = new WebMapServiceImageryProvider({
+                                         url: finalNomenUrl,
+                                         layers: nomenLayer[i],
+                                         credit: 'USGS @ wms.wr.usgs.gov',
+                                         ellipsoid: that._ellipsoid,
+                                         enablePickFeatures: false
+                                         });*/
+
                                         var nomenImageryProvider = new WebMapServiceImageryProvider({
+                                            //  url: finalNomenUrl,
                                             url: onlineResource,
-                                            parameters: {format: 'image/png'},
+                                             parameters: {format: 'image/png'},
                                             layers: nomenLayer[i],
                                             credit: 'USGS @ wms.wr.usgs.gov',
                                             ellipsoid: that._ellipsoid,
@@ -913,7 +1074,7 @@ define([
              ========================= VO WIDGET CALL ==========================
              =================================================================== */
 
-            that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
+             that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
 
             /* ================================================================= 
              ===================================================================

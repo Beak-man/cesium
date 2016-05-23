@@ -140,8 +140,8 @@ define([//  Definition des d�pendances
         /*  if (typeof endUserOptions.ellipsoidSize !== 'undefined'){ 
          Ellipsoid.modify(Ellipsoid, endUserOptions);
          }; */
-    
-     /*   if (typeof endUserOptions.imageryProvider !== 'undefined'){ 
+
+        /*   if (typeof endUserOptions.imageryProvider !== 'undefined'){ 
          urlMap = endUserOptions.imageryProvider.toString();
          }; */
 
@@ -202,142 +202,204 @@ define([//  Definition des d�pendances
      };
      };
      var urlMap = onlineResUrl.replace('--', '=') + '&' +  urlParam;
-*/
-     
-  /*   imageryProvider = new WebMapServiceImageryProvider({
+     */
+
+    /*   imageryProvider = new WebMapServiceImageryProvider({
      // url     : 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map&SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000',
      url       : urlMap,
-    // layers    : paramObject.LAYERS,
+     // layers    : paramObject.LAYERS,
      layers    : 'THEMIS',
      credit    : 'USGS @ planetarymaps.usgs.gov',
      ellipsoid : ellipsoidImageryParam
      });
-    // };*/
+     // };*/
 
     var loadingIndicator = document.getElementById('loadingIndicator');
 
     var viewer;
 
-    try {
-        viewer = new Viewer('cesiumContainer', {
-            mapProjection: mapProjectionParam, // The map projection to use in 2D and Columbus View modes (class : GeographicProjection).		
-            globe: globeParam, //  The globe to use in the scene. (class : Globe)
-            baseLayerPicker: false,
-            imageryProvider: imageryProvider, // Fournit l'image a afficher sur le globe.
-            terrainProvider: terrainProviderParam,
-            scene3DOnly: endUserOptions.scene3DOnly, // show 3D scene directly.
-            skyAtmosphere: false, // atm visualisation.
-            skyBox: new SkyBox({show: false}), // stars visualisation (calcul�s).
-            selectionIndicator: false,
-            timeline: false, // for files which contains the temporal dimension
-            animation: false, // for animation which displayed with the time 
-            navigationInstructionsInitiallyVisible: false
-        });
-    } catch (exception) {
-        loadingIndicator.style.display = 'none';
-        var message = formatError(exception);
-        console.error(message);
-        if (!document.querySelector('.cesium-widget-errorPanel')) {
-            window.alert(message);
+    function viewerCreation(configuration) {
+
+        try {
+            viewer = new Viewer('cesiumContainer', {
+                mapProjection: mapProjectionParam, // The map projection to use in 2D and Columbus View modes (class : GeographicProjection).		
+                globe: globeParam, //  The globe to use in the scene. (class : Globe)
+                baseLayerPicker: false,
+                imageryProvider: imageryProvider, // Fournit l'image a afficher sur le globe.
+                terrainProvider: terrainProviderParam,
+                scene3DOnly: endUserOptions.scene3DOnly, // show 3D scene directly.
+                skyAtmosphere: false, // atm visualisation.
+                skyBox: new SkyBox({show: false}), // stars visualisation (calcul�s).
+                selectionIndicator: false,
+                timeline: false, // for files which contains the temporal dimension
+                animation: false, // for animation which displayed with the time 
+                navigationInstructionsInitiallyVisible: false,
+                configuration : configuration // contains configuration (see ./sources/widget/ConfigurationFiles/ )
+            });
+        } catch (exception) {
+            loadingIndicator.style.display = 'none';
+            var message = formatError(exception);
+            console.error(message);
+            if (!document.querySelector('.cesium-widget-errorPanel')) {
+                window.alert(message);
+            }
+            return;
         }
-        return;
+
+        var xhr = getXMLHttpRequest();
+        // var url = 'Cesium/Widgets/ShowSystems/SolarSystemConfig.json';
+        var url = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
+
+
+
+
+
+
+        viewer.extend(viewerDragDropMixin);
+        if (endUserOptions.inspector) {
+            viewer.extend(viewerCesiumInspectorMixin);
+        }
+
+        var showLoadError = function (name, error) {
+            var title = 'An error occurred while loading the file: ' + name;
+            var message = 'An error occurred while loading the file, which may indicate that it is invalid.  A detailed error report is below:';
+            viewer.cesiumWidget.showErrorPanel(title, message, error);
+        };
+
+        viewer.dropError.addEventListener(function (viewerArg, name, error) {
+            showLoadError(name, error);
+        });
+
+        var scene = viewer.scene;
+        var context = scene.context;
+
+        // =================== default color of the globe ======================
+
+        scene.globe.baseColor = Color.BLACK;
+
+        // ==================== unable fog, moon and sun =======================
+
+        scene.fog.enabled = false;
+        scene.moon.show = false;
+        scene.sun.show = false;
+
+        // =====================================================================
+
+        if (endUserOptions.debug) {
+            context.validateShaderProgram = true;
+            context.validateFramebuffer = true;
+            context.logShaderCompilation = true;
+            context.throwOnWebGLError = true;
+        }
+
+        if (endUserOptions.source) {
+            var source = endUserOptions.source;
+        }
+        if (defined(source)) {
+            var dataSource;
+            var loadPromise;
+
+            if (/\.czml$/i.test(source)) {
+                dataSource = new CzmlDataSource(getFilenameFromUri(source));
+                loadPromise = dataSource.loadUrl(source);
+            } else if (/\.geojson$/i.test(source) || /\.json$/i.test(source) || /\.topojson$/i.test(source)) {
+
+
+                //console.log(source);
+
+                dataSource = new GeoJsonDataSource(getFilenameFromUri(source), {
+                    markerColor: Color.RED
+                });
+                loadPromise = dataSource.load(source);
+            } else if (/\.kml$/i.test(source) || /\.kmz$/i.test(source)) {
+                dataSource = new KmlDataSource(getFilenameFromUri(source));
+                loadPromise = dataSource.load(source);
+            } else {
+                showLoadError(source, 'Unknown format.');
+            }
+
+            if (defined(loadPromise)) {
+                viewer.dataSources.add(loadPromise).then(function (dataSource) {
+                    var lookAt = endUserOptions.lookAt;
+                    if (defined(lookAt)) {
+                        var entity = dataSource.entities.getById(lookAt);
+                        if (defined(entity)) {
+                            viewer.trackedEntity = entity;
+                        } else {
+                            var error = 'No entity with id "' + lookAt + '" exists in the provided data source.';
+                            showLoadError(source, error);
+                        }
+                    }
+                }).otherwise(function (error) {
+                    showLoadError(source, error);
+                });
+            }
+        }
+
+        if (endUserOptions.stats) {
+            scene.debugShowFramesPerSecond = true;
+        }
+
+        var theme = endUserOptions.theme;
+        if (defined(theme)) {
+            if (endUserOptions.theme === 'lighter') {
+                document.body.classList.add('cesium-lighter');
+                viewer.animation.applyThemeChanges();
+            } else {
+                var error = 'Unknown theme: ' + theme;
+                viewer.cesiumWidget.showErrorPanel(error, '');
+            }
+        }
+        loadingIndicator.style.display = 'none';
     }
 
-    viewer.extend(viewerDragDropMixin);
-    if (endUserOptions.inspector) {
-        viewer.extend(viewerCesiumInspectorMixin);
+    /* =========================================================================
+     ======================== READ CONFIGURATION FILES =========================
+     =========================================================================== */
+
+    function getXMLHttpRequest() {
+        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+            var xhr = new XMLHttpRequest();
+        } else if (typeof ActiveXObject !== " undefined") {
+            var xhr = new ActiveXObject("Microsoft.XMLHTTP"); // activeX pour IE
+        } else {
+            console.log("AJAX don't available on this browser");
+            var xhr = null;
+        }
+        return xhr;
     }
 
-    var showLoadError = function (name, error) {
-        var title = 'An error occurred while loading the file: ' + name;
-        var message = 'An error occurred while loading the file, which may indicate that it is invalid.  A detailed error report is below:';
-        viewer.cesiumWidget.showErrorPanel(title, message, error);
+    // Solar system configuration : 
+
+    var xhr = getXMLHttpRequest();
+    var url = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
+
+    xhr.open('GET', url, true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send();
+    xhr.onreadystatechange = function () {
+
+        if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
+
+            var data = xhr.responseText;
+            var jsonData = JSON.parse(data);
+            // var solarSystem = jsonData.solarSystem;
+            // var systemsDimensions = jsonData.systemsDimensions;
+            
+            var configuration = {};
+
+            configuration = {
+                planetarySystem : {
+                    system: jsonData.solarSystem,
+                    dimension: jsonData.systemsDimensions
+                }
+            };
+            
+            viewerCreation(configuration);
+            
+        }
     };
 
-    viewer.dropError.addEventListener(function (viewerArg, name, error) {
-        showLoadError(name, error);
-    });
 
-    var scene = viewer.scene;
-    var context = scene.context;
-
-    // =================== default color of the globe ======================
-
-    scene.globe.baseColor = Color.BLACK;
-
-    // ==================== unable fog, moon and sun =======================
-
-    scene.fog.enabled = false;
-    scene.moon.show = false;
-    scene.sun.show = false;
-
-    // =====================================================================
-
-    if (endUserOptions.debug) {
-        context.validateShaderProgram = true;
-        context.validateFramebuffer = true;
-        context.logShaderCompilation = true;
-        context.throwOnWebGLError = true;
-    }
-
-    if (endUserOptions.source) {
-        var source = endUserOptions.source;
-    }
-    if (defined(source)) {
-        var dataSource;
-        var loadPromise;
-
-        if (/\.czml$/i.test(source)) {
-            dataSource = new CzmlDataSource(getFilenameFromUri(source));
-            loadPromise = dataSource.loadUrl(source);
-        } else if (/\.geojson$/i.test(source) || /\.json$/i.test(source) || /\.topojson$/i.test(source)) {
-
-
-            //console.log(source);
-
-            dataSource = new GeoJsonDataSource(getFilenameFromUri(source), {
-                markerColor: Color.RED
-            });
-            loadPromise = dataSource.load(source);
-        } else if (/\.kml$/i.test(source) || /\.kmz$/i.test(source)) {
-            dataSource = new KmlDataSource(getFilenameFromUri(source));
-            loadPromise = dataSource.load(source);
-        } else {
-            showLoadError(source, 'Unknown format.');
-        }
-
-        if (defined(loadPromise)) {
-            viewer.dataSources.add(loadPromise).then(function (dataSource) {
-                var lookAt = endUserOptions.lookAt;
-                if (defined(lookAt)) {
-                    var entity = dataSource.entities.getById(lookAt);
-                    if (defined(entity)) {
-                        viewer.trackedEntity = entity;
-                    } else {
-                        var error = 'No entity with id "' + lookAt + '" exists in the provided data source.';
-                        showLoadError(source, error);
-                    }
-                }
-            }).otherwise(function (error) {
-                showLoadError(source, error);
-            });
-        }
-    }
-
-    if (endUserOptions.stats) {
-        scene.debugShowFramesPerSecond = true;
-    }
-
-    var theme = endUserOptions.theme;
-    if (defined(theme)) {
-        if (endUserOptions.theme === 'lighter') {
-            document.body.classList.add('cesium-lighter');
-            viewer.animation.applyThemeChanges();
-        } else {
-            var error = 'Unknown theme: ' + theme;
-            viewer.cesiumWidget.showErrorPanel(error, '');
-        }
-    }
-    loadingIndicator.style.display = 'none';
 
 });

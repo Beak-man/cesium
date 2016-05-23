@@ -81,9 +81,9 @@ define([
                             function (resolve, reject) {
 
                                 xhr.open('GET', serverUrl, true);
-                                
+
                                 // test
-                                
+
                                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                                 xhr.send();
                                 xhr.onload = function () {
@@ -91,12 +91,12 @@ define([
                                     if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
 
                                         var data = xhr.responseText;
-                                        
+
                                         console.log(data);
-                                        
+
                                         var jsonData = JSON.parse(data);
                                         var server = jsonData[serverName];
-                                        
+
                                         console.log(jsonData);
 
                                         var queryPart1 = server.url + "?REQUEST=doQuery&LANG=ADQL&";
@@ -113,14 +113,11 @@ define([
                                             if (xhrVO.readyState == 4 && xhrVO.status == 200 || xhrVO.status == 0) {
 
                                                 var data = xhrVO.responseText;
-                                               
-                                               console.log(data);
-                                               
+                                                console.log(data);
                                             }
                                         }
 
-                                        resolve(query)
-                                                ;
+                                        resolve(query);
 
                                     } else { // On utilise la fonction "reject" lorsque this.status est différent de 2xx
                                         reject(xhr.status);
@@ -132,7 +129,7 @@ define([
                             function (result) {
 
                                 that._query = result;
-                              //  getVOData(that._query);
+                                //  getVOData(that._query);
 
                                 console.log(result);
 
@@ -156,8 +153,6 @@ define([
                     if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
 
                         var data = xhr.responseText;
-                        //    var jsonData = JSON.parse(data);
-
                         console.log(data);
                     }
                 }

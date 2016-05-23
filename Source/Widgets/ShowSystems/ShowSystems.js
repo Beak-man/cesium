@@ -15,24 +15,12 @@ define([
         ShowSystemsViewModel) {
     "use strict";
 
-    function getXMLHttpRequest() {
-        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-            var xhr = new XMLHttpRequest();
-        } else if (typeof ActiveXObject !== " undefined") {
-            var xhr = new ActiveXObject("Microsoft.XMLHTTP"); // activeX pour IE
-        } else {
-            console.log("AJAX don't available on this browser");
-            var xhr = null;
-        }
-        return xhr;
-    }
-
     function createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, solarSystem, systemsDimensions, that) {
 
         var count = 0;
         var i;
 
-        // on parcours l'objet solarSystem construit a partir du fichier de config avec AJAX
+        // on parcours l'objet solarSystem construit
         for (i in solarSystem) {
 
             var planetarySystem = solarSystem[i];
@@ -173,7 +161,7 @@ define([
     }
 
 
-    function getDataSolarSystem(xhr, method, url, async, viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, that) {
+   /* function getDataSolarSystem(xhr, method, url, async, viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, that) {
 
         xhr.open(method, url, async);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -190,16 +178,16 @@ define([
                 createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, solarSystem, systemsDimensions, that);
             }
         }
-    }
+    }*/
+    
+    
+    // ================================== MAIN FUNCTION =========================================================
 
-    var ShowSystems = function (viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer) {
-
+    var ShowSystems = function (viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration) {
+        
         var that = this;
-        var xhr = getXMLHttpRequest();
-        // var url = 'Cesium/Widgets/ShowSystems/SolarSystemConfig.json';
-        var url = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
-
-        getDataSolarSystem(xhr, 'GET', url, true, viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, that);
+        createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration.planetarySystem.system, configuration.planetarySystem.dimension, that);
+        
     }
 
     defineProperties(ShowSystems.prototype, {
