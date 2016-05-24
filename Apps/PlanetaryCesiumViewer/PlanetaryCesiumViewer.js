@@ -234,7 +234,7 @@ define([//  Definition des d�pendances
                 timeline: false, // for files which contains the temporal dimension
                 animation: false, // for animation which displayed with the time 
                 navigationInstructionsInitiallyVisible: false,
-                configuration : configuration // contains configuration (see ./sources/widget/ConfigurationFiles/ )
+                configuration: configuration // contains configuration (see ./sources/widget/ConfigurationFiles/ )
             });
         } catch (exception) {
             loadingIndicator.style.display = 'none';
@@ -371,8 +371,37 @@ define([//  Definition des d�pendances
 
     // Solar system configuration : 
 
+    /*  var xhr = getXMLHttpRequest();
+     var url = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
+     
+     xhr.open('GET', url, true);
+     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+     xhr.send();
+     xhr.onreadystatechange = function () {
+     
+     if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
+     
+     var data = xhr.responseText;
+     var jsonData = JSON.parse(data);
+     // var solarSystem = jsonData.solarSystem;
+     // var systemsDimensions = jsonData.systemsDimensions;
+     
+     var configuration = {};
+     
+     configuration = {
+     planetarySystem : {
+     system: jsonData.solarSystem,
+     dimension: jsonData.systemsDimensions
+     }
+     };
+     
+     viewerCreation(configuration);
+     }
+     };*/
+
+
     var xhr = getXMLHttpRequest();
-    var url = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
+    var url = '../../Source/Widgets/ConfigurationFiles/configurationFile.json';
 
     xhr.open('GET', url, true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -383,23 +412,20 @@ define([//  Definition des d�pendances
 
             var data = xhr.responseText;
             var jsonData = JSON.parse(data);
-            // var solarSystem = jsonData.solarSystem;
-            // var systemsDimensions = jsonData.systemsDimensions;
-            
+
             var configuration = {};
 
             configuration = {
-                planetarySystem : {
-                    system: jsonData.solarSystem,
-                    dimension: jsonData.systemsDimensions
+                servers: jsonData.servers,
+                planetarySystem: {
+                    system: jsonData.planetarySystem.solarSystem,
+                    dimension: jsonData.planetarySystem.systemsDimensions
                 }
             };
-            
+
             viewerCreation(configuration);
-            
         }
     };
-
 
 
 });

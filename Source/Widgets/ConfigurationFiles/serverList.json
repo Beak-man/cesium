@@ -3,7 +3,7 @@
 		"name"      : "Planetary maps (USGS)",
 		"url"       : "http://planetarymaps.usgs.gov/cgi-bin/mapserv",
 		"dir"       : "/maps/",
-		"extension" : "_simp_cyl.map"
+		"extension" : "_npole.map"
 	    },	
 			
 		

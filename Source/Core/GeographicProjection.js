@@ -37,9 +37,11 @@ define([
          console.log("*************************************************************************");
          */
 
-        this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84);
-        this._semimajorAxis = this._ellipsoid.maximumRadius;
-        this._oneOverSemimajorAxis = 1.0 / this._semimajorAxis;
+        // définition de l'ellipsoid
+
+        this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84); // ellipsoid
+        this._semimajorAxis = this._ellipsoid.maximumRadius; // rayon max
+        this._oneOverSemimajorAxis = 1.0 / this._semimajorAxis; // 1/R
     }
 
     defineProperties(GeographicProjection.prototype, {

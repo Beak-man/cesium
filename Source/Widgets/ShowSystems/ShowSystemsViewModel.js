@@ -130,7 +130,12 @@ define([
 
         var pn = planetName.toLowerCase();
 
-        var ajaxDataRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + pn + '_simp_cyl.map&service=WMS&request=GetCapabilities';
+        var mapType = that.configuration.servers.USGSserver.extension;
+
+        var ajaxDataRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + pn + mapType[1] + '&service=WMS&request=GetCapabilities';
+
+        console.log(ajaxDataRequest);
+
         var ajaxDataRequestNomen = 'http://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + pn + '_nomen_wms.map&service=WMS&request=GetCapabilities';
 
         getXmlPlanetData(that, viewer, xhr, xhrNomen, 'post', ajaxDataRequest, ajaxDataRequestNomen, true, listContainer, pn, naifCode);
@@ -146,7 +151,9 @@ define([
         var pn = planetName.toLowerCase();
         var ps = satelliteName.toLowerCase();
 
-        var ajaxRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + ps + '_simp_cyl.map&service=WMS&request=GetCapabilities';
+        var mapType = that.configuration.servers.USGSserver.extension;
+
+        var ajaxRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + ps + mapType[0] + '&service=WMS&request=GetCapabilities';
         var ajaxDataRequestNomen = 'http://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + ps + '_nomen_wms.map&service=WMS&request=GetCapabilities';
 
         getXmlDataSatellite(that, viewer, xhr, xhrNomen, 'post', ajaxRequest, ajaxDataRequestNomen, true, listContainer, pn, ps, naifCode);
@@ -176,12 +183,16 @@ define([
                     var capability = data.getElementsByTagName("Capability");
                     var layersIni = capability[0].getElementsByTagName("Layer");
 
+                    console.log(onlineResource);
+
                     var names = [];
                     var title = []
                     var abstract = [];
                     var layerName = [];
                     var layer = [];
                     var imageryProvidersTab = [];
+
+                    var crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
 
                     var PlanetName = pn.replace(pn.charAt(0), pn.charAt(0).toUpperCase())
 
@@ -294,16 +305,48 @@ define([
                             });
 
 
-                        } else {
+                        } else if (names[i].indexOf(strTest) == -1) {
 
-                            imageryProvidersTab[i] = new WebMapServiceImageryProvider({
-                                url: onlineResource,
-                                parameters: {format: 'image/jpeg'},
-                                layers: layer[i],
-                                credit: 'USGS @ wms.wr.usgs.gov',
-                                ellipsoid: that._ellipsoid,
-                                enablePickFeatures: false
-                            });
+                            if (crs == "EPSG:32761" || crs == "EPSG:32661") {
+
+                                var bboxAttributesTab = layersIni[0].getElementsByTagName("BoundingBox")[0].attributes;
+
+                                var minx = convertToDecimal(bboxAttributesTab[1].nodeValue); // following the xml file
+                                var miny = convertToDecimal(bboxAttributesTab[2].nodeValue); // following the xml file
+                                var maxx = convertToDecimal(bboxAttributesTab[3].nodeValue); // following the xml file
+                                var maxy = convertToDecimal(bboxAttributesTab[4].nodeValue); // following the xml file
+
+                                var bboxString = minx + "," + miny + "," + maxx + "," + maxy;
+
+                                imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                                    url: onlineResource,
+                                    parameters: {
+                                        format: 'image/jpeg',
+                                        service: 'WMS',
+                                      //  bbox: bboxString,
+                                     //    bbox: '0,0,1000000,1000000',
+                                        srs: crs},
+                                    layers: layer[i],
+                                    credit: 'USGS @ wms.wr.usgs.gov',
+                                    ellipsoid: that._ellipsoid,
+                                    enablePickFeatures: false
+                                });
+
+
+                            } else {
+
+                                imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                                    url: onlineResource,
+                                    parameters: {format: 'image/jpeg'},
+                                    layers: layer[i],
+                                    credit: 'USGS @ wms.wr.usgs.gov',
+                                    ellipsoid: that._ellipsoid,
+                                    enablePickFeatures: false
+                                });
+
+                            }
+                            //  console.log(imageryProvidersTab[i]);
+
                         }
                     }
 
@@ -473,6 +516,27 @@ define([
         }
     }
 
+
+    function  convertToDecimal(str) {
+
+        var expr = 'e+';
+        if (str.indexOf(expr) > -1) {
+
+            var strSplitedTab = str.split(expr);
+            var val = parseFloat(strSplitedTab[0]);
+            var exp = parseFloat(strSplitedTab[1]);
+            var decimaleValue = val * Math.pow(10, exp);
+            
+            return decimaleValue.toString();
+        } else {
+
+            console.log("bounding box values incorrect");
+            return null;
+
+        }
+    }
+
+
     function getXmlDataSatellite(that, viewer, xhr, xhrNomen, method, url, urlNomen, async, listContainer, pn, sn, naifCode) {
 
         xhr.open(method, url, async);
@@ -628,7 +692,7 @@ define([
                     /* ========================================================= 
                      =================== NOMENCLATURE LAYERS =================== 
                      =========================================================== */
-                    
+
                     // Requete AJAX
 
                     xhrNomen.open(method, urlNomen, async);
@@ -642,7 +706,7 @@ define([
                             var data = xhrNomen.responseXML;
 
                             try {
-                                
+
                                 // Declaration des tableaux
 
                                 var nomenNames = [];
@@ -686,7 +750,7 @@ define([
                                     nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName("Abstract")[0].textContent;
 
                                     // ======================= test for "\n" in the abstract ==========================
-                                    
+
                                     var abstrNomm = nomenAbstract[i].toString();
                                     var testReg = new RegExp("\n");
 
@@ -920,10 +984,11 @@ define([
      * @param {Object} solarSystem     : object which contains the stellar system to display
      */
 
-    var ShowSystemsViewModel = function (viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem) {
+    var ShowSystemsViewModel = function (viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem, configuration) {
 
         this._viewer = viewer;
         this._scene = scene;
+        this.configuration = configuration;
         this._viewerContainer = viewerContainer;
         this._footerToolbar = footerToolbar;
         this._configContainer = configContainer;

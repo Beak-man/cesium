@@ -15,7 +15,11 @@ define([
         ShowSystemsViewModel) {
     "use strict";
 
-    function createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, solarSystem, systemsDimensions, that) {
+    function createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, that) {
+        
+        
+        var solarSystem =  configuration.planetarySystem.system;
+        var systemsDimensions = configuration.planetarySystem.dimension;
 
         var count = 0;
         var i;
@@ -154,7 +158,7 @@ define([
         btnHideVectorialData.setAttribute('data-bind', 'click: hideDataCommand');
         btnContainer.appendChild(btnHideVectorialData);
 
-        var viewModel = new ShowSystemsViewModel(viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem);
+        var viewModel = new ShowSystemsViewModel(viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem, configuration);
         that._viewModel = viewModel;
 
         knockout.applyBindings(viewModel, PlanetsToolbar);
@@ -186,7 +190,7 @@ define([
     var ShowSystems = function (viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration) {
         
         var that = this;
-        createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration.planetarySystem.system, configuration.planetarySystem.dimension, that);
+        createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, that);
         
     }
 
