@@ -72,8 +72,6 @@ define([
 
     function crsChange(obj) {
 
-        console.log("dans crsChange");
-
         GeoJsonDataSource._ellipsoid = obj.ellipsoid;
 
         var naifCodes = obj.naifCodes;

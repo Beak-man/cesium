@@ -280,14 +280,31 @@ define([
 
                         layerName[i] = finalLayerName;
 
-                        imageryProvidersTab[i] = new WebMapServiceImageryProvider({
-                            url: onlineResource,
-                            parameters: {format: 'image/png; mode=8bit'},
-                            layers: layer[i],
-                            credit: 'USGS @ wms.wr.usgs.gov',
-                            ellipsoid: that._ellipsoid,
-                            enablePickFeatures: false
-                        });
+                        var strTest = "Quad";
+
+                        if (names[i].indexOf(strTest) > -1) {
+
+                            imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                                url: onlineResource,
+                                parameters: {format: 'image/png; mode=8bit'},
+                                layers: layer[i],
+                                credit: 'USGS @ wms.wr.usgs.gov',
+                                ellipsoid: that._ellipsoid,
+                                enablePickFeatures: false
+                            });
+
+
+                        } else {
+
+                            imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                                url: onlineResource,
+                                parameters: {format: 'image/jpeg'},
+                                layers: layer[i],
+                                credit: 'USGS @ wms.wr.usgs.gov',
+                                ellipsoid: that._ellipsoid,
+                                enablePickFeatures: false
+                            });
+                        }
                     }
 
                     /* ========================================================= 
@@ -344,6 +361,15 @@ define([
                                     nomenTitle[i] = nomenclatureLayers[i].getElementsByTagName("Title")[0].textContent;
                                     nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName("Abstract")[0].textContent;
 
+                                    var abstrNomm = nomenAbstract[i].toString();
+                                    var testReg = new RegExp("\n");
+
+                                    if (testReg.test(abstrNomm)) {
+                                        abstrNomm = nomenAbstract[i].replace(/\n/g, " ");
+                                    }
+
+
+
                                     // // On met la premiere lettre du name en Majuscule
 
                                     if (nomenNames[i] == "NOMENCLATURE_180") {
@@ -378,7 +404,7 @@ define([
                                         var btnShowLayer = document.createElement('INPUT');
                                         btnShowLayer.type = 'checkbox';
                                         btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + nomenAbstract[i] + '"},checked : show_' + showIndex);
+                                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstrNomm + '"},checked : show_' + showIndex);
                                         colomn1.appendChild(btnShowLayer);
 
                                         // Le nom de la layer
@@ -441,7 +467,7 @@ define([
                         }
                     }
                 } catch (e) {
-                    console.log(e);
+                    //  console.log(e);
                 }
             }
         }
@@ -521,6 +547,17 @@ define([
                             abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
                             layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
 
+                            var abstr = abstract[i].toString();
+
+                            // ======================= test for "\n" ==========================
+
+                            var testReg = new RegExp("\n");
+
+                            if (testReg.test(abstr)) {
+                                var abstr = abstract[i].replace(/\n/g, " ");
+                            }
+
+
                             /* === transform the first case to UpperCase (for the vizualiation only : not Important) === */
 
                             var nameLowerCase = names[i].toLowerCase();
@@ -552,7 +589,7 @@ define([
                             var btnShowLayer = document.createElement('INPUT');
                             btnShowLayer.type = 'checkbox';
                             btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                            btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstract[i] + '"}, checked : show_' + i);
+                            btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstr + '"}, checked : show_' + i);
                             colomn1.appendChild(btnShowLayer);
 
                             var colomn2 = document.createElement('TD');
@@ -578,8 +615,8 @@ define([
                             layerName[i] = finalLayerName;
 
                             imageryProvidersTab[i] = new WebMapServiceImageryProvider({
-                                //  url: finalNomenUrl,
                                 url: onlineResource,
+                                parameters: {format: 'image/jpeg'},
                                 layers: layer[i],
                                 credit: 'USGS @ wms.wr.usgs.gov',
                                 ellipsoid: that._ellipsoid,
@@ -588,11 +625,11 @@ define([
                         }
                     }
 
-
-
                     /* ========================================================= 
                      =================== NOMENCLATURE LAYERS =================== 
                      =========================================================== */
+                    
+                    // Requete AJAX
 
                     xhrNomen.open(method, urlNomen, async);
                     xhrNomen.withCredentials = false;
@@ -605,13 +642,14 @@ define([
                             var data = xhrNomen.responseXML;
 
                             try {
+                                
+                                // Declaration des tableaux
 
                                 var nomenNames = [];
                                 var nomenTitle = []
                                 var nomenAbstract = [];
                                 var nomenLayerName = [];
                                 var nomenLayer = [];
-                                //  var nomenBBox = [];
                                 var nomenImageryProvidersTab = [];
 
                                 var layerNomenCount = 0;
@@ -647,6 +685,16 @@ define([
                                     nomenTitle[i] = nomenclatureLayers[i].getElementsByTagName("Title")[0].textContent;
                                     nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName("Abstract")[0].textContent;
 
+                                    // ======================= test for "\n" in the abstract ==========================
+                                    
+                                    var abstrNomm = nomenAbstract[i].toString();
+                                    var testReg = new RegExp("\n");
+
+
+                                    if (testReg.test(abstrNomm)) {
+                                        abstrNomm = nomenAbstract[i].replace(/\n/g, " ");
+                                    }
+
                                     // // On met la premiere lettre du name en Majuscule
 
                                     if (nomenNames[i] == "NOMENCLATURE_180") {
@@ -681,7 +729,7 @@ define([
                                         var btnShowLayer = document.createElement('INPUT');
                                         btnShowLayer.type = 'checkbox';
                                         btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + nomenAbstract[i] + '"},checked : show_' + showIndex);
+                                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstrNomm + '"},checked : show_' + showIndex);
                                         colomn1.appendChild(btnShowLayer);
 
                                         // Le nom de la layer
@@ -899,6 +947,18 @@ define([
 
         this._command = createCommand(function (planetName, planetIndex, satelliteIndex, vectorDimensionsString) {
 
+            var stringVectorTab = vectorDimensionsString.split(',');
+            var objectDimensions = {
+                x: parseFloat(stringVectorTab[0]),
+                y: parseFloat(stringVectorTab[1]),
+                z: parseFloat(stringVectorTab[2])
+            }
+
+            initializeScene(that, objectDimensions);
+            initializeMarkerMoveWidget(that);
+            homeView(that._scene);
+
+
             try {
                 that._viewer.showSystems.viewModel.voData.destroyWrapperMenu;
             } catch (e) {
@@ -918,18 +978,6 @@ define([
             /* ================================================================= 
              ===================================================================
              =================================================================== */
-
-            var stringVectorTab = vectorDimensionsString.split(',');
-
-            var objectDimensions = {
-                x: parseFloat(stringVectorTab[0]),
-                y: parseFloat(stringVectorTab[1]),
-                z: parseFloat(stringVectorTab[2])
-            }
-
-            initializeScene(that, objectDimensions);
-            initializeMarkerMoveWidget(that);
-            homeView(that._scene);
 
             var naifCode = [planetIndex, satelliteIndex];
 

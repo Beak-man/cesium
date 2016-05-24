@@ -391,9 +391,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         //>>includeEnd('debug')
 
         var that = this;
-        var configuration = options.configuration;
-        
-        console.log(configuration);
+        var configuration = options.configuration; // Informations contained in the configurationFiles folder.
 
         var viewerContainer = document.createElement('div');
         viewerContainer.className = 'cesium-viewer';
