@@ -185,7 +185,7 @@ define([
                 this._btnContainer = btnContainer;
                 this._inputObjects = inputObjects;
                 this._query = null;
-                this._format = "html";
+                this._format = "json";
 
                 this._serverUrl = '../../Source/Widgets/ConfigurationFiles/serverList.json';
 

@@ -24,7 +24,9 @@ define([
     './ListViewModel',
     '../../Core/Matrix4',
     '../../Core/Occluder',
+    '../../Core/Rectangle',
     '../../Core/ScreenSpaceEventType',
+    '../../Core/StereographicTilingScheme',
     '../VOData/VOData',
     '../../Scene/WebMapServiceImageryProvider',
     '../../Core/WebMercatorProjection',
@@ -52,7 +54,9 @@ define([
         ListViewModel,
         Matrix4,
         Occluder,
+        Rectangle,
         ScreenSpaceEventType,
+        StereographicTilingScheme,
         VOData,
         WebMapServiceImageryProvider,
         WebMercatorProjection,
@@ -132,7 +136,7 @@ define([
 
         var mapType = that.configuration.servers.USGSserver.extension;
 
-        var ajaxDataRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + pn + mapType[1] + '&service=WMS&request=GetCapabilities';
+        var ajaxDataRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + pn + mapType[0] + '&service=WMS&request=GetCapabilities';
 
         console.log(ajaxDataRequest);
 
@@ -293,7 +297,7 @@ define([
 
                         var strTest = "Quad";
 
-                        if (names[i].indexOf(strTest) > -1) {
+                        if (names[i].indexOf(strTest) > -1) { // pour les quads
 
                             imageryProvidersTab[i] = new WebMapServiceImageryProvider({
                                 url: onlineResource,
@@ -305,7 +309,7 @@ define([
                             });
 
 
-                        } else if (names[i].indexOf(strTest) == -1) {
+                        } else if (names[i].indexOf(strTest) == -1) { // pour les maps npoles et spoles
 
                             if (crs == "EPSG:32761" || crs == "EPSG:32661") {
 
@@ -318,22 +322,41 @@ define([
 
                                 var bboxString = minx + "," + miny + "," + maxx + "," + maxy;
 
+                           /*     var degrad = Math.PI / 180.0;
+                                var rect = Rectangle.fromDegrees(220.96, 38.2, 135, 86.78);
+                                var tilngSchemeOptions = {
+                                    ellipsoid: that._ellipsoid,
+                                    rectangle: rect
+                                };*/
+                                
+                              //  console.log(rect);
+                                
+                              console.log("controle avant imageryProviderTab")
+
                                 imageryProvidersTab[i] = new WebMapServiceImageryProvider({
                                     url: onlineResource,
                                     parameters: {
                                         format: 'image/jpeg',
                                         service: 'WMS',
-                                      //  bbox: bboxString,
-                                     //    bbox: '0,0,1000000,1000000',
+                                        bbox: bboxString,
+                                        //    bbox: '0,0,1000000,1000000',
                                         srs: crs},
                                     layers: layer[i],
                                     credit: 'USGS @ wms.wr.usgs.gov',
                                     ellipsoid: that._ellipsoid,
-                                    enablePickFeatures: false
+                                    enablePickFeatures: false,
+                                   // tilingScheme: new StereographicTilingScheme(tilngSchemeOptions)
+                                   // tilingScheme: new GeographicTilingScheme()
+
+                                    //  rectangle: new Rectangle((220.96 / 2) * degrad, (38.2 / 2) * degrad, (135 / 2) * degrad, (86.78 / 2) * degrad)
+                                    //  rectangle : new Rectangle(220.96*degrad,38.2*degrad,135*degrad,86.78*degrad)
                                 });
 
+                                  console.log("controle ")
 
-                            } else {
+                            } else { // pour les autres maps
+                                
+                                 console.log("controle dans le else")
 
                                 imageryProvidersTab[i] = new WebMapServiceImageryProvider({
                                     url: onlineResource,
@@ -343,6 +366,8 @@ define([
                                     ellipsoid: that._ellipsoid,
                                     enablePickFeatures: false
                                 });
+
+                             console.log("controle dans fin else");
 
                             }
                             //  console.log(imageryProvidersTab[i]);
@@ -473,6 +498,8 @@ define([
 
                                         // Creation du layer
 
+                                        console.log("controle avant : nomenImageryProvider");
+
                                         var nomenImageryProvider = new WebMapServiceImageryProvider({
                                             //  url: finalNomenUrl,
                                             url: onlineResource,
@@ -482,6 +509,8 @@ define([
                                             ellipsoid: that._ellipsoid,
                                             enablePickFeatures: false
                                         });
+                                        
+                                      // console.log("controle apres : nomenImageryProvider");
 
                                         nomenLayerName.push(finalNomenLayerName);
                                         nomenImageryProvidersTab.push(nomenImageryProvider);
@@ -508,7 +537,7 @@ define([
                                 knockout.applyBindings(listViewModel, listContainer2);
                             }
                         }
-                    }
+                    } 
                 } catch (e) {
                     //  console.log(e);
                 }
@@ -526,7 +555,7 @@ define([
             var val = parseFloat(strSplitedTab[0]);
             var exp = parseFloat(strSplitedTab[1]);
             var decimaleValue = val * Math.pow(10, exp);
-            
+
             return decimaleValue.toString();
         } else {
 
