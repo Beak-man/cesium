@@ -18,12 +18,9 @@ define([
     'use strict';
 
     /**
-     * A simple map projection where longitude and latitude are linearly mapped to X and Y by multiplying
-     * them by the {@link Ellipsoid#maximumRadius}.  This projection
-     * is commonly known as geographic, equirectangular, equidistant cylindrical, or plate carrÃ©e.  It
-     * is also known as EPSG:4326.
+     * A map projection
      *
-     * @alias GeographicProjection
+     * @alias StereographicProjection
      * @constructor
      *
      * @param {Ellipsoid} [ellipsoid=Ellipsoid.WGS84] The ellipsoid.
@@ -31,13 +28,8 @@ define([
      * @see WebMercatorProjection
      */
     function StereographicProjection(ellipsoid) {
-
-        /*	console.log("************* Ellipsoid depuis GeographicProjection *********************");
-         console.log(ellipsoid);
-         console.log("*************************************************************************");
-         */
-
-        // définition de l'ellipsoid
+        
+        console.log("dans constructeur de SterographicProjection");
 
         this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84); // ellipsoid
         this._semimajorAxis = this._ellipsoid.maximumRadius; // rayon max
@@ -57,12 +49,9 @@ define([
             get: function () {
                 return this._ellipsoid;
             },
-            /* ************************************************* NEW ***************************************************** */
-
             set: function (ellipsoid) {
                 this._ellipsoid = ellipsoid;
             },
-            /* *********************************************************************************************************** */
         }
     });
 
@@ -81,6 +70,8 @@ define([
     StereographicProjection.prototype.project = function (cartographic, result) {
         // Actually this is the special case of equidistant cylindrical called the plate carree
         var semimajorAxis = this._semimajorAxis;
+        
+        console.log("dans project de SterographicProjection");
 
         //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
 
@@ -90,21 +81,21 @@ define([
 
         //  =======================================================================
 
-    /*    var radeg = 180.0 / Math.PI;
+     /*   var radeg = 180.0 / Math.PI;
 
         var theta = cartographic.latitude;
-        var phi = cartographic.longitude;
+        var phi = cartographic.longitude;*/
         
       //  console.log(theta+" "+phi);
 
-        /* var angle = ((90.0 / radeg) - theta) / 2.0;
+      //   var angle = ((90.0 / radeg) - theta) / 2.0;
 
-        var R = Math.tan(angle) * semimajorAxis;
+      //  var R = Math.tan(angle) * semimajorAxis;
 
-        var x = R * Math.sin(phi);
-        var y = -R * Math.cos(phi);*\      
+      /*  var x = R * Math.sin(phi);
+        var y = -R * Math.cos(phi);    */
         
-        var x = theta*Math.cos(phi)* semimajorAxis;
+      /*  var x = theta*Math.cos(phi)* semimajorAxis;
         var y = phi* semimajorAxis;        
         
         var z = cartographic.height;*/
@@ -151,8 +142,8 @@ define([
 
         //  =======================================================================
 
-       /* console.log("inverse");
-       /* var radeg = 180.0 / Math.PI;
+       /* console.log("inverse");*/
+      /*  var radeg = 180.0 / Math.PI;
     
         var height = cartesian.z;
 
@@ -161,12 +152,12 @@ define([
 
         var R = Math.sqrt(x * x + y * y);
         var latitude = (90.0 / radeg - 2.0 * Math.atan2(2, R))* oneOverEarthSemimajorAxis;
-        var longitude = (Math.atan2(x, -y))* oneOverEarthSemimajorAxis;*\
+        var longitude = (Math.atan2(x, -y))* oneOverEarthSemimajorAxis;*/
         
          
          var longitude = cartesian.y * oneOverEarthSemimajorAxis;
          var latitude = (cartesian.x/Math.cos(longitude)) * oneOverEarthSemimajorAxis;
-         var height = cartesian.z; */
+         var height = cartesian.z; 
 
         if (!defined(result)) {
             return new Cartographic(longitude, latitude, height);

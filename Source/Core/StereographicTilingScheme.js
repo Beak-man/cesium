@@ -44,14 +44,9 @@ define([
         options = defaultValue(options, {}); // on recupere les options
         this._ellipsoid = defaultValue(options.ellipsoid, Ellipsoid.WGS84); // on recupere l'ellipsoid
         this._rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE); // region selectionnée définie par ses coordonnées (lng, lat)
-        
-        console.log("controle StereographicTilingScheme avant : new StereographicProjection(this._ellipsoid)");
 
-        this._projection = new StereographicProjection(this._ellipsoid); // projection calculée a partir de GeographicProjection ==> objet = {ellipsoid, semimajorAxis, 1/semimajorAxis}
-        
-        console.log("controle StereographicTilingScheme apres : new StereographicProjection(this._ellipsoid)");
-        
-        this._numberOfLevelZeroTilesX = defaultValue(options.numberOfLevelZeroTilesX, 2);
+        this._projection = new StereographicProjection(this._ellipsoid); // projection calculée a partir de StereographicProjection ==> objet = {ellipsoid, semimajorAxis, 1/semimajorAxis}  
+        this._numberOfLevelZeroTilesX = defaultValue(options.numberOfLevelZeroTilesX, 1);
         this._numberOfLevelZeroTilesY = defaultValue(options.numberOfLevelZeroTilesY, 1);
 
     }

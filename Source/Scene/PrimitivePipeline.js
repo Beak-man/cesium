@@ -1139,6 +1139,9 @@ define([
             }
         }
 
+
+        console.log(packedParameters);
+ 
         var ellipsoid = Ellipsoid.clone(packedParameters.ellipsoid);
         var projection = packedParameters.isGeographic ? new GeographicProjection(ellipsoid) : new WebMercatorProjection(ellipsoid);
 

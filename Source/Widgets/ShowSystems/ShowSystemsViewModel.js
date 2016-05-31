@@ -136,9 +136,7 @@ define([
 
         var mapType = that.configuration.servers.USGSserver.extension;
 
-        var ajaxDataRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + pn + mapType[0] + '&service=WMS&request=GetCapabilities';
-
-        console.log(ajaxDataRequest);
+        var ajaxDataRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + pn + mapType[1] + '&service=WMS&request=GetCapabilities';
 
         var ajaxDataRequestNomen = 'http://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + pn + '_nomen_wms.map&service=WMS&request=GetCapabilities';
 
@@ -186,8 +184,6 @@ define([
                     var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
                     var capability = data.getElementsByTagName("Capability");
                     var layersIni = capability[0].getElementsByTagName("Layer");
-
-                    console.log(onlineResource);
 
                     var names = [];
                     var title = []
@@ -322,16 +318,12 @@ define([
 
                                 var bboxString = minx + "," + miny + "," + maxx + "," + maxy;
 
-                           /*     var degrad = Math.PI / 180.0;
-                                var rect = Rectangle.fromDegrees(220.96, 38.2, 135, 86.78);
+                                //                                  W =-220.96  S =38.2  E = 135  N = 86.78
+                                  var rect = Rectangle.fromDegrees(-180.00, 38.2, 180, 86.78);
                                 var tilngSchemeOptions = {
                                     ellipsoid: that._ellipsoid,
                                     rectangle: rect
-                                };*/
-                                
-                              //  console.log(rect);
-                                
-                              console.log("controle avant imageryProviderTab")
+                                };
 
                                 imageryProvidersTab[i] = new WebMapServiceImageryProvider({
                                     url: onlineResource,
@@ -345,18 +337,16 @@ define([
                                     credit: 'USGS @ wms.wr.usgs.gov',
                                     ellipsoid: that._ellipsoid,
                                     enablePickFeatures: false,
-                                   // tilingScheme: new StereographicTilingScheme(tilngSchemeOptions)
-                                   // tilingScheme: new GeographicTilingScheme()
-
-                                    //  rectangle: new Rectangle((220.96 / 2) * degrad, (38.2 / 2) * degrad, (135 / 2) * degrad, (86.78 / 2) * degrad)
-                                    //  rectangle : new Rectangle(220.96*degrad,38.2*degrad,135*degrad,86.78*degrad)
+                                    rectangle: rect,
+                                    tilingScheme: new StereographicTilingScheme(tilngSchemeOptions),
+                                  //  tilingScheme: new GographicTilingScheme(tilngSchemeOptions),
+                                    //  tileWidth : 2048,
+                                    //  tileHeight : 2048
                                 });
 
-                                  console.log("controle ")
+                                console.log(imageryProvidersTab[i]);
 
                             } else { // pour les autres maps
-                                
-                                 console.log("controle dans le else")
 
                                 imageryProvidersTab[i] = new WebMapServiceImageryProvider({
                                     url: onlineResource,
@@ -366,11 +356,9 @@ define([
                                     ellipsoid: that._ellipsoid,
                                     enablePickFeatures: false
                                 });
-
-                             console.log("controle dans fin else");
-
+                              console.log(imageryProvidersTab[i]);
                             }
-                            //  console.log(imageryProvidersTab[i]);
+
 
                         }
                     }
@@ -498,31 +486,31 @@ define([
 
                                         // Creation du layer
 
-                                        console.log("controle avant : nomenImageryProvider");
-
-                                        var nomenImageryProvider = new WebMapServiceImageryProvider({
+                                 /*       var nomenImageryProvider = new WebMapServiceImageryProvider({
                                             //  url: finalNomenUrl,
                                             url: onlineResource,
                                             parameters: {format: 'image/png; mode=8bit'},
                                             layers: nomenLayer[i],
                                             credit: 'USGS @ wms.wr.usgs.gov',
                                             ellipsoid: that._ellipsoid,
-                                            enablePickFeatures: false
-                                        });
-                                        
-                                      // console.log("controle apres : nomenImageryProvider");
+                                            enablePickFeatures: false,
+                                        });*/
 
-                                        nomenLayerName.push(finalNomenLayerName);
-                                        nomenImageryProvidersTab.push(nomenImageryProvider);
+                                        // a remettre
+
+                                      /*  nomenLayerName.push(finalNomenLayerName);
+                                        nomenImageryProvidersTab.push(nomenImageryProvider);*/
                                     }
                                 }
 
                                 // incorporation des nomenclature layers dans les imageryproviders
 
-                                for (var k = 0; k < nomenLayerName.length; k++) {
+                                // a remettre
+
+                              /*  for (var k = 0; k < nomenLayerName.length; k++) {
                                     layerName.push(nomenLayerName[k]);
                                     imageryProvidersTab.push(nomenImageryProvidersTab[k]);
-                                }
+                                }*/
 
                                 //  Creation du model et binding
 
@@ -537,7 +525,7 @@ define([
                                 knockout.applyBindings(listViewModel, listContainer2);
                             }
                         }
-                    } 
+                    }
                 } catch (e) {
                     //  console.log(e);
                 }

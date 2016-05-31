@@ -36,6 +36,7 @@ define([
 
     function setupLayers(that, viewer, dimLayers, layerName, imageryProvidersTab) {
         for (var i = 0; i < dimLayers; i++) {
+           // console.log(imageryProvidersTab[i]);
             addAdditionalLayerOption(viewer, layerName[i], imageryProvidersTab[i], that['alpha_' + i], that['show_' + i]);
         }
     }

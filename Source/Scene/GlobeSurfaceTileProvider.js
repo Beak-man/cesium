@@ -943,9 +943,12 @@ define([
             }
 
             if (projection instanceof WebMercatorProjection) {
+                
+                consoole.log("dans le GlobeSurfaceTileProvider : utilisation du WebMercatorProjection");
+                
                 southLatitude = tile.rectangle.south;
                 northLatitude = tile.rectangle.north;
-
+            
                 southMercatorY = WebMercatorProjection.geodeticLatitudeToMercatorAngle(southLatitude);
 
                 oneOverMercatorHeight = 1.0 / (WebMercatorProjection.geodeticLatitudeToMercatorAngle(northLatitude) - southMercatorY);
