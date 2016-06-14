@@ -84,19 +84,19 @@ define([
      /*   var radeg = 180.0 / Math.PI;
 
         var theta = cartographic.latitude;
-        var phi = cartographic.longitude;*/
+        var phi = cartographic.longitude;
         
       //  console.log(theta+" "+phi);
 
-      //   var angle = ((90.0 / radeg) - theta) / 2.0;
+         var angle = ((90.0 / radeg) - theta) / 2.0;
 
-      //  var R = Math.tan(angle) * semimajorAxis;
+        var R = Math.tan(angle) * semimajorAxis;*/
 
-      /*  var x = R * Math.sin(phi);
-        var y = -R * Math.cos(phi);    */
+     /*   var x = R * Math.sin(phi);
+        var y = -R * Math.cos(phi);   */
         
-      /*  var x = theta*Math.cos(phi)* semimajorAxis;
-        var y = phi* semimajorAxis;        
+    /*    var x = theta*Math.cos(phi)* semimajorAxis;
+        var y = phi* semimajorAxis;      
         
         var z = cartographic.height;*/
 
@@ -155,9 +155,9 @@ define([
         var longitude = (Math.atan2(x, -y))* oneOverEarthSemimajorAxis;*/
         
          
-         var longitude = cartesian.y * oneOverEarthSemimajorAxis;
+      /*   var longitude = cartesian.y * oneOverEarthSemimajorAxis;
          var latitude = (cartesian.x/Math.cos(longitude)) * oneOverEarthSemimajorAxis;
-         var height = cartesian.z; 
+         var height = cartesian.z; */
 
         if (!defined(result)) {
             return new Cartographic(longitude, latitude, height);

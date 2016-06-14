@@ -42,7 +42,10 @@ define([
         this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84); // ellipsoid
         this._semimajorAxis = this._ellipsoid.maximumRadius; // rayon max
         this._oneOverSemimajorAxis = 1.0 / this._semimajorAxis; // 1/R
+
     }
+
+    // a modifier
 
     defineProperties(GeographicProjection.prototype, {
         /**
@@ -82,32 +85,42 @@ define([
         // Actually this is the special case of equidistant cylindrical called the plate carree
         var semimajorAxis = this._semimajorAxis;
 
+
+        // console.log("dans project de GeographicProjection");
+
+
+        // console.log(cartographic);
+
         //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
 
-          var x = cartographic.longitude * semimajorAxis;
-          var y = cartographic.latitude * semimajorAxis;
-          var z = cartographic.height;
+        var x = cartographic.longitude * semimajorAxis;
+        var y = cartographic.latitude * semimajorAxis;
+        var z = cartographic.height;
 
         //  =======================================================================
 
-    /*    var radeg = 180.0 / Math.PI;
+       /* var radeg = 180.0 / Math.PI;
+        var coef = 360.0 / Math.PI;
 
         var theta = cartographic.latitude;
         var phi = cartographic.longitude;
-        
-      //  console.log(theta+" "+phi);
 
-        /* var angle = ((90.0 / radeg) - theta) / 2.0;
+        //  console.log(theta+" "+phi);
+
+        var angle = ((90.0 / radeg) - theta) / 2.0;
+      //  var angle = (theta) / 2.0;
 
         var R = Math.tan(angle) * semimajorAxis;
 
-        var x = R * Math.sin(phi);
-        var y = -R * Math.cos(phi);*\      
-        
-        var x = theta*Math.cos(phi)* semimajorAxis;
-        var y = phi* semimajorAxis;        
-        
-        var z = cartographic.height;*/
+        var x = R * Math.sin(phi)*coef;
+        var y = -R * Math.cos(phi)*coef;*/
+
+         
+        /* var x = theta*Math.cos(phi)* semimajorAxis;
+         var y = phi* semimajorAxis;     */  
+         
+
+        var z = cartographic.height;
 
         if (!defined(result)) {
             return new Cartesian3(x, y, z);
@@ -116,9 +129,10 @@ define([
         result.x = x;
         result.y = y;
         result.z = z;
-        
-      //  console.log(result);
-        
+
+
+        //  console.log(result);
+
         return result;
     };
 
@@ -145,28 +159,29 @@ define([
 
         //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
 
-          var longitude = cartesian.x * oneOverEarthSemimajorAxis;
-          var latitude = cartesian.y * oneOverEarthSemimajorAxis;
-          var height = cartesian.z;
+         var longitude = cartesian.x * oneOverEarthSemimajorAxis;
+         var latitude = cartesian.y * oneOverEarthSemimajorAxis;
+         var height = cartesian.z;
 
         //  =======================================================================
 
-       /* console.log("inverse");
-       /* var radeg = 180.0 / Math.PI;
-    
-        var height = cartesian.z;
+        /* console.log("inverse");*/
 
+      /*  var radeg = 180.0 / Math.PI;
+
+        var height = cartesian.z;
         var x = cartesian.x;
         var y = cartesian.y;
 
         var R = Math.sqrt(x * x + y * y);
-        var latitude = (90.0 / radeg - 2.0 * Math.atan2(2, R))* oneOverEarthSemimajorAxis;
-        var longitude = (Math.atan2(x, -y))* oneOverEarthSemimajorAxis;*\
-        
-         
-         var longitude = cartesian.y * oneOverEarthSemimajorAxis;
-         var latitude = (cartesian.x/Math.cos(longitude)) * oneOverEarthSemimajorAxis;
-         var height = cartesian.z; */
+
+        var latitude = (90.0 / radeg - 2.0 * Math.atan((Math.PI * R) / 360.)) * oneOverEarthSemimajorAxis;
+        var longitude = (Math.atan2(-y, x)) * oneOverEarthSemimajorAxis;*/
+
+        /*  var longitude = cartesian.y * oneOverEarthSemimajorAxis;
+         var latitude = (cartesian.x/Math.cos(longitude)) * oneOverEarthSemimajorAxis;*/
+
+        /*  var height = cartesian.z; */
 
         if (!defined(result)) {
             return new Cartographic(longitude, latitude, height);
@@ -175,7 +190,7 @@ define([
         result.longitude = longitude;
         result.latitude = latitude;
         result.height = height;
-        
+
         return result;
     };
 

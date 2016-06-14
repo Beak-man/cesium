@@ -40,14 +40,15 @@ define([
      */
     function GeographicTilingScheme(options) {
         
+        console.log("in GeographicTilingScheme");
+        console.log(options);
         
         options = defaultValue(options, {}); // on recupere les options
         this._ellipsoid = defaultValue(options.ellipsoid, Ellipsoid.WGS84); // on recupere l'ellipsoid
         this._rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE); // region selectionnée définie par ses coordonnées (lng, lat)
         this._projection = new GeographicProjection(this._ellipsoid); // projection calculée a partir de GeographicProjection ==> objet = {ellipsoid, semimajorAxis, 1/semimajorAxis}
-        this._numberOfLevelZeroTilesX = defaultValue(options.numberOfLevelZeroTilesX, 2);
+        this._numberOfLevelZeroTilesX = defaultValue(options.numberOfLevelZeroTilesX, 1);
         this._numberOfLevelZeroTilesY = defaultValue(options.numberOfLevelZeroTilesY, 1);
-        
     }
 
     defineProperties(GeographicTilingScheme.prototype, {
@@ -241,6 +242,7 @@ define([
 
         result.x = xTileCoordinate;
         result.y = yTileCoordinate;
+        
         return result;
     };
 

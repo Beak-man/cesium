@@ -1,22 +1,24 @@
 /*global define*/
 define([
-    './Cartesian2',
-    './defaultValue',
-    './defined',
-    './defineProperties',
-    './DeveloperError',
-    './Ellipsoid',
-    './StereographicProjection',
-    './Math',
-    './Rectangle'
-], function (
+        './Cartesian2',
+        './defaultValue',
+        './defined',
+        './defineProperties',
+        './DeveloperError',
+        './Ellipsoid',
+        './GeographicProjection',
+        './WebMercatorProjection',
+        './Math',
+        './Rectangle'
+    ], function(
         Cartesian2,
         defaultValue,
         defined,
         defineProperties,
         DeveloperError,
         Ellipsoid,
-        StereographicProjection,
+        GeographicProjection,
+        WebMercatorProjection,
         CesiumMath,
         Rectangle) {
     'use strict';
@@ -39,16 +41,17 @@ define([
      * the tile tree.
      */
     function StereographicTilingScheme(options) {
-
-
+        
+       console.log("in StereographicTilingScheme");
+     
         options = defaultValue(options, {}); // on recupere les options
         this._ellipsoid = defaultValue(options.ellipsoid, Ellipsoid.WGS84); // on recupere l'ellipsoid
         this._rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE); // region selectionnée définie par ses coordonnées (lng, lat)
+       // this._projection = new GeographicProjection(this._ellipsoid); // projection calculée a partir de GeographicProjection ==> objet = {ellipsoid, semimajorAxis, 1/semimajorAxis}
+        this._projection = new WebMercatorProjection(this._ellipsoid); // projection calculée a partir de GeographicProjection ==> objet = {ellipsoid, semimajorAxis, 1/semimajorAxis}
 
-        this._projection = new StereographicProjection(this._ellipsoid); // projection calculée a partir de StereographicProjection ==> objet = {ellipsoid, semimajorAxis, 1/semimajorAxis}  
         this._numberOfLevelZeroTilesX = defaultValue(options.numberOfLevelZeroTilesX, 1);
         this._numberOfLevelZeroTilesY = defaultValue(options.numberOfLevelZeroTilesY, 1);
-
     }
 
     defineProperties(StereographicTilingScheme.prototype, {
@@ -57,28 +60,30 @@ define([
          * @memberof GeographicTilingScheme.prototype
          * @type {Ellipsoid}
          */
-        ellipsoid: {
-            get: function () {
+        ellipsoid : {
+            get : function() {
                 return this._ellipsoid;
             }
         },
+
         /**
          * Gets the rectangle, in radians, covered by this tiling scheme.
          * @memberof GeographicTilingScheme.prototype
          * @type {Rectangle}
          */
-        rectangle: {
-            get: function () {
+        rectangle : {
+            get : function() {
                 return this._rectangle;
             }
         },
+
         /**
          * Gets the map projection used by this tiling scheme.
          * @memberof GeographicTilingScheme.prototype
          * @type {MapProjection}
          */
-        projection: {
-            get: function () {
+        projection : {
+            get : function() {
                 return this._projection;
             }
         }
@@ -90,8 +95,8 @@ define([
      * @param {Number} level The level-of-detail.
      * @returns {Number} The number of tiles in the X direction at the given level.
      */
-    StereographicTilingScheme.prototype.getNumberOfXTilesAtLevel = function (level) {
-
+    StereographicTilingScheme.prototype.getNumberOfXTilesAtLevel = function(level) {
+        
         return this._numberOfLevelZeroTilesX << level;
     };
 
@@ -101,7 +106,7 @@ define([
      * @param {Number} level The level-of-detail.
      * @returns {Number} The number of tiles in the Y direction at the given level.
      */
-    StereographicTilingScheme.prototype.getNumberOfYTilesAtLevel = function (level) {
+    StereographicTilingScheme.prototype.getNumberOfYTilesAtLevel = function(level) {
         return this._numberOfLevelZeroTilesY << level;
     };
 
@@ -115,7 +120,7 @@ define([
      * @returns {Rectangle} The specified 'result', or a new object containing the native rectangle if 'result'
      *          is undefined.
      */
-    StereographicTilingScheme.prototype.rectangleToNativeRectangle = function (rectangle, result) {
+    StereographicTilingScheme.prototype.rectangleToNativeRectangle = function(rectangle, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(rectangle)) {
             throw new DeveloperError('rectangle is required.');
@@ -150,7 +155,7 @@ define([
      * @returns {Rectangle} The specified 'result', or a new object containing the rectangle
      *          if 'result' is undefined.
      */
-    StereographicTilingScheme.prototype.tileXYToNativeRectangle = function (x, y, level, result) {
+    StereographicTilingScheme.prototype.tileXYToNativeRectangle = function(x, y, level, result) {
         var rectangleRadians = this.tileXYToRectangle(x, y, level, result);
         rectangleRadians.west = CesiumMath.toDegrees(rectangleRadians.west);
         rectangleRadians.south = CesiumMath.toDegrees(rectangleRadians.south);
@@ -170,7 +175,7 @@ define([
      * @returns {Rectangle} The specified 'result', or a new object containing the rectangle
      *          if 'result' is undefined.
      */
-    StereographicTilingScheme.prototype.tileXYToRectangle = function (x, y, level, result) {
+    StereographicTilingScheme.prototype.tileXYToRectangle = function(x, y, level, result) {
         var rectangle = this._rectangle;
 
         var xTiles = this.getNumberOfXTilesAtLevel(level);
@@ -206,7 +211,7 @@ define([
      * @returns {Cartesian2} The specified 'result', or a new object containing the tile x, y coordinates
      *          if 'result' is undefined.
      */
-    StereographicTilingScheme.prototype.positionToTileXY = function (position, level, result) {
+    StereographicTilingScheme.prototype.positionToTileXY = function(position, level, result) {
         var rectangle = this._rectangle;
         if (!Rectangle.contains(rectangle, position)) {
             // outside the bounds of the tiling scheme
@@ -216,31 +221,29 @@ define([
         var xTiles = this.getNumberOfXTilesAtLevel(level);
         var yTiles = this.getNumberOfYTilesAtLevel(level);
 
-        var xTileWidth = rectangle.width / xTiles;  // largeur du rectangle
-        var yTileHeight = rectangle.height / yTiles; // hauteur du rectangle
-
-        // on recupere la longitude avec un recentrage si necessaire
+        var xTileWidth = rectangle.width / xTiles;
+        var yTileHeight = rectangle.height / yTiles;
 
         var longitude = position.longitude;
         if (rectangle.east < rectangle.west) {
             longitude += CesiumMath.TWO_PI;
         }
 
-        // calcul de la coordonnée en X
-
         var xTileCoordinate = (longitude - rectangle.west) / xTileWidth | 0;
+        
+         console.log(xTileWidth);
+        console.log(xTileCoordinate);
+        
         if (xTileCoordinate >= xTiles) {
             xTileCoordinate = xTiles - 1;
         }
-
-        // calcul de la coordonnée en Y
+        
+        console.log(xTiles +" "+yTiles);
 
         var yTileCoordinate = (rectangle.north - position.latitude) / yTileHeight | 0;
-        if (yTileCoordinate >= yTiles) {
+       if (yTileCoordinate >= yTiles) {
             yTileCoordinate = yTiles - 1;
         }
-
-        // construction de l'objet result
 
         if (!defined(result)) {
             return new Cartesian2(xTileCoordinate, yTileCoordinate);
@@ -248,6 +251,7 @@ define([
 
         result.x = xTileCoordinate;
         result.y = yTileCoordinate;
+        
         return result;
     };
 

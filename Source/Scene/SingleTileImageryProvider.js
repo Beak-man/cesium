@@ -6,6 +6,7 @@ define([
         '../Core/defineProperties',
         '../Core/DeveloperError',
         '../Core/Event',
+         '../Core/StereographicTilingScheme',
         '../Core/GeographicTilingScheme',
         '../Core/loadImage',
         '../Core/Rectangle',
@@ -19,6 +20,7 @@ define([
         defineProperties,
         DeveloperError,
         Event,
+        StereographicTilingScheme,
         GeographicTilingScheme,
         loadImage,
         Rectangle,
@@ -66,12 +68,22 @@ define([
         this._proxy = proxy;
 
         var rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE);
-        var tilingScheme = new GeographicTilingScheme({
+        
+       /* var tilingScheme = new GeographicTilingScheme({
+            rectangle : rectangle,
+            numberOfLevelZeroTilesX : 1,
+            numberOfLevelZeroTilesY : 1,
+            ellipsoid : options.ellipsoid
+        });*/
+        
+        var tilingScheme = new StereographicTilingScheme({
             rectangle : rectangle,
             numberOfLevelZeroTilesX : 1,
             numberOfLevelZeroTilesY : 1,
             ellipsoid : options.ellipsoid
         });
+        
+        
         this._tilingScheme = tilingScheme;
 
         this._image = undefined;

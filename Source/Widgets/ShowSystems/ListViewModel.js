@@ -9,6 +9,7 @@ define([
     '../../Core/destroyObject',
     '../../ThirdParty/knockout',
     '../../Core/defineProperties',
+    '../../Core/Rectangle'
 ], function (
         CesiumMath,
         Color,
@@ -16,7 +17,8 @@ define([
         defaultValue,
         destroyObject,
         knockout,
-        defineProperties
+        defineProperties,
+        Rectangle
         ) {
     "use strict";
 

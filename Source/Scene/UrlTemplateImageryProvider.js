@@ -513,11 +513,14 @@ define([
             that._maximumLevel = properties.maximumLevel;
             that._tilingScheme = defaultValue(properties.tilingScheme, new WebMercatorTilingScheme({ellipsoid: properties.ellipsoid}));
             that._rectangle = defaultValue(properties.rectangle, that._tilingScheme.rectangle);
+            
+            /* ============================= NEW =============================== */
 
-            if (!(properties.tilingScheme instanceof  StereographicTilingScheme)) {
+            if (!(properties.tilingScheme instanceof  StereographicTilingScheme || properties.tilingScheme instanceof  GeographicTilingScheme)) {
                 that._rectangle = Rectangle.intersection(that._rectangle, that._tilingScheme.rectangle);
             }
 
+            /* ================================================================= */
 
             that._hasAlphaChannel = defaultValue(properties.hasAlphaChannel, true);
 

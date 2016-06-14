@@ -84,8 +84,11 @@ define([
         // Equation pour la compsante en Y
         
         if (latitude > WebMercatorProjection.MaximumLatitude) {
+            
             latitude = WebMercatorProjection.MaximumLatitude;
+            
         } else if (latitude < -WebMercatorProjection.MaximumLatitude) {
+            
             latitude = -WebMercatorProjection.MaximumLatitude;
         }
         var sinLatitude = Math.sin(latitude);

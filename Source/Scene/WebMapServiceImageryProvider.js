@@ -93,6 +93,9 @@ define([
      * viewer.imageryLayers.addImageryProvider(provider);
      */
     function WebMapServiceImageryProvider(options) {
+        
+        console.log("in WebMapServiceImageryProvider");
+        
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
 
         //>>includeStart('debug', pragmas.debug);
@@ -132,18 +135,29 @@ define([
                 pickFeaturesQueryOptions[name] = value;
             }
         }
+        
+        /* ============================= NEW ===================================
+         * 
+         * @param {type} tilingScheme
+         * @returns {String}
+         */
 
         function setSrs(tilingScheme) {
 
             if (tilingScheme instanceof WebMercatorTilingScheme) {
                 return 'EPSG:3857';
             } else if (tilingScheme instanceof StereographicTilingScheme) {
-                return 'EPSG:32661';
+                return 'EPSG:32661'; // pour le pole Nord (appliquer un autre EPSG pour le pole sud ==> introduire un autre parametre pour savoir si c'est pole nord ou suds)
             } else {
                 return 'EPSG:4326';
             }
         }
+        
+        /*======================================================================
+         * =====================================================================
+         * ===================================================================== */
 
+        console.log(options.tilingScheme);
         var srsSet = setSrs(options.tilingScheme);
 
         setParameter('layers', options.layers);

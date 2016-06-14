@@ -17,6 +17,7 @@ define([
     './FooterViewModel',
     '../../Core/freezeObject',
     '../../Core/GeographicProjection',
+     '../../Core/GeographicTilingScheme',
     '../../DataSources/GeoJsonDataSource',
     '../../Scene/Globe',
     '../../ThirdParty/knockout',
@@ -25,6 +26,7 @@ define([
     '../../Core/Matrix4',
     '../../Core/Occluder',
     '../../Core/Rectangle',
+    '../../Scene/SingleTileImageryProvider',
     '../../Core/ScreenSpaceEventType',
     '../../Core/StereographicTilingScheme',
     '../VOData/VOData',
@@ -47,6 +49,7 @@ define([
         FooterViewModel,
         freezeObject,
         GeographicProjection,
+        GeographicTilingScheme,
         GeoJsonDataSource,
         Globe,
         knockout,
@@ -55,6 +58,7 @@ define([
         Matrix4,
         Occluder,
         Rectangle,
+        SingleTileImageryProvider,
         ScreenSpaceEventType,
         StereographicTilingScheme,
         VOData,
@@ -136,7 +140,7 @@ define([
 
         var mapType = that.configuration.servers.USGSserver.extension;
 
-        var ajaxDataRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + pn + mapType[1] + '&service=WMS&request=GetCapabilities';
+        var ajaxDataRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + pn + mapType[0] + '&service=WMS&request=GetCapabilities';
 
         var ajaxDataRequestNomen = 'http://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + pn + '_nomen_wms.map&service=WMS&request=GetCapabilities';
 
@@ -318,14 +322,21 @@ define([
 
                                 var bboxString = minx + "," + miny + "," + maxx + "," + maxy;
 
-                                //                                  W =-220.96  S =38.2  E = 135  N = 86.78
-                                  var rect = Rectangle.fromDegrees(-180.00, 38.2, 180, 86.78);
+                                //                         W = -220.96  S =38.2  E = 135  N = 86.78
+                                var rect = Rectangle.fromDegrees(-180., 38.2, 180., 89.999999);
+                              //  var rect = Rectangle.fromDegrees(-220.96, 38.2, 135, 86.78);
+                                
                                 var tilngSchemeOptions = {
                                     ellipsoid: that._ellipsoid,
-                                    rectangle: rect
+                                    rectangle: rect,
+                                    numberOfLevelZeroTilesX: 1,
+                                    numberOfLevelZeroTilesY: 1,
                                 };
+                                
+                             //   console.log(tilngSchemeOptions);
+                              //  console.log("before imageryProvidersTab");
 
-                                imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                            /*   imageryProvidersTab[i] = new WebMapServiceImageryProvider({
                                     url: onlineResource,
                                     parameters: {
                                         format: 'image/jpeg',
@@ -338,11 +349,20 @@ define([
                                     ellipsoid: that._ellipsoid,
                                     enablePickFeatures: false,
                                     rectangle: rect,
-                                    tilingScheme: new StereographicTilingScheme(tilngSchemeOptions),
-                                  //  tilingScheme: new GographicTilingScheme(tilngSchemeOptions),
+                                     tilingScheme: new StereographicTilingScheme(tilngSchemeOptions),
+                                   // tilingScheme: new GeographicTilingScheme(tilngSchemeOptions),
                                     //  tileWidth : 2048,
                                     //  tileHeight : 2048
-                                });
+                                });*/
+
+                              //  console.log("before SingleTileImageryProvider");
+
+                                imageryProvidersTab[i] = new SingleTileImageryProvider({
+                                 url: "http://planetarymaps.usgs.gov/cgi-bin/mapserv?format=image/jpeg&service=WMS&bbox=-2357030,-2357030,2357030,2357030&srs=EPSG:32661&version=1.1.1&request=GetMap&styles=&map=/maps/mars/mars_npole.map&=&layers=MOLA_color_north&width=2048&height=2048",
+                                 rectangle: rect,
+                                 ellipsoid: that._ellipsoid,
+                                 });
+
 
                                 console.log(imageryProvidersTab[i]);
 
@@ -356,7 +376,7 @@ define([
                                     ellipsoid: that._ellipsoid,
                                     enablePickFeatures: false
                                 });
-                              console.log(imageryProvidersTab[i]);
+                                console.log(imageryProvidersTab[i]);
                             }
 
 
@@ -486,20 +506,20 @@ define([
 
                                         // Creation du layer
 
-                                 /*       var nomenImageryProvider = new WebMapServiceImageryProvider({
-                                            //  url: finalNomenUrl,
-                                            url: onlineResource,
-                                            parameters: {format: 'image/png; mode=8bit'},
-                                            layers: nomenLayer[i],
-                                            credit: 'USGS @ wms.wr.usgs.gov',
-                                            ellipsoid: that._ellipsoid,
-                                            enablePickFeatures: false,
-                                        });*/
+                                        /*       var nomenImageryProvider = new WebMapServiceImageryProvider({
+                                         //  url: finalNomenUrl,
+                                         url: onlineResource,
+                                         parameters: {format: 'image/png; mode=8bit'},
+                                         layers: nomenLayer[i],
+                                         credit: 'USGS @ wms.wr.usgs.gov',
+                                         ellipsoid: that._ellipsoid,
+                                         enablePickFeatures: false,
+                                         });*/
 
                                         // a remettre
 
-                                      /*  nomenLayerName.push(finalNomenLayerName);
-                                        nomenImageryProvidersTab.push(nomenImageryProvider);*/
+                                        /*  nomenLayerName.push(finalNomenLayerName);
+                                         nomenImageryProvidersTab.push(nomenImageryProvider);*/
                                     }
                                 }
 
@@ -507,10 +527,10 @@ define([
 
                                 // a remettre
 
-                              /*  for (var k = 0; k < nomenLayerName.length; k++) {
-                                    layerName.push(nomenLayerName[k]);
-                                    imageryProvidersTab.push(nomenImageryProvidersTab[k]);
-                                }*/
+                                /*  for (var k = 0; k < nomenLayerName.length; k++) {
+                                 layerName.push(nomenLayerName[k]);
+                                 imageryProvidersTab.push(nomenImageryProvidersTab[k]);
+                                 }*/
 
                                 //  Creation du model et binding
 

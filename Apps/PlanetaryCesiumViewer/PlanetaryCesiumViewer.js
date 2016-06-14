@@ -15,6 +15,7 @@ define([//  Definition des d�pendances
     'Cesium/Core/Math',
     'Cesium/Core/Rectangle',
     'Cesium/Core/GeographicProjection',
+    'Cesium/Core/StereographicProjection',
     'Cesium/Core/NearFarScalar',
     'Cesium/Core/ScreenSpaceEventHandler',
     'Cesium/Core/ScreenSpaceEventType',
@@ -55,6 +56,7 @@ define([//  Definition des d�pendances
         CesiumMath,
         Rectangle,
         GeographicProjection,
+        StereographicProjection,
         NearFarScalar,
         ScreenSpaceEventHandler,
         ScreenSpaceEventType,
@@ -159,7 +161,8 @@ define([//  Definition des d�pendances
         Ellipsoid.used = "WGS84";
 
         globeParam = new Globe(Ellipsoid.WGS84);
-        mapProjectionParam = new GeographicProjection(Ellipsoid.WGS84);
+       // mapProjectionParam = new GeographicProjection(Ellipsoid.WGS84);
+          mapProjectionParam =  new StereographicProjection(Ellipsoid.WGS84);
         terrainProviderParam = new EllipsoidTerrainProvider({ellipsoid: Ellipsoid.WGS84});
         ellipsoidImageryParam = Ellipsoid.WGS84;
     }
