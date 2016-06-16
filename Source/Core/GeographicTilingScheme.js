@@ -40,9 +40,6 @@ define([
      */
     function GeographicTilingScheme(options) {
         
-        console.log("in GeographicTilingScheme");
-        console.log(options);
-        
         options = defaultValue(options, {}); // on recupere les options
         this._ellipsoid = defaultValue(options.ellipsoid, Ellipsoid.WGS84); // on recupere l'ellipsoid
         this._rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE); // region selectionnée définie par ses coordonnées (lng, lat)

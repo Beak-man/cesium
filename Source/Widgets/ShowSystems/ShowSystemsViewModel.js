@@ -17,7 +17,7 @@ define([
     './FooterViewModel',
     '../../Core/freezeObject',
     '../../Core/GeographicProjection',
-     '../../Core/GeographicTilingScheme',
+    '../../Core/GeographicTilingScheme',
     '../../DataSources/GeoJsonDataSource',
     '../../Scene/Globe',
     '../../ThirdParty/knockout',
@@ -74,7 +74,7 @@ define([
     // moveAndfillPanel : This function is used to move the layer list panel far a given planet and create the Ajax request to get 'capabilities'. Then 'getXmlPlanetData'.
     // getXmlPlanetData : This function is used to get the response of the capabilities request and parse the xml response to create the url for each layer.
 
-    function showPlanetView(that, viewer, planetName, configContainer, listContainer, btnContainer, xhr, xhrNomen, naifCode) {
+    function showPlanetView(that, viewer, planetName, configContainer, listContainer, btnContainer, xhr, xhrNomen) {
 
         for (var i = 0; i < that.dim; i++) {
             that["buttonVisible_" + i] = false;
@@ -93,15 +93,15 @@ define([
             configContainer.style.left = that._windowsMove;
 
             setTimeout(function () {
-                moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen, naifCode)
+                moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen)
             }, 900);
         }
         else {
-            moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen, naifCode)
+            moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen)
         }
     }
 
-    function showSatelliteView(that, viewer, planetName, satelliteName, configContainer, listContainer, btnContainer, xhr, xhrNomen, naifCode) {
+    function showSatelliteView(that, viewer, planetName, satelliteName, configContainer, listContainer, btnContainer, xhr, xhrNomen) {
 
         for (var i = 0; i < that.dim; i++) {
             that["buttonVisible_" + i] = false;
@@ -120,15 +120,15 @@ define([
             configContainer.style.left = that._windowsMove;
 
             setTimeout(function () {
-                moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen, naifCode)
+                moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen)
             }, 900);
         }
         else {
-            moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen, naifCode)
+            moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen)
         }
     }
 
-    function moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen, naifCode) {
+    function moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen) {
 
         configContainer.className = "";
         configContainer.className = "cesium-showSystems-configContainer";
@@ -144,10 +144,10 @@ define([
 
         var ajaxDataRequestNomen = 'http://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + pn + '_nomen_wms.map&service=WMS&request=GetCapabilities';
 
-        getXmlPlanetData(that, viewer, xhr, xhrNomen, 'post', ajaxDataRequest, ajaxDataRequestNomen, true, listContainer, pn, naifCode);
+        getXmlPlanetData(that, viewer, xhr, xhrNomen, 'post', ajaxDataRequest, ajaxDataRequestNomen, true, listContainer, pn);
     }
 
-    function moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen, naifCode) {
+    function moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen) {
         configContainer.className = "";
         configContainer.className = "cesium-showSystems-configContainer";
         configContainer.style.visibility = "visible";
@@ -162,12 +162,14 @@ define([
         var ajaxRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + ps + mapType[0] + '&service=WMS&request=GetCapabilities';
         var ajaxDataRequestNomen = 'http://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + ps + '_nomen_wms.map&service=WMS&request=GetCapabilities';
 
-        getXmlDataSatellite(that, viewer, xhr, xhrNomen, 'post', ajaxRequest, ajaxDataRequestNomen, true, listContainer, pn, ps, naifCode);
+        getXmlDataSatellite(that, viewer, xhr, xhrNomen, 'post', ajaxRequest, ajaxDataRequestNomen, true, listContainer, pn, ps);
     }
 
-    function getXmlPlanetData(that, viewer, xhr, xhrNomen, method, url, urlNomen, async, listContainer, pn, naifCode) {
+    function getXmlPlanetData(that, viewer, xhr, xhrNomen, method, url, urlNomen, async, listContainer, pn) {
 
-        viewer.tools.viewModel.removeAllCommands;
+        if (viewer.tools) {
+            viewer.tools.viewModel.removeAllCommands;
+        }
 
         var listViewModel;
         var listContainer2;
@@ -324,47 +326,47 @@ define([
 
                                 //                         W = -220.96  S =38.2  E = 135  N = 86.78
                                 var rect = Rectangle.fromDegrees(-180., 38.2, 180., 89.999999);
-                              //  var rect = Rectangle.fromDegrees(-220.96, 38.2, 135, 86.78);
-                                
+                                //  var rect = Rectangle.fromDegrees(-220.96, 38.2, 135, 86.78);
+
                                 var tilngSchemeOptions = {
                                     ellipsoid: that._ellipsoid,
                                     rectangle: rect,
                                     numberOfLevelZeroTilesX: 1,
                                     numberOfLevelZeroTilesY: 1,
                                 };
-                                
-                             //   console.log(tilngSchemeOptions);
-                              //  console.log("before imageryProvidersTab");
 
-                            /*   imageryProvidersTab[i] = new WebMapServiceImageryProvider({
-                                    url: onlineResource,
-                                    parameters: {
-                                        format: 'image/jpeg',
-                                        service: 'WMS',
-                                        bbox: bboxString,
-                                        //    bbox: '0,0,1000000,1000000',
-                                        srs: crs},
-                                    layers: layer[i],
-                                    credit: 'USGS @ wms.wr.usgs.gov',
-                                    ellipsoid: that._ellipsoid,
-                                    enablePickFeatures: false,
-                                    rectangle: rect,
-                                     tilingScheme: new StereographicTilingScheme(tilngSchemeOptions),
-                                   // tilingScheme: new GeographicTilingScheme(tilngSchemeOptions),
-                                    //  tileWidth : 2048,
-                                    //  tileHeight : 2048
-                                });*/
+                                //   console.log(tilngSchemeOptions);
+                                //  console.log("before imageryProvidersTab");
 
-                              //  console.log("before SingleTileImageryProvider");
+                                /*   imageryProvidersTab[i] = new WebMapServiceImageryProvider({
+                                 url: onlineResource,
+                                 parameters: {
+                                 format: 'image/jpeg',
+                                 service: 'WMS',
+                                 bbox: bboxString,
+                                 //    bbox: '0,0,1000000,1000000',
+                                 srs: crs},
+                                 layers: layer[i],
+                                 credit: 'USGS @ wms.wr.usgs.gov',
+                                 ellipsoid: that._ellipsoid,
+                                 enablePickFeatures: false,
+                                 rectangle: rect,
+                                 tilingScheme: new StereographicTilingScheme(tilngSchemeOptions),
+                                 // tilingScheme: new GeographicTilingScheme(tilngSchemeOptions),
+                                 //  tileWidth : 2048,
+                                 //  tileHeight : 2048
+                                 });*/
+
+                                //  console.log("before SingleTileImageryProvider");
 
                                 imageryProvidersTab[i] = new SingleTileImageryProvider({
-                                 url: "http://planetarymaps.usgs.gov/cgi-bin/mapserv?format=image/jpeg&service=WMS&bbox=-2357030,-2357030,2357030,2357030&srs=EPSG:32661&version=1.1.1&request=GetMap&styles=&map=/maps/mars/mars_npole.map&=&layers=MOLA_color_north&width=2048&height=2048",
-                                 rectangle: rect,
-                                 ellipsoid: that._ellipsoid,
-                                 });
+                                    url: "http://planetarymaps.usgs.gov/cgi-bin/mapserv?format=image/jpeg&service=WMS&bbox=-2357030,-2357030,2357030,2357030&srs=EPSG:32661&version=1.1.1&request=GetMap&styles=&map=/maps/mars/mars_npole.map&=&layers=MOLA_color_north&width=2048&height=2048",
+                                    rectangle: rect,
+                                    ellipsoid: that._ellipsoid,
+                                });
 
 
-                                console.log(imageryProvidersTab[i]);
+                                //    console.log(imageryProvidersTab[i]);
 
                             } else { // pour les autres maps
 
@@ -376,7 +378,7 @@ define([
                                     ellipsoid: that._ellipsoid,
                                     enablePickFeatures: false
                                 });
-                                console.log(imageryProvidersTab[i]);
+                                //     console.log(imageryProvidersTab[i]);
                             }
 
 
@@ -506,20 +508,20 @@ define([
 
                                         // Creation du layer
 
-                                        /*       var nomenImageryProvider = new WebMapServiceImageryProvider({
-                                         //  url: finalNomenUrl,
-                                         url: onlineResource,
-                                         parameters: {format: 'image/png; mode=8bit'},
-                                         layers: nomenLayer[i],
-                                         credit: 'USGS @ wms.wr.usgs.gov',
-                                         ellipsoid: that._ellipsoid,
-                                         enablePickFeatures: false,
-                                         });*/
+                                        var nomenImageryProvider = new WebMapServiceImageryProvider({
+                                            //  url: finalNomenUrl,
+                                            url: onlineResource,
+                                            parameters: {format: 'image/png; mode=8bit'},
+                                            layers: nomenLayer[i],
+                                            credit: 'USGS @ wms.wr.usgs.gov',
+                                            ellipsoid: that._ellipsoid,
+                                            enablePickFeatures: false,
+                                        });
 
                                         // a remettre
 
-                                        /*  nomenLayerName.push(finalNomenLayerName);
-                                         nomenImageryProvidersTab.push(nomenImageryProvider);*/
+                                        nomenLayerName.push(finalNomenLayerName);
+                                        nomenImageryProvidersTab.push(nomenImageryProvider);
                                     }
                                 }
 
@@ -527,10 +529,10 @@ define([
 
                                 // a remettre
 
-                                /*  for (var k = 0; k < nomenLayerName.length; k++) {
-                                 layerName.push(nomenLayerName[k]);
-                                 imageryProvidersTab.push(nomenImageryProvidersTab[k]);
-                                 }*/
+                                for (var k = 0; k < nomenLayerName.length; k++) {
+                                    layerName.push(nomenLayerName[k]);
+                                    imageryProvidersTab.push(nomenImageryProvidersTab[k]);
+                                }
 
                                 //  Creation du model et binding
 
@@ -574,7 +576,7 @@ define([
     }
 
 
-    function getXmlDataSatellite(that, viewer, xhr, xhrNomen, method, url, urlNomen, async, listContainer, pn, sn, naifCode) {
+    function getXmlDataSatellite(that, viewer, xhr, xhrNomen, method, url, urlNomen, async, listContainer, pn, sn) {
 
         xhr.open(method, url, async);
         xhr.withCredentials = false;
@@ -1005,6 +1007,67 @@ define([
         var footerViewModel = new FooterViewModel(that._footerToolbar, configContainer, that._btnShowPanel);
         knockout.applyBindings(footerViewModel, that._btnShowPanel);
     }
+
+
+
+    function homePlanetShow(configuration, xhr, xhrNomen, that) {
+
+        var homePlanet = configuration.homePlanet;
+
+        // Naif code determination 
+
+        var count = 1;
+        var naifCode = [];
+
+        for (var planet in configuration.planetarySystem.system) {
+
+            if (planet == homePlanet) {
+                naifCode = [count, 0];
+                break;
+            } else {
+                count++;
+            }
+        }
+
+       console.log(naifCode);
+
+        var planetarySystem = configuration.planetarySystem.system[homePlanet];
+        var planetarySystemDimension = configuration.planetarySystem.dimension[homePlanet + "System"];
+        var planetDimension = planetarySystemDimension[homePlanet];
+
+        //  console.log(planetarySystem);
+        //  console.log(planetarySystemDimension);
+        //  console.log(planetDimension);
+
+        initializeScene(that, planetDimension);
+        initializeMarkerMoveWidget(that);
+        homeView(that._scene);
+
+
+        try {
+            that._viewer.showSystems.viewModel.voData.destroyWrapperMenu;
+        } catch (e) {
+        }
+
+        try {
+            that._voData.viewModel.hidePanel;
+        } catch (e) {
+        }
+
+        that._voData = new VOData(that._viewerContainer, that._viewer, homePlanet);
+
+        var obj = {
+            naifCodes: naifCode,
+            ellipsoid: that._ellipsoid
+        }
+
+        GeoJsonDataSource.crsModification = obj;
+        showPlanetView(that, that._viewer, homePlanet, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen);
+
+
+    }
+
+
     /* ================================================================================================================== */
     /* ================================================ Main functions ================================================== */
     /* ================================================================================================================== */
@@ -1046,6 +1109,8 @@ define([
         var that = this;
         var xhr = getRequest();
         var xhrNomen = getRequest();
+
+        homePlanetShow(configuration, xhr, xhrNomen, that);
 
         this._command = createCommand(function (planetName, planetIndex, satelliteIndex, vectorDimensionsString) {
 
@@ -1089,7 +1154,7 @@ define([
             }
 
             GeoJsonDataSource.crsModification = obj;
-            showPlanetView(that, that._viewer, planetName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, naifCode);
+            showPlanetView(that, that._viewer, planetName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen);
 
             /*  if (planetName == 'venus') {
              
@@ -1307,23 +1372,39 @@ define([
         var newGeographicProjection = new GeographicProjection(that._ellipsoid);
         var newGlobe = new Globe(that._ellipsoid);
 
-        that._viewer.dataSources.removeAll(true);
-        that._viewer.scene.globe = newGlobe;
-        that._viewer.scene.mapProjection = newGeographicProjection;
-        that._viewer.scene.camera.projection = newGeographicProjection;
-        that._viewer.terrainProvider = newTerrainProvider;
-        that._viewer.scene.globe.baseColor = Color.BLACK;
-        that._viewer.scene.camera.ellipsoid = that._ellipsoid;
+        if (that._viewer.dataSources && that._viewer.scene) {
+            that._viewer.dataSources.removeAll(true);
+            that._viewer.scene.globe = newGlobe;
+            that._viewer.scene.mapProjection = newGeographicProjection;
+            that._viewer.scene.camera.projection = newGeographicProjection;
+            that._viewer.terrainProvider = newTerrainProvider;
+            that._viewer.scene.globe.baseColor = Color.BLACK;
+            that._viewer.scene.camera.ellipsoid = that._ellipsoid;
+
+        } else {
+
+            that._scene.globe = newGlobe;
+            that._scene.mapProjection = newGeographicProjection;
+            that._scene.camera.projection = newGeographicProjection;
+            that._scene.globe.baseColor = Color.BLACK;
+            that._scene.camera.ellipsoid = that._ellipsoid;
+
+        }
     }
 
     function initializeMarkerMoveWidget(that) {
-        that._viewer.markerMove.viewModel._isActive = false;
-        that._viewer.markerMove.viewModel.dropDownVisible = false;
 
-        if (that._viewer.markerMove.viewModel._handlerRight)
-            that._viewer.markerMove.viewModel._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-        if (that._viewer.markerMove.viewModel._handlerLeft)
-            that._viewer.markerMove.viewModel._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        if (that._viewer.markerMove) {
+
+            that._viewer.markerMove.viewModel._isActive = false;
+            that._viewer.markerMove.viewModel.dropDownVisible = false;
+
+            if (that._viewer.markerMove.viewModel._handlerRight)
+                that._viewer.markerMove.viewModel._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+            if (that._viewer.markerMove.viewModel._handlerLeft)
+                that._viewer.markerMove.viewModel._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+
+        }
     }
 
     function getObjectSize(obj) {

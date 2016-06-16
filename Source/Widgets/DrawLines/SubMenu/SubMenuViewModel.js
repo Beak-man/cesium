@@ -1142,7 +1142,7 @@ define([
                         polyLinesTmps.removeAll();
                         polyLinesLabelsTmps.removeAll();
 
-                        console.log(polyLinesTmps);
+                      //  console.log(polyLinesTmps);
                     } else {
 
                         that._handlerMouseMoveCircle.setInputAction(function (mouvement) {

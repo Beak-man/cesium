@@ -29,7 +29,7 @@ define([
      */
     function StereographicProjection(ellipsoid) {
         
-        console.log("dans constructeur de SterographicProjection");
+      //  console.log("dans constructeur de SterographicProjection");
 
         this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84); // ellipsoid
         this._semimajorAxis = this._ellipsoid.maximumRadius; // rayon max
@@ -71,8 +71,6 @@ define([
         // Actually this is the special case of equidistant cylindrical called the plate carree
         var semimajorAxis = this._semimajorAxis;
         
-        console.log("dans project de SterographicProjection");
-
         //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
 
           var x = cartographic.longitude * semimajorAxis;

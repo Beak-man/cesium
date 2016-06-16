@@ -1,5 +1,5 @@
 /*global define*/
-define([//  Definition des d�pendances
+define([//  Definition des dependances
     'Cesium/Core/Cartesian3',
     'Cesium/Core/defined',
     'Cesium/Core/formatError',
@@ -419,6 +419,7 @@ define([//  Definition des d�pendances
             var configuration = {};
 
             configuration = {
+                homePlanet: jsonData.homePlanet,
                 servers: jsonData.servers,
                 planetarySystem: {
                     system: jsonData.planetarySystem.solarSystem,

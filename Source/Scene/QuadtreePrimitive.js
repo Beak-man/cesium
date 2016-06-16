@@ -94,7 +94,7 @@ define([
         var tilingScheme = this._tileProvider.tilingScheme;
         var ellipsoid = tilingScheme.ellipsoid;
         
-        console.log(tilingScheme);
+       // console.log(tilingScheme);
 
         this._tilesToRender = [];
         this._tileTraversalQueue = new Queue();

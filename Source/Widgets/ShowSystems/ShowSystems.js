@@ -160,6 +160,8 @@ define([
 
         var viewModel = new ShowSystemsViewModel(viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem, configuration);
         that._viewModel = viewModel;
+        
+        console.log(viewModel._command);
 
         knockout.applyBindings(viewModel, PlanetsToolbar);
     }

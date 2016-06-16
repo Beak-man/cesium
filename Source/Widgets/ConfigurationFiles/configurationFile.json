@@ -1,4 +1,6 @@
-{"servers" : {
+{   "homePlanet" : "mars",
+      
+    "servers" : {
 
 	"USGSserver" : {	
 		"name"      : "Planetary maps (USGS)",

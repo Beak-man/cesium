@@ -94,8 +94,6 @@ define([
      */
     function WebMapServiceImageryProvider(options) {
         
-        console.log("in WebMapServiceImageryProvider");
-        
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
 
         //>>includeStart('debug', pragmas.debug);
@@ -156,8 +154,7 @@ define([
         /*======================================================================
          * =====================================================================
          * ===================================================================== */
-
-        console.log(options.tilingScheme);
+        
         var srsSet = setSrs(options.tilingScheme);
 
         setParameter('layers', options.layers);
@@ -193,9 +190,6 @@ define([
             pickFeaturesUri.query = objectToQuery(pickFeaturesQueryOptions);
             pickFeaturesTemplateUrl = pickFeaturesUri.toString().replace(/%7B/g, '{').replace(/%7D/g, '}');
         }
-
-
-         console.log("before tileProvider");
 
         // Let UrlTemplateImageryProvider do the actual URL building.
         this._tileProvider = new UrlTemplateImageryProvider({
