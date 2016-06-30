@@ -1029,8 +1029,6 @@ define([
             }
         }
 
-       console.log(naifCode);
-
         var planetarySystem = configuration.planetarySystem.system[homePlanet];
         var planetarySystemDimension = configuration.planetarySystem.dimension[homePlanet + "System"];
         var planetDimension = planetarySystemDimension[homePlanet];
@@ -1054,7 +1052,9 @@ define([
         } catch (e) {
         }
 
-        that._voData = new VOData(that._viewerContainer, that._viewer, homePlanet);
+        if (that._isVOWidgetVisible == true) {
+            that._voData = new VOData(that._viewerContainer, that._viewer, homePlanet);
+        }
 
         var obj = {
             naifCodes: naifCode,
@@ -1084,7 +1084,7 @@ define([
      * @param {Object} solarSystem     : object which contains the stellar system to display
      */
 
-    var ShowSystemsViewModel = function (viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem, configuration) {
+    var ShowSystemsViewModel = function (viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem, configuration, isVOWidgetVisible) {
 
         this._viewer = viewer;
         this._scene = scene;
@@ -1097,6 +1097,7 @@ define([
         this.isShowSystemActive = false;
         this.previousIndex = null;
         this._windowsMove = '-470px';
+        this._isVOWidgetVisible = isVOWidgetVisible;
 
         this._voData = null;
 
@@ -1140,7 +1141,9 @@ define([
              ========================= VO WIDGET CALL ==========================
              =================================================================== */
 
-            that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
+            if (that._isVOWidgetVisible == true) {
+                that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
+            }
 
             /* ================================================================= 
              ===================================================================
@@ -1369,6 +1372,15 @@ define([
 
 
         var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
+        
+      /*  var newTerrainProvider = new CesiumTerrainProvider({
+                        url : 'https://assets.agi.com/stk-terrain/world',
+                        //url : '//localhost:8080/tilesets/MOLA-terrain-tiles/',
+                        ellipsoid : that._ellipsoid,
+                        requestWaterMask : false,
+                        requestVertexNormals : false
+        });*/
+        
         var newGeographicProjection = new GeographicProjection(that._ellipsoid);
         var newGlobe = new Globe(that._ellipsoid);
 

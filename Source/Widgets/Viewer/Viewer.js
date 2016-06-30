@@ -1,57 +1,57 @@
 /*global define*/
 define([
-        '../../Core/BoundingSphere',
-        '../../Core/Cartesian3',
-        '../../Core/defaultValue',
-        '../../Core/defined',
-        '../../Core/defineProperties',
-        '../../Core/destroyObject',
-        '../../Core/DeveloperError',
-        '../../Core/EventHelper',
-        '../../Core/Fullscreen',
-        '../../Core/isArray',
-        '../../Core/Matrix4',
-        '../../Core/Rectangle',
-        '../../Core/ScreenSpaceEventType',
-        '../../DataSources/BoundingSphereState',
-        '../../DataSources/ConstantPositionProperty',
-        '../../DataSources/DataSourceCollection',
-        '../../DataSources/DataSourceDisplay',
-        '../../DataSources/Entity',
-        '../../DataSources/EntityView',
-        '../../DataSources/Property',
-        '../../Scene/ImageryLayer',
-        '../../Scene/SceneMode',
-        '../../ThirdParty/knockout',
-        '../../ThirdParty/when',
-        '../Animation/Animation',
-        '../Animation/AnimationViewModel',
-        '../BaseLayerPicker/BaseLayerPicker',
-        '../BaseLayerPicker/createDefaultImageryProviderViewModels',
-        '../BaseLayerPicker/createDefaultTerrainProviderViewModels',
-        '../CesiumWidget/CesiumWidget',
-        '../ClockViewModel',
-        '../FullscreenButton/FullscreenButton',
-        '../Geocoder/Geocoder',
-        '../getElement',
-        '../HomeButton/HomeButton',
-        '../InfoBox/InfoBox',
-        '../NavigationHelpButton/NavigationHelpButton',
-        '../SceneModePicker/SceneModePicker',
-        '../SelectionIndicator/SelectionIndicator',
-        '../subscribeAndEvaluate',
-        '../Timeline/Timeline',
-        '../VRButton/VRButton',
-        '../LongitudeLatitdude/LngLat', /* *** NEW *** */
-        '../MarkerMove/MarkerMove', /* *** NEW *** */
-        '../ShowSystems/ShowSystems', /* *** NEW *** */
-        '../Tools/Tools', /* *** NEW *** */
-        '../DrawLines/DrawLines', /* *** NEW *** */
-        '../CustomObject/CustomObject', /* *** NEW *** */
-        '../EditDrawing/EditDrawing', /* *** NEW *** */
-        '../ShowGrid/ShowGrid', /* *** NEW *** */
-        '../PointCircleSwitch/PointCircleSwitch' /* *** NEW *** */
-    ], function(
+    '../../Core/BoundingSphere',
+    '../../Core/Cartesian3',
+    '../../Core/defaultValue',
+    '../../Core/defined',
+    '../../Core/defineProperties',
+    '../../Core/destroyObject',
+    '../../Core/DeveloperError',
+    '../../Core/EventHelper',
+    '../../Core/Fullscreen',
+    '../../Core/isArray',
+    '../../Core/Matrix4',
+    '../../Core/Rectangle',
+    '../../Core/ScreenSpaceEventType',
+    '../../DataSources/BoundingSphereState',
+    '../../DataSources/ConstantPositionProperty',
+    '../../DataSources/DataSourceCollection',
+    '../../DataSources/DataSourceDisplay',
+    '../../DataSources/Entity',
+    '../../DataSources/EntityView',
+    '../../DataSources/Property',
+    '../../Scene/ImageryLayer',
+    '../../Scene/SceneMode',
+    '../../ThirdParty/knockout',
+    '../../ThirdParty/when',
+    '../Animation/Animation',
+    '../Animation/AnimationViewModel',
+    '../BaseLayerPicker/BaseLayerPicker',
+    '../BaseLayerPicker/createDefaultImageryProviderViewModels',
+    '../BaseLayerPicker/createDefaultTerrainProviderViewModels',
+    '../CesiumWidget/CesiumWidget',
+    '../ClockViewModel',
+    '../FullscreenButton/FullscreenButton',
+    '../Geocoder/Geocoder',
+    '../getElement',
+    '../HomeButton/HomeButton',
+    '../InfoBox/InfoBox',
+    '../NavigationHelpButton/NavigationHelpButton',
+    '../SceneModePicker/SceneModePicker',
+    '../SelectionIndicator/SelectionIndicator',
+    '../subscribeAndEvaluate',
+    '../Timeline/Timeline',
+    '../VRButton/VRButton',
+    '../LongitudeLatitdude/LngLat', /* *** NEW *** */
+    '../MarkerMove/MarkerMove', /* *** NEW *** */
+    '../ShowSystems/ShowSystems', /* *** NEW *** */
+    '../Tools/Tools', /* *** NEW *** */
+    '../DrawLines/DrawLines', /* *** NEW *** */
+    '../CustomObject/CustomObject', /* *** NEW *** */
+    '../EditDrawing/EditDrawing', /* *** NEW *** */
+    '../ShowGrid/ShowGrid', /* *** NEW *** */
+    '../PointCircleSwitch/PointCircleSwitch' /* *** NEW *** */
+], function (
         BoundingSphere,
         Cartesian3,
         defaultValue,
@@ -219,10 +219,10 @@ define([
         if (defined(homeButton)) {
             homeButton.container.style.visibility = visibility;
         }
-        if(defined(sceneModePicker)) {
+        if (defined(sceneModePicker)) {
             sceneModePicker.container.style.visibility = visibility;
         }
-        if(defined(baseLayerPicker)) {
+        if (defined(baseLayerPicker)) {
             baseLayerPicker.container.style.visibility = visibility;
         }
         if (defined(animation)) {
@@ -360,6 +360,10 @@ define([
 
         container = getElement(container);
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
+        
+        options.showSystems = defaultValue(options.showSystems, false);
+        options.tools = defaultValue(options.tools, false);
+        
 
         var createBaseLayerPicker = (!defined(options.globe) || options.globe !== false) &&
                 (!defined(options.baseLayerPicker) || options.baseLayerPicker !== false);
@@ -391,7 +395,9 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         //>>includeEnd('debug')
 
         var that = this;
-        var configuration = options.configuration; // Informations contained in the configurationFiles folder.
+        
+        var configuration = defaultValue(options.configuration, null); // Informations contained in the configurationFiles folder.
+        
 
         var viewerContainer = document.createElement('div');
         viewerContainer.className = 'cesium-viewer';
@@ -412,23 +418,23 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         // Cesium widget
         var cesiumWidget = new CesiumWidget(cesiumWidgetContainer, {
-            terrainProvider : options.terrainProvider,
-            imageryProvider : createBaseLayerPicker ? false : options.imageryProvider,
-            clock : options.clock,
-            skyBox : options.skyBox,
-            skyAtmosphere : options.skyAtmosphere,
-            sceneMode : options.sceneMode,
-            mapProjection : options.mapProjection,
-            globe : options.globe,
-            orderIndependentTranslucency : options.orderIndependentTranslucency,
-            contextOptions : options.contextOptions,
-            useDefaultRenderLoop : options.useDefaultRenderLoop,
-            targetFrameRate : options.targetFrameRate,
-            showRenderLoopErrors : options.showRenderLoopErrors,
-            creditContainer : defined(options.creditContainer) ? options.creditContainer : bottomContainer,
-            scene3DOnly : scene3DOnly,
-            terrainExaggeration : options.terrainExaggeration,
-            configuration : options.configuration
+            terrainProvider: options.terrainProvider,
+            imageryProvider: createBaseLayerPicker ? false : options.imageryProvider,
+            clock: options.clock,
+            skyBox: options.skyBox,
+            skyAtmosphere: options.skyAtmosphere,
+            sceneMode: options.sceneMode,
+            mapProjection: options.mapProjection,
+            globe: options.globe,
+            orderIndependentTranslucency: options.orderIndependentTranslucency,
+            contextOptions: options.contextOptions,
+            useDefaultRenderLoop: options.useDefaultRenderLoop,
+            targetFrameRate: options.targetFrameRate,
+            showRenderLoopErrors: options.showRenderLoopErrors,
+            creditContainer: defined(options.creditContainer) ? options.creditContainer : bottomContainer,
+            scene3DOnly: scene3DOnly,
+            terrainExaggeration: options.terrainExaggeration,
+            configuration: options.configuration
         });
 
         var dataSourceCollection = options.dataSources;
@@ -560,46 +566,45 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         /*  var homePlanetButton;
          homePlanetButton = new HomePlanetButton(toolbar, cesiumWidget.scene);*/
 
-        // longitude and latitude 
-     /*   var lngLat;
-        lngLat = new LngLat(modificationsToolbarWrapperPanel, container, cesiumWidget.scene);*/
-
-        // Markers move
-      /*  var markerMove;
-        markerMove = new MarkerMove(modificationsToolbarWrapperPanel, container, cesiumWidget.scene, this);*/
-
         // show planets
+
         var showSystems;
-        showSystems = new ShowSystems(viewerContainer, planetsToolbar, footerToolbar, cesiumWidget.scene, this, configuration);
+        
+         if (!defined(options.showSystems) || options.showSystems !== false) {
+                 showSystems = new ShowSystems(viewerContainer, planetsToolbar, footerToolbar, cesiumWidget.scene, this, configuration, options.VOData);
+             }
 
         // build custom objects
+        
         var customObject;
         /* customObject = new CustomObject(viewerContainer, customToolbar, this);*/
 
         // tools for modifications
         var tools;
-        tools = new Tools(modificationsToolbar, modificationsToolbarWrapper, this);
 
-        var drawLines;
-        drawLines = new DrawLines(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
+        if (!defined(options.tools) || options.tools !== false) {
+            tools = new Tools(modificationsToolbar, modificationsToolbarWrapper, this);
 
-        var editDrawing;
-        editDrawing = new EditDrawing(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, viewerContainer, this);
+            var drawLines;
+            drawLines = new DrawLines(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
 
-        var showGrid;
-        showGrid = new ShowGrid(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
+            var editDrawing;
+            editDrawing = new EditDrawing(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, viewerContainer, this);
 
-        var pointCircleSwitch;
-        pointCircleSwitch = new PointCircleSwitch(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, viewerContainer, this);
+            var showGrid;
+            showGrid = new ShowGrid(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, this);
 
-        // longitude and latitude 
-        var lngLat;
-        lngLat = new LngLat(modificationsToolbarWrapperPanel, container, cesiumWidget.scene);
-        
-        // Markers move
-        var markerMove;
-        markerMove = new MarkerMove(modificationsToolbarWrapperPanel, container, cesiumWidget.scene, this);
+            var pointCircleSwitch;
+            pointCircleSwitch = new PointCircleSwitch(modificationsToolbarWrapper, modificationsToolbarWrapperPanel, viewerContainer, this);
 
+            // longitude and latitude 
+            var lngLat;
+            lngLat = new LngLat(modificationsToolbarWrapperPanel, container, cesiumWidget.scene);
+
+            // Markers move
+            var markerMove;
+            markerMove = new MarkerMove(modificationsToolbarWrapperPanel, container, cesiumWidget.scene, this);
+        }
 
         /* *******************************************************************************************************************************
          * *******************************************************************************************************************************
@@ -711,7 +716,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             viewerContainer.appendChild(vrContainer);
             vrButton = new VRButton(vrContainer, cesiumWidget.scene, options.fullScreenElement);
 
-            vrSubscription = subscribeAndEvaluate(vrButton.viewModel, 'isVREnabled', function(isVREnabled) {
+            vrSubscription = subscribeAndEvaluate(vrButton.viewModel, 'isVREnabled', function (isVREnabled) {
                 vrContainer.style.display = isVREnabled ? 'block' : 'none';
                 if (defined(fullscreenButton)) {
                     vrContainer.style.right = fullscreenContainer.clientWidth + 'px';
@@ -722,7 +727,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
                 }
             });
 
-            vrModeSubscription = subscribeAndEvaluate(vrButton.viewModel, 'isVRMode', function(isVRMode) {
+            vrModeSubscription = subscribeAndEvaluate(vrButton.viewModel, 'isVRMode', function (isVRMode) {
                 enableVRUI(that, isVRMode);
             });
         }
@@ -746,16 +751,16 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         this._dataSourceDisplay = dataSourceDisplay;
         this._clockViewModel = clockViewModel;
         this._toolbar = toolbar;
-        this._homeButton = homeButton;
-        this._lngLat = lngLat;           /* *** NEW *** */
-        this._markerMove = markerMove;   /* *** NEW *** */
-        this._showSystems = showSystems; /* *** NEW *** */
-        this._tools = tools;             /* *** NEW *** */
-        this._drawLines = drawLines;     /* *** NEW *** */
-        this._customObject = customObject;     /* *** NEW *** */
-        this._editDrawing = editDrawing;  /* *** NEW *** */
-        this._showGrid = showGrid;  /* *** NEW *** */
-        this._pointCircleSwitch = pointCircleSwitch; /* *** NEW *** */
+        this._homeButton =  defaultValue(homeButton, null);
+        this._lngLat =  defaultValue(lngLat, null);           /* *** NEW *** */
+        this._markerMove =  defaultValue(markerMove,null);   /* *** NEW *** */
+        this._showSystems = defaultValue(showSystems, null); /* *** NEW *** */
+        this._tools =  defaultValue(tools, null);             /* *** NEW *** */
+        this._drawLines =  defaultValue(drawLines, null);     /* *** NEW *** */
+        this._customObject =  defaultValue(customObject, null);     /* *** NEW *** */
+        this._editDrawing =  defaultValue(editDrawing, null);  /* *** NEW *** */
+        this._showGrid =  defaultValue(showGrid, null);  /* *** NEW *** */
+        this._pointCircleSwitch =  defaultValue(pointCircleSwitch, null); /* *** NEW *** */
         this._sceneModePicker = sceneModePicker;
         this._baseLayerPicker = baseLayerPicker;
         this._navigationHelpButton = navigationHelpButton;
@@ -1021,12 +1026,11 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
          * @type {VRButton}
          * @readonly
          */
-        vrButton : {
-            get : function() {
+        vrButton: {
+            get: function () {
                 return this._vrButton;
             }
         },
-
         /**
          * Gets the display used for {@link DataSource} visualization.
          * @memberof Viewer.prototype
@@ -1787,7 +1791,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
             //If the zoom target is a rectangular imagery in an ImageLayer
             if (zoomTarget instanceof ImageryLayer) {
-                zoomTarget.getViewableRectangle().then(function(rectangle) {
+                zoomTarget.getViewableRectangle().then(function (rectangle) {
                     //Only perform the zoom if it wasn't cancelled before the promise was resolved
                     if (that._zoomPromise === zoomPromise) {
                         that._zoomTarget = rectangle;
@@ -1864,13 +1868,13 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         //If zoomTarget was an ImageryLayer
         if (entities instanceof Rectangle) {
             var options = {
-                destination : entities,
-                duration : zoomOptions.duration,
-                maximumHeight : zoomOptions.maximumHeight,
-                complete : function() {
+                destination: entities,
+                duration: zoomOptions.duration,
+                maximumHeight: zoomOptions.maximumHeight,
+                complete: function () {
                     zoomPromise.resolve(true);
                 },
-                cancel : function() {
+                cancel: function () {
                     zoomPromise.resolve(false);
                 }
             };
@@ -1916,15 +1920,15 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         } else {
             clearZoom(viewer);
             camera.flyToBoundingSphere(boundingSphere, {
-                duration : zoomOptions.duration,
-                maximumHeight : zoomOptions.maximumHeight,
-                complete : function() {
+                duration: zoomOptions.duration,
+                maximumHeight: zoomOptions.maximumHeight,
+                complete: function () {
                     zoomPromise.resolve(true);
                 },
                 cancel: function () {
                     zoomPromise.resolve(false);
                 },
-                offset : zoomOptions.offset
+                offset: zoomOptions.offset
             });
         }
     }

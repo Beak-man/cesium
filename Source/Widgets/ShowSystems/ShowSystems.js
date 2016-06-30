@@ -15,7 +15,7 @@ define([
         ShowSystemsViewModel) {
     "use strict";
 
-    function createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, that) {
+    function createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, that, isWidgetVisible) {
         
         
         var solarSystem =  configuration.planetarySystem.system;
@@ -56,7 +56,6 @@ define([
                     window[name + 'SystemButton'].style.cssText = 'font-family : Arial; position:relative; top:-2px; left:-3px;';
                     window[name + 'SystemButton'].setAttribute('data-bind', 'attr: { title: tooltip}, click: showSystem.bind($data,"' + count + '")');
                     window[name + 'Wrapper'].appendChild(window[name + 'SystemButton']);
-
                 }
 
                 // On parcours le systeme planetaire (j=0 c'est la planète. J>0 ce sont les satellites
@@ -158,41 +157,18 @@ define([
         btnHideVectorialData.setAttribute('data-bind', 'click: hideDataCommand');
         btnContainer.appendChild(btnHideVectorialData);
 
-        var viewModel = new ShowSystemsViewModel(viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem, configuration);
+        var viewModel = new ShowSystemsViewModel(viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem, configuration, isWidgetVisible);
         that._viewModel = viewModel;
-        
-        console.log(viewModel._command);
 
         knockout.applyBindings(viewModel, PlanetsToolbar);
     }
-
-
-   /* function getDataSolarSystem(xhr, method, url, async, viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, that) {
-
-        xhr.open(method, url, async);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send();
-        xhr.onreadystatechange = function () {
-
-            if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
-
-                var data = xhr.responseText;
-                var jsonData = JSON.parse(data);
-                var solarSystem = jsonData.solarSystem;
-                var systemsDimensions = jsonData.systemsDimensions;
-
-                createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, solarSystem, systemsDimensions, that);
-            }
-        }
-    }*/
-    
-    
+ 
     // ================================== MAIN FUNCTION =========================================================
 
-    var ShowSystems = function (viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration) {
+    var ShowSystems = function (viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, isWidgetVisible) {
         
         var that = this;
-        createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, that);
+        createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, that, isWidgetVisible);
         
     }
 

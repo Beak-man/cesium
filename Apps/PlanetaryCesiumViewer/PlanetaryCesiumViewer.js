@@ -1,6 +1,7 @@
 /*global define*/
 define([//  Definition des dependances
     'Cesium/Core/Cartesian3',
+    'Cesium/Scene/createOpenStreetMapImageryProvider',
     'Cesium/Core/defined',
     'Cesium/Core/formatError',
     'Cesium/Core/getFilenameFromUri',
@@ -11,6 +12,7 @@ define([//  Definition des dependances
     'Cesium/Core/defaultValue',
     'Cesium/Core/Ellipsoid',
     'Cesium/Core/EllipsoidTerrainProvider',
+    'Cesium/Core/freezeObject',
     'Cesium/Core/loadJson',
     'Cesium/Core/Math',
     'Cesium/Core/Rectangle',
@@ -42,6 +44,7 @@ define([//  Definition des dependances
     'Cesium/ThirdParty/when',
 ], function (
         Cartesian3,
+        createOpenStreetMapImageryProvider,
         defined,
         formatError,
         getFilenameFromUri,
@@ -52,6 +55,7 @@ define([//  Definition des dependances
         defaultValue,
         Ellipsoid,
         EllipsoidTerrainProvider,
+        freezeObject,
         loadJson,
         CesiumMath,
         Rectangle,
@@ -90,6 +94,11 @@ define([//  Definition des dependances
      * 'theme'  : 'lighter',    // Use the dark-text-on-light-background theme.
      * 'scene3DOnly' : false    // Enable 3D only mode.
      */
+
+    // URL of the configuration file
+
+    var urlConfig = '../../Source/Widgets/ConfigurationFiles/configurationFile.json';
+
 
     // Here, we use the request to create the "endUserOptions" object.
 
@@ -135,17 +144,8 @@ define([//  Definition des dependances
     var mapProjectionParam;      /* *** NEW *** */
     var terrainProviderParam;    /* *** NEW *** */
     var ellipsoidImageryParam;   /* *** NEW *** */
-    var urlMap;
 
     if (typeof endUserOptions.ellipsoidType !== 'undefined') {
-
-        /*  if (typeof endUserOptions.ellipsoidSize !== 'undefined'){ 
-         Ellipsoid.modify(Ellipsoid, endUserOptions);
-         }; */
-
-        /*   if (typeof endUserOptions.imageryProvider !== 'undefined'){ 
-         urlMap = endUserOptions.imageryProvider.toString();
-         }; */
 
         Ellipsoid.modify(Ellipsoid, endUserOptions);
 
@@ -161,22 +161,14 @@ define([//  Definition des dependances
         Ellipsoid.used = "WGS84";
 
         globeParam = new Globe(Ellipsoid.WGS84);
-       // mapProjectionParam = new GeographicProjection(Ellipsoid.WGS84);
-          mapProjectionParam =  new StereographicProjection(Ellipsoid.WGS84);
+        mapProjectionParam = new GeographicProjection(Ellipsoid.WGS84);
         terrainProviderParam = new EllipsoidTerrainProvider({ellipsoid: Ellipsoid.WGS84});
         ellipsoidImageryParam = Ellipsoid.WGS84;
     }
-    ;
 
     var imageryProvider;
-    var paramObject = {};
 
-    /* if (endUserOptions.tmsImageryUrl) {
-     imageryProvider = new createTileMapServiceImageryProvider({
-     url: endUserOptions.tmsImageryUrl
-     });
-     
-     } else if (endUserOptions.imageryProviderParams && endUserOptions.onlineResUrl){
+    /* 
      
      // request parameters to get a Map : 
      
@@ -195,50 +187,36 @@ define([//  Definition des dependances
      var tabParams        = urlParams.split(';');
      var propretiesObject = ['SERVICE', 'VERSION', 'SRS', 'STYLES', 'REQUEST', 'FORMAT', 'LAYERS', 'BBOX', 'WIDTH', 'HEIGHT'];
      var urlParam         = "";
-     
-     for (var i = 0; i < tabParams.length; i++) {
-     if (i < tabParams.length - 1) {
-     paramObject[propretiesObject[i]] = tabParams[i];
-     urlParam += propretiesObject[i] + "=" + tabParams[i] + '&';
-     } else if (i == tabParams.length-1) {
-     urlParam += propretiesObject[i]+"="+tabParams[i]
-     };
-     };
-     var urlMap = onlineResUrl.replace('--', '=') + '&' +  urlParam;
      */
-
-    /*   imageryProvider = new WebMapServiceImageryProvider({
-     // url     : 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map&SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000',
-     url       : urlMap,
-     // layers    : paramObject.LAYERS,
-     layers    : 'THEMIS',
-     credit    : 'USGS @ planetarymaps.usgs.gov',
-     ellipsoid : ellipsoidImageryParam
-     });
-     // };*/
 
     var loadingIndicator = document.getElementById('loadingIndicator');
 
     var viewer;
 
+    var viewerOptions = {
+        mapProjection: mapProjectionParam, // The map projection to use in 2D and Columbus View modes (class : GeographicProjection).		
+        globe: globeParam, //  The globe to use in the scene. (class : Globe)
+        baseLayerPicker: false,
+        imageryProvider: imageryProvider, // Fournit l'image a afficher sur le globe.
+        terrainProvider: terrainProviderParam,
+        scene3DOnly: endUserOptions.scene3DOnly, // show 3D scene directly.
+        skyAtmosphere: false, // atm visualisation.
+        skyBox: new SkyBox({show: false}), // stars visualisation (calcul�s).
+        selectionIndicator: false,
+        timeline: false, // for files which contains the temporal dimension
+        animation: false, // for animation which displayed with the time 
+        navigationInstructionsInitiallyVisible: false,
+        showSystems: true,
+        tools: true,
+        VOData: false
+    }
+
     function viewerCreation(configuration) {
 
         try {
-            viewer = new Viewer('cesiumContainer', {
-                mapProjection: mapProjectionParam, // The map projection to use in 2D and Columbus View modes (class : GeographicProjection).		
-                globe: globeParam, //  The globe to use in the scene. (class : Globe)
-                baseLayerPicker: false,
-                imageryProvider: imageryProvider, // Fournit l'image a afficher sur le globe.
-                terrainProvider: terrainProviderParam,
-                scene3DOnly: endUserOptions.scene3DOnly, // show 3D scene directly.
-                skyAtmosphere: false, // atm visualisation.
-                skyBox: new SkyBox({show: false}), // stars visualisation (calcul�s).
-                selectionIndicator: false,
-                timeline: false, // for files which contains the temporal dimension
-                animation: false, // for animation which displayed with the time 
-                navigationInstructionsInitiallyVisible: false,
-                configuration: configuration // contains configuration (see ./sources/widget/ConfigurationFiles/ )
-            });
+            viewerOptions.configuration = configuration // contains configuration (see ./sources/widget/ConfigurationFiles/ )
+            viewer = new Viewer('cesiumContainer', viewerOptions);
+
         } catch (exception) {
             loadingIndicator.style.display = 'none';
             var message = formatError(exception);
@@ -250,13 +228,7 @@ define([//  Definition des dependances
         }
 
         var xhr = getXMLHttpRequest();
-        // var url = 'Cesium/Widgets/ShowSystems/SolarSystemConfig.json';
         var url = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
-
-
-
-
-
 
         viewer.extend(viewerDragDropMixin);
         if (endUserOptions.inspector) {
@@ -374,62 +346,45 @@ define([//  Definition des dependances
 
     // Solar system configuration : 
 
-    /*  var xhr = getXMLHttpRequest();
-     var url = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
-     
-     xhr.open('GET', url, true);
-     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-     xhr.send();
-     xhr.onreadystatechange = function () {
-     
-     if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
-     
-     var data = xhr.responseText;
-     var jsonData = JSON.parse(data);
-     // var solarSystem = jsonData.solarSystem;
-     // var systemsDimensions = jsonData.systemsDimensions;
-     
-     var configuration = {};
-     
-     configuration = {
-     planetarySystem : {
-     system: jsonData.solarSystem,
-     dimension: jsonData.systemsDimensions
-     }
-     };
-     
-     viewerCreation(configuration);
-     }
-     };*/
+    if (viewerOptions.showSystems == true) {
 
+        var xhr = getXMLHttpRequest();
 
-    var xhr = getXMLHttpRequest();
-    var url = '../../Source/Widgets/ConfigurationFiles/configurationFile.json';
+        // var urlConfig = '../../Source/Widgets/ConfigurationFiles/configurationFile.json';
 
-    xhr.open('GET', url, true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.send();
-    xhr.onreadystatechange = function () {
+        xhr.open('GET', urlConfig, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send();
+        xhr.onreadystatechange = function () {
 
-        if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
+            if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
 
-            var data = xhr.responseText;
-            var jsonData = JSON.parse(data);
+                var data = xhr.responseText;
+                var jsonData = JSON.parse(data);
 
-            var configuration = {};
+                var configuration = {};
 
-            configuration = {
-                homePlanet: jsonData.homePlanet,
-                servers: jsonData.servers,
-                planetarySystem: {
-                    system: jsonData.planetarySystem.solarSystem,
-                    dimension: jsonData.planetarySystem.systemsDimensions
-                }
-            };
+                configuration = {
+                    homePlanet: jsonData.homePlanet,
+                    servers: jsonData.servers,
+                    planetarySystem: {
+                        system: jsonData.planetarySystem.solarSystem,
+                        dimension: jsonData.planetarySystem.systemsDimensions
+                    }
+                };
 
-            viewerCreation(configuration);
-        }
-    };
+                viewerCreation(configuration);
+            }
+        };
+    } else if (viewerOptions.showSystems == false || viewerOptions.showSystems == 'undefined') {
 
+        var imageryProvider = new createOpenStreetMapImageryProvider({
+            url: 'https://a.tile.openstreetmap.org/'
+        });
 
+        viewerOptions.imageryProvider = imageryProvider;
+
+        var configuration = null;
+        viewerCreation(configuration);
+    }
 });

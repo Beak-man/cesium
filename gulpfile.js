@@ -135,7 +135,7 @@ gulp.task('clean', function(done) {
 });
 
 gulp.task('requirejs', function(done) {
-    var config = JSON.parse(new Buffer(process.argv[3].substring(2), 'base64').toString('utf8'));
+    var config = JSON.parse(new Buffer(process.argv[2].substring(2), 'base64').toString('utf8'));
     requirejs.optimize(config, function() {
         done();
     }, done);
