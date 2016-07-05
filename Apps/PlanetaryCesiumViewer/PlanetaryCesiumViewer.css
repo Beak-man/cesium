@@ -328,10 +328,22 @@ body {
    ==================================== icons toolbar  =================================== 
    ======================================================================================= */
 
+#logoBarre{
+   position : absolute;
+    top : 93.3%;
+    width: 100%;
+    z-index: 10;
+     text-align: center;
+}
+
 #logos{ 
-    position : relative;
-    top : 96.8%;
-    left : 84.5%;
+    
+  /*  position : relative;
+   /* top : 96.8%;
+  /*  left : 84.5%;
+      top : 93.0%;*/
     display: inline-block;
     background-color: #ffffff;
+    border-radius: 9px 9px 9px 9px;
+    border: #ffffff thick solid;
 }
