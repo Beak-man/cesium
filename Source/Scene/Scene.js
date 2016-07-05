@@ -218,6 +218,7 @@ define([
             creditContainer.style.color = '#ffffff';
             creditContainer.style['font-size'] = '10px';
             creditContainer.style['padding-right'] = '5px';
+             creditContainer.innerHTML= 'test';
             canvas.parentNode.appendChild(creditContainer);
         }
 
