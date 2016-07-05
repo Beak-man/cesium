@@ -135,7 +135,7 @@ gulp.task('clean', function(done) {
 });
 
 gulp.task('requirejs', function(done) {
-    var config = JSON.parse(new Buffer(process.argv[2].substring(2), 'base64').toString('utf8'));
+    var config = JSON.parse(new Buffer(process.argv[3].substring(2), 'base64').toString('utf8'));
     requirejs.optimize(config, function() {
         done();
     }, done);
@@ -1229,7 +1229,7 @@ function buildPlanetaryCesiumViewer() {
     mkdirp.sync(cesiumViewerOutputDirectory);
 
     var promise = Promise.join(
-        requirejsOptimize('CesiumViewer', {
+        requirejsOptimize('PlanetaryCesiumViewer', {
             wrap : true,
             useStrict : true,
             optimizeCss : 'standard',
@@ -1241,7 +1241,7 @@ function buildPlanetaryCesiumViewer() {
             name : 'PlanetaryCesiumViewerStartup',
             out : cesiumViewerStartup
         }),
-        requirejsOptimize('CesiumViewer CSS', {
+        requirejsOptimize('PlanetaryCesiumViewer CSS', {
             wrap : true,
             useStrict : true,
             optimizeCss : 'standard',
@@ -1283,7 +1283,7 @@ function buildPlanetaryCesiumViewer() {
                       '!Build/Cesium/Widgets/**/*.css'],
                 {
                     base : 'Build/Cesium',
-                    nodir : true
+                    nodir : false
                 }),
 
             gulp.src(['Build/Cesium/Widgets/InfoBox/InfoBoxDescription.css'], {
