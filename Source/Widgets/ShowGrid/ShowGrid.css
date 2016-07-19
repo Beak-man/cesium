@@ -1,0 +1,24 @@
+.cesium-showGrid-button-hidden{
+    visibility : hidden;
+    opacity : 0;
+    z-index : 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    transition-property: opacity;
+    transition:  0.1s;
+}
+
+.cesium-showGrid-button-visible{
+    visibility : visible;
+    z-index : 1;
+    opacity : 1;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    transition-property: opacity;
+    transition:  1.0s;
+    transition-delay: 0.0s;
+    
+    transition-property: visibility;
+    transition:  0.2s;
+    transition-delay: 0.4s;
+}

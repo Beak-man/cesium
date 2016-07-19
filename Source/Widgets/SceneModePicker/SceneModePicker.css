@@ -1,6 +1,8 @@
 span.cesium-sceneModePicker-wrapper {
     display: inline-block;
     position: relative;
+	top : 0px;
+	left : 0px;
     margin: 0 3px;
 }
 

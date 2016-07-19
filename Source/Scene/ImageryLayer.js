@@ -267,7 +267,6 @@ define([
         }
     });
 
-
     /**
      * This value is used as the default brightness for the imagery layer if one is not provided during construction
      * or by the imagery provider. This value does not modify the brightness of the imagery.
@@ -419,6 +418,7 @@ define([
         // the geometry tile.  The ImageryProvider and ImageryLayer both have the
         // opportunity to constrain the rectangle.  The imagery TilingScheme's rectangle
         // always fully contains the ImageryProvider's rectangle.
+        
         var imageryBounds = Rectangle.intersection(imageryProvider.rectangle, this._rectangle, imageryBoundsScratch);
         var rectangle = Rectangle.intersection(tile.rectangle, imageryBounds, tileImageryBoundsScratch);
 

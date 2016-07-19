@@ -210,6 +210,13 @@ define([
         this.appearance = options.appearance;
         this._appearance = undefined;
         this._material = undefined;
+		
+		if (options.primitiveType) {
+			this.primitiveType = options.primitiveType;
+		}
+		else {
+			this.primitiveType = 'undefined';
+		};
 
         /**
          * The 4x4 transformation matrix that transforms the primitive (all geometry instances) from model to world coordinates.

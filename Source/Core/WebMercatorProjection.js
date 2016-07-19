@@ -32,6 +32,9 @@ define([
      * @see GeographicProjection
      */
     function WebMercatorProjection(ellipsoid) {
+        
+      //  console.log(ellipsoid);
+        
         this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84);
         this._semimajorAxis = this._ellipsoid.maximumRadius;
         this._oneOverSemimajorAxis = 1.0 / this._semimajorAxis;
@@ -49,7 +52,11 @@ define([
         ellipsoid : {
             get : function() {
                 return this._ellipsoid;
-            }
+            },
+            set : function(ellipsoid) {
+                 this._ellipsoid = ellipsoid;
+            },
+            
         }
     });
 
@@ -73,13 +80,20 @@ define([
      */
     WebMercatorProjection.geodeticLatitudeToMercatorAngle = function(latitude) {
         // Clamp the latitude coordinate to the valid Mercator bounds.
+        
+        // Equation pour la compsante en Y
+        
         if (latitude > WebMercatorProjection.MaximumLatitude) {
+            
             latitude = WebMercatorProjection.MaximumLatitude;
+            
         } else if (latitude < -WebMercatorProjection.MaximumLatitude) {
+            
             latitude = -WebMercatorProjection.MaximumLatitude;
         }
         var sinLatitude = Math.sin(latitude);
         return 0.5 * Math.log((1.0 + sinLatitude) / (1.0 - sinLatitude));
+
     };
 
     /**
@@ -110,6 +124,9 @@ define([
      */
     WebMercatorProjection.prototype.project = function(cartographic, result) {
         var semimajorAxis = this._semimajorAxis;
+        
+        // Calcul des coordonnées x, y z
+        
         var x = cartographic.longitude * semimajorAxis;
         var y = WebMercatorProjection.geodeticLatitudeToMercatorAngle(cartographic.latitude) * semimajorAxis;
         var z = cartographic.height;

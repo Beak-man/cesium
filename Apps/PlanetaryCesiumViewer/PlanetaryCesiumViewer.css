@@ -1,0 +1,349 @@
+@import url(../../Source/Widgets/widgets.css);
+@import url(../../Source/Widgets/lighter.css);
+@import url(../Sandcastle/templates/bucket.css);
+@import url(../../Source/Widgets/ShowSystems/ShowSystems.css);
+@import url(../../Source/Widgets/InfoBox/InfoBoxDescription.css);
+@import url(../../Source/Widgets/Tools/Tools.css);
+@import url(../../Source/Widgets/DrawLines/DrawLines.css);
+@import url(../../Source/Widgets/DrawLines/SubMenu/SubMenu.css);
+@import url(../../Source/Widgets/CustomObject/CustomObject.css);
+@import url(../../Source/Widgets/EditDrawing/EditDrawing.css);
+@import url(../../Source/Widgets/ShowGrid/ShowGrid.css);
+@import url(../../Source/Widgets/VOData/VOData.css);
+@import url(../../Source/Widgets/EditDrawing/SubMenu/ColorPicker/ColorPicker.css);
+@import url(../../Source/Widgets/FlagCounter/FlagCounter.css);
+
+/*@import url(../Sandcastle/templates/bucket.css);
+@import url(./Cesium/Widgets/ShowSystems/ShowSystems.css);
+@import url(./Cesium/Widgets/InfoBox/InfoBoxDescription.css);
+@import url(./Cesium/Widgets/Tools/Tools.css);
+@import url(./Cesium/Widgets/DrawLines/DrawLines.css);
+@import url(./Cesium/Widgets/DrawLines/SubMenu/SubMenu.css);
+@import url(./Cesium/Widgets/CustomObject/CustomObject.css);
+@import url(./Cesium/Widgets/EditDrawing/EditDrawing.css);
+@import url(./Cesium/Widgets/ShowGrid/ShowGrid.css);*/
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    background: #000;
+}
+
+.fullWindow {
+    position: absolute;
+    z-index : 0;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.loadingIndicator {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -33px;
+    margin-left: -33px;
+    width: 66px;
+    height: 66px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(Images/ajax-loader.gif);
+}
+
+#toolbar {
+    background: rgba(42, 42, 42, 0.8);
+    padding: 4px;
+    border-radius: 4px;
+    color: white;
+    font-family: sans-serif;
+    /*font-size: 70%;
+    position: absolute;
+    left: 100px;*/
+}
+#toolbar input {
+    vertical-align: middle;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+#toolbar table tr {
+    transform: translateY(0);
+    transition: transform 0.4s ease-out;
+}
+#toolbar table tr.up {
+    transform: translateY(33px);
+    transition: none;
+}
+#toolbar table tr.down {
+    transform: translateY(-33px);
+    transition: none;
+}
+
+#vtoolbar {
+    background: rgba(42, 42, 42, 0.8);
+    padding: 4px;
+    border-radius: 4px;
+    color: white;
+    font-family: sans-serif;
+    /*font-size: 70%;*/
+    position: absolute;
+    bottom: 110px;
+    right: 100px;
+}
+#vtoolbar input {
+    vertical-align: middle;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+#vtoolbar table tr {
+    transform: translateY(0);
+    transition: transform 0.4s ease-out;
+}
+#vtoolbar table tr.up {
+    transform: translateY(33px);
+    transition: none;
+}
+#vtoolbar table tr.down {
+    transform: translateY(-33px);
+    transition: none;
+}
+
+#coordinates {
+    background: rgba(42, 42, 42, 0.8);
+    padding: 4px;
+    border-radius: 4px;
+    color: white;
+    font-family: sans-serif;
+    /*font-size: 70%;*/
+    position : absolute;
+    top : 50px;
+    right : 70px;   
+}
+
+
+#coordinates.table {
+    border: 1px solid white;
+    opacity: 1;
+    transition: opacity 1.0s linear;
+}
+
+.cesium-rlayer-menu-button {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+}
+
+.cesium-rlayer-menu {
+    visibility: hidden;
+    position: absolute;
+    top: 40px;
+    left: 10px;
+    width: 450px;
+    max-height: 80%;
+    overflow-y: scroll;
+    border-radius: 10px;
+    -webkit-transform: scale(0.01);
+    -moz-transform: scale(0.01);
+    transform: scale(0.01);
+    -webkit-transform-origin: 234px -10px;
+    -moz-transform-origin: 234px -10px;
+    transform-origin: 234px -10px;
+    -webkit-transition: visibility 0s 0.25s, -webkit-transform 0.25s ease-in;
+    -moz-transition: visibility 0s 0.25s, -moz-transform 0.25s ease-in;
+    transition: visibility 0s 0.25s, transform 0.25s ease-in;
+}
+
+.cesium-rlayer-menu-visible {
+    visibility: visible;
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    transform: scale(1);
+    -webkit-transition: -webkit-transform 0.25s ease-out;
+    -moz-transition: -moz-transform 0.25s ease-out;
+    transition: transform 0.25s ease-out;
+}
+
+/* ======================================================================================= 
+   ================================= Main planet toolbar ================================= 
+   ======================================================================================= */
+
+.cesium-viewer-mainPlanetsToolbar{
+    vertical-align:top;
+    display: block;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: 30px;
+}
+
+/* ======================================================================================= 
+   =============================== Planet toolbar buttons ================================ 
+   ======================================================================================= */
+.cesium-viewer-planetsToolbar {
+    vertical-align:top;
+    display: inline-block;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    height: 30px;
+}
+
+.cesium-button-planet {
+    display: inline-block;
+    position: relative;
+    background: #303336; 
+    border: 1px solid #444;
+    color: #edffff; /* For text buttons */
+    /* fill: #edffff; /* For SVG buttons */
+    border-radius: 4px;
+    padding: 5px 6px;
+    margin: 2px 3px;
+    font-size : 0.9em;
+    vertical-align: middle;
+    cursor: pointer;
+    overflow: hidden;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-align:center;
+}
+
+.cesium-button-planet:focus {
+    color: #fff; /* For text buttons */
+    /*  fill: #fff; /* For SVG buttons */
+    border-color: #ea4;
+    outline: none;
+    background: #48b;
+}
+
+.cesium-button-planet:hover {
+    color: #fff; /* For text buttons */
+    fill: #fff; /* For SVG buttons */
+    background: #48b;
+    border-color: #aef;
+    box-shadow: 0 0 8px #fff;
+}
+
+.cesium-button-planet:active {
+    color: #000; /* For text buttons */
+    /*  fill: #000; /* For SVG buttons */
+    background: #adf;
+    border-color: #fff;
+    box-shadow: 0 0 8px #fff;
+}
+
+.cesium-button-planet option {
+    background-color: #000;
+    color: #eee;
+}
+
+.cesium-button-planet option:disabled {
+    color: #777;
+}
+
+.cesium-button-planet:disabled,
+.cesium-button-planet-disabled,
+.cesium-button-planet-disabled:focus,
+.cesium-button-planet-disabled:hover,
+.cesium-button-planet-disabled:active {
+    background: #303336;
+    border-color: #444;
+    color: #646464; /* For text buttons */
+    /* fill: #646464; /* For SVG buttons */
+    box-shadow: none;
+    cursor: default;
+}
+
+.cesium-planetsToolbar-button {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 75px;
+    height: 23px;
+    border-radius: 14%;
+    padding: 0;
+    vertical-align: middle;
+    z-index: 0; /* Workaround for rounded raster image corners in Chrome */
+    display: inline-block; 
+}
+
+/* ====================================================================================== 
+  ================================= custom toolbar  ===================================== 
+  ======================================================================================= */
+
+.cesium-viewer-customToolbar {
+    vertical-align:top;
+    display: inline-block;
+    position: relative;
+    top: 0px;
+    left: 10px;
+    height: 30px;
+}
+
+/* ====================================================================================== 
+  =============================== footer toolbar buttons ================================ 
+  ======================================================================================= */
+
+.cesium-viewer-footerToolbar {
+    vertical-align : bottom;
+    display        : block;
+    position       : absolute;
+    bottom         : 60px;
+    left           : 10px;
+    /*height: 30px;
+        width  : 30px;
+        border : #ffffff thin solid;*/
+}
+
+/* ======================================================================================= 
+   ============================ modifications toolbar buttons ============================ 
+   ======================================================================================= */
+
+.cesium-viewer-modificationsToolbar {
+    display  : block;
+    position : absolute;
+    top   : 5px;
+    left    : 800px;
+    height   : 30px;
+    /*border : #ffffff thin solid;*/
+}
+
+/* ======================================================================================= 
+   ==================================== icons toolbar  =================================== 
+   ======================================================================================= */
+
+#logoBarre{
+   position : absolute;
+    top : 93.3%;
+    width: 100%;
+    z-index: 10;
+     text-align: center;
+}
+
+#logos{ 
+    
+  /*  position : relative;
+   /* top : 96.8%;
+  /*  left : 84.5%;
+      top : 93.0%;*/
+    display: inline-block;
+    background-color: #ffffff;
+    border-radius: 9px 9px 9px 9px;
+    border: #ffffff thick solid;
+}

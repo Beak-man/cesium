@@ -854,7 +854,7 @@ define([
             throw new DeveloperError('latitude is required');
         }
         //>>includeEnd('debug');
-
+        
         longitude = CesiumMath.toRadians(longitude);
         latitude = CesiumMath.toRadians(latitude);
         return Cartesian3.fromRadians(longitude, latitude, height, ellipsoid, result);

@@ -1,19 +1,20 @@
 /*global define*/
 define([
-        '../Core/combine',
-        '../Core/defaultValue',
-        '../Core/defined',
-        '../Core/defineProperties',
-        '../Core/DeveloperError',
-        '../Core/freezeObject',
-        '../Core/GeographicTilingScheme',
-        '../Core/objectToQuery',
-        '../Core/queryToObject',
-        '../Core/WebMercatorTilingScheme',
-        '../ThirdParty/Uri',
-        './GetFeatureInfoFormat',
-        './UrlTemplateImageryProvider'
-    ], function(
+    '../Core/combine',
+    '../Core/defaultValue',
+    '../Core/defined',
+    '../Core/defineProperties',
+    '../Core/DeveloperError',
+    '../Core/freezeObject',
+    '../Core/GeographicTilingScheme',
+    '../Core/objectToQuery',
+    '../Core/queryToObject',
+    '../Core/StereographicTilingScheme',
+    '../Core/WebMercatorTilingScheme',
+    '../ThirdParty/Uri',
+    './GetFeatureInfoFormat',
+    './UrlTemplateImageryProvider'
+], function (
         combine,
         defaultValue,
         defined,
@@ -23,6 +24,7 @@ define([
         GeographicTilingScheme,
         objectToQuery,
         queryToObject,
+        StereographicTilingScheme,
         WebMercatorTilingScheme,
         Uri,
         GetFeatureInfoFormat,
@@ -91,6 +93,7 @@ define([
      * viewer.imageryLayers.addImageryProvider(provider);
      */
     function WebMapServiceImageryProvider(options) {
+        
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
 
         //>>includeStart('debug', pragmas.debug);
@@ -130,9 +133,33 @@ define([
                 pickFeaturesQueryOptions[name] = value;
             }
         }
+        
+        /* ============================= NEW ===================================
+         * 
+         * @param {type} tilingScheme
+         * @returns {String}
+         */
+
+        function setSrs(tilingScheme) {
+
+            if (tilingScheme instanceof WebMercatorTilingScheme) {
+                return 'EPSG:3857';
+            } else if (tilingScheme instanceof StereographicTilingScheme) {
+                return 'EPSG:32661'; // pour le pole Nord (appliquer un autre EPSG pour le pole sud ==> introduire un autre parametre pour savoir si c'est pole nord ou suds)
+            } else {
+                return 'EPSG:4326';
+            }
+        }
+        
+        /*======================================================================
+         * =====================================================================
+         * ===================================================================== */
+        
+        var srsSet = setSrs(options.tilingScheme);
 
         setParameter('layers', options.layers);
-        setParameter('srs', options.tilingScheme instanceof WebMercatorTilingScheme ? 'EPSG:3857' : 'EPSG:4326');
+       // setParameter('srs', options.tilingScheme instanceof WebMercatorTilingScheme ? 'EPSG:3857' : 'EPSG:4326');
+        setParameter('srs', srsSet);
         setParameter('bbox', '{westProjected},{southProjected},{eastProjected},{northProjected}');
         setParameter('width', '{width}');
         setParameter('height', '{height}');
@@ -166,19 +193,19 @@ define([
 
         // Let UrlTemplateImageryProvider do the actual URL building.
         this._tileProvider = new UrlTemplateImageryProvider({
-            url : templateUrl,
-            pickFeaturesUrl : pickFeaturesTemplateUrl,
-            tilingScheme : defaultValue(options.tilingScheme, new GeographicTilingScheme({ ellipsoid : options.ellipsoid})),
-            rectangle : options.rectangle,
-            tileWidth : options.tileWidth,
-            tileHeight : options.tileHeight,
-            minimumLevel : options.minimumLevel,
-            maximumLevel : options.maximumLevel,
-            proxy : options.proxy,
+            url: templateUrl,
+            pickFeaturesUrl: pickFeaturesTemplateUrl,
+            tilingScheme: defaultValue(options.tilingScheme, new GeographicTilingScheme({ellipsoid: options.ellipsoid})),
+            rectangle: options.rectangle,
+            tileWidth: options.tileWidth,
+            tileHeight: options.tileHeight,
+            minimumLevel: options.minimumLevel,
+            maximumLevel: options.maximumLevel,
+            proxy: options.proxy,
             subdomains: options.subdomains,
-            tileDiscardPolicy : options.tileDiscardPolicy,
-            credit : options.credit,
-            getFeatureInfoFormats : getFeatureInfoFormats,
+            tileDiscardPolicy: options.tileDiscardPolicy,
+            credit: options.credit,
+            getFeatureInfoFormats: getFeatureInfoFormats,
             enablePickFeatures: options.enablePickFeatures
         });
     }
@@ -190,36 +217,33 @@ define([
          * @type {String}
          * @readonly
          */
-        url : {
-            get : function() {
+        url: {
+            get: function () {
                 return this._url;
             }
         },
-
         /**
          * Gets the proxy used by this provider.
          * @memberof WebMapServiceImageryProvider.prototype
          * @type {Proxy}
          * @readonly
          */
-        proxy : {
-            get : function() {
+        proxy: {
+            get: function () {
                 return this._tileProvider.proxy;
             }
         },
-
         /**
          * Gets the names of the WMS layers, separated by commas.
          * @memberof WebMapServiceImageryProvider.prototype
          * @type {String}
          * @readonly
          */
-        layers : {
-            get : function() {
+        layers: {
+            get: function () {
                 return this._layers;
             }
         },
-
         /**
          * Gets the width of each tile, in pixels. This function should
          * not be called before {@link WebMapServiceImageryProvider#ready} returns true.
@@ -227,12 +251,11 @@ define([
          * @type {Number}
          * @readonly
          */
-        tileWidth : {
-            get : function() {
+        tileWidth: {
+            get: function () {
                 return this._tileProvider.tileWidth;
             }
         },
-
         /**
          * Gets the height of each tile, in pixels.  This function should
          * not be called before {@link WebMapServiceImageryProvider#ready} returns true.
@@ -240,12 +263,11 @@ define([
          * @type {Number}
          * @readonly
          */
-        tileHeight : {
-            get : function() {
+        tileHeight: {
+            get: function () {
                 return this._tileProvider.tileHeight;
             }
         },
-
         /**
          * Gets the maximum level-of-detail that can be requested.  This function should
          * not be called before {@link WebMapServiceImageryProvider#ready} returns true.
@@ -253,12 +275,11 @@ define([
          * @type {Number}
          * @readonly
          */
-        maximumLevel : {
-            get : function() {
+        maximumLevel: {
+            get: function () {
                 return this._tileProvider.maximumLevel;
             }
         },
-
         /**
          * Gets the minimum level-of-detail that can be requested.  This function should
          * not be called before {@link WebMapServiceImageryProvider#ready} returns true.
@@ -266,12 +287,11 @@ define([
          * @type {Number}
          * @readonly
          */
-        minimumLevel : {
-            get : function() {
+        minimumLevel: {
+            get: function () {
                 return this._tileProvider.minimumLevel;
             }
         },
-
         /**
          * Gets the tiling scheme used by this provider.  This function should
          * not be called before {@link WebMapServiceImageryProvider#ready} returns true.
@@ -279,12 +299,11 @@ define([
          * @type {TilingScheme}
          * @readonly
          */
-        tilingScheme : {
-            get : function() {
+        tilingScheme: {
+            get: function () {
                 return this._tileProvider.tilingScheme;
             }
         },
-
         /**
          * Gets the rectangle, in radians, of the imagery provided by this instance.  This function should
          * not be called before {@link WebMapServiceImageryProvider#ready} returns true.
@@ -292,12 +311,11 @@ define([
          * @type {Rectangle}
          * @readonly
          */
-        rectangle : {
-            get : function() {
+        rectangle: {
+            get: function () {
                 return this._tileProvider.rectangle;
             }
         },
-
         /**
          * Gets the tile discard policy.  If not undefined, the discard policy is responsible
          * for filtering out "missing" tiles via its shouldDiscardImage function.  If this function
@@ -307,12 +325,11 @@ define([
          * @type {TileDiscardPolicy}
          * @readonly
          */
-        tileDiscardPolicy : {
-            get : function() {
+        tileDiscardPolicy: {
+            get: function () {
                 return this._tileProvider.tileDiscardPolicy;
             }
         },
-
         /**
          * Gets an event that is raised when the imagery provider encounters an asynchronous error.  By subscribing
          * to the event, you will be notified of the error and can potentially recover from it.  Event listeners
@@ -321,36 +338,33 @@ define([
          * @type {Event}
          * @readonly
          */
-        errorEvent : {
-            get : function() {
+        errorEvent: {
+            get: function () {
                 return this._tileProvider.errorEvent;
             }
         },
-
         /**
          * Gets a value indicating whether or not the provider is ready for use.
          * @memberof WebMapServiceImageryProvider.prototype
          * @type {Boolean}
          * @readonly
          */
-        ready : {
-            get : function() {
+        ready: {
+            get: function () {
                 return this._tileProvider.ready;
             }
         },
-
         /**
          * Gets a promise that resolves to true when the provider is ready for use.
          * @memberof WebMapServiceImageryProvider.prototype
          * @type {Promise.<Boolean>}
          * @readonly
          */
-        readyPromise : {
-            get : function() {
+        readyPromise: {
+            get: function () {
                 return this._tileProvider.readyPromise;
             }
         },
-
         /**
          * Gets the credit to display when this imagery provider is active.  Typically this is used to credit
          * the source of the imagery.  This function should not be called before {@link WebMapServiceImageryProvider#ready} returns true.
@@ -358,12 +372,11 @@ define([
          * @type {Credit}
          * @readonly
          */
-        credit : {
-            get : function() {
+        credit: {
+            get: function () {
                 return this._tileProvider.credit;
             }
         },
-
         /**
          * Gets a value indicating whether or not the images provided by this imagery provider
          * include an alpha channel.  If this property is false, an alpha channel, if present, will
@@ -374,12 +387,11 @@ define([
          * @type {Boolean}
          * @readonly
          */
-        hasAlphaChannel : {
-            get : function() {
+        hasAlphaChannel: {
+            get: function () {
                 return this._tileProvider.hasAlphaChannel;
             }
         },
-
         /**
          * Gets or sets a value indicating whether feature picking is enabled.  If true, {@link WebMapServiceImageryProvider#pickFeatures} will
          * invoke the <code>GetFeatureInfo</code> service on the WMS server and attempt to interpret the features included in the response.  If false,
@@ -389,11 +401,11 @@ define([
          * @type {Boolean}
          * @default true
          */
-        enablePickFeatures : {
-            get : function() {
+        enablePickFeatures: {
+            get: function () {
                 return this._tileProvider.enablePickFeatures;
             },
-            set : function(enablePickFeatures)  {
+            set: function (enablePickFeatures) {
                 this._tileProvider.enablePickFeatures = enablePickFeatures;
             }
         }
@@ -409,7 +421,7 @@ define([
      *
      * @exception {DeveloperError} <code>getTileCredits</code> must not be called before the imagery provider is ready.
      */
-    WebMapServiceImageryProvider.prototype.getTileCredits = function(x, y, level) {
+    WebMapServiceImageryProvider.prototype.getTileCredits = function (x, y, level) {
         return this._tileProvider.getTileCredits(x, y, level);
     };
 
@@ -427,7 +439,7 @@ define([
      *
      * @exception {DeveloperError} <code>requestImage</code> must not be called before the imagery provider is ready.
      */
-    WebMapServiceImageryProvider.prototype.requestImage = function(x, y, level) {
+    WebMapServiceImageryProvider.prototype.requestImage = function (x, y, level) {
         return this._tileProvider.requestImage(x, y, level);
     };
 
@@ -446,7 +458,7 @@ define([
      *
      * @exception {DeveloperError} <code>pickFeatures</code> must not be called before the imagery provider is ready.
      */
-    WebMapServiceImageryProvider.prototype.pickFeatures = function(x, y, level, longitude, latitude) {
+    WebMapServiceImageryProvider.prototype.pickFeatures = function (x, y, level, longitude, latitude) {
         return this._tileProvider.pickFeatures(x, y, level, longitude, latitude);
     };
 
@@ -461,11 +473,11 @@ define([
      * @constant
      */
     WebMapServiceImageryProvider.DefaultParameters = freezeObject({
-        service : 'WMS',
-        version : '1.1.1',
-        request : 'GetMap',
-        styles : '',
-        format : 'image/jpeg'
+        service: 'WMS',
+        version: '1.1.1',
+        request: 'GetMap',
+        styles: '',
+        format: 'image/jpeg'
     });
 
     /**
@@ -477,9 +489,9 @@ define([
      * @constant
      */
     WebMapServiceImageryProvider.GetFeatureInfoDefaultParameters = freezeObject({
-        service : 'WMS',
-        version : '1.1.1',
-        request : 'GetFeatureInfo'
+        service: 'WMS',
+        version: '1.1.1',
+        request: 'GetFeatureInfo'
     });
 
     WebMapServiceImageryProvider.DefaultGetFeatureInfoFormats = freezeObject([
@@ -490,7 +502,7 @@ define([
 
     function objectToLowercase(obj) {
         var result = {};
-        for ( var key in obj) {
+        for (var key in obj) {
             if (obj.hasOwnProperty(key)) {
                 result[key.toLowerCase()] = obj[key];
             }

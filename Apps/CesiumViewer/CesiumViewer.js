@@ -1,22 +1,28 @@
 /*global define*/
 define([
-        'Cesium/Core/Cartesian3',
-        'Cesium/Core/defined',
-        'Cesium/Core/formatError',
-        'Cesium/Core/getFilenameFromUri',
-        'Cesium/Core/Math',
-        'Cesium/Core/objectToQuery',
-        'Cesium/Core/queryToObject',
-        'Cesium/DataSources/CzmlDataSource',
-        'Cesium/DataSources/GeoJsonDataSource',
-        'Cesium/DataSources/KmlDataSource',
-        'Cesium/Scene/createTileMapServiceImageryProvider',
-        'Cesium/Widgets/Viewer/Viewer',
-        'Cesium/Widgets/Viewer/viewerCesiumInspectorMixin',
-        'Cesium/Widgets/Viewer/viewerDragDropMixin',
-        'domReady!'
-    ], function(
+    'Cesium/Scene/BingMapsImageryProvider',
+    'Cesium/Scene/BingMapsStyle',
+    'Cesium/Core/Cartesian3',
+    'Cesium/Scene/createOpenStreetMapImageryProvider',
+    'Cesium/Core/defined',
+    'Cesium/Core/formatError',
+    'Cesium/Core/getFilenameFromUri',
+    'Cesium/Core/Math',
+    'Cesium/Core/objectToQuery',
+    'Cesium/Core/queryToObject',
+    'Cesium/DataSources/CzmlDataSource',
+    'Cesium/DataSources/GeoJsonDataSource',
+    'Cesium/DataSources/KmlDataSource',
+    'Cesium/Scene/createTileMapServiceImageryProvider',
+    'Cesium/Widgets/Viewer/Viewer',
+    'Cesium/Widgets/Viewer/viewerCesiumInspectorMixin',
+    'Cesium/Widgets/Viewer/viewerDragDropMixin',
+    'domReady!'
+], function (
+        BingMapsImageryProvider,
+        BingMapsStyle,
         Cartesian3,
+        createOpenStreetMapImageryProvider,
         defined,
         formatError,
         getFilenameFromUri,
@@ -48,17 +54,28 @@ define([
     var imageryProvider;
     if (endUserOptions.tmsImageryUrl) {
         imageryProvider = createTileMapServiceImageryProvider({
-            url : endUserOptions.tmsImageryUrl
+            url: endUserOptions.tmsImageryUrl
         });
+    } else {
+        imageryProvider = new createOpenStreetMapImageryProvider({
+            url: 'https://a.tile.openstreetmap.org/'
+        });
+
+        /*  imageryProvider = new BingMapsImageryProvider({
+         url: 'https://dev.virtualearth.net',
+         key: 'get-yours-at-https://www.bingmapsportal.com/',
+         mapStyle: BingMapsStyle.ROAD
+         });*/
     }
+    ;
 
     var loadingIndicator = document.getElementById('loadingIndicator');
     var viewer;
     try {
         viewer = new Viewer('cesiumContainer', {
-            imageryProvider : imageryProvider,
-            baseLayerPicker : !defined(imageryProvider),
-            scene3DOnly : endUserOptions.scene3DOnly
+            imageryProvider: imageryProvider,
+            baseLayerPicker: !defined(imageryProvider),
+            scene3DOnly: endUserOptions.scene3DOnly
         });
     } catch (exception) {
         loadingIndicator.style.display = 'none';
@@ -75,13 +92,13 @@ define([
         viewer.extend(viewerCesiumInspectorMixin);
     }
 
-    var showLoadError = function(name, error) {
+    var showLoadError = function (name, error) {
         var title = 'An error occurred while loading the file: ' + name;
         var message = 'An error occurred while loading the file, which may indicate that it is invalid.  A detailed error report is below:';
         viewer.cesiumWidget.showErrorPanel(title, message, error);
     };
 
-    viewer.dropError.addEventListener(function(viewerArg, name, error) {
+    viewer.dropError.addEventListener(function (viewerArg, name, error) {
         showLoadError(name, error);
     });
 
@@ -113,7 +130,7 @@ define([
         }
 
         if (defined(loadPromise)) {
-            viewer.dataSources.add(loadPromise).then(function(dataSource) {
+            viewer.dataSources.add(loadPromise).then(function (dataSource) {
                 var lookAt = endUserOptions.lookAt;
                 if (defined(lookAt)) {
                     var entity = dataSource.entities.getById(lookAt);
@@ -126,7 +143,7 @@ define([
                 } else if (!defined(view)) {
                     viewer.flyTo(dataSource);
                 }
-            }).otherwise(function(error) {
+            }).otherwise(function (error) {
                 showLoadError(source, error);
             });
         }
@@ -181,12 +198,12 @@ define([
     var updateTimer;
     if (endUserOptions.saveCamera !== 'false') {
         var camera = viewer.camera;
-        camera.moveStart.addEventListener(function() {
+        camera.moveStart.addEventListener(function () {
             if (!defined(updateTimer)) {
                 updateTimer = window.setInterval(saveCamera, 1000);
             }
         });
-        camera.moveEnd.addEventListener(function() {
+        camera.moveEnd.addEventListener(function () {
             if (defined(updateTimer)) {
                 window.clearInterval(updateTimer);
                 updateTimer = undefined;
@@ -194,6 +211,5 @@ define([
             saveCamera();
         });
     }
-
     loadingIndicator.style.display = 'none';
 });

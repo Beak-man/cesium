@@ -44,6 +44,7 @@ define([
      */
     function Geocoder(options) {
         //>>includeStart('debug', pragmas.debug);
+        
         if (!defined(options) || !defined(options.container)) {
             throw new DeveloperError('options.container is required.');
         }

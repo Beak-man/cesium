@@ -1,0 +1,276 @@
+/*============================================================================== */
+/*=========================== COLOR PICKER CONTAINER =========================== */
+/*============================================================================== */
+
+.cesium-MainColorPickerContainer{
+    position: absolute;
+    top: 50%;
+    left: 80%;
+    width: 200px;
+    height: 320px;
+    background: #303336; 
+    border: 1px solid #444;
+    z-index: 0;
+}
+
+
+.cesium-MainColorPickerContainer-transition{
+
+    position: absolute;
+    top: 50%;
+    left: 80%;
+    width: 200px;
+    background: #303336; 
+    border: 1px solid #444;
+    z-index: 0;
+
+    transition-property: height;
+    transition:  0.5s;
+}
+
+
+.cesium-BarMenuContainer{
+    width: 100%;
+    height: 6.5%;
+    border-bottom:  2px solid #222;
+}
+
+.cesium-ColorPickerContainer{
+    width: 100%;
+    height: 93.5%;
+    // border: red thin solid;
+}
+
+
+
+
+/*============================= COLOR BUTTONS ================================== */
+
+.cesium-buttonColor{
+    display: inline-block;
+    position: relative;
+    border: 1px solid #444;
+    border-radius: 0px;
+    padding: 5px 6px;
+    margin: 2px 3px;
+    cursor: pointer;
+    overflow: hidden;
+    // background: chartreuse;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/*========================== SELECTED COLOR CONTAINER ========================== */
+
+.cesium-buttonColor-selected{
+    position: absolute;
+    top: 85%;
+    left: 2.5%;
+    border: 1px solid #444;
+    display: inline-block;
+    border-radius: 0px;
+    width: 50px;
+    height: 30px;
+}
+
+/*======================== SELECTED COLOR TEXT CONTAINER ======================= */
+
+.cesium-buttonColor-selected-text{
+    position: absolute;
+    top: 86%;
+    left: 32.5%;
+    border: 1px solid #444;
+    border-radius: 0px;
+    width: 128px;
+    height: 20px;
+    text-align: center;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/*============================================================================== */
+/*============================= BAR MENU CONTAINER  ============================ */
+/*============================================================================== */
+
+
+.cesium-titleMenuLeft{
+    width: 22%;
+    height: 100%;
+    color: white;
+    display: inline-block;
+    // border: red thin solid;
+}
+
+.cesium-boxMenuButton{
+    display: inline-block;
+    position: relative;
+    border: 1px solid #444;
+    border-radius: 0px;
+    width: 16px;
+    height: 16px;
+    padding-left: 0px;
+    padding-right:  3px;
+    margin-left: 3px;
+    margin-right:  3px;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: top;
+}
+
+.cesium-titleMenuRight{
+    width: 77%;
+    height: 100%;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    vertical-align: top;
+    font-size: 0.9em;
+    // border: red thin solid;
+}
+
+/*============================================================================== */
+/*======================= ASSIGN PROPERTY CONTAINER  =========================== */
+/*============================================================================== */
+
+.cesium-Color-assignProperty{
+    position: absolute;
+    top: 40%;
+    left: 32.5%;
+    width: 350px;
+    height: 130px;
+    background: #303336; 
+    border: 1px solid #444;
+    visibility: hidden;
+}
+
+/*======================= RIGHT AND LEFT SUB-CONTAINER ========================= */
+
+.cesium-Color-assignProperty-left{
+    width: 0%;
+    height: 100%;
+    display: inline-block;
+    border-right: 1px solid #444;
+
+}
+
+.cesium-Color-assignProperty-right{
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+}
+
+/*=============================== PROPERTY NAME ================================ */
+
+.cesium-Color-propertyName-input{
+    position : absolute;
+    top : 25%;
+    left : 47%;
+}
+
+.cesium-Color-propertyNameTitle-input{
+    position : absolute;
+    top : 25%;
+    left : 5%;
+}
+
+/*=============================== PROPERTY VALUE ================================ */
+
+.cesium-Color-propertyValue-input{
+    position : absolute;
+    top : 50%;
+    left : 47%;
+}
+
+.cesium-Color-propertyValueTitle-input{
+    position : absolute;
+    top : 50%;
+    left : 5%;
+}
+
+/*=========================== ASSIGN AND CANCEL BUTTON ========================= */
+
+.cesium-Color-propertyAssign-button{
+    position : absolute;
+    top : 73%;
+    left : 80%;
+}
+
+.cesium-Color-propertyAssign-button-cancel{
+    position : absolute;
+    top : 73%;
+    left : 60%;
+
+}
+
+/* ============================== TABLE LEFT =================================== */
+
+.cesium-Color-assignProperty-left-table{
+    width: 100%;
+}
+
+.cesium-Color-assignProperty-left-table td{
+    width: 20%;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/*============================================================================== */
+/*============================= LEGEND CONTAINER  ============================== */
+/*============================================================================== */
+
+
+.cesium-legendContainer{
+    position: absolute;
+    top: 20%;
+    left: 80%;
+    width: 200px;
+    height: 250px;
+    background: #303336; 
+    border: 1px solid #444;
+    z-index: 0;
+}
+
+.cesium-legendContainer-transition{
+    position: absolute;
+    top: 20%;
+    left: 80%;
+    width: 200px;
+
+    background: #303336; 
+    border: 1px solid #444;
+    z-index: 0;
+
+    transition-property: height;
+    transition:  0.5s;
+}
+
+.cesium-legendContainerTop{
+    width: 100%;
+    height: 8%;
+    border-bottom:  1px solid #222;
+}
+
+.cesium-legendContainerMiddle{
+    width: 100%;
+    height: 80%;
+    border-bottom: 1px solid #222;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.cesium-legendContainerBottom{
+    width: 100%;
+    height: 12%;
+}
+
+.cesium-tableLegend{
+    width: 100%;
+    text-align: center;
+    font-size: 0.8em;
+}

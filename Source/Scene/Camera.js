@@ -94,6 +94,7 @@ define([
         }
         //>>includeEnd('debug');
         this._scene = scene;
+        this._ellipsoid = Ellipsoid.WGS84;
 
         this._transform = Matrix4.clone(Matrix4.IDENTITY);
         this._invTransform = Matrix4.clone(Matrix4.IDENTITY);
@@ -233,10 +234,10 @@ define([
      * @private
      */
     Camera.TRANSFORM_2D = new Matrix4(
-        0.0, 0.0, 1.0, 0.0,
-        1.0, 0.0, 0.0, 0.0,
-        0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 1.0);
+            0.0, 0.0, 1.0, 0.0,
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0);
 
     /**
      * @private
@@ -269,7 +270,7 @@ define([
         if (camera._changed.numberOfListeners === 0) {
             return;
         }
-
+        
         var percentageChanged = camera.percentageChanged;
 
         if (camera._mode === SceneMode.SCENE2D) {
@@ -572,12 +573,21 @@ define([
          *
          * @default {@link Matrix4.IDENTITY}
          */
-        transform : {
-            get : function() {
+        transform: {
+            get: function () {
                 return this._transform;
             }
         },
-
+        projection: {
+            set: function (mapProjection) {
+                this._projection = mapProjection;
+ }
+        },
+        ellipsoid: {
+            set: function (ellipsoid) {
+                this._ellipsoid = ellipsoid;
+            }
+        },
         /**
          * Gets the inverse camera transform.
          * @memberof Camera.prototype
@@ -587,13 +597,12 @@ define([
          *
          * @default {@link Matrix4.IDENTITY}
          */
-        inverseTransform : {
-            get : function() {
+        inverseTransform: {
+            get: function () {
                 updateMembers(this);
                 return this._invTransform;
             }
         },
-
         /**
          * Gets the view matrix.
          * @memberof Camera.prototype
@@ -603,13 +612,12 @@ define([
          *
          * @see Camera#inverseViewMatrix
          */
-        viewMatrix : {
-            get : function() {
+        viewMatrix: {
+            get: function () {
                 updateMembers(this);
                 return this._viewMatrix;
             }
         },
-
         /**
          * Gets the inverse view matrix.
          * @memberof Camera.prototype
@@ -619,13 +627,12 @@ define([
          *
          * @see Camera#viewMatrix
          */
-        inverseViewMatrix : {
-            get : function() {
+        inverseViewMatrix: {
+            get: function () {
                 updateMembers(this);
                 return this._invViewMatrix;
             }
         },
-
         /**
          * Gets the {@link Cartographic} position of the camera, with longitude and latitude
          * expressed in radians and height in meters.  In 2D and Columbus View, it is possible
@@ -636,13 +643,12 @@ define([
          * @type {Cartographic}
          * @readonly
          */
-        positionCartographic : {
-            get : function() {
+        positionCartographic: {
+            get: function () {
                 updateMembers(this);
                 return this._positionCartographic;
             }
         },
-
         /**
          * Gets the position of the camera in world coordinates.
          * @memberof Camera.prototype
@@ -650,13 +656,12 @@ define([
          * @type {Cartesian3}
          * @readonly
          */
-        positionWC : {
-            get : function() {
+        positionWC: {
+            get: function () {
                 updateMembers(this);
                 return this._positionWC;
             }
         },
-
         /**
          * Gets the view direction of the camera in world coordinates.
          * @memberof Camera.prototype
@@ -664,13 +669,12 @@ define([
          * @type {Cartesian3}
          * @readonly
          */
-        directionWC : {
-            get : function() {
+        directionWC: {
+            get: function () {
                 updateMembers(this);
                 return this._directionWC;
             }
         },
-
         /**
          * Gets the up direction of the camera in world coordinates.
          * @memberof Camera.prototype
@@ -678,13 +682,12 @@ define([
          * @type {Cartesian3}
          * @readonly
          */
-        upWC : {
-            get : function() {
+        upWC: {
+            get: function () {
                 updateMembers(this);
                 return this._upWC;
             }
         },
-
         /**
          * Gets the right direction of the camera in world coordinates.
          * @memberof Camera.prototype
@@ -692,13 +695,12 @@ define([
          * @type {Cartesian3}
          * @readonly
          */
-        rightWC : {
-            get : function() {
+        rightWC: {
+            get: function () {
                 updateMembers(this);
                 return this._rightWC;
             }
         },
-
         /**
          * Gets the camera heading in radians.
          * @memberof Camera.prototype
@@ -725,7 +727,6 @@ define([
                 return undefined;
             }
         },
-
         /**
          * Gets the camera pitch in radians.
          * @memberof Camera.prototype
@@ -733,8 +734,8 @@ define([
          * @type {Number}
          * @readonly
          */
-        pitch : {
-            get : function() {
+        pitch: {
+            get: function () {
                 if (this._mode !== SceneMode.MORPHING) {
                     var ellipsoid = this._projection.ellipsoid;
 
@@ -752,7 +753,6 @@ define([
                 return undefined;
             }
         },
-
         /**
          * Gets the camera roll in radians.
          * @memberof Camera.prototype
@@ -760,8 +760,8 @@ define([
          * @type {Number}
          * @readonly
          */
-        roll : {
-            get : function() {
+        roll: {
+            get: function () {
                 if (this._mode !== SceneMode.MORPHING) {
                     var ellipsoid = this._projection.ellipsoid;
 
@@ -779,27 +779,25 @@ define([
                 return undefined;
             }
         },
-
         /**
          * Gets the event that will be raised at when the camera starts to move.
          * @memberof Camera.prototype
          * @type {Event}
          * @readonly
          */
-        moveStart : {
-            get : function() {
+        moveStart: {
+            get: function () {
                 return this._moveStart;
             }
         },
-
         /**
          * Gets the event that will be raised when the camera has stopped moving.
          * @memberof Camera.prototype
          * @type {Event}
          * @readonly
          */
-        moveEnd : {
-            get : function() {
+        moveEnd: {
+            get: function () {
                 return this._moveEnd;
             }
         },
@@ -820,7 +818,7 @@ define([
     /**
      * @private
      */
-    Camera.prototype.update = function(mode) {
+    Camera.prototype.update = function (mode) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(mode)) {
             throw new DeveloperError('mode is required.');
@@ -860,7 +858,7 @@ define([
     var setTransformUp = new Cartesian3();
     var setTransformDirection = new Cartesian3();
 
-    Camera.prototype._setTransform = function(transform) {
+    Camera.prototype._setTransform = function (transform) {
         var position = Cartesian3.clone(this.positionWC, setTransformPosition);
         var up = Cartesian3.clone(this.upWC, setTransformUp);
         var direction = Cartesian3.clone(this.directionWC, setTransformDirection);
@@ -992,13 +990,13 @@ define([
     }
 
     var scratchSetViewOptions = {
-        destination : undefined,
-        orientation : {
-            direction : undefined,
-            up : undefined,
-            heading : undefined,
-            pitch : undefined,
-            roll : undefined
+        destination: undefined,
+        orientation: {
+            direction: undefined,
+            up: undefined,
+            heading: undefined,
+            pitch: undefined,
+            roll: undefined
         },
         convert : undefined,
         endTransform : undefined
@@ -1054,7 +1052,7 @@ define([
      *     }
      * });
      */
-    Camera.prototype.setView = function(options) {
+    Camera.prototype.setView = function (options) {
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         var orientation = defaultValue(options.orientation, defaultValue.EMPTY_OBJECT);
 
@@ -1150,7 +1148,7 @@ define([
      * @param {Cartesian4} [result] The object onto which to store the result.
      * @returns {Cartesian4} The transformed vector or point.
      */
-    Camera.prototype.worldToCameraCoordinates = function(cartesian, result) {
+    Camera.prototype.worldToCameraCoordinates = function (cartesian, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(cartesian)) {
             throw new DeveloperError('cartesian is required.');
@@ -1171,7 +1169,7 @@ define([
      * @param {Cartesian3} [result] The object onto which to store the result.
      * @returns {Cartesian3} The transformed point.
      */
-    Camera.prototype.worldToCameraCoordinatesPoint = function(cartesian, result) {
+    Camera.prototype.worldToCameraCoordinatesPoint = function (cartesian, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(cartesian)) {
             throw new DeveloperError('cartesian is required.');
@@ -1192,7 +1190,7 @@ define([
      * @param {Cartesian3} [result] The object onto which to store the result.
      * @returns {Cartesian3} The transformed vector.
      */
-    Camera.prototype.worldToCameraCoordinatesVector = function(cartesian, result) {
+    Camera.prototype.worldToCameraCoordinatesVector = function (cartesian, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(cartesian)) {
             throw new DeveloperError('cartesian is required.');
@@ -1213,7 +1211,7 @@ define([
      * @param {Cartesian4} [result] The object onto which to store the result.
      * @returns {Cartesian4} The transformed vector or point.
      */
-    Camera.prototype.cameraToWorldCoordinates = function(cartesian, result) {
+    Camera.prototype.cameraToWorldCoordinates = function (cartesian, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(cartesian)) {
             throw new DeveloperError('cartesian is required.');
@@ -1234,7 +1232,7 @@ define([
      * @param {Cartesian3} [result] The object onto which to store the result.
      * @returns {Cartesian3} The transformed point.
      */
-    Camera.prototype.cameraToWorldCoordinatesPoint = function(cartesian, result) {
+    Camera.prototype.cameraToWorldCoordinatesPoint = function (cartesian, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(cartesian)) {
             throw new DeveloperError('cartesian is required.');
@@ -1255,7 +1253,7 @@ define([
      * @param {Cartesian3} [result] The object onto which to store the result.
      * @returns {Cartesian3} The transformed vector.
      */
-    Camera.prototype.cameraToWorldCoordinatesVector = function(cartesian, result) {
+    Camera.prototype.cameraToWorldCoordinatesVector = function (cartesian, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(cartesian)) {
             throw new DeveloperError('cartesian is required.');
@@ -1313,7 +1311,7 @@ define([
      * @see Camera#moveUp
      * @see Camera#moveDown
      */
-    Camera.prototype.move = function(direction, amount) {
+    Camera.prototype.move = function (direction, amount) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(direction)) {
             throw new DeveloperError('direction is required.');
@@ -1336,7 +1334,7 @@ define([
      *
      * @see Camera#moveBackward
      */
-    Camera.prototype.moveForward = function(amount) {
+    Camera.prototype.moveForward = function (amount) {
         amount = defaultValue(amount, this.defaultMoveAmount);
         this.move(this.direction, amount);
     };
@@ -1349,7 +1347,7 @@ define([
      *
      * @see Camera#moveForward
      */
-    Camera.prototype.moveBackward = function(amount) {
+    Camera.prototype.moveBackward = function (amount) {
         amount = defaultValue(amount, this.defaultMoveAmount);
         this.move(this.direction, -amount);
     };
@@ -1361,7 +1359,7 @@ define([
      *
      * @see Camera#moveDown
      */
-    Camera.prototype.moveUp = function(amount) {
+    Camera.prototype.moveUp = function (amount) {
         amount = defaultValue(amount, this.defaultMoveAmount);
         this.move(this.up, amount);
     };
@@ -1374,7 +1372,7 @@ define([
      *
      * @see Camera#moveUp
      */
-    Camera.prototype.moveDown = function(amount) {
+    Camera.prototype.moveDown = function (amount) {
         amount = defaultValue(amount, this.defaultMoveAmount);
         this.move(this.up, -amount);
     };
@@ -1386,7 +1384,7 @@ define([
      *
      * @see Camera#moveLeft
      */
-    Camera.prototype.moveRight = function(amount) {
+    Camera.prototype.moveRight = function (amount) {
         amount = defaultValue(amount, this.defaultMoveAmount);
         this.move(this.right, amount);
     };
@@ -1399,7 +1397,7 @@ define([
      *
      * @see Camera#moveRight
      */
-    Camera.prototype.moveLeft = function(amount) {
+    Camera.prototype.moveLeft = function (amount) {
         amount = defaultValue(amount, this.defaultMoveAmount);
         this.move(this.right, -amount);
     };
@@ -1412,7 +1410,7 @@ define([
      *
      * @see Camera#lookRight
      */
-    Camera.prototype.lookLeft = function(amount) {
+    Camera.prototype.lookLeft = function (amount) {
         amount = defaultValue(amount, this.defaultLookAmount);
         this.look(this.up, -amount);
     };
@@ -1425,7 +1423,7 @@ define([
      *
      * @see Camera#lookLeft
      */
-    Camera.prototype.lookRight = function(amount) {
+    Camera.prototype.lookRight = function (amount) {
         amount = defaultValue(amount, this.defaultLookAmount);
         this.look(this.up, amount);
     };
@@ -1438,7 +1436,7 @@ define([
      *
      * @see Camera#lookDown
      */
-    Camera.prototype.lookUp = function(amount) {
+    Camera.prototype.lookUp = function (amount) {
         amount = defaultValue(amount, this.defaultLookAmount);
         this.look(this.right, -amount);
     };
@@ -1451,7 +1449,7 @@ define([
      *
      * @see Camera#lookUp
      */
-    Camera.prototype.lookDown = function(amount) {
+    Camera.prototype.lookDown = function (amount) {
         amount = defaultValue(amount, this.defaultLookAmount);
         this.look(this.right, amount);
     };
@@ -1469,7 +1467,7 @@ define([
      * @see Camera#lookLeft
      * @see Camera#lookRight
      */
-    Camera.prototype.look = function(axis, angle) {
+    Camera.prototype.look = function (axis, angle) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(axis)) {
             throw new DeveloperError('axis is required.');
@@ -1496,7 +1494,7 @@ define([
      *
      * @see Camera#twistRight
      */
-    Camera.prototype.twistLeft = function(amount) {
+    Camera.prototype.twistLeft = function (amount) {
         amount = defaultValue(amount, this.defaultLookAmount);
         this.look(this.direction, amount);
     };
@@ -1508,7 +1506,7 @@ define([
      *
      * @see Camera#twistLeft
      */
-    Camera.prototype.twistRight = function(amount) {
+    Camera.prototype.twistRight = function (amount) {
         amount = defaultValue(amount, this.defaultLookAmount);
         this.look(this.direction, -amount);
     };
@@ -1527,6 +1525,7 @@ define([
      * @see Camera#rotateLeft
      * @see Camera#rotateRight
      */
+
     Camera.prototype.rotate = function(axis, angle) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(axis)) {
@@ -1552,7 +1551,7 @@ define([
      * @see Camera#rotateUp
      * @see Camera#rotate
      */
-    Camera.prototype.rotateDown = function(angle) {
+    Camera.prototype.rotateDown = function (angle) {
         angle = defaultValue(angle, this.defaultRotateAmount);
         rotateVertical(this, angle);
     };
@@ -1565,7 +1564,7 @@ define([
      * @see Camera#rotateDown
      * @see Camera#rotate
      */
-    Camera.prototype.rotateUp = function(angle) {
+    Camera.prototype.rotateUp = function (angle) {
         angle = defaultValue(angle, this.defaultRotateAmount);
         rotateVertical(this, -angle);
     };
@@ -1613,7 +1612,7 @@ define([
      * @see Camera#rotateLeft
      * @see Camera#rotate
      */
-    Camera.prototype.rotateRight = function(angle) {
+    Camera.prototype.rotateRight = function (angle) {
         angle = defaultValue(angle, this.defaultRotateAmount);
         rotateHorizontal(this, -angle);
     };
@@ -1626,7 +1625,7 @@ define([
      * @see Camera#rotateRight
      * @see Camera#rotate
      */
-    Camera.prototype.rotateLeft = function(angle) {
+    Camera.prototype.rotateLeft = function (angle) {
         angle = defaultValue(angle, this.defaultRotateAmount);
         rotateHorizontal(this, angle);
     };
@@ -1685,7 +1684,7 @@ define([
      *
      * @see Camera#zoomOut
      */
-    Camera.prototype.zoomIn = function(amount) {
+    Camera.prototype.zoomIn = function (amount) {
         amount = defaultValue(amount, this.defaultZoomAmount);
         if (this._mode === SceneMode.SCENE2D) {
             zoom2D(this, amount);
@@ -1702,7 +1701,7 @@ define([
      *
      * @see Camera#zoomIn
      */
-    Camera.prototype.zoomOut = function(amount) {
+    Camera.prototype.zoomOut = function (amount) {
         amount = defaultValue(amount, this.defaultZoomAmount);
         if (this._mode === SceneMode.SCENE2D) {
             zoom2D(this, -amount);
@@ -1717,7 +1716,7 @@ define([
      *
      * @returns {Number} The magnitude of the position.
      */
-    Camera.prototype.getMagnitude = function() {
+    Camera.prototype.getMagnitude = function () {
         if (this._mode === SceneMode.SCENE3D) {
             return Cartesian3.magnitude(this.position);
         } else if (this._mode === SceneMode.COLUMBUS_VIEW) {
@@ -1758,7 +1757,7 @@ define([
      * var range = 5000.0;
      * viewer.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
      */
-    Camera.prototype.lookAt = function(target, offset) {
+    Camera.prototype.lookAt = function (target, offset) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(target)) {
             throw new DeveloperError('target is required');
@@ -1771,7 +1770,9 @@ define([
         }
         //>>includeEnd('debug');
 
-        var transform = Transforms.eastNorthUpToFixedFrame(target, Ellipsoid.WGS84, scratchLookAtMatrix4);
+        // var transform = Transforms.eastNorthUpToFixedFrame(target, Ellipsoid.WGS84, scratchLookAtMatrix4);
+        var ellipsoid = Camera._ellipsoid;
+        var transform = Transforms.eastNorthUpToFixedFrame(target, ellipsoid, scratchLookAtMatrix4);
         this.lookAtTransform(transform, offset);
     };
 
@@ -1824,7 +1825,7 @@ define([
      * var range = 5000.0;
      * viewer.camera.lookAtTransform(transform, new Cesium.HeadingPitchRange(heading, pitch, range));
      */
-    Camera.prototype.lookAtTransform = function(transform, offset) {
+    Camera.prototype.lookAtTransform = function (transform, offset) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(transform)) {
             throw new DeveloperError('transform is required');
@@ -1999,18 +2000,18 @@ define([
         var tanTheta = camera.frustum.aspectRatio * tanPhi;
 
         var d = Math.max(
-            computeD(direction, up, northWest, tanPhi),
-            computeD(direction, up, southEast, tanPhi),
-            computeD(direction, up, northEast, tanPhi),
-            computeD(direction, up, southWest, tanPhi),
-            computeD(direction, up, northCenter, tanPhi),
-            computeD(direction, up, southCenter, tanPhi),
-            computeD(direction, right, northWest, tanTheta),
-            computeD(direction, right, southEast, tanTheta),
-            computeD(direction, right, northEast, tanTheta),
-            computeD(direction, right, southWest, tanTheta),
-            computeD(direction, right, northCenter, tanTheta),
-            computeD(direction, right, southCenter, tanTheta));
+                computeD(direction, up, northWest, tanPhi),
+                computeD(direction, up, southEast, tanPhi),
+                computeD(direction, up, northEast, tanPhi),
+                computeD(direction, up, southWest, tanPhi),
+                computeD(direction, up, northCenter, tanPhi),
+                computeD(direction, up, southCenter, tanPhi),
+                computeD(direction, right, northWest, tanTheta),
+                computeD(direction, right, southEast, tanTheta),
+                computeD(direction, right, northEast, tanTheta),
+                computeD(direction, right, southWest, tanTheta),
+                computeD(direction, right, northCenter, tanTheta),
+                computeD(direction, right, southCenter, tanTheta));
 
         // If the rectangle crosses the equator, compute D at the equator, too, because that's the
         // widest part of the rectangle when projected onto the globe.
@@ -2116,7 +2117,7 @@ define([
      * @param {Cartesian3} [result] The camera position needed to view the rectangle
      * @returns {Cartesian3} The camera position needed to view the rectangle
      */
-    Camera.prototype.getRectangleCameraCoordinates = function(rectangle, result) {
+    Camera.prototype.getRectangleCameraCoordinates = function (rectangle, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(rectangle)) {
             throw new DeveloperError('rectangle is required');
@@ -2191,7 +2192,7 @@ define([
      * @returns {Cartesian3} If the ellipsoid or map was picked, returns the point on the surface of the ellipsoid or map
      * in world coordinates. If the ellipsoid or map was not picked, returns undefined.
      */
-    Camera.prototype.pickEllipsoid = function(windowPosition, ellipsoid, result) {
+    Camera.prototype.pickEllipsoid = function (windowPosition, ellipsoid, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(windowPosition)) {
             throw new DeveloperError('windowPosition is required.');
@@ -2280,7 +2281,7 @@ define([
      * @param {Ray} [result] The object onto which to store the result.
      * @returns {Ray} Returns the {@link Cartesian3} position and direction of the ray.
      */
-    Camera.prototype.getPickRay = function(windowPosition, result) {
+    Camera.prototype.getPickRay = function (windowPosition, result) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(windowPosition)) {
             throw new DeveloperError('windowPosition is required.');
@@ -2368,15 +2369,15 @@ define([
             camera.worldToCameraCoordinatesPoint(interp, camera.position);
         }
         return {
-            easingFunction : EasingFunction.EXPONENTIAL_OUT,
-            startObject : {
-                time : 0.0
+            easingFunction: EasingFunction.EXPONENTIAL_OUT,
+            startObject: {
+                time: 0.0
             },
-            stopObject : {
-                time : 1.0
+            stopObject: {
+                time: 1.0
             },
-            duration : duration,
-            update : updateCV
+            duration: duration,
+            update: updateCV
         };
     }
 
@@ -2427,7 +2428,7 @@ define([
      *
      * @private
      */
-    Camera.prototype.createCorrectPositionTween = function(duration) {
+    Camera.prototype.createCorrectPositionTween = function (duration) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(duration)) {
             throw new DeveloperError('duration is required.');
@@ -2444,16 +2445,16 @@ define([
     var scratchFlyToDestination = new Cartesian3();
     var scratchFlyToCarto = new Cartographic();
     var newOptions = {
-        destination : undefined,
-        heading : undefined,
-        pitch : undefined,
-        roll : undefined,
-        duration : undefined,
-        complete : undefined,
-        cancel : undefined,
-        endTransform : undefined,
-        maximumHeight : undefined,
-        easingFunction : undefined
+        destination: undefined,
+        heading: undefined,
+        pitch: undefined,
+        roll: undefined,
+        duration: undefined,
+        complete: undefined,
+        cancel: undefined,
+        endTransform: undefined,
+        maximumHeight: undefined,
+        easingFunction: undefined
     };
 
     /**
@@ -2503,7 +2504,7 @@ define([
      *     }
      * });
      */
-    Camera.prototype.flyTo = function(options) {
+    Camera.prototype.flyTo = function (options) {
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         var destination = options.destination;
         //>>includeStart('debug', pragmas.debug);
@@ -2654,7 +2655,7 @@ define([
      *
      * @exception {DeveloperError} viewBoundingSphere is not supported while morphing.
      */
-    Camera.prototype.viewBoundingSphere = function(boundingSphere, offset) {
+    Camera.prototype.viewBoundingSphere = function (boundingSphere, offset) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(boundingSphere)) {
             throw new DeveloperError('boundingSphere is required.');
@@ -2700,7 +2701,7 @@ define([
      * @param {Number} [options.maximumHeight] The maximum height at the peak of the flight.
      * @param {EasingFunction|EasingFunction~Callback} [options.easingFunction] Controls how the time is interpolated over the duration of the flight.
      */
-    Camera.prototype.flyToBoundingSphere = function(boundingSphere, options) {
+    Camera.prototype.flyToBoundingSphere = function (boundingSphere, options) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(boundingSphere)) {
             throw new DeveloperError('boundingSphere is required.');
@@ -2720,7 +2721,8 @@ define([
             position = offsetFromHeadingPitchRange(offset.heading, offset.pitch, offset.range);
         }
 
-        var transform = Transforms.eastNorthUpToFixedFrame(boundingSphere.center, Ellipsoid.WGS84, scratchflyToBoundingSphereTransform);
+        var ellipsoid = Camera._ellipsoid;
+        var transform = Transforms.eastNorthUpToFixedFrame(boundingSphere.center, ellipsoid, scratchflyToBoundingSphereTransform);
         Matrix4.multiplyByPoint(transform, position, position);
 
         var direction;
@@ -2745,17 +2747,17 @@ define([
         }
 
         this.flyTo({
-            destination : position,
-            orientation : {
-                direction : direction,
-                up : up
+            destination: position,
+            orientation: {
+                direction: direction,
+                up: up
             },
-            duration : options.duration,
-            complete : options.complete,
-            cancel : options.cancel,
-            endTransform : options.endTransform,
-            maximumHeight : options.maximumHeight,
-            easingFunction : options.easingFunction
+            duration: options.duration,
+            complete: options.complete,
+            cancel: options.cancel,
+            endTransform: options.endTransform,
+            maximumHeight: options.maximumHeight,
+            easingFunction: options.easingFunction
         });
     };
 
@@ -2892,7 +2894,7 @@ define([
     /**
      * @private
      */
-    Camera.clone = function(camera, result) {
+    Camera.clone = function (camera, result) {
         if (!defined(result)) {
             result = new Camera(camera._scene);
         }

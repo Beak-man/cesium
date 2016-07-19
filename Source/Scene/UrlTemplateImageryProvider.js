@@ -1,28 +1,29 @@
 /*global define*/
 define([
-        '../Core/Cartesian2',
-        '../Core/Cartesian3',
-        '../Core/Cartographic',
-        '../Core/combine',
-        '../Core/Credit',
-        '../Core/defaultValue',
-        '../Core/defined',
-        '../Core/defineProperties',
-        '../Core/DeveloperError',
-        '../Core/Event',
-        '../Core/freezeObject',
-        '../Core/GeographicTilingScheme',
-        '../Core/loadJson',
-        '../Core/loadText',
-        '../Core/loadWithXhr',
-        '../Core/loadXML',
-        '../Core/Math',
-        '../Core/Rectangle',
-        '../Core/TileProviderError',
-        '../Core/WebMercatorTilingScheme',
-        '../ThirdParty/when',
-        './ImageryProvider'
-    ], function(
+    '../Core/Cartesian2',
+    '../Core/Cartesian3',
+    '../Core/Cartographic',
+    '../Core/combine',
+    '../Core/Credit',
+    '../Core/defaultValue',
+    '../Core/defined',
+    '../Core/defineProperties',
+    '../Core/DeveloperError',
+    '../Core/Event',
+    '../Core/freezeObject',
+    '../Core/GeographicTilingScheme',
+    '../Core/loadJson',
+    '../Core/loadText',
+    '../Core/loadWithXhr',
+    '../Core/loadXML',
+    '../Core/Math',
+    '../Core/Rectangle',
+    '../Core/StereographicTilingScheme',
+    '../Core/TileProviderError',
+    '../Core/WebMercatorTilingScheme',
+    '../ThirdParty/when',
+    './ImageryProvider'
+], function (
         Cartesian2,
         Cartesian3,
         Cartographic,
@@ -41,6 +42,7 @@ define([
         loadXML,
         CesiumMath,
         Rectangle,
+        StereographicTilingScheme,
         TileProviderError,
         WebMercatorTilingScheme,
         when,
@@ -173,10 +175,10 @@ define([
     function UrlTemplateImageryProvider(options) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(options)) {
-          throw new DeveloperError('options is required.');
+            throw new DeveloperError('options is required.');
         }
         if (!when.isPromise(options) && !defined(options.url)) {
-          throw new DeveloperError('options is required.');
+            throw new DeveloperError('options is required.');
         }
         //>>includeEnd('debug');
 
@@ -237,12 +239,11 @@ define([
          * @type {String}
          * @readonly
          */
-        url : {
-            get : function() {
+        url: {
+            get: function () {
                 return this._url;
             }
         },
-
         /**
          * Gets the URL scheme zero padding for each tile coordinate. The format is '000' where each coordinate will be padded on
          * the left with zeros to match the width of the passed string of zeros. e.g. Setting:
@@ -287,12 +288,11 @@ define([
          * @type {String}
          * @readonly
          */
-        pickFeaturesUrl : {
-            get : function() {
+        pickFeaturesUrl: {
+            get: function () {
                 return this._pickFeaturesUrl;
             }
         },
-
         /**
          * Gets the proxy used by this provider.
          * @memberof UrlTemplateImageryProvider.prototype
@@ -300,12 +300,11 @@ define([
          * @readonly
          * @default undefined
          */
-        proxy : {
-            get : function() {
+        proxy: {
+            get: function () {
                 return this._proxy;
             }
         },
-
         /**
          * Gets the width of each tile, in pixels. This function should
          * not be called before {@link UrlTemplateImageryProvider#ready} returns true.
@@ -314,8 +313,8 @@ define([
          * @readonly
          * @default 256
          */
-        tileWidth : {
-            get : function() {
+        tileWidth: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this.ready) {
                     throw new DeveloperError('tileWidth must not be called before the imagery provider is ready.');
@@ -324,7 +323,6 @@ define([
                 return this._tileWidth;
             }
         },
-
         /**
          * Gets the height of each tile, in pixels.  This function should
          * not be called before {@link UrlTemplateImageryProvider#ready} returns true.
@@ -334,7 +332,7 @@ define([
          * @default 256
          */
         tileHeight: {
-            get : function() {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this.ready) {
                     throw new DeveloperError('tileHeight must not be called before the imagery provider is ready.');
@@ -343,7 +341,6 @@ define([
                 return this._tileHeight;
             }
         },
-
         /**
          * Gets the maximum level-of-detail that can be requested, or undefined if there is no limit.
          * This function should not be called before {@link UrlTemplateImageryProvider#ready} returns true.
@@ -352,8 +349,8 @@ define([
          * @readonly
          * @default undefined
          */
-        maximumLevel : {
-            get : function() {
+        maximumLevel: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this.ready) {
                     throw new DeveloperError('maximumLevel must not be called before the imagery provider is ready.');
@@ -362,7 +359,6 @@ define([
                 return this._maximumLevel;
             }
         },
-
         /**
          * Gets the minimum level-of-detail that can be requested.  This function should
          * not be called before {@link UrlTemplateImageryProvider#ready} returns true.
@@ -371,8 +367,8 @@ define([
          * @readonly
          * @default 0
          */
-        minimumLevel : {
-            get : function() {
+        minimumLevel: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this.ready) {
                     throw new DeveloperError('minimumLevel must not be called before the imagery provider is ready.');
@@ -381,7 +377,6 @@ define([
                 return this._minimumLevel;
             }
         },
-
         /**
          * Gets the tiling scheme used by this provider.  This function should
          * not be called before {@link UrlTemplateImageryProvider#ready} returns true.
@@ -390,8 +385,8 @@ define([
          * @readonly
          * @default new WebMercatorTilingScheme()
          */
-        tilingScheme : {
-            get : function() {
+        tilingScheme: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this.ready) {
                     throw new DeveloperError('tilingScheme must not be called before the imagery provider is ready.');
@@ -400,7 +395,6 @@ define([
                 return this._tilingScheme;
             }
         },
-
         /**
          * Gets the rectangle, in radians, of the imagery provided by this instance.  This function should
          * not be called before {@link UrlTemplateImageryProvider#ready} returns true.
@@ -409,8 +403,8 @@ define([
          * @readonly
          * @default tilingScheme.rectangle
          */
-        rectangle : {
-            get : function() {
+        rectangle: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this.ready) {
                     throw new DeveloperError('rectangle must not be called before the imagery provider is ready.');
@@ -419,7 +413,6 @@ define([
                 return this._rectangle;
             }
         },
-
         /**
          * Gets the tile discard policy.  If not undefined, the discard policy is responsible
          * for filtering out "missing" tiles via its shouldDiscardImage function.  If this function
@@ -430,8 +423,8 @@ define([
          * @readonly
          * @default undefined
          */
-        tileDiscardPolicy : {
-            get : function() {
+        tileDiscardPolicy: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this.ready) {
                     throw new DeveloperError('tileDiscardPolicy must not be called before the imagery provider is ready.');
@@ -440,7 +433,6 @@ define([
                 return this._tileDiscardPolicy;
             }
         },
-
         /**
          * Gets an event that is raised when the imagery provider encounters an asynchronous error.  By subscribing
          * to the event, you will be notified of the error and can potentially recover from it.  Event listeners
@@ -449,36 +441,33 @@ define([
          * @type {Event}
          * @readonly
          */
-        errorEvent : {
-            get : function() {
+        errorEvent: {
+            get: function () {
                 return this._errorEvent;
             }
         },
-
         /**
          * Gets a value indicating whether or not the provider is ready for use.
          * @memberof UrlTemplateImageryProvider.prototype
          * @type {Boolean}
          * @readonly
          */
-        ready : {
-            get : function() {
+        ready: {
+            get: function () {
                 return defined(this._urlParts);
             }
         },
-
         /**
          * Gets a promise that resolves to true when the provider is ready for use.
          * @memberof UrlTemplateImageryProvider.prototype
          * @type {Promise.<Boolean>}
          * @readonly
          */
-        readyPromise : {
-            get : function() {
+        readyPromise: {
+            get: function () {
                 return this._readyPromise;
             }
         },
-
         /**
          * Gets the credit to display when this imagery provider is active.  Typically this is used to credit
          * the source of the imagery.  This function should not be called before {@link UrlTemplateImageryProvider#ready} returns true.
@@ -487,8 +476,8 @@ define([
          * @readonly
          * @default undefined
          */
-        credit : {
-            get : function() {
+        credit: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this.ready) {
                     throw new DeveloperError('credit must not be called before the imagery provider is ready.');
@@ -497,7 +486,6 @@ define([
                 return this._credit;
             }
         },
-
         /**
          * Gets a value indicating whether or not the images provided by this imagery provider
          * include an alpha channel.  If this property is false, an alpha channel, if present, will
@@ -510,8 +498,8 @@ define([
          * @readonly
          * @default true
          */
-        hasAlphaChannel : {
-            get : function() {
+        hasAlphaChannel: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this.ready) {
                     throw new DeveloperError('hasAlphaChannel must not be called before the imagery provider is ready.');
@@ -528,20 +516,24 @@ define([
      *
      * @param {Promise.<Object>|Object} options Any of the options that may be passed to the {@link UrlTemplateImageryProvider} constructor.
      */
-    UrlTemplateImageryProvider.prototype.reinitialize = function(options) {
+    UrlTemplateImageryProvider.prototype.reinitialize = function (options) {
         var that = this;
-        that._readyPromise = when(options).then(function(properties) {
+        that._readyPromise = when(options).then(function (properties) {
+
             //>>includeStart('debug', pragmas.debug);
             if (!defined(properties)) {
                 throw new DeveloperError('options is required.');
-              }
+            }
             if (!defined(properties.url)) {
                 throw new DeveloperError('options.url is required.');
             }
             //>>includeEnd('debug');
+
             that.enablePickFeatures = defaultValue(properties.enablePickFeatures, that.enablePickFeatures);
             that._url = properties.url;
+
             that._urlSchemeZeroPadding = defaultValue(properties.urlSchemeZeroPadding, that.urlSchemeZeroPadding);
+
             that._pickFeaturesUrl = properties.pickFeaturesUrl;
             that._proxy = properties.proxy;
             that._tileDiscardPolicy = properties.tileDiscardPolicy;
@@ -560,9 +552,17 @@ define([
             that._tileHeight = defaultValue(properties.tileHeight, 256);
             that._minimumLevel = defaultValue(properties.minimumLevel, 0);
             that._maximumLevel = properties.maximumLevel;
-            that._tilingScheme = defaultValue(properties.tilingScheme, new WebMercatorTilingScheme({ ellipsoid : properties.ellipsoid }));
+            that._tilingScheme = defaultValue(properties.tilingScheme, new WebMercatorTilingScheme({ellipsoid: properties.ellipsoid}));
             that._rectangle = defaultValue(properties.rectangle, that._tilingScheme.rectangle);
-            that._rectangle = Rectangle.intersection(that._rectangle, that._tilingScheme.rectangle);
+            
+            /* ============================= NEW =============================== */
+
+            if (!(properties.tilingScheme instanceof  StereographicTilingScheme || properties.tilingScheme instanceof  GeographicTilingScheme)) {
+                that._rectangle = Rectangle.intersection(that._rectangle, that._tilingScheme.rectangle);
+            }
+
+            /* ================================================================= */
+
             that._hasAlphaChannel = defaultValue(properties.hasAlphaChannel, true);
 
             var credit = properties.credit;
@@ -570,9 +570,9 @@ define([
                 credit = new Credit(credit);
             }
             that._credit = credit;
-
             that._urlParts = urlTemplateToParts(that._url, tags);
             that._pickFeaturesUrlParts = urlTemplateToParts(that._pickFeaturesUrl, pickFeaturesTags);
+
             return true;
         });
     };
@@ -587,7 +587,7 @@ define([
      *
      * @exception {DeveloperError} <code>getTileCredits</code> must not be called before the imagery provider is ready.
      */
-    UrlTemplateImageryProvider.prototype.getTileCredits = function(x, y, level) {
+    UrlTemplateImageryProvider.prototype.getTileCredits = function (x, y, level) {
         //>>includeStart('debug', pragmas.debug);
         if (!this.ready) {
             throw new DeveloperError('getTileCredits must not be called before the imagery provider is ready.');
@@ -608,13 +608,14 @@ define([
      *          should be retried later.  The resolved image may be either an
      *          Image or a Canvas DOM object.
      */
-    UrlTemplateImageryProvider.prototype.requestImage = function(x, y, level) {
+    UrlTemplateImageryProvider.prototype.requestImage = function (x, y, level) {
         //>>includeStart('debug', pragmas.debug);
         if (!this.ready) {
             throw new DeveloperError('requestImage must not be called before the imagery provider is ready.');
         }
         //>>includeEnd('debug');
         var url = buildImageUrl(this, x, y, level);
+
         return ImageryProvider.loadImage(this, url);
     };
 
@@ -632,7 +633,7 @@ define([
      *                   instances.  The array may be empty if no features are found at the given location.
      *                   It may also be undefined if picking is not supported.
      */
-    UrlTemplateImageryProvider.prototype.pickFeatures = function(x, y, level, longitude, latitude) {
+    UrlTemplateImageryProvider.prototype.pickFeatures = function (x, y, level, longitude, latitude) {
         //>>includeStart('debug', pragmas.debug);
         if (!this.ready) {
             throw new DeveloperError('pickFeatures must not be called before the imagery provider is ready.');
@@ -683,7 +684,7 @@ define([
         degreesScratchComputed = false;
         projectedScratchComputed = false;
 
-        return buildUrl(imageryProvider, imageryProvider._urlParts, function(partFunction) {
+        return buildUrl(imageryProvider, imageryProvider._urlParts, function (partFunction) {
             return partFunction(imageryProvider, x, y, level);
         });
     }
@@ -694,7 +695,7 @@ define([
         ijScratchComputed = false;
         longitudeLatitudeProjectedScratchComputed = false;
 
-        return buildUrl(imageryProvider, imageryProvider._pickFeaturesUrlParts, function(partFunction) {
+        return buildUrl(imageryProvider, imageryProvider._pickFeaturesUrlParts, function (partFunction) {
             return partFunction(imageryProvider, x, y, level, longitude, latitude, format);
         });
     }
@@ -990,15 +991,15 @@ define([
     };
 
     var pickFeaturesTags = combine(tags, {
-        '{i}' : iTag,
-        '{j}' : jTag,
-        '{reverseI}' : reverseITag,
-        '{reverseJ}' : reverseJTag,
-        '{longitudeDegrees}' : longitudeDegreesTag,
-        '{latitudeDegrees}' : latitudeDegreesTag,
-        '{longitudeProjected}' : longitudeProjectedTag,
-        '{latitudeProjected}' : latitudeProjectedTag,
-        '{format}' : formatTag
+        '{i}': iTag,
+        '{j}': jTag,
+        '{reverseI}': reverseITag,
+        '{reverseJ}': reverseJTag,
+        '{longitudeDegrees}': longitudeDegreesTag,
+        '{latitudeDegrees}': latitudeDegreesTag,
+        '{longitudeProjected}': longitudeProjectedTag,
+        '{latitudeProjected}': latitudeProjectedTag,
+        '{format}': formatTag
     });
 
     return UrlTemplateImageryProvider;

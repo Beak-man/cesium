@@ -103,12 +103,16 @@ define([
 
         this._url = options.url;
         this._proxy = options.proxy;
+        
+        console.log(options.ellipsoid);
 
         this._tilingScheme = new GeographicTilingScheme({
             numberOfLevelZeroTilesX : 2,
             numberOfLevelZeroTilesY : 1,
             ellipsoid : options.ellipsoid
         });
+
+        console.log(this._tilingScheme.ellipsoid);
 
         this._heightmapWidth = 65;
         this._levelZeroMaximumGeometricError = TerrainProvider.getEstimatedLevelZeroGeometricErrorForAHeightmap(this._tilingScheme.ellipsoid, this._heightmapWidth, this._tilingScheme.getNumberOfXTilesAtLevel(0));
@@ -122,7 +126,7 @@ define([
          * @default false
          * @private
          */
-        this._hasVertexNormals = false;
+        this._hasVertexNormals = true;
         /**
          * Boolean flag that indicates if the client should request vertex normals from the server.
          * @type {Boolean}
@@ -227,6 +231,9 @@ define([
             that._readyPromise.resolve(true);
         }
 
+
+        // A developper 
+
         function metadataFailure(data) {
             // If the metadata is not found, assume this is a pre-metadata heightmap tileset.
             if (defined(data) && data.statusCode === 404) {
@@ -295,6 +302,9 @@ define([
 
     function createHeightmapTerrainData(provider, buffer, level, x, y, tmsY) {
         var heightBuffer = new Uint16Array(buffer, 0, provider._heightmapWidth * provider._heightmapWidth);
+        
+        // creation de la tile ici ???
+        
         return new HeightmapTerrainData({
             buffer : heightBuffer,
             childTileMask : new Uint8Array(buffer, heightBuffer.byteLength, 1)[0],
