@@ -188,6 +188,12 @@ define([//  Definition des dependances
      var propretiesObject = ['SERVICE', 'VERSION', 'SRS', 'STYLES', 'REQUEST', 'FORMAT', 'LAYERS', 'BBOX', 'WIDTH', 'HEIGHT'];
      var urlParam         = "";
      */
+    
+    
+    
+    
+    
+    
 
     var loadingIndicator = document.getElementById('loadingIndicator');
 
