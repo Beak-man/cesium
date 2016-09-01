@@ -236,6 +236,7 @@ define([
         //>>includeEnd('debug');
 
         if (!GroundPrimitive._initialized) {
+            this._ready = false;
             return false;
         }
         
@@ -299,7 +300,6 @@ define([
             throw new DeveloperError('result is required.');
         }
         //>>includeEnd('debug');
-
 
         var i;
         var length;
