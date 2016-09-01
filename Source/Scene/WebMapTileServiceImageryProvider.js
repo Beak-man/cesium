@@ -205,6 +205,8 @@ define([
         if (defined(proxy)) {
             url = proxy.getURL(url);
         }
+        
+        console.log(url);
 
         return url;
     }

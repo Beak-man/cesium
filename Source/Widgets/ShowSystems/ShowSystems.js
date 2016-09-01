@@ -10,9 +10,9 @@ define([
     "use strict";
 
     function createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, that, isWidgetVisible) {
-        
-        
-        var solarSystem =  configuration.planetarySystem.system;
+
+
+        var solarSystem = configuration.planetarySystem.system;
         var systemsDimensions = configuration.planetarySystem.dimension;
 
         var count = 0;
@@ -33,7 +33,7 @@ define([
             if (planetarySystem.length > 1) {
 
                 if (name !== '') {
-                    
+
                     // window[name + 'Wrapper'] allow to create variables dinamically
 
                     // create the container that contains the sub-buttons
@@ -121,6 +121,17 @@ define([
          customButton.innerHTML = 'Custom.';
          //customButton.setAttribute('data-bind', 'attr: { title: tooltip}, click: command.bind($data, "Custom")');
          PlanetsToolbar.appendChild(customButton); */
+        
+        // ============================ test WMTS ==============================
+
+        var wmtsButttn = document.createElement('div');
+        wmtsButttn.className = 'cesium-button-planet cesium-planetsToolbar-button';
+        wmtsButttn.innerHTML = "WMTS";
+        wmtsButttn.setAttribute('data-bind', 'click: WMTSCommand');           
+        PlanetsToolbar.appendChild(wmtsButttn);
+
+        // =====================================================================
+
 
         var configContainer = document.createElement('div');
         configContainer.className = 'cesium-showSystems-configContainer';
@@ -153,14 +164,14 @@ define([
 
         knockout.applyBindings(viewModel, PlanetsToolbar);
     }
- 
+
     // ================================== MAIN FUNCTION =========================================================
 
     var ShowSystems = function (viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, isWidgetVisible) {
-        
+
         var that = this;
         createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, that, isWidgetVisible);
-        
+
     }
 
     defineProperties(ShowSystems.prototype, {
