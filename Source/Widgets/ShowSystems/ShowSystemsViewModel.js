@@ -1,5 +1,3 @@
-/* Structure de base des widgets en Cesium : il faut respecter cette structure */
-
 /*global define*/
 define([
     '../../Scene/Camera',
@@ -25,7 +23,8 @@ define([
     '../VOData/VOData',
     '../../Scene/WebMapServiceImageryProvider',
     '../../Core/WebMercatorProjection',
-    '../../Core/WebMercatorTilingScheme'
+    '../../Core/WebMercatorTilingScheme',
+    '../../Scene/WebMapTileServiceImageryProvider'
 ], function (
         Camera,
         Cartesian3,
@@ -50,7 +49,8 @@ define([
         VOData,
         WebMapServiceImageryProvider,
         WebMercatorProjection,
-        WebMercatorTilingScheme
+        WebMercatorTilingScheme,
+        WebMapTileServiceImageryProvider
         ) {
     "use strict";
 
@@ -129,7 +129,7 @@ define([
         var ajaxDataRequest = 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + pn + mapType[0] + '&service=WMS&request=GetCapabilities';
 
         var ajaxDataRequestNomen = 'http://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + pn + '_nomen_wms.map&service=WMS&request=GetCapabilities';
-        
+
         getXmlPlanetData(that, viewer, xhr, xhrNomen, 'post', ajaxDataRequest, ajaxDataRequestNomen, true, listContainer, pn);
     }
 
@@ -389,7 +389,7 @@ define([
                                 var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
                                 var capability = data.getElementsByTagName("Capability");
                                 var layersIni = capability[0].getElementsByTagName("Layer");
-                                
+
                                 var nomenclatureLayers = [];
 
                                 for (var i = 0; i < layersIni.length; i++) {
@@ -470,7 +470,6 @@ define([
                                         colomn3.appendChild(inputRange);
 
                                         var nomenImageryProvider = new WebMapServiceImageryProvider({
-
                                             url: onlineResource,
                                             parameters: {format: 'image/png; mode=8bit'},
                                             layers: nomenLayer[i],
@@ -956,7 +955,6 @@ define([
     }
 
 
-
     function homePlanetShow(configuration, xhr, xhrNomen, that) {
 
         var homePlanet = configuration.homePlanet;
@@ -1011,6 +1009,26 @@ define([
     }
 
 
+    function getWMTSFunction(that) {
+        
+        console.log(that._ellipsoid);
+
+        var planetMars = new WebMapTileServiceImageryProvider({
+            url:  'https://api.nasa.gov/mars-wmts/catalog/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly',
+            ellipsoid: that._ellipsoid,
+            style: 'default',
+            tileMatrixSetID: 'default028mm',
+            layer: ' Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly',
+            format: 'image/jpg',
+        });
+
+        console.log(planetMars.url);
+
+        that._viewer.imageryLayers.addImageryProvider(planetMars);
+        console.log(that._viewer.imageryLayers);
+    }
+
+
     /* ================================================================================================================== */
     /* ================================================ Main functions ================================================== */
     /* ================================================================================================================== */
@@ -1055,6 +1073,50 @@ define([
         var xhrNomen = getRequest();
 
         homePlanetShow(configuration, xhr, xhrNomen, that);
+
+        // ************************** WMTS TESTS *******************************
+
+        this._wmtsCommand = createCommand(function () {
+
+            // INITIALISATION DU PANNEAU GAUCHE DU GLOBE
+
+            hideFunction(that);
+
+            var objectDimensions = {
+                x: 3390000,
+                y: 3390000,
+                z: 3360000
+            }
+
+            listContainer.innerHTML = "";
+            //  configContainer.innerHTML = "";
+
+            initializeScene(that, objectDimensions);
+            initializeMarkerMoveWidget(that);
+            homeView(that._scene);
+
+            try {
+                that._viewer.showSystems.viewModel.voData.destroyWrapperMenu;
+            } catch (e) {
+            }
+
+            var naifCode = [4, 0];
+
+            var obj = {
+                naifCodes: naifCode,
+                ellipsoid: that._ellipsoid
+            }
+
+            GeoJsonDataSource.crsModification = obj;
+
+            // FONCTION DE RECUPERATION DES WMTS
+
+            getWMTSFunction(that);
+
+
+        });
+
+        // *********************************************************************
 
         this._command = createCommand(function (planetName, planetIndex, satelliteIndex, vectorDimensionsString) {
 
@@ -1238,6 +1300,11 @@ define([
 
             }
         },
+        WMTSCommand: {
+            get: function () {
+                return this._wmtsCommand
+            }
+        },
     });
 
     /* ================================================================================================================== */
@@ -1308,15 +1375,15 @@ define([
 
 
         var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
-        
-      /*  var newTerrainProvider = new CesiumTerrainProvider({
-                        url : 'https://assets.agi.com/stk-terrain/world',
-                        //url : '//localhost:8080/tilesets/MOLA-terrain-tiles/',
-                        ellipsoid : that._ellipsoid,
-                        requestWaterMask : false,
-                        requestVertexNormals : false
-        });*/
-        
+
+        /*  var newTerrainProvider = new CesiumTerrainProvider({
+         url : 'https://assets.agi.com/stk-terrain/world',
+         //url : '//localhost:8080/tilesets/MOLA-terrain-tiles/',
+         ellipsoid : that._ellipsoid,
+         requestWaterMask : false,
+         requestVertexNormals : false
+         });*/
+
         var newGeographicProjection = new GeographicProjection(that._ellipsoid);
         var newGlobe = new Globe(that._ellipsoid);
 
