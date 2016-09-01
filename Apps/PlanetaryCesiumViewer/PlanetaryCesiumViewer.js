@@ -188,6 +188,12 @@ define([//  Definition des dependances
      var propretiesObject = ['SERVICE', 'VERSION', 'SRS', 'STYLES', 'REQUEST', 'FORMAT', 'LAYERS', 'BBOX', 'WIDTH', 'HEIGHT'];
      var urlParam         = "";
      */
+    
+    
+    
+    
+    
+    
 
     var loadingIndicator = document.getElementById('loadingIndicator');
 
@@ -208,7 +214,8 @@ define([//  Definition des dependances
         navigationInstructionsInitiallyVisible: false,
         showSystems: true,
         tools: true,
-        VOData: false
+        VOData: false,
+        geocoder : false
     }
 
     function viewerCreation(configuration) {

@@ -33,6 +33,8 @@ define([
             if (planetarySystem.length > 1) {
 
                 if (name !== '') {
+                    
+                    // window[name + 'Wrapper'] allow to create variables dinamically
 
                     // create the container that contains the sub-buttons
                     window[name + 'Wrapper'] = document.createElement('span');
