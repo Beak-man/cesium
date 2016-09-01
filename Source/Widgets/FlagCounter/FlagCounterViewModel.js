@@ -58,8 +58,8 @@ define([
                     var latitude = cartographic.latitude * (180.0 / Math.PI);
 
                     that._viewer.camera.flyTo({
-                        destination: Cartesian3.fromDegrees(longitude, latitude, 7000.0, ellipsoid),
-                        duration: 1.0,
+                           destination: Cartesian3.fromDegrees(longitude, latitude, 7.0, ellipsoid),
+                        duration: 2.0,
                     });
 
                     break;
