@@ -2658,6 +2658,7 @@ define([
         newOptions.easingFunction = options.easingFunction;
 
         var scene = this._scene;
+
         flightTween = scene.tweens.add(CameraFlightPath.createTween(scene, newOptions));
         this._currentFlight = flightTween;
     };

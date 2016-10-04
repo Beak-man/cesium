@@ -265,8 +265,12 @@ define([
         var ellipsoid = projection.ellipsoid;
         var maximumHeight = options.maximumHeight;
         var easingFunction = options.easingFunction;
+        
+         console.log(scene.mode);
+         console.log(convert);
 
         if (convert && mode !== SceneMode.SCENE3D) {
+
             ellipsoid.cartesianToCartographic(destination, scratchCartographic);
             destination = projection.project(scratchCartographic, scratchDestination);
         }
@@ -333,9 +337,13 @@ define([
         if (!defined(easingFunction)) {
             var startHeight = camera.positionCartographic.height;
             var endHeight = mode === SceneMode.SCENE3D ? ellipsoid.cartesianToCartographic(destination).height : destination.z;
+            
+            console.log(startHeight);
+             console.log(endHeight);
 
             if (startHeight > endHeight && startHeight > 11500.0) {
                 easingFunction = EasingFunction.CUBIC_OUT;
+                console.log(EasingFunction.CUBIC_OUT);
             } else {
                 easingFunction = EasingFunction.QUINTIC_IN_OUT;
             }
