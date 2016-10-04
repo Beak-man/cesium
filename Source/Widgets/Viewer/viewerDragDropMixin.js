@@ -80,7 +80,7 @@ define([
 
         //Local variables to be closed over by defineProperties.
         var dropEnabled = true;
-        var flyToOnDrop = true;
+        var flyToOnDrop = defaultValue(options.flyToOnDrop, true);
         var dropError = new Event();
         var clearOnDrop = defaultValue(options.clearOnDrop, true);
         var dropTarget = defaultValue(options.dropTarget, viewer.container);

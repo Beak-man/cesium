@@ -7,6 +7,7 @@ defineSuite([
         'Core/ClockRange',
         'Core/ClockStep',
         'Core/Color',
+        'Core/combine',
         'Core/DefaultProxy',
         'Core/Event',
         'Core/Iso8601',
@@ -37,6 +38,7 @@ defineSuite([
         ClockRange,
         ClockStep,
         Color,
+        combine,
         DefaultProxy,
         Event,
         Iso8601,
@@ -774,6 +776,24 @@ defineSuite([
                 <south>-90</south>\
                 <east>180</east>\
                 <north>90</north>\
+            </LatLonBox>\
+        </GroundOverlay>';
+
+        return KmlDataSource.load(parser.parseFromString(kml, "text/xml"), options).then(function(dataSource) {
+            var entity = dataSource.entities.values[0];
+            expect(entity.polygon).toBeUndefined();
+            expect(entity.rectangle.coordinates.getValue()).toEqual(Rectangle.fromDegrees(-180, -90, 180, 90));
+        });
+    });
+
+    it('GroundOverlay: Handles out-of-range latitudes.', function() {
+        var kml = '<?xml version="1.0" encoding="UTF-8"?>\
+        <GroundOverlay>\
+            <LatLonBox>\
+                <west>-180</west>\
+                <south>-100</south>\
+                <east>180</east>\
+                <north>100</north>\
             </LatLonBox>\
         </GroundOverlay>';
 
@@ -3848,7 +3868,7 @@ defineSuite([
                     </coordinates>\
                 </LineString>\
             </Placemark>';
-        var clampToGroundOptions = Object.assign({ clampToGround : true }, options);
+        var clampToGroundOptions = combine(options, { clampToGround : true });
         return KmlDataSource.load(parser.parseFromString(kml, "text/xml"), clampToGroundOptions).then(function(dataSource) {
             var entity = dataSource.entities.values[0];
             expect(entity.corridor).toBeDefined();
