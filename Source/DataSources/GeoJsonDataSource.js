@@ -334,6 +334,7 @@ define([
                 circle.fill = true;
                 circle.outlineColor = Color.YELLOW;
                 circle.outlineWidth = 1.0;
+                 circle.height = 1.0;
 
                 if (geoJson.properties.flagColor) {
 
@@ -552,13 +553,15 @@ define([
         graphics.positions = new ConstantProperty(coordinatesArrayToCartesianArray(coordinates, crsFunction));
     }
 
-
     function processLineString(dataSource, geoJson, geometry, crsFunction, options) {
         createLineString(dataSource, geoJson, crsFunction, geometry.coordinates, options);
     }
 
     function processMultiLineString(dataSource, geoJson, geometry, crsFunction, options) {
         var lineStrings = geometry.coordinates;
+        
+        console.log(lineStrings);
+        
         for (var i = 0; i < lineStrings.length; i++) {
             createLineString(dataSource, geoJson, crsFunction, lineStrings[i], options);
         }

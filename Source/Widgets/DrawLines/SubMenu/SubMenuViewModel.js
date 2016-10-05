@@ -141,10 +141,10 @@ define([
                             }
                         }
 
-                        // If we have our 2 points (i.e 4 components in arrayRadians), then
+                        // If we have 2 points (i.e 4 components in arrayRadians), then
 
                         if (arrayRadians.length === 4) {
-
+                            
                             // create an object which contains parameters to draw a line
 
                             newPolyLine = {
@@ -195,6 +195,8 @@ define([
 
                             // If there is more than 1 line in the collection, 
                             // wer remove the before last one
+                            
+                            console.log(polyLines._polylines);
 
                             if (dim > 1) {
                                 var polyline = polyLines._polylines[dim - 2];
@@ -469,7 +471,8 @@ define([
                                 var circleOutlineGeometry = new CircleOutlineGeometry({
                                     center: cartesianCartographicCircleCenter,
                                     radius: circleRadius,
-                                    ellipsoid: ellipsoid
+                                    ellipsoid: ellipsoid,
+                                    height : 0
                                 });
 
                                 var circleOutlineInstance = new GeometryInstance({
@@ -527,12 +530,13 @@ define([
                     var cartesianCircleCenter = newPrim._boundingSphereWC[0].center;
                     var radius = circleRadius = newPrim._boundingSphereWC[0].radius;
 
-                    console.log(circleRadius);
+                   // console.log(circleRadius);
 
                     var circleGeometry = new CircleGeometry({
                         center: cartesianCircleCenter,
                         radius: circleRadius,
                         ellipsoid: ellipsoid,
+                        height : 0,
                         vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT
                     });
 
@@ -668,6 +672,7 @@ define([
                                 center: middlePoint,
                                 radius: diameter / 2.0,
                                 ellipsoid: ellipsoid,
+                                height : 0,
                                 vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT
                             });
 
@@ -1093,6 +1098,7 @@ define([
                                 center: centerPosition,
                                 radius: diameter / 2.0,
                                 ellipsoid: ellipsoid,
+                                height : 0,
                                 vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT
                             });
 
