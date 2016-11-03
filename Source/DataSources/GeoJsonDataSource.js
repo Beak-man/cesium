@@ -1136,7 +1136,7 @@ define([
          ***************************************************************************************************************************** */
 
         var crs = geoJson.crs;
-        var crsFunction = crs !== null ? defaultCrsFunction : null;
+      //  var crsFunction = crs !== null ? defaultCrsFunction : null;
 
         if (defined(crs)) {
             if (!defined(crs.properties)) {

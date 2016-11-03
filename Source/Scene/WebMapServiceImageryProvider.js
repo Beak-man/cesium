@@ -107,6 +107,7 @@ define([
 
         this._url = options.url;
         this._layers = options.layers;
+       
 
         var getFeatureInfoFormats = defaultValue(options.getFeatureInfoFormats, WebMapServiceImageryProvider.DefaultGetFeatureInfoFormats);
 
@@ -208,6 +209,7 @@ define([
             getFeatureInfoFormats: getFeatureInfoFormats,
             enablePickFeatures: options.enablePickFeatures
         });
+        
     }
 
     defineProperties(WebMapServiceImageryProvider.prototype, {

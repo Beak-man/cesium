@@ -557,9 +557,9 @@ define([
             
             /* ============================= NEW =============================== */
 
-            if (!(properties.tilingScheme instanceof  StereographicTilingScheme || properties.tilingScheme instanceof  GeographicTilingScheme)) {
+        /*    if (!(properties.tilingScheme instanceof  StereographicTilingScheme || properties.tilingScheme instanceof  GeographicTilingScheme)) {
                 that._rectangle = Rectangle.intersection(that._rectangle, that._tilingScheme.rectangle);
-            }
+            }*/
 
             /* ================================================================= */
 
