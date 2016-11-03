@@ -609,6 +609,9 @@ define([
      *          Image or a Canvas DOM object.
      */
     UrlTemplateImageryProvider.prototype.requestImage = function (x, y, level) {
+        
+        console.log();
+        
         //>>includeStart('debug', pragmas.debug);
         if (!this.ready) {
             throw new DeveloperError('requestImage must not be called before the imagery provider is ready.');

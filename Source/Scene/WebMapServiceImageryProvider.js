@@ -93,7 +93,7 @@ define([
      * viewer.imageryLayers.addImageryProvider(provider);
      */
     function WebMapServiceImageryProvider(options) {
-        
+
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
 
         //>>includeStart('debug', pragmas.debug);
@@ -107,7 +107,7 @@ define([
 
         this._url = options.url;
         this._layers = options.layers;
-       
+
 
         var getFeatureInfoFormats = defaultValue(options.getFeatureInfoFormats, WebMapServiceImageryProvider.DefaultGetFeatureInfoFormats);
 
@@ -134,7 +134,7 @@ define([
                 pickFeaturesQueryOptions[name] = value;
             }
         }
-        
+
         /* ============================= NEW ===================================
          * 
          * @param {type} tilingScheme
@@ -151,15 +151,15 @@ define([
                 return 'EPSG:4326';
             }
         }
-        
+
         /*======================================================================
          * =====================================================================
          * ===================================================================== */
-        
+
         var srsSet = setSrs(options.tilingScheme);
 
         setParameter('layers', options.layers);
-       // setParameter('srs', options.tilingScheme instanceof WebMercatorTilingScheme ? 'EPSG:3857' : 'EPSG:4326');
+        // setParameter('srs', options.tilingScheme instanceof WebMercatorTilingScheme ? 'EPSG:3857' : 'EPSG:4326');
         setParameter('srs', srsSet);
         setParameter('bbox', '{westProjected},{southProjected},{eastProjected},{northProjected}');
         setParameter('width', '{width}');
@@ -209,7 +209,7 @@ define([
             getFeatureInfoFormats: getFeatureInfoFormats,
             enablePickFeatures: options.enablePickFeatures
         });
-        
+
     }
 
     defineProperties(WebMapServiceImageryProvider.prototype, {

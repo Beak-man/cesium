@@ -288,6 +288,8 @@ define([
                             });
 
 
+                            
+
                         } else if (names[i].indexOf(strTest) == -1) { // for npoles et spoles maps
 
                             if (crs == "EPSG:32761" || crs == "EPSG:32661") {
@@ -355,7 +357,7 @@ define([
                                     ellipsoid: that._ellipsoid,
                                     enablePickFeatures: false
                                 });
-                                //     console.log(imageryProvidersTab[i]);
+                                   console.log(imageryProvidersTab[i]);
                             }
                         }
                     }
