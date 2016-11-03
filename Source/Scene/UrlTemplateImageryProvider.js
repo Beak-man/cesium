@@ -209,7 +209,7 @@ define([
          * @default true
          */
         this.enablePickFeatures = true;
-
+        
         this.reinitialize(options);
     }
 
@@ -262,13 +262,11 @@ define([
          * @type {Object}
          * @readonly
          */
-        urlSchemeZeroPadding : {
-            get : function() {
+        urlSchemeZeroPadding: {
+            get: function () {
                 return this._urlSchemeZeroPadding;
             }
         },
-
-
         /**
          * Gets the URL template to use to use to pick features.  If this property is not specified,
          * {@link UrlTemplateImageryProvider#pickFeatures} will immediately returned undefined, indicating no
@@ -554,12 +552,12 @@ define([
             that._maximumLevel = properties.maximumLevel;
             that._tilingScheme = defaultValue(properties.tilingScheme, new WebMercatorTilingScheme({ellipsoid: properties.ellipsoid}));
             that._rectangle = defaultValue(properties.rectangle, that._tilingScheme.rectangle);
-            
+
             /* ============================= NEW =============================== */
 
-        /*    if (!(properties.tilingScheme instanceof  StereographicTilingScheme || properties.tilingScheme instanceof  GeographicTilingScheme)) {
-                that._rectangle = Rectangle.intersection(that._rectangle, that._tilingScheme.rectangle);
-            }*/
+            /*    if (!(properties.tilingScheme instanceof  StereographicTilingScheme || properties.tilingScheme instanceof  GeographicTilingScheme)) {
+             that._rectangle = Rectangle.intersection(that._rectangle, that._tilingScheme.rectangle);
+             }*/
 
             /* ================================================================= */
 
@@ -609,15 +607,15 @@ define([
      *          Image or a Canvas DOM object.
      */
     UrlTemplateImageryProvider.prototype.requestImage = function (x, y, level) {
-        
-        console.log();
-        
+
         //>>includeStart('debug', pragmas.debug);
         if (!this.ready) {
             throw new DeveloperError('requestImage must not be called before the imagery provider is ready.');
         }
         //>>includeEnd('debug');
         var url = buildImageUrl(this, x, y, level);
+
+        console.log(url);
 
         return ImageryProvider.loadImage(this, url);
     };
@@ -719,7 +717,7 @@ define([
         if (defined(proxy)) {
             url = proxy.getURL(url);
         }
-
+        console.log(url);
         return url;
     }
 
@@ -763,8 +761,8 @@ define([
 
     function padWithZerosIfNecessary(imageryProvider, key, value) {
         if (imageryProvider &&
-            imageryProvider.urlSchemeZeroPadding &&
-            imageryProvider.urlSchemeZeroPadding.hasOwnProperty(key) )
+                imageryProvider.urlSchemeZeroPadding &&
+                imageryProvider.urlSchemeZeroPadding.hasOwnProperty(key))
         {
             var paddingTemplate = imageryProvider.urlSchemeZeroPadding[key];
             if (typeof paddingTemplate === 'string') {

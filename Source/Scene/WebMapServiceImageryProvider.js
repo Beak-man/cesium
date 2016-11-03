@@ -159,8 +159,8 @@ define([
         var srsSet = setSrs(options.tilingScheme);
 
         setParameter('layers', options.layers);
-        // setParameter('srs', options.tilingScheme instanceof WebMercatorTilingScheme ? 'EPSG:3857' : 'EPSG:4326');
-        setParameter('srs', srsSet);
+        setParameter('srs', options.tilingScheme instanceof WebMercatorTilingScheme ? 'EPSG:3857' : 'EPSG:4326');
+        // setParameter('srs', srsSet);
         setParameter('bbox', '{westProjected},{southProjected},{eastProjected},{northProjected}');
         setParameter('width', '{width}');
         setParameter('height', '{height}');
@@ -209,7 +209,6 @@ define([
             getFeatureInfoFormats: getFeatureInfoFormats,
             enablePickFeatures: options.enablePickFeatures
         });
-
     }
 
     defineProperties(WebMapServiceImageryProvider.prototype, {

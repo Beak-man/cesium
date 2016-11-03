@@ -461,7 +461,7 @@ define([
                 canvasOrPromise = dataSource._pinBuilder.fromColor(color, size);
             }
 
-            dataSource._promises.push(when(canvasOrPromise, function (dataUrl) {
+           dataSource._promises.push(when(canvasOrPromise, function (dataUrl) {
                 var billboard = new BillboardGraphics();
                 billboard.verticalOrigin = new ConstantProperty(VerticalOrigin.BOTTOM);
                 billboard.image = new ConstantProperty(dataUrl);
@@ -492,7 +492,7 @@ define([
                 });
 
                 dataSource._promises.push(promise);
-            }))
+            })) 
         }
     }
 

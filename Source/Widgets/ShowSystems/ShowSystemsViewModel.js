@@ -338,11 +338,11 @@ define([
 
                                 //  console.log("before SingleTileImageryProvider");
 
-                                imageryProvidersTab[i] = new SingleTileImageryProvider({
+                          /*      imageryProvidersTab[i] = new SingleTileImageryProvider({
                                     url: "http://planetarymaps.usgs.gov/cgi-bin/mapserv?format=image/jpeg&service=WMS&bbox=-2357030,-2357030,2357030,2357030&srs=EPSG:32661&version=1.1.1&request=GetMap&styles=&map=/maps/mars/mars_npole.map&=&layers=MOLA_color_north&width=2048&height=2048",
                                     rectangle: rect,
                                     ellipsoid: that._ellipsoid,
-                                });
+                                });*/
 
 
                                 //    console.log(imageryProvidersTab[i]);
@@ -357,7 +357,7 @@ define([
                                     ellipsoid: that._ellipsoid,
                                     enablePickFeatures: false
                                 });
-                                   console.log(imageryProvidersTab[i]);
+                               //    console.log(imageryProvidersTab[i]);
                             }
                         }
                     }
