@@ -1,36 +1,36 @@
 /*global define*/
 define([
-        '../Core/Color',
-        '../Core/createGuid',
-        '../Core/defaultValue',
-        '../Core/defined',
-        '../Core/defineProperties',
-        '../Core/DeveloperError',
-        '../Core/Event',
-        '../Core/Ellipsoid', 
-        './EllipseGraphics',
-        '../Core/getFilenameFromUri',
-        '../Core/loadJson',
-        '../Core/PinBuilder',
-        '../Core/PolygonHierarchy',
-        '../Core/RuntimeError',
-        '../Scene/HeightReference',
-        '../Scene/VerticalOrigin',
-        '../ThirdParty/topojson',
-        '../ThirdParty/when',
-        './BillboardGraphics',
-        './CallbackProperty',
-        './ColorMaterialProperty',
-        './ConstantPositionProperty',
-        './ConstantProperty',
-        './CoordinatesReferenceSystems', 
-        './CorridorGraphics',
-        './DataSource',
-        './EntityCluster',
-        './EntityCollection',
-        './PolygonGraphics',
-        './PolylineGraphics'
-    ], function(
+    '../Core/Color',
+    '../Core/createGuid',
+    '../Core/defaultValue',
+    '../Core/defined',
+    '../Core/defineProperties',
+    '../Core/DeveloperError',
+    '../Core/Event',
+    '../Core/Ellipsoid',
+    './EllipseGraphics',
+    '../Core/getFilenameFromUri',
+    '../Core/loadJson',
+    '../Core/PinBuilder',
+    '../Core/PolygonHierarchy',
+    '../Core/RuntimeError',
+    '../Scene/HeightReference',
+    '../Scene/VerticalOrigin',
+    '../ThirdParty/topojson',
+    '../ThirdParty/when',
+    './BillboardGraphics',
+    './CallbackProperty',
+    './ColorMaterialProperty',
+    './ConstantPositionProperty',
+    './ConstantProperty',
+    './CoordinatesReferenceSystems',
+    './CorridorGraphics',
+    './DataSource',
+    './EntityCluster',
+    './EntityCollection',
+    './PolygonGraphics',
+    './PolylineGraphics'
+], function (
         Color,
         createGuid,
         defaultValue,
@@ -54,7 +54,7 @@ define([
         ColorMaterialProperty,
         ConstantPositionProperty,
         ConstantProperty,
-        CoordinatesReferenceSystems, 
+        CoordinatesReferenceSystems,
         CorridorGraphics,
         DataSource,
         EntityCluster,
@@ -109,7 +109,7 @@ define([
     var simpleStyleIdentifiers = ['title', 'description', //
         'marker-size', 'marker-symbol', 'marker-color', 'stroke', //
         'stroke-opacity', 'stroke-width', 'fill', 'fill-opacity'];
-    
+
     var stringifyScratch = new Array(4);
 
     function defaultDescribe(properties, nameProperty) {
@@ -306,124 +306,124 @@ define([
 
         if (geoJson.properties.radius || geoJson.properties.Radius) {
 
-                counter = counter + 1;
+            counter = counter + 1;
 
-                var radius;
-                var position;
+            var radius;
+            var position;
 
-                var radii = geoJson.properties.radius ? geoJson.properties.radius : geoJson.properties.Radius;
-
-
-                try {
-                    var radiusString = radii;
-                    var stringSplit = radiusString.split(" ");
-                    radius = parseFloat(stringSplit[0]);
-                } catch (e) {
-                    var radiusString = geoJson.properties.radius;
-                    radius = parseFloat(radiusString);
-                }
-
-                //  if (options.circle) {
-
-                var circle = new EllipseGraphics();
-
-                circle.outline = new ConstantProperty(true);
-                circle.semiMajorAxis = radius;
-                circle.semiMinorAxis = radius;
-                circle.outline = true;
-                circle.fill = true;
-                circle.outlineColor = Color.YELLOW;
-                circle.outlineWidth = 1.0;
-                 circle.height = 1.0;
-
-                if (geoJson.properties.flagColor) {
-
-                    var rgbaString = geoJson.properties.flagColor;
-                    var rgbaStringTab = rgbaString.split(", ");
-                    var R = parseFloat(rgbaStringTab[0]) / 255.;
-                    var G = parseFloat(rgbaStringTab[1]) / 255.;
-                    var B = parseFloat(rgbaStringTab[2]) / 255.;
-                    var A = parseFloat(rgbaStringTab[3]) / 2.5;
-
-                    circle.material = new Color(R, G, B, A);
+            var radii = geoJson.properties.radius ? geoJson.properties.radius : geoJson.properties.Radius;
 
 
-                } else {
-                    circle.material = new Color(1.0, 1.0, 0.0, 0.3);
-                }
+            try {
+                var radiusString = radii;
+                var stringSplit = radiusString.split(" ");
+                radius = parseFloat(stringSplit[0]);
+            } catch (e) {
+                var radiusString = geoJson.properties.radius;
+                radius = parseFloat(radiusString);
+            }
 
-                if (!GeoJsonDataSource._ellipsoid) {
-                    position = new ConstantPositionProperty(crsFunction(coordinates));
+            //  if (options.circle) {
 
-                } else if (GeoJsonDataSource._ellipsoid) {
-                    position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
-                }
+            var circle = new EllipseGraphics();
 
-                //  var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
+            circle.outline = new ConstantProperty(true);
+            circle.semiMajorAxis = radius;
+            circle.semiMinorAxis = radius;
+            circle.outline = true;
+            circle.fill = true;
+            circle.outlineColor = Color.YELLOW;
+            circle.outlineWidth = 1.0;
+            circle.height = 1.0;
 
-                //  entity.position = position;
-                // entity.ellipse = circle;
+            if (geoJson.properties.flagColor) {
 
-                //  } else if (!options.circle || options.circle === 'undefined') { //
+                var rgbaString = geoJson.properties.flagColor;
+                var rgbaStringTab = rgbaString.split(", ");
+                var R = parseFloat(rgbaStringTab[0]) / 255.;
+                var G = parseFloat(rgbaStringTab[1]) / 255.;
+                var B = parseFloat(rgbaStringTab[2]) / 255.;
+                var A = parseFloat(rgbaStringTab[3]) / 2.5;
 
-                var point = new EllipseGraphics();
+                circle.material = new Color(R, G, B, A);
 
-                point.outline = new ConstantProperty(true);
-                point.semiMajorAxis = radius;
-                point.semiMinorAxis = radius;
-                point.outline = true;
-                point.fill = true;
-                point.outlineColor = Color.YELLOW;
-                point.outlineWidth = 1.0;
 
-                if (geoJson.properties.flagColor) {
+            } else {
+                circle.material = new Color(1.0, 1.0, 0.0, 0.3);
+            }
 
-                    var rgbaString = geoJson.properties.flagColor;
-                    var rgbaStringTab = rgbaString.split(", ");
+            if (!GeoJsonDataSource._ellipsoid) {
+                position = new ConstantPositionProperty(crsFunction(coordinates));
 
-                    var R = parseFloat(rgbaStringTab[0]) / 255;
-                    var G = parseFloat(rgbaStringTab[1]) / 255;
-                    var B = parseFloat(rgbaStringTab[2]) / 255;
-                    var A = parseFloat(rgbaStringTab[3]);
+            } else if (GeoJsonDataSource._ellipsoid) {
+                position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
+            }
 
-                    point.color = new Color(R, G, B, A);
-                    point.outlineColor._value = new Color(R, G, B, A);
-                    point.outlineWidth._value = 2;
+            //  var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
 
-                    flaggedCounter = flaggedCounter + 1;
+            //  entity.position = position;
+            // entity.ellipse = circle;
 
-                } else {
-                    point.color = new Color(1.0, 1.0, 0.0, 1.0);
-                    point.outlineColor._value = new Color(1.0, 1.0, 0.0, 1.0);
-                    point.outlineWidth._value = 2;
-                }
+            //  } else if (!options.circle || options.circle === 'undefined') { //
 
-                if (!GeoJsonDataSource._ellipsoid) {
-                    position = new ConstantPositionProperty(crsFunction(coordinates));
+            var point = new EllipseGraphics();
 
-                } else if (GeoJsonDataSource._ellipsoid) {
-                    position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
-                }
+            point.outline = new ConstantProperty(true);
+            point.semiMajorAxis = radius;
+            point.semiMinorAxis = radius;
+            point.outline = true;
+            point.fill = true;
+            point.outlineColor = Color.YELLOW;
+            point.outlineWidth = 1.0;
 
-                var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
+            if (geoJson.properties.flagColor) {
 
-                entity.position = position;
-                entity.ellipse = circle;
-                entity.ellipse.show = false;
-                entity.point = point;
+                var rgbaString = geoJson.properties.flagColor;
+                var rgbaStringTab = rgbaString.split(", ");
 
-                GeoJsonDataSource.flaggedCounter = flaggedCounter;
-                GeoJsonDataSource.counter = counter;
+                var R = parseFloat(rgbaStringTab[0]) / 255;
+                var G = parseFloat(rgbaStringTab[1]) / 255;
+                var B = parseFloat(rgbaStringTab[2]) / 255;
+                var A = parseFloat(rgbaStringTab[3]);
 
-                var countObject = {
-                    flagged: flaggedCounter,
-                    total: counter
-                }
+                point.color = new Color(R, G, B, A);
+                point.outlineColor._value = new Color(R, G, B, A);
+                point.outlineWidth._value = 2;
 
-                try {
-                    GeoJsonDataSource._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.flagCounter.viewModel.counterUpdateOnLoad = countObject;
-                } catch (e) {
-                }
+                flaggedCounter = flaggedCounter + 1;
+
+            } else {
+                point.color = new Color(1.0, 1.0, 0.0, 1.0);
+                point.outlineColor._value = new Color(1.0, 1.0, 0.0, 1.0);
+                point.outlineWidth._value = 2;
+            }
+
+            if (!GeoJsonDataSource._ellipsoid) {
+                position = new ConstantPositionProperty(crsFunction(coordinates));
+
+            } else if (GeoJsonDataSource._ellipsoid) {
+                position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
+            }
+
+            var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
+
+            entity.position = position;
+            entity.ellipse = circle;
+            entity.ellipse.show = false;
+            entity.point = point;
+
+            GeoJsonDataSource.flaggedCounter = flaggedCounter;
+            GeoJsonDataSource.counter = counter;
+
+            var countObject = {
+                flagged: flaggedCounter,
+                total: counter
+            }
+
+            try {
+                GeoJsonDataSource._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.flagCounter.viewModel.counterUpdateOnLoad = countObject;
+            } catch (e) {
+            }
 
         } else {
 
@@ -471,22 +471,31 @@ define([
 
                 if (!GeoJsonDataSource._ellipsoid) {
                     entity.position = new ConstantPositionProperty(crsFunction(coordinates));
-                    
-                    } else if (GeoJsonDataSource._ellipsoid) {
+
+                } else if (GeoJsonDataSource._ellipsoid) {
                     entity.position = new ConstantPositionProperty(crsFunction(coordinates, GeoJsonDataSource._ellipsoid));
                 }
 
-            // Clamp to ground if there isn't a height specified
-            if (coordinates.length === 2) {
-                billboard.heightReference = HeightReference.CLAMP_TO_GROUND;
-            }
+                // Clamp to ground if there isn't a height specified
+                if (coordinates.length === 2 && options.clampToGround) {
+                    billboard.heightReference = HeightReference.CLAMP_TO_GROUND;
+                }
 
-            var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
-            entity.billboard = billboard;
-            entity.position = new ConstantPositionProperty(crsFunction(coordinates));
-        }));
+                var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
+                entity.billboard = billboard;
+                entity.position = new ConstantPositionProperty(crsFunction(coordinates));
+
+                var promise = when(canvasOrPromise).then(function (image) {
+                    billboard.image = new ConstantProperty(image);
+                }).otherwise(function () {
+                    billboard.image = new ConstantProperty(dataSource._pinBuilder.fromColor(color, size));
+                });
+
+                dataSource._promises.push(promise);
+            }))
+        }
     }
-    }
+
 
     function processPoint(dataSource, geoJson, geometry, crsFunction, options) {
 
@@ -559,9 +568,9 @@ define([
 
     function processMultiLineString(dataSource, geoJson, geometry, crsFunction, options) {
         var lineStrings = geometry.coordinates;
-        
+
         console.log(lineStrings);
-        
+
         for (var i = 0; i < lineStrings.length; i++) {
             createLineString(dataSource, geoJson, crsFunction, lineStrings[i], options);
         }
@@ -843,15 +852,14 @@ define([
          * @type {Boolean}
          * @default false
          */
-        clampToGround : {
-            get : function() {
+        clampToGround: {
+            get: function () {
                 return defaultClampToGround;
             },
-            set : function(value) {
+            set: function (value) {
                 defaultClampToGround = value;
             }
         },
-
         /**
          * Gets an object that maps the name of a crs to a callback function which takes a GeoJSON coordinate
          * and transforms it into a WGS84 Earth-fixed Cartesian.  Older versions of GeoJSON which
@@ -992,18 +1000,17 @@ define([
                 this._entityCollection.show = value;
             }
         },
-
         /**
          * Gets or sets the clustering options for this data source. This object can be shared between multiple data sources.
          *
          * @memberof GeoJsonDataSource.prototype
          * @type {EntityCluster}
          */
-        clustering : {
-            get : function() {
+        clustering: {
+            get: function () {
                 return this._entityCluster;
             },
-            set : function(value) {
+            set: function (value) {
                 //>>includeStart('debug', pragmas.debug);
                 if (!defined(value)) {
                     throw new DeveloperError('value must be defined.');
@@ -1065,13 +1072,13 @@ define([
 
         options = {
             describe: defaultValue(options.describe, defaultDescribeProperty),
-            markerSize : defaultValue(options.markerSize, defaultMarkerSize),
-            markerSymbol : defaultValue(options.markerSymbol, defaultMarkerSymbol),
-            markerColor : defaultValue(options.markerColor, defaultMarkerColor),
-            strokeWidthProperty : new ConstantProperty(defaultValue(options.strokeWidth, defaultStrokeWidth)),
-            strokeMaterialProperty : new ColorMaterialProperty(defaultValue(options.stroke, defaultStroke)),
-            fillMaterialProperty : new ColorMaterialProperty(defaultValue(options.fill, defaultFill)),
-            clampToGround : defaultValue(options.clampToGround, defaultClampToGround)
+            markerSize: defaultValue(options.markerSize, defaultMarkerSize),
+            markerSymbol: defaultValue(options.markerSymbol, defaultMarkerSymbol),
+            markerColor: defaultValue(options.markerColor, defaultMarkerColor),
+            strokeWidthProperty: new ConstantProperty(defaultValue(options.strokeWidth, defaultStrokeWidth)),
+            strokeMaterialProperty: new ColorMaterialProperty(defaultValue(options.stroke, defaultStroke)),
+            fillMaterialProperty: new ColorMaterialProperty(defaultValue(options.fill, defaultFill)),
+            clampToGround: defaultValue(options.clampToGround, defaultClampToGround)
         };
 
         var that = this;
@@ -1129,10 +1136,7 @@ define([
          ***************************************************************************************************************************** */
 
         var crs = geoJson.crs;
-
-        if (crs === null) {
-            throw new RuntimeError('crs is null.');
-        }
+        var crsFunction = crs !== null ? defaultCrsFunction : null;
 
         if (defined(crs)) {
             if (!defined(crs.properties)) {
@@ -1169,7 +1173,12 @@ define([
 
         return when(crsFunction, function (crsFunction) {
             that._entityCollection.removeAll();
-            typeHandler(that, geoJson, geoJson, crsFunction, options);
+
+            // null is a valid value for the crs, but means the entire load process becomes a no-op
+            // because we can't assume anything about the coordinates.
+            if (crsFunction !== null) {
+                typeHandler(that, geoJson, geoJson, crsFunction, options);
+            }
 
             return when.all(that._promises, function () {
                 that._promises.length = 0;

@@ -315,7 +315,9 @@ define([
      */
     QuadtreePrimitive.prototype.endFrame = function(frameState) {
         var passes = frameState.passes;
-        if (!passes.render) {
+        if (!passes.render || frameState.mode === SceneMode.MORPHING) {
+            // Only process the load queue for a single pass.
+            // Don't process the load queue or update heights during the morph flights.
             return;
         }
 
@@ -617,11 +619,7 @@ define([
         var ellipsoid = projection.ellipsoid;
 
         while (tilesToUpdateHeights.length > 0) {
-            var tile = tilesToUpdateHeights[tilesToUpdateHeights.length - 1];
-            if (tile !== primitive._lastTileUpdated) {
-                primitive._lastTileIndex = 0;
-            }
-
+            var tile = tilesToUpdateHeights[0];
             var customData = tile.customData;
             var customDataLength = customData.length;
 
@@ -682,11 +680,11 @@ define([
             }
 
             if (timeSliceMax) {
-                primitive._lastTileUpdated = tile;
                 primitive._lastTileIndex = i;
                 break;
             } else {
-                tilesToUpdateHeights.pop();
+                primitive._lastTileIndex = 0;
+                tilesToUpdateHeights.shift();
             }
         }
     }
