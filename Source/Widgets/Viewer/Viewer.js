@@ -8,7 +8,6 @@ define([
     '../../Core/destroyObject',
     '../../Core/DeveloperError',
     '../../Core/EventHelper',
-    '../../Core/Fullscreen',
     '../../Core/isArray',
     '../../Core/Matrix4',
     '../../Core/Rectangle',
@@ -22,7 +21,6 @@ define([
     '../../DataSources/Property',
     '../../Scene/ImageryLayer',
     '../../Scene/SceneMode',
-    '../../Scene/ShadowMode',
     '../../ThirdParty/knockout',
     '../../ThirdParty/when',
     '../Animation/Animation',
@@ -61,7 +59,6 @@ define([
         destroyObject,
         DeveloperError,
         EventHelper,
-        Fullscreen,
         isArray,
         Matrix4,
         Rectangle,
@@ -75,7 +72,6 @@ define([
         Property,
         ImageryLayer,
         SceneMode,
-        ShadowMode,
         knockout,
         when,
         Animation,
@@ -365,10 +361,10 @@ define([
 
         container = getElement(container);
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
-        
+
         options.showSystems = defaultValue(options.showSystems, false);
         options.tools = defaultValue(options.tools, false);
-        
+
 
         var createBaseLayerPicker = (!defined(options.globe) || options.globe !== false) &&
                 (!defined(options.baseLayerPicker) || options.baseLayerPicker !== false);
@@ -400,9 +396,9 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         //>>includeEnd('debug')
 
         var that = this;
-        
+
         var configuration = defaultValue(options.configuration, null); // Informations contained in the configurationFiles folder.
-        
+
 
         var viewerContainer = document.createElement('div');
         viewerContainer.className = 'cesium-viewer';
@@ -423,25 +419,25 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         // Cesium widget
         var cesiumWidget = new CesiumWidget(cesiumWidgetContainer, {
-            terrainProvider : options.terrainProvider,
-            imageryProvider : createBaseLayerPicker ? false : options.imageryProvider,
-            clock : options.clock,
-            skyBox : options.skyBox,
-            skyAtmosphere : options.skyAtmosphere,
-            sceneMode : options.sceneMode,
-            mapProjection : options.mapProjection,
-            globe : options.globe,
-            orderIndependentTranslucency : options.orderIndependentTranslucency,
-            contextOptions : options.contextOptions,
-            useDefaultRenderLoop : options.useDefaultRenderLoop,
-            targetFrameRate : options.targetFrameRate,
-            showRenderLoopErrors : options.showRenderLoopErrors,
-            creditContainer : defined(options.creditContainer) ? options.creditContainer : bottomContainer,
-            scene3DOnly : scene3DOnly,
-            terrainExaggeration : options.terrainExaggeration,
-            shadows : options.shadows,
-            terrainShadows : options.terrainShadows,
-            mapMode2D : options.mapMode2D,
+            terrainProvider: options.terrainProvider,
+            imageryProvider: createBaseLayerPicker ? false : options.imageryProvider,
+            clock: options.clock,
+            skyBox: options.skyBox,
+            skyAtmosphere: options.skyAtmosphere,
+            sceneMode: options.sceneMode,
+            mapProjection: options.mapProjection,
+            globe: options.globe,
+            orderIndependentTranslucency: options.orderIndependentTranslucency,
+            contextOptions: options.contextOptions,
+            useDefaultRenderLoop: options.useDefaultRenderLoop,
+            targetFrameRate: options.targetFrameRate,
+            showRenderLoopErrors: options.showRenderLoopErrors,
+            creditContainer: defined(options.creditContainer) ? options.creditContainer : bottomContainer,
+            scene3DOnly: scene3DOnly,
+            terrainExaggeration: options.terrainExaggeration,
+            shadows: options.shadows,
+            terrainShadows: options.terrainShadows,
+            mapMode2D: options.mapMode2D,
             configuration: options.configuration
         });
 
@@ -548,12 +544,12 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             // Subscribe to search so that we can clear the trackedEntity when it is clicked.
             eventHelper.add(geocoder.viewModel.search.beforeExecute, Viewer.prototype._clearObjects, this);
         }
-        
-         console.log(cesiumWidget.scene);
+
+        console.log(cesiumWidget.scene);
 
         // HomeButton
         var homeButton;
-        if (!defined(options.homeButton) || options.homeButton !== false) {            
+        if (!defined(options.homeButton) || options.homeButton !== false) {
             homeButton = new HomeButton(toolbar, cesiumWidget.scene);
             if (defined(geocoder)) {
                 eventHelper.add(homeButton.viewModel.command.afterExecute, function () {
@@ -579,13 +575,13 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         // show planets
 
         var showSystems;
-        
-         if (!defined(options.showSystems) || options.showSystems !== false) {
-                 showSystems = new ShowSystems(viewerContainer, planetsToolbar, footerToolbar, cesiumWidget.scene, this, configuration, options.VOData);
-             }
+
+        if (!defined(options.showSystems) || options.showSystems !== false) {
+            showSystems = new ShowSystems(viewerContainer, planetsToolbar, footerToolbar, cesiumWidget.scene, this, configuration, options.VOData);
+        }
 
         // build custom objects
-        
+
         var customObject;
         /* customObject = new CustomObject(viewerContainer, customToolbar, this);*/
 
@@ -763,16 +759,16 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         this._dataSourceDisplay = dataSourceDisplay;
         this._clockViewModel = clockViewModel;
         this._toolbar = toolbar;
-        this._homeButton =  defaultValue(homeButton, null);
-        this._lngLat =  defaultValue(lngLat, null);           /* *** NEW *** */
-        this._markerMove =  defaultValue(markerMove,null);   /* *** NEW *** */
+        this._homeButton = defaultValue(homeButton, null);
+        this._lngLat = defaultValue(lngLat, null);           /* *** NEW *** */
+        this._markerMove = defaultValue(markerMove, null);   /* *** NEW *** */
         this._showSystems = defaultValue(showSystems, null); /* *** NEW *** */
-        this._tools =  defaultValue(tools, null);             /* *** NEW *** */
-        this._drawLines =  defaultValue(drawLines, null);     /* *** NEW *** */
-        this._customObject =  defaultValue(customObject, null);     /* *** NEW *** */
-        this._editDrawing =  defaultValue(editDrawing, null);  /* *** NEW *** */
-        this._showGrid =  defaultValue(showGrid, null);  /* *** NEW *** */
-        this._pointCircleSwitch =  defaultValue(pointCircleSwitch, null); /* *** NEW *** */
+        this._tools = defaultValue(tools, null);             /* *** NEW *** */
+        this._drawLines = defaultValue(drawLines, null);     /* *** NEW *** */
+        this._customObject = defaultValue(customObject, null);     /* *** NEW *** */
+        this._editDrawing = defaultValue(editDrawing, null);  /* *** NEW *** */
+        this._showGrid = defaultValue(showGrid, null);  /* *** NEW *** */
+        this._pointCircleSwitch = defaultValue(pointCircleSwitch, null); /* *** NEW *** */
         this._sceneModePicker = sceneModePicker;
         this._baseLayerPicker = baseLayerPicker;
         this._navigationHelpButton = navigationHelpButton;
@@ -1115,41 +1111,38 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
          * @memberof Viewer.prototype
          * @type {Boolean}
          */
-        shadows : {
-            get : function() {
+        shadows: {
+            get: function () {
                 return this.scene.shadowMap.enabled;
             },
-            set : function(value) {
+            set: function (value) {
                 this.scene.shadowMap.enabled = value;
             }
         },
-
         /**
          * Determines if the terrain casts or shadows from the sun.
          * @memberof Viewer.prototype
          * @type {ShadowMode}
          */
-        terrainShadows : {
-            get : function() {
+        terrainShadows: {
+            get: function () {
                 return this.scene.globe.shadows;
             },
-            set : function(value) {
+            set: function (value) {
                 this.scene.globe.shadows = value;
             }
         },
-
         /**
          * Get the scene's shadow map
          * @memberof Viewer.prototype
          * @type {ShadowMap}
          * @readonly
          */
-        shadowMap : {
-            get : function() {
+        shadowMap: {
+            get: function () {
                 return this.scene.shadowMap;
             }
         },
-
         /**
          * Gets the collection of image layers that will be rendered on the globe.
          * @memberof Viewer.prototype
