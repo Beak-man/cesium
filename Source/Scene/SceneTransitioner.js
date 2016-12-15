@@ -1,22 +1,22 @@
 /*global define*/
 define([
-        '../Core/Cartesian3',
-        '../Core/Cartographic',
-        '../Core/defined',
-        '../Core/destroyObject',
-        '../Core/DeveloperError',
-        '../Core/EasingFunction',
-        '../Core/Math',
-        '../Core/Matrix4',
-        '../Core/Ray',
-        '../Core/ScreenSpaceEventHandler',
-        '../Core/ScreenSpaceEventType',
-        '../Core/Transforms',
-        './Camera',
-        './OrthographicFrustum',
-        './PerspectiveFrustum',
-        './SceneMode'
-    ], function(
+    '../Core/Cartesian3',
+    '../Core/Cartographic',
+    '../Core/defined',
+    '../Core/destroyObject',
+    '../Core/DeveloperError',
+    '../Core/EasingFunction',
+    '../Core/Math',
+    '../Core/Matrix4',
+    '../Core/Ray',
+    '../Core/ScreenSpaceEventHandler',
+    '../Core/ScreenSpaceEventType',
+    '../Core/Transforms',
+    './Camera',
+    './OrthographicFrustum',
+    './PerspectiveFrustum',
+    './SceneMode'
+], function (
         Cartesian3,
         Cartographic,
         defined,
@@ -52,13 +52,13 @@ define([
         this._completeMorph = undefined;
     }
 
-    SceneTransitioner.prototype.completeMorph = function() {
+    SceneTransitioner.prototype.completeMorph = function () {
         if (defined(this._completeMorph)) {
             this._completeMorph();
         }
     };
 
-    SceneTransitioner.prototype.morphTo2D = function(duration, ellipsoid) {
+    SceneTransitioner.prototype.morphTo2D = function (duration, ellipsoid) {
         if (defined(this._completeMorph)) {
             this._completeMorph();
         }
@@ -96,16 +96,16 @@ define([
     var scratchToCVToENU = new Matrix4();
     var scratchToCVFrustum = new PerspectiveFrustum();
     var scratchToCVCamera = {
-        position : undefined,
-        direction : undefined,
-        up : undefined,
-        position2D : undefined,
-        direction2D : undefined,
-        up2D : undefined,
-        frustum : undefined
+        position: undefined,
+        direction: undefined,
+        up: undefined,
+        position2D: undefined,
+        direction2D: undefined,
+        up2D: undefined,
+        frustum: undefined
     };
 
-    SceneTransitioner.prototype.morphToColumbusView = function(duration, ellipsoid) {
+    SceneTransitioner.prototype.morphToColumbusView = function (duration, ellipsoid) {
         if (defined(this._completeMorph)) {
             this._completeMorph();
         }
@@ -131,14 +131,20 @@ define([
 
             Cartesian3.negate(Cartesian3.UNIT_Z, direction);
             Cartesian3.clone(Cartesian3.UNIT_Y, up);
+            
         } else {
+            
             var camera = scene.camera;
+            
             if (this._previousMode === SceneMode.SCENE2D) {
+                
                 Cartesian3.clone(camera.position, position);
                 position.z = camera.frustum.right - camera.frustum.left;
                 Cartesian3.negate(Cartesian3.UNIT_Z, direction);
                 Cartesian3.clone(Cartesian3.UNIT_Y, up);
+                
             } else {
+                
                 Cartesian3.clone(camera.positionWC, position);
                 Cartesian3.clone(camera.directionWC, direction);
                 Cartesian3.clone(camera.upWC, up);
@@ -146,10 +152,16 @@ define([
                 var surfacePoint = ellipsoid.scaleToGeodeticSurface(position, scratchToCVSurfacePosition);
                 var toENU = Transforms.eastNorthUpToFixedFrame(surfacePoint, ellipsoid, scratchToCVToENU);
                 Matrix4.inverseTransformation(toENU, toENU);
+                
+                // Appel a GeographicProjection.prototype.project(); --> retourne : "position"
 
                 scene.mapProjection.project(ellipsoid.cartesianToCartographic(position, scratchToCVCartographic), position);
                 Matrix4.multiplyByPointAsVector(toENU, direction, direction);
                 Matrix4.multiplyByPointAsVector(toENU, up, up);
+                
+                
+                console.log(scene);
+                
             }
         }
 
@@ -182,7 +194,7 @@ define([
         }
     };
 
-    SceneTransitioner.prototype.morphTo3D = function(duration, ellipsoid) {
+    SceneTransitioner.prototype.morphTo3D = function (duration, ellipsoid) {
         if (defined(this._completeMorph)) {
             this._completeMorph();
         }
@@ -230,7 +242,7 @@ define([
      *
      * @returns {Boolean} <code>true</code> if this object was destroyed; otherwise, <code>false</code>.
      */
-    SceneTransitioner.prototype.isDestroyed = function() {
+    SceneTransitioner.prototype.isDestroyed = function () {
         return false;
     };
 
@@ -244,7 +256,7 @@ define([
      * @example
      * transitioner = transitioner && transitioner.destroy();
      */
-    SceneTransitioner.prototype.destroy = function() {
+    SceneTransitioner.prototype.destroy = function () {
         destroyMorphHandler(this);
         return destroyObject(this);
     };
@@ -253,7 +265,7 @@ define([
         if (transitioner._scene.completeMorphOnUserInput) {
             transitioner._morphHandler = new ScreenSpaceEventHandler(transitioner._scene.canvas, false);
 
-            var completeMorph = function() {
+            var completeMorph = function () {
                 transitioner._morphCancelled = true;
                 completeMorphFunction(transitioner);
             };
@@ -267,7 +279,7 @@ define([
 
     function destroyMorphHandler(transitioner) {
         var tweens = transitioner._currentTweens;
-        for ( var i = 0; i < tweens.length; ++i) {
+        for (var i = 0; i < tweens.length; ++i) {
             tweens[i].cancelTween();
         }
         transitioner._currentTweens.length = 0;
@@ -278,10 +290,10 @@ define([
     var scratchCVTo3DSurfacePoint = new Cartesian3();
     var scratchCVTo3DFromENU = new Matrix4();
     var scratchCVTo3DCamera = {
-        position : new Cartesian3(),
-        direction : new Cartesian3(),
-        up : new Cartesian3(),
-        frustum : undefined
+        position: new Cartesian3(),
+        direction: new Cartesian3(),
+        up: new Cartesian3(),
+        frustum: undefined
     };
 
     function getColumbusViewTo3DCamera(transitioner, ellipsoid) {
@@ -335,16 +347,16 @@ define([
         }
 
         var tween = scene.tweens.add({
-            duration : duration,
-            easingFunction : EasingFunction.QUARTIC_OUT,
-            startObject : {
-                time : 0.0
+            duration: duration,
+            easingFunction: EasingFunction.QUARTIC_OUT,
+            startObject: {
+                time: 0.0
             },
-            stopObject : {
-                time : 1.0
+            stopObject: {
+                time: 1.0
             },
-            update : update,
-            complete : function() {
+            update: update,
+            complete: function () {
                 addMorphTimeAnimations(transitioner, scene, 0.0, 1.0, duration, complete);
             }
         });
@@ -409,25 +421,25 @@ define([
 
         if (duration > 0.0) {
             var tween = scene.tweens.add({
-                duration : duration,
-                easingFunction : EasingFunction.QUARTIC_OUT,
-                startObject : {
-                    time : 0.0
+                duration: duration,
+                easingFunction: EasingFunction.QUARTIC_OUT,
+                startObject: {
+                    time: 0.0
                 },
-                stopObject : {
-                    time : 1.0
+                stopObject: {
+                    time: 1.0
                 },
-                update : update,
-                complete : function() {
+                update: update,
+                complete: function () {
                     scene._mode = SceneMode.MORPHING;
-                    morphOrthographicToPerspective(transitioner, duration, camera3D, function() {
+                    morphOrthographicToPerspective(transitioner, duration, camera3D, function () {
                         morphFromColumbusViewTo3D(transitioner, duration, camera3D, complete);
                     });
                 }
             });
             transitioner._currentTweens.push(tween);
         } else {
-            morphOrthographicToPerspective(transitioner, duration, camera3D, function() {
+            morphOrthographicToPerspective(transitioner, duration, camera3D, function () {
                 morphFromColumbusViewTo3D(transitioner, duration, camera3D, complete);
             });
         }
@@ -453,16 +465,16 @@ define([
             updateHeight(camera, height);
         }
         var tween = scene.tweens.add({
-            duration : duration,
-            easingFunction : EasingFunction.QUARTIC_OUT,
-            startObject : {
-                time : 0.0
+            duration: duration,
+            easingFunction: EasingFunction.QUARTIC_OUT,
+            startObject: {
+                time: 0.0
             },
-            stopObject : {
-                time : 1.0
+            stopObject: {
+                time: 1.0
             },
-            update : update,
-            complete : function() {
+            update: update,
+            complete: function () {
                 camera.frustum = endCamera.frustum.clone();
                 complete(transitioner);
             }
@@ -480,10 +492,10 @@ define([
     var scratchCVTo2DRay = new Ray();
     var scratchCVTo2DPickPos = new Cartesian3();
     var scratchCVTo2DCamera = {
-        position : undefined,
-        direction : undefined,
-        up : undefined,
-        frustum : undefined
+        position: undefined,
+        direction: undefined,
+        up: undefined,
+        frustum: undefined
     };
 
     function morphFromColumbusViewTo2D(transitioner, duration) {
@@ -549,16 +561,16 @@ define([
         }
 
         var tween = scene.tweens.add({
-            duration : duration,
-            easingFunction : EasingFunction.QUARTIC_OUT,
-            startObject : {
-                time : 0.0
+            duration: duration,
+            easingFunction: EasingFunction.QUARTIC_OUT,
+            startObject: {
+                time: 0.0
             },
-            stopObject : {
-                time : 1.0
+            stopObject: {
+                time: 1.0
             },
-            update : updateCV,
-            complete : function() {
+            update: updateCV,
+            complete: function () {
                 morphPerspectiveToOrthographic(transitioner, duration, camera2D, updateHeight, complete);
             }
         });
@@ -567,19 +579,19 @@ define([
 
     var scratch3DTo2DCartographic = new Cartographic();
     var scratch3DTo2DCamera = {
-        position : new Cartesian3(),
-        direction : new Cartesian3(),
-        up : new Cartesian3(),
-        position2D : new Cartesian3(),
-        direction2D : new Cartesian3(),
-        up2D : new Cartesian3(),
-        frustum : new OrthographicFrustum()
+        position: new Cartesian3(),
+        direction: new Cartesian3(),
+        up: new Cartesian3(),
+        position2D: new Cartesian3(),
+        direction2D: new Cartesian3(),
+        up2D: new Cartesian3(),
+        frustum: new OrthographicFrustum()
     };
     var scratch3DTo2DEndCamera = {
-        position : new Cartesian3(),
-        direction : new Cartesian3(),
-        up : new Cartesian3(),
-        frustum : undefined
+        position: new Cartesian3(),
+        direction: new Cartesian3(),
+        up: new Cartesian3(),
+        frustum: undefined
     };
     var scratch3DTo2DPickPosition = new Cartesian3();
     var scratch3DTo2DRay = new Ray();
@@ -672,16 +684,16 @@ define([
             camera.position.z = d / Math.tan(camera.frustum.fov * 0.5);
         }
         var tween = scene.tweens.add({
-            duration : duration,
-            easingFunction : EasingFunction.QUARTIC_OUT,
-            startObject : {
-                time : 0.0
+            duration: duration,
+            easingFunction: EasingFunction.QUARTIC_OUT,
+            startObject: {
+                time: 0.0
             },
-            stopObject : {
-                time : 1.0
+            stopObject: {
+                time: 1.0
             },
-            update : update,
-            complete : function() {
+            update: update,
+            complete: function () {
                 complete(transitioner);
             }
         });
@@ -721,16 +733,16 @@ define([
             camera.position.z = 2.0 * scene.mapProjection.ellipsoid.maximumRadius;
         }
         var tween = scene.tweens.add({
-            duration : duration,
-            easingFunction : EasingFunction.QUARTIC_OUT,
-            startObject : {
-                time : 0.0
+            duration: duration,
+            easingFunction: EasingFunction.QUARTIC_OUT,
+            startObject: {
+                time: 0.0
             },
-            stopObject : {
-                time : 1.0
+            stopObject: {
+                time: 1.0
             },
-            update : update,
-            complete : function() {
+            update: update,
+            complete: function () {
                 scene._mode = SceneMode.MORPHING;
                 morphOrthographicToPerspective(transitioner, duration, cameraCV, complete);
             }
@@ -749,11 +761,15 @@ define([
     // cette fonction ne sert qu'a mettre en perspective :  ne contient pas de tuiles...
 
     function morphFrom3DToColumbusView(transitioner, duration, endCamera, complete) {
-        
+
         console.log("dans morphFrom3DToColumbusView");
-        
+
         var scene = transitioner._scene;
         var camera = scene.camera;
+        
+  //      scene.globe._ellipsoid.test = "testPasseVariable";
+        
+   //     console.log(scene.globe._ellipsoid);
 
         var startPos = Cartesian3.clone(camera.position, scratch3DToCVStartPos);
         var startDir = Cartesian3.clone(camera.direction, scratch3DToCVStartDir);
@@ -770,17 +786,18 @@ define([
             Cartesian3.cross(camera.direction, camera.up, camera.right);
             Cartesian3.normalize(camera.right, camera.right);
         }
+        
         var tween = scene.tweens.add({
-            duration : duration,
-            easingFunction : EasingFunction.QUARTIC_OUT,
-            startObject : {
-                time : 0.0
+            duration: duration,
+            easingFunction: EasingFunction.QUARTIC_OUT,
+            startObject: {
+                time: 0.0
             },
-            stopObject : {
-                time : 1.0
+            stopObject: {
+                time: 1.0
             },
-            update : update,
-            complete : function() {
+            update: update,
+            complete: function () {
                 addMorphTimeAnimations(transitioner, scene, 1.0, 0.0, duration, complete);
             }
         });
@@ -790,16 +807,16 @@ define([
     function addMorphTimeAnimations(transitioner, scene, start, stop, duration, complete) {
         // Later, this will be linear and each object will adjust, if desired, in its vertex shader.
         var options = {
-            object : scene,
-            property : 'morphTime',
-            startValue : start,
-            stopValue : stop,
-            duration : duration,
-            easingFunction : EasingFunction.QUARTIC_OUT
+            object: scene,
+            property: 'morphTime',
+            startValue: start,
+            stopValue: stop,
+            duration: duration,
+            easingFunction: EasingFunction.QUARTIC_OUT
         };
 
         if (defined(complete)) {
-            options.complete = function() {
+            options.complete = function () {
                 complete(transitioner);
             };
         }
@@ -809,7 +826,7 @@ define([
     }
 
     function complete3DCallback(camera3D) {
-        return function(transitioner) {
+        return function (transitioner) {
             var scene = transitioner._scene;
             scene._mode = SceneMode.SCENE3D;
             scene.morphTime = SceneMode.getMorphTime(SceneMode.SCENE3D);
@@ -839,7 +856,7 @@ define([
     }
 
     function complete2DCallback(camera2D) {
-        return function(transitioner) {
+        return function (transitioner) {
             var scene = transitioner._scene;
 
             scene._mode = SceneMode.SCENE2D;
@@ -864,7 +881,7 @@ define([
     }
 
     function completeColumbusViewCallback(cameraCV) {
-        return function(transitioner) {
+        return function (transitioner) {
             var scene = transitioner._scene;
             scene._mode = SceneMode.COLUMBUS_VIEW;
             scene.morphTime = SceneMode.getMorphTime(SceneMode.COLUMBUS_VIEW);

@@ -272,8 +272,6 @@ define([
         // Lecture de la tuile : endRow = height
         //                       endCol = width
 
-
-
         for (var rowIndex = startRow; rowIndex < endRow; ++rowIndex) {
             var row = rowIndex;
             if (row < 0) {
