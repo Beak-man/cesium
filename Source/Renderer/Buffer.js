@@ -1,14 +1,14 @@
 /*global define*/
 define([
-        '../Core/defaultValue',
-        '../Core/defined',
-        '../Core/defineProperties',
-        '../Core/destroyObject',
-        '../Core/DeveloperError',
-        '../Core/IndexDatatype',
-        './BufferUsage',
-        './WebGLConstants'
-    ], function(
+    '../Core/defaultValue',
+    '../Core/defined',
+    '../Core/defineProperties',
+    '../Core/destroyObject',
+    '../Core/DeveloperError',
+    '../Core/IndexDatatype',
+    './BufferUsage',
+    './WebGLConstants'
+], function (
         defaultValue,
         defined,
         defineProperties,
@@ -47,6 +47,9 @@ define([
         }
         //>>includeEnd('debug');
 
+
+        //  console.log(options);
+
         var gl = options.context._gl;
         var bufferTarget = options.bufferTarget;
         var typedArray = options.typedArray;
@@ -63,6 +66,9 @@ define([
             throw new DeveloperError('Buffer size must be greater than zero.');
         }
         //>>includeEnd('debug');
+
+     //   console.log(bufferTarget);
+     //   console.log(typedArray);
 
         var buffer = gl.createBuffer();
         gl.bindBuffer(bufferTarget, buffer);
@@ -117,12 +123,14 @@ define([
      * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glBindBuffer.xml|glBindBuffer} with <code>ARRAY_BUFFER</code>
      * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glBufferData.xml|glBufferData} with <code>ARRAY_BUFFER</code>
      */
-    Buffer.createVertexBuffer = function(options) {
+    Buffer.createVertexBuffer = function (options) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(options.context)) {
             throw new DeveloperError('options.context is required.');
         }
         //>>includeEnd('debug');
+
+        console.log
 
         return new Buffer({
             context: options.context,
@@ -178,7 +186,7 @@ define([
      * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glBindBuffer.xml|glBindBuffer} with <code>ELEMENT_ARRAY_BUFFER</code>
      * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glBufferData.xml|glBufferData} with <code>ELEMENT_ARRAY_BUFFER</code>
      */
-    Buffer.createIndexBuffer = function(options) {
+    Buffer.createIndexBuffer = function (options) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(options.context)) {
             throw new DeveloperError('options.context is required.');
@@ -198,28 +206,28 @@ define([
 
         var bytesPerIndex = IndexDatatype.getSizeInBytes(indexDatatype);
         var buffer = new Buffer({
-            context : context,
-            bufferTarget : WebGLConstants.ELEMENT_ARRAY_BUFFER,
-            typedArray : options.typedArray,
-            sizeInBytes : options.sizeInBytes,
-            usage : options.usage
+            context: context,
+            bufferTarget: WebGLConstants.ELEMENT_ARRAY_BUFFER,
+            typedArray: options.typedArray,
+            sizeInBytes: options.sizeInBytes,
+            usage: options.usage
         });
 
         var numberOfIndices = buffer.sizeInBytes / bytesPerIndex;
 
         defineProperties(buffer, {
             indexDatatype: {
-                get : function() {
+                get: function () {
                     return indexDatatype;
                 }
             },
-            bytesPerIndex : {
-                get : function() {
+            bytesPerIndex: {
+                get: function () {
                     return bytesPerIndex;
                 }
             },
-            numberOfIndices : {
-                get : function() {
+            numberOfIndices: {
+                get: function () {
                     return numberOfIndices;
                 }
             }
@@ -229,24 +237,23 @@ define([
     };
 
     defineProperties(Buffer.prototype, {
-        sizeInBytes : {
-            get : function() {
+        sizeInBytes: {
+            get: function () {
                 return this._sizeInBytes;
             }
         },
-
         usage: {
-            get : function() {
+            get: function () {
                 return this._usage;
             }
         }
     });
 
-    Buffer.prototype._getBuffer = function() {
+    Buffer.prototype._getBuffer = function () {
         return this._buffer;
     };
 
-    Buffer.prototype.copyFromArrayView = function(arrayView, offsetInBytes) {
+    Buffer.prototype.copyFromArrayView = function (arrayView, offsetInBytes) {
         offsetInBytes = defaultValue(offsetInBytes, 0);
 
         //>>includeStart('debug', pragmas.debug);
@@ -265,11 +272,11 @@ define([
         gl.bindBuffer(target, null);
     };
 
-    Buffer.prototype.isDestroyed = function() {
+    Buffer.prototype.isDestroyed = function () {
         return false;
     };
 
-    Buffer.prototype.destroy = function() {
+    Buffer.prototype.destroy = function () {
         this._gl.deleteBuffer(this._buffer);
         return destroyObject(this);
     };

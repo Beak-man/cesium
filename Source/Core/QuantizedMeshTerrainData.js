@@ -249,6 +249,7 @@ define([
      *          be retried later.
      */
     QuantizedMeshTerrainData.prototype.createMesh = function(tilingScheme, x, y, level, exaggeration) {
+        
         //>>includeStart('debug', pragmas.debug);
         if (!defined(tilingScheme)) {
             throw new DeveloperError('tilingScheme is required.');
@@ -295,12 +296,15 @@ define([
         }
 
         var that = this;
+        
         return when(verticesPromise, function(result) {
+            
             var vertexCount = that._quantizedVertices.length / 3;
             vertexCount += that._westIndices.length + that._southIndices.length + that._eastIndices.length + that._northIndices.length;
             var indicesTypedArray = IndexDatatype.createTypedArray(vertexCount, result.indices);
 
             var vertices = new Float32Array(result.vertices);
+            
             var rtc = result.center;
             var minimumHeight = result.minimumHeight;
             var maximumHeight = result.maximumHeight;

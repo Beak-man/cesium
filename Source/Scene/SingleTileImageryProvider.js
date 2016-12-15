@@ -1,19 +1,19 @@
 /*global define*/
 define([
-        '../Core/Credit',
-        '../Core/defaultValue',
-        '../Core/defined',
-        '../Core/defineProperties',
-        '../Core/DeveloperError',
-        '../Core/Event',
-         '../Core/StereographicTilingScheme',
-        '../Core/GeographicTilingScheme',
-        '../Core/loadImage',
-        '../Core/Rectangle',
-        '../Core/RuntimeError',
-        '../Core/TileProviderError',
-        '../ThirdParty/when'
-    ], function(
+    '../Core/Credit',
+    '../Core/defaultValue',
+    '../Core/defined',
+    '../Core/defineProperties',
+    '../Core/DeveloperError',
+    '../Core/Event',
+    '../Core/StereographicTilingScheme',
+    '../Core/GeographicTilingScheme',
+    '../Core/loadImage',
+    '../Core/Rectangle',
+    '../Core/RuntimeError',
+    '../Core/TileProviderError',
+    '../ThirdParty/when'
+], function (
         Credit,
         defaultValue,
         defined,
@@ -68,22 +68,22 @@ define([
         this._proxy = proxy;
 
         var rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE);
-        
-       /* var tilingScheme = new GeographicTilingScheme({
-            rectangle : rectangle,
-            numberOfLevelZeroTilesX : 1,
-            numberOfLevelZeroTilesY : 1,
-            ellipsoid : options.ellipsoid
-        });*/
-        
-        var tilingScheme = new StereographicTilingScheme({
-            rectangle : rectangle,
-            numberOfLevelZeroTilesX : 1,
-            numberOfLevelZeroTilesY : 1,
-            ellipsoid : options.ellipsoid
+
+        var tilingScheme = new GeographicTilingScheme({
+            rectangle: rectangle,
+            numberOfLevelZeroTilesX: 1,
+            numberOfLevelZeroTilesY: 1,
+            ellipsoid: options.ellipsoid
         });
-        
-        
+
+        /*     var tilingScheme = new StereographicTilingScheme({
+         rectangle : rectangle,
+         numberOfLevelZeroTilesX : 1,
+         numberOfLevelZeroTilesY : 1,
+         ellipsoid : options.ellipsoid
+         });*/
+
+
         this._tilingScheme = tilingScheme;
 
         this._image = undefined;
@@ -135,7 +135,6 @@ define([
         function doRequest() {
             when(loadImage(imageUrl), success, failure);
         }
-
         doRequest();
     }
 
@@ -146,24 +145,22 @@ define([
          * @type {String}
          * @readonly
          */
-        url : {
-            get : function() {
+        url: {
+            get: function () {
                 return this._url;
             }
         },
-
         /**
          * Gets the proxy used by this provider.
          * @memberof SingleTileImageryProvider.prototype
          * @type {Proxy}
          * @readonly
          */
-        proxy : {
-            get : function() {
+        proxy: {
+            get: function () {
                 return this._proxy;
             }
         },
-
         /**
          * Gets the width of each tile, in pixels. This function should
          * not be called before {@link SingleTileImageryProvider#ready} returns true.
@@ -171,8 +168,8 @@ define([
          * @type {Number}
          * @readonly
          */
-        tileWidth : {
-            get : function() {
+        tileWidth: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this._ready) {
                     throw new DeveloperError('tileWidth must not be called before the imagery provider is ready.');
@@ -182,7 +179,6 @@ define([
                 return this._tileWidth;
             }
         },
-
         /**
          * Gets the height of each tile, in pixels.  This function should
          * not be called before {@link SingleTileImageryProvider#ready} returns true.
@@ -191,7 +187,7 @@ define([
          * @readonly
          */
         tileHeight: {
-            get : function() {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this._ready) {
                     throw new DeveloperError('tileHeight must not be called before the imagery provider is ready.');
@@ -201,7 +197,6 @@ define([
                 return this._tileHeight;
             }
         },
-
         /**
          * Gets the maximum level-of-detail that can be requested.  This function should
          * not be called before {@link SingleTileImageryProvider#ready} returns true.
@@ -209,8 +204,8 @@ define([
          * @type {Number}
          * @readonly
          */
-        maximumLevel : {
-            get : function() {
+        maximumLevel: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this._ready) {
                     throw new DeveloperError('maximumLevel must not be called before the imagery provider is ready.');
@@ -220,7 +215,6 @@ define([
                 return 0;
             }
         },
-
         /**
          * Gets the minimum level-of-detail that can be requested.  This function should
          * not be called before {@link SingleTileImageryProvider#ready} returns true.
@@ -228,8 +222,8 @@ define([
          * @type {Number}
          * @readonly
          */
-        minimumLevel : {
-            get : function() {
+        minimumLevel: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this._ready) {
                     throw new DeveloperError('minimumLevel must not be called before the imagery provider is ready.');
@@ -239,7 +233,6 @@ define([
                 return 0;
             }
         },
-
         /**
          * Gets the tiling scheme used by this provider.  This function should
          * not be called before {@link SingleTileImageryProvider#ready} returns true.
@@ -247,8 +240,8 @@ define([
          * @type {TilingScheme}
          * @readonly
          */
-        tilingScheme : {
-            get : function() {
+        tilingScheme: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this._ready) {
                     throw new DeveloperError('tilingScheme must not be called before the imagery provider is ready.');
@@ -258,7 +251,6 @@ define([
                 return this._tilingScheme;
             }
         },
-
         /**
          * Gets the rectangle, in radians, of the imagery provided by this instance.  This function should
          * not be called before {@link SingleTileImageryProvider#ready} returns true.
@@ -266,12 +258,11 @@ define([
          * @type {Rectangle}
          * @readonly
          */
-        rectangle : {
-            get : function() {
+        rectangle: {
+            get: function () {
                 return this._tilingScheme.rectangle;
             }
         },
-
         /**
          * Gets the tile discard policy.  If not undefined, the discard policy is responsible
          * for filtering out "missing" tiles via its shouldDiscardImage function.  If this function
@@ -281,8 +272,8 @@ define([
          * @type {TileDiscardPolicy}
          * @readonly
          */
-        tileDiscardPolicy : {
-            get : function() {
+        tileDiscardPolicy: {
+            get: function () {
                 //>>includeStart('debug', pragmas.debug);
                 if (!this._ready) {
                     throw new DeveloperError('tileDiscardPolicy must not be called before the imagery provider is ready.');
@@ -292,7 +283,6 @@ define([
                 return undefined;
             }
         },
-
         /**
          * Gets an event that is raised when the imagery provider encounters an asynchronous error.  By subscribing
          * to the event, you will be notified of the error and can potentially recover from it.  Event listeners
@@ -301,36 +291,33 @@ define([
          * @type {Event}
          * @readonly
          */
-        errorEvent : {
-            get : function() {
+        errorEvent: {
+            get: function () {
                 return this._errorEvent;
             }
         },
-
         /**
          * Gets a value indicating whether or not the provider is ready for use.
          * @memberof SingleTileImageryProvider.prototype
          * @type {Boolean}
          * @readonly
          */
-        ready : {
-            get : function() {
+        ready: {
+            get: function () {
                 return this._ready;
             }
         },
-
         /**
          * Gets a promise that resolves to true when the provider is ready for use.
          * @memberof SingleTileImageryProvider.prototype
          * @type {Promise.<Boolean>}
          * @readonly
          */
-        readyPromise : {
-            get : function() {
+        readyPromise: {
+            get: function () {
                 return this._readyPromise.promise;
             }
         },
-
         /**
          * Gets the credit to display when this imagery provider is active.  Typically this is used to credit
          * the source of the imagery.  This function should not be called before {@link SingleTileImageryProvider#ready} returns true.
@@ -338,12 +325,11 @@ define([
          * @type {Credit}
          * @readonly
          */
-        credit : {
-            get : function() {
+        credit: {
+            get: function () {
                 return this._credit;
             }
         },
-
         /**
          * Gets a value indicating whether or not the images provided by this imagery provider
          * include an alpha channel.  If this property is false, an alpha channel, if present, will
@@ -354,8 +340,8 @@ define([
          * @type {Boolean}
          * @readonly
          */
-        hasAlphaChannel : {
-            get : function() {
+        hasAlphaChannel: {
+            get: function () {
                 return true;
             }
         }
@@ -371,7 +357,7 @@ define([
      *
      * @exception {DeveloperError} <code>getTileCredits</code> must not be called before the imagery provider is ready.
      */
-    SingleTileImageryProvider.prototype.getTileCredits = function(x, y, level) {
+    SingleTileImageryProvider.prototype.getTileCredits = function (x, y, level) {
         return undefined;
     };
 
@@ -389,7 +375,7 @@ define([
      *
      * @exception {DeveloperError} <code>requestImage</code> must not be called before the imagery provider is ready.
      */
-    SingleTileImageryProvider.prototype.requestImage = function(x, y, level) {
+    SingleTileImageryProvider.prototype.requestImage = function (x, y, level) {
         //>>includeStart('debug', pragmas.debug);
         if (!this._ready) {
             throw new DeveloperError('requestImage must not be called before the imagery provider is ready.');
@@ -413,7 +399,7 @@ define([
      *                   instances.  The array may be empty if no features are found at the given location.
      *                   It may also be undefined if picking is not supported.
      */
-    SingleTileImageryProvider.prototype.pickFeatures = function() {
+    SingleTileImageryProvider.prototype.pickFeatures = function () {
         return undefined;
     };
 

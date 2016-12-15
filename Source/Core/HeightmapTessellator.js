@@ -1,23 +1,23 @@
 /*global define*/
 define([
-        './AxisAlignedBoundingBox',
-        './BoundingSphere',
-        './Cartesian2',
-        './Cartesian3',
-        './defaultValue',
-        './defined',
-        './DeveloperError',
-        './Ellipsoid',
-        './EllipsoidalOccluder',
-        './freezeObject',
-        './Math',
-        './Matrix4',
-        './OrientedBoundingBox',
-        './Rectangle',
-        './TerrainEncoding',
-        './Transforms',
-        './WebMercatorProjection'
-    ], function(
+    './AxisAlignedBoundingBox',
+    './BoundingSphere',
+    './Cartesian2',
+    './Cartesian3',
+    './defaultValue',
+    './defined',
+    './DeveloperError',
+    './Ellipsoid',
+    './EllipsoidalOccluder',
+    './freezeObject',
+    './Math',
+    './Matrix4',
+    './OrientedBoundingBox',
+    './Rectangle',
+    './TerrainEncoding',
+    './Transforms',
+    './WebMercatorProjection'
+], function (
         AxisAlignedBoundingBox,
         BoundingSphere,
         Cartesian2,
@@ -52,12 +52,12 @@ define([
      * @constant
      */
     HeightmapTessellator.DEFAULT_STRUCTURE = freezeObject({
-        heightScale : 1.0,
-        heightOffset : 0.0,
-        elementsPerHeight : 1,
-        stride : 1,
-        elementMultiplier : 256.0,
-        isBigEndian : false
+        heightScale: 1.0,
+        heightOffset: 0.0,
+        elementsPerHeight: 1,
+        stride: 1,
+        elementMultiplier: 256.0,
+        isBigEndian: false
     });
 
     var cartesian3Scratch = new Cartesian3();
@@ -134,7 +134,7 @@ define([
      * var encoding = statistics.encoding;
      * var position = encoding.decodePosition(statistics.vertices, index * encoding.getStride());
      */
-    HeightmapTessellator.computeVertices = function(options) {
+    HeightmapTessellator.computeVertices = function (options) {
         //>>includeStart('debug', pragmas.debug);
         if (!defined(options) || !defined(options.heightmap)) {
             throw new DeveloperError('options.heightmap is required.');
@@ -269,6 +269,11 @@ define([
 
         var index = 0;
 
+        // Lecture de la tuile : endRow = height
+        //                       endCol = width
+
+
+
         for (var rowIndex = startRow; rowIndex < endRow; ++rowIndex) {
             var row = rowIndex;
             if (row < 0) {
@@ -362,6 +367,10 @@ define([
                 position.y = rSurfaceY + nY * heightSample;
                 position.z = rSurfaceZ + nZ * heightSample;
 
+                //  console.log(position);
+
+
+
                 positions[index] = position;
                 heights[index] = heightSample;
 
@@ -399,6 +408,15 @@ define([
 
         var aaBox = new AxisAlignedBoundingBox(minimum, maximum, relativeToCenter);
         var encoding = new TerrainEncoding(aaBox, hMin, maximumHeight, fromENU, false, includeWebMercatorT);
+
+        // ============================ NEW ====================================
+
+        /*  var centerTile = encoding.center;
+         var deltaPhi = (rectangle.east - rectangle.west);
+         var deltaTheta = (rectangle.north - rectangle.south);*/
+
+        // =====================================================================
+
         var vertices = new Float32Array(size * encoding.getStride());
 
         var bufferIndex = 0;
@@ -406,14 +424,17 @@ define([
             bufferIndex = encoding.encode(vertices, bufferIndex, positions[j], uvs[j], heights[j], undefined, webMercatorTs[j]);
         }
 
+
+
+
         return {
-            vertices : vertices,
-            maximumHeight : maximumHeight,
-            minimumHeight : minimumHeight,
-            encoding : encoding,
-            boundingSphere3D : boundingSphere3D,
-            orientedBoundingBox : orientedBoundingBox,
-            occludeePointInScaledSpace : occludeePointInScaledSpace
+            vertices: vertices,
+            maximumHeight: maximumHeight,
+            minimumHeight: minimumHeight,
+            encoding: encoding,
+            boundingSphere3D: boundingSphere3D,
+            orientedBoundingBox: orientedBoundingBox,
+            occludeePointInScaledSpace: occludeePointInScaledSpace
         };
     };
 

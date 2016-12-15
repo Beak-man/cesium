@@ -93,34 +93,39 @@ define([
 
         //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
 
-        var x = cartographic.longitude * semimajorAxis;
-        var y = cartographic.latitude * semimajorAxis;
-        var z = cartographic.height;
+        
+         
+         var x = cartographic.longitude * semimajorAxis;
+         var y = cartographic.latitude * semimajorAxis;
+         var z = cartographic.height;
+         
+         
 
-        //  =======================================================================
+        //  ==================== Projection Sinusoidale ===============================
 
-       /* var radeg = 180.0 / Math.PI;
-        var coef = 360.0 / Math.PI;
-
-        var theta = cartographic.latitude;
+        /*
         var phi = cartographic.longitude;
+        var theta = cartographic.latitude;
 
-        //  console.log(theta+" "+phi);
-
-        var angle = ((90.0 / radeg) - theta) / 2.0;
-      //  var angle = (theta) / 2.0;
-
-        var R = Math.tan(angle) * semimajorAxis;
-
-        var x = R * Math.sin(phi)*coef;
-        var y = -R * Math.cos(phi)*coef;*/
-
+          var x = ((phi * Math.cos(theta))) / (2.0 * Math.PI);
+         var y = (theta / (Math.PI));
+         var z = cartographic.height;
          
-        /* var x = theta*Math.cos(phi)* semimajorAxis;
-         var y = phi* semimajorAxis;     */  
-         
+         x = x * semimajorAxis;
+         y = y * semimajorAxis;
+         */
 
+        // ===================== Projection stereographique ======================
+
+      /*  var argum = (Math.PI / 2.0 - theta) / 2.0;
+        var Rtheta = Math.tan(argum);
+
+        var x = Rtheta * Math.sin(phi) / 2;
+        var y = -Rtheta * Math.cos(phi) / 2;
         var z = cartographic.height;
+
+        x = x * semimajorAxis;
+        y = y * semimajorAxis;*/
 
         if (!defined(result)) {
             return new Cartesian3(x, y, z);
@@ -155,33 +160,33 @@ define([
         }
         //>>includeEnd('debug');
 
-        var oneOverEarthSemimajorAxis = this._oneOverSemimajorAxis;
+        var oneOverSemimajorAxis = this._oneOverSemimajorAxis;
 
         //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
 
-         var longitude = cartesian.x * oneOverEarthSemimajorAxis;
-         var latitude = cartesian.y * oneOverEarthSemimajorAxis;
+          var longitude = cartesian.x * oneOverSemimajorAxis;
+         var latitude = cartesian.y * oneOverSemimajorAxis;
          var height = cartesian.z;
 
-        //  =======================================================================
+        //  ====================================================================
 
-        /* console.log("inverse");*/
 
-      /*  var radeg = 180.0 / Math.PI;
+        // ==========================Sinusoidale ==============================
 
+     /*   
+        var longitude = ((cartesian.x * 2.0 * Math.PI)) / (Math.cos(cartesian.y)) * oneOverSemimajorAxis;
+        var latitude = cartesian.y * Math.PI * oneOverSemimajorAxis;
         var height = cartesian.z;
-        var x = cartesian.x;
-        var y = cartesian.y;
-
-        var R = Math.sqrt(x * x + y * y);
-
-        var latitude = (90.0 / radeg - 2.0 * Math.atan((Math.PI * R) / 360.)) * oneOverEarthSemimajorAxis;
-        var longitude = (Math.atan2(-y, x)) * oneOverEarthSemimajorAxis;*/
-
-        /*  var longitude = cartesian.y * oneOverEarthSemimajorAxis;
-         var latitude = (cartesian.x/Math.cos(longitude)) * oneOverEarthSemimajorAxis;*/
-
-        /*  var height = cartesian.z; */
+        */
+        
+        // ======================== Stereographique ============================
+        
+     /*   var sqrtTerme = Math.sqrt(cartesian.x*cartesian.x + cartesian.y*cartesian.y)
+        var atanTerme = Math.atan(4.0*sqrtTerme);
+        
+        var latitude = Math.PI/2.0 - atanTerme;
+        var longitude = Math.atan2(cartesian.x, cartesian.y);
+        var height = cartesian.z;*/
 
         if (!defined(result)) {
             return new Cartographic(longitude, latitude, height);

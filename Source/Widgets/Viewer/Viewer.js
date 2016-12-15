@@ -353,6 +353,7 @@ define([
      * });
      */
     function Viewer(container, options) {
+
         //>>includeStart('debug', pragmas.debug);
         if (!defined(container)) {
             throw new DeveloperError('container is required.');
@@ -399,6 +400,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         var configuration = defaultValue(options.configuration, null); // Informations contained in the configurationFiles folder.
 
+        // container principal
 
         var viewerContainer = document.createElement('div');
         viewerContainer.className = 'cesium-viewer';
@@ -417,7 +419,8 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         var scene3DOnly = defaultValue(options.scene3DOnly, false);
 
-        // Cesium widget
+        // Cesium widget : widget qui contient la scene de Cesium
+        
         var cesiumWidget = new CesiumWidget(cesiumWidgetContainer, {
             terrainProvider: options.terrainProvider,
             imageryProvider: createBaseLayerPicker ? false : options.imageryProvider,

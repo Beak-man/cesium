@@ -1,15 +1,15 @@
 /*global define*/
 define([
-        '../ThirdParty/when',
-        './defaultValue',
-        './defined',
-        './defineProperties',
-        './Ellipsoid',
-        './Event',
-        './GeographicTilingScheme',
-        './HeightmapTerrainData',
-        './TerrainProvider'
-    ], function(
+    '../ThirdParty/when',
+    './defaultValue',
+    './defined',
+    './defineProperties',
+    './Ellipsoid',
+    './Event',
+    './GeographicTilingScheme',
+    './HeightmapTerrainData',
+    './TerrainProvider'
+], function (
         when,
         defaultValue,
         defined,
@@ -44,7 +44,7 @@ define([
         this._tilingScheme = options.tilingScheme;
         if (!defined(this._tilingScheme)) {
             this._tilingScheme = new GeographicTilingScheme({
-                ellipsoid : defaultValue(options.ellipsoid, Ellipsoid.WGS84)
+                ellipsoid: defaultValue(options.ellipsoid, Ellipsoid.WGS84)
             });
         }
 
@@ -64,64 +64,57 @@ define([
          * @memberof EllipsoidTerrainProvider.prototype
          * @type {Event}
          */
-        errorEvent : {
-            get : function() {
+        errorEvent: {
+            get: function () {
                 return this._errorEvent;
             }
         },
-
         /**
          * Gets the credit to display when this terrain provider is active.  Typically this is used to credit
          * the source of the terrain.  This function should not be called before {@link EllipsoidTerrainProvider#ready} returns true.
          * @memberof EllipsoidTerrainProvider.prototype
          * @type {Credit}
          */
-        credit : {
-            get : function() {
+        credit: {
+            get: function () {
                 return undefined;
             }
         },
-
         /**
          * Gets the tiling scheme used by this provider.  This function should
          * not be called before {@link EllipsoidTerrainProvider#ready} returns true.
          * @memberof EllipsoidTerrainProvider.prototype
          * @type {GeographicTilingScheme}
          */
-        tilingScheme : {
-            get : function() {
+        tilingScheme: {
+            get: function () {
                 return this._tilingScheme;
             },
-			
-			set : function(ellipsoid){
-				this._tilingScheme = new GeographicTilingScheme({ ellipsoid : ellipsoid});
+            set: function (ellipsoid) {
+                this._tilingScheme = new GeographicTilingScheme({ellipsoid: ellipsoid});
             }
-		  },
-			
-
+        },
         /**
          * Gets a value indicating whether or not the provider is ready for use.
          * @memberof EllipsoidTerrainProvider.prototype
          * @type {Boolean}
          */
-        ready : {
-            get : function() {
+        ready: {
+            get: function () {
                 return true;
             }
         },
-
         /**
          * Gets a promise that resolves to true when the provider is ready for use.
          * @memberof EllipsoidTerrainProvider.prototype
          * @type {Promise.<Boolean>}
          * @readonly
          */
-        readyPromise : {
-            get : function() {
+        readyPromise: {
+            get: function () {
                 return this._readyPromise;
             }
         },
-
         /**
          * Gets a value indicating whether or not the provider includes a water mask.  The water mask
          * indicates which areas of the globe are water rather than land, so they can be rendered
@@ -130,20 +123,19 @@ define([
          * @memberof EllipsoidTerrainProvider.prototype
          * @type {Boolean}
          */
-        hasWaterMask : {
-            get : function() {
+        hasWaterMask: {
+            get: function () {
                 return false;
             }
         },
-
         /**
          * Gets a value indicating whether or not the requested tiles include vertex normals.
          * This function should not be called before {@link EllipsoidTerrainProvider#ready} returns true.
          * @memberof EllipsoidTerrainProvider.prototype
          * @type {Boolean}
          */
-        hasVertexNormals : {
-            get : function() {
+        hasVertexNormals: {
+            get: function () {
                 return false;
             }
         }
@@ -164,13 +156,13 @@ define([
      *          returns undefined instead of a promise, it is an indication that too many requests are already
      *          pending and the request will be retried later.
      */
-    EllipsoidTerrainProvider.prototype.requestTileGeometry = function(x, y, level, throttleRequests) {
+    EllipsoidTerrainProvider.prototype.requestTileGeometry = function (x, y, level, throttleRequests) {
         var width = 16;
         var height = 16;
         return new HeightmapTerrainData({
-            buffer : new Uint8Array(width * height),
-            width : width,
-            height : height
+            buffer: new Uint8Array(width * height),
+            width: width,
+            height: height
         });
     };
 
@@ -180,7 +172,7 @@ define([
      * @param {Number} level The tile level for which to get the maximum geometric error.
      * @returns {Number} The maximum geometric error.
      */
-    EllipsoidTerrainProvider.prototype.getLevelMaximumGeometricError = function(level) {
+    EllipsoidTerrainProvider.prototype.getLevelMaximumGeometricError = function (level) {
         return this._levelZeroMaximumGeometricError / (1 << level);
     };
 
@@ -192,7 +184,7 @@ define([
      * @param {Number} level The level of the tile for which to request geometry.
      * @returns {Boolean} Undefined if not supported, otherwise true or false.
      */
-    EllipsoidTerrainProvider.prototype.getTileDataAvailable = function(x, y, level) {
+    EllipsoidTerrainProvider.prototype.getTileDataAvailable = function (x, y, level) {
         return undefined;
     };
 

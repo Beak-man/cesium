@@ -203,6 +203,12 @@ define([
         var thisLevelMaxError = levelZeroMaxError / (1 << level);
         this._skirtHeight = Math.min(thisLevelMaxError * 4.0, 1000.0);
 
+     //   console.log(taskProcessor);
+     
+     var test = "test Ok";
+     
+    // console.log(tilingScheme);
+
         var verticesPromise = taskProcessor.scheduleTask({
             heightmap : this._buffer,
             structure : structure,
@@ -215,16 +221,20 @@ define([
             ellipsoid : ellipsoid,
             skirtHeight : this._skirtHeight,
             isGeographic : tilingScheme instanceof GeographicTilingScheme,
-            exaggeration : exaggeration
+            exaggeration : exaggeration,
+            test : test
         });
 
         if (!defined(verticesPromise)) {
             // Postponed
             return undefined;
         }
+        
+     //   console.log(verticesPromise);
 
         var that = this;
         return when(verticesPromise, function(result) {
+            
             that._mesh = new TerrainMesh(
                     center,
                     new Float32Array(result.vertices),

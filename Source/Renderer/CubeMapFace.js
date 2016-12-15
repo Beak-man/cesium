@@ -24,6 +24,9 @@ define([
         this._size = size;
         this._preMultiplyAlpha = preMultiplyAlpha;
         this._flipY = flipY;
+        
+        console.log(texture);
+        
     }
 
     defineProperties(CubeMapFace.prototype, {

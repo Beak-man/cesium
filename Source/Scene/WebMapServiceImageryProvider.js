@@ -209,6 +209,7 @@ define([
             getFeatureInfoFormats: getFeatureInfoFormats,
             enablePickFeatures: options.enablePickFeatures
         });
+        
     }
 
     defineProperties(WebMapServiceImageryProvider.prototype, {

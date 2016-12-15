@@ -1,19 +1,19 @@
 /*global define*/
 define([
-        '../Core/BoundingSphere',
-        '../Core/Cartesian3',
-        '../Core/defined',
-        '../Core/DeveloperError',
-        '../Core/IndexDatatype',
-        '../Core/OrientedBoundingBox',
-        '../Core/TileProviderError',
-        '../Renderer/Buffer',
-        '../Renderer/BufferUsage',
-        '../Renderer/VertexArray',
-        '../ThirdParty/when',
-        './TerrainState',
-        './TileBoundingBox'
-    ], function(
+    '../Core/BoundingSphere',
+    '../Core/Cartesian3',
+    '../Core/defined',
+    '../Core/DeveloperError',
+    '../Core/IndexDatatype',
+    '../Core/OrientedBoundingBox',
+    '../Core/TileProviderError',
+    '../Renderer/Buffer',
+    '../Renderer/BufferUsage',
+    '../Renderer/VertexArray',
+    '../ThirdParty/when',
+    './TerrainState',
+    './TileBoundingBox'
+], function (
         BoundingSphere,
         Cartesian3,
         defined,
@@ -42,6 +42,8 @@ define([
      * @param {Number} [upsampleDetails.level] The level coordinate of the tile being upsampled.
      */
     function TileTerrain(upsampleDetails) {
+
+        console.log("dans TileTerrain")
         /**
          * The current state of the terrain in the terrain processing pipeline.
          * @type {TerrainState}
@@ -54,7 +56,7 @@ define([
         this.upsampleDetails = upsampleDetails;
     }
 
-    TileTerrain.prototype.freeResources = function() {
+    TileTerrain.prototype.freeResources = function () {
         this.state = TerrainState.UNLOADED;
         this.data = undefined;
         this.mesh = undefined;
@@ -74,7 +76,7 @@ define([
         }
     };
 
-    TileTerrain.prototype.publishToTile = function(tile) {
+    TileTerrain.prototype.publishToTile = function (tile) {
         var surfaceTile = tile.data;
 
         var mesh = this.mesh;
@@ -84,16 +86,22 @@ define([
         surfaceTile.boundingSphere3D = BoundingSphere.clone(mesh.boundingSphere3D, surfaceTile.boundingSphere3D);
         surfaceTile.orientedBoundingBox = OrientedBoundingBox.clone(mesh.orientedBoundingBox, surfaceTile.orientedBoundingBox);
         surfaceTile.tileBoundingBox = new TileBoundingBox({
-            rectangle : tile.rectangle,
-            minimumHeight : mesh.minimumHeight,
-            maximumHeight : mesh.maximumHeight,
-            ellipsoid : tile.tilingScheme.ellipsoid
+            rectangle: tile.rectangle,
+            minimumHeight: mesh.minimumHeight,
+            maximumHeight: mesh.maximumHeight,
+            ellipsoid: tile.tilingScheme.ellipsoid
         });
 
         tile.data.occludeePointInScaledSpace = Cartesian3.clone(mesh.occludeePointInScaledSpace, surfaceTile.occludeePointInScaledSpace);
     };
 
-    TileTerrain.prototype.processLoadStateMachine = function(frameState, terrainProvider, x, y, level) {
+
+    // PROCESSUS DE TRAITEMENT DE LA TUILE
+
+    TileTerrain.prototype.processLoadStateMachine = function (frameState, terrainProvider, x, y, level) {
+        
+        //console.log(frameState);
+        
         if (this.state === TerrainState.UNLOADED) {
             requestTileGeometry(this, terrainProvider, x, y, level);
         }
@@ -108,6 +116,7 @@ define([
     };
 
     function requestTileGeometry(tileTerrain, terrainProvider, x, y, level) {
+        
         function success(terrainData) {
             tileTerrain.data = terrainData;
             tileTerrain.state = TerrainState.RECEIVED;
@@ -120,12 +129,12 @@ define([
 
             var message = 'Failed to obtain terrain tile X: ' + x + ' Y: ' + y + ' Level: ' + level + '.';
             terrainProvider._requestError = TileProviderError.handleError(
-                terrainProvider._requestError,
-                terrainProvider,
-                terrainProvider.errorEvent,
-                message,
-                x, y, level,
-                doRequest);
+                    terrainProvider._requestError,
+                    terrainProvider,
+                    terrainProvider.errorEvent,
+                    message,
+                    x, y, level,
+                    doRequest);
         }
 
         function doRequest() {
@@ -147,7 +156,7 @@ define([
         doRequest();
     }
 
-    TileTerrain.prototype.processUpsampleStateMachine = function(frameState, terrainProvider, x, y, level) {
+    TileTerrain.prototype.processUpsampleStateMachine = function (frameState, terrainProvider, x, y, level) {
         if (this.state === TerrainState.UNLOADED) {
             var upsampleDetails = this.upsampleDetails;
 
@@ -171,10 +180,10 @@ define([
             this.state = TerrainState.RECEIVING;
 
             var that = this;
-            when(this.data, function(terrainData) {
+            when(this.data, function (terrainData) {
                 that.data = terrainData;
                 that.state = TerrainState.RECEIVED;
-            }, function() {
+            }, function () {
                 that.state = TerrainState.FAILED;
             });
         }
@@ -189,10 +198,15 @@ define([
     };
 
     function transform(tileTerrain, frameState, terrainProvider, x, y, level) {
+        
         var tilingScheme = terrainProvider.tilingScheme;
 
         var terrainData = tileTerrain.data;
-        var meshPromise = terrainData.createMesh(tilingScheme, x, y, level, frameState.terrainExaggeration);
+        
+     //   console.log(terrainData.createMesh());
+        
+        var test = "test";  
+        var meshPromise = terrainData.createMesh(tilingScheme, x, y, level, frameState.terrainExaggeration, test);
 
         if (!defined(meshPromise)) {
             // Postponed.
@@ -201,33 +215,41 @@ define([
 
         tileTerrain.state = TerrainState.TRANSFORMING;
 
-        when(meshPromise, function(mesh) {
+      //  console.log(meshPromise);
+
+        when(meshPromise, function (mesh) {
+        //    console.log(mesh);
             tileTerrain.mesh = mesh;
             tileTerrain.state = TerrainState.TRANSFORMED;
-        }, function() {
+        }, function () {
             tileTerrain.state = TerrainState.FAILED;
         });
     }
 
     function createResources(tileTerrain, context, terrainProvider, x, y, level) {
+        
+      //  console.log(tileTerrain);
+        
         var typedArray = tileTerrain.mesh.vertices;
+        
         var buffer = Buffer.createVertexBuffer({
-            context : context,
-            typedArray : typedArray,
-            usage : BufferUsage.STATIC_DRAW
+            context: context,
+            typedArray: typedArray,
+            usage: BufferUsage.STATIC_DRAW
         });
+        
         var attributes = tileTerrain.mesh.encoding.getAttributes(buffer);
 
         var indexBuffers = tileTerrain.mesh.indices.indexBuffers || {};
         var indexBuffer = indexBuffers[context.id];
         if (!defined(indexBuffer) || indexBuffer.isDestroyed()) {
             var indices = tileTerrain.mesh.indices;
-            var indexDatatype = (indices.BYTES_PER_ELEMENT === 2) ?  IndexDatatype.UNSIGNED_SHORT : IndexDatatype.UNSIGNED_INT;
+            var indexDatatype = (indices.BYTES_PER_ELEMENT === 2) ? IndexDatatype.UNSIGNED_SHORT : IndexDatatype.UNSIGNED_INT;
             indexBuffer = Buffer.createIndexBuffer({
-                context : context,
-                typedArray : indices,
-                usage : BufferUsage.STATIC_DRAW,
-                indexDatatype : indexDatatype
+                context: context,
+                typedArray: indices,
+                usage: BufferUsage.STATIC_DRAW,
+                indexDatatype: indexDatatype
             });
             indexBuffer.vertexArrayDestroyable = false;
             indexBuffer.referenceCount = 1;
@@ -238,9 +260,9 @@ define([
         }
 
         tileTerrain.vertexArray = new VertexArray({
-            context : context,
-            attributes : attributes,
-            indexBuffer : indexBuffer
+            context: context,
+            attributes: attributes,
+            indexBuffer: indexBuffer
         });
 
         tileTerrain.state = TerrainState.READY;

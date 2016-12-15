@@ -264,6 +264,9 @@ define([
      * @private
      */
     function VertexArray(options) {
+        
+     //   console.log(options);
+
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
 
         //>>includeStart('debug', pragmas.debug);
@@ -279,6 +282,9 @@ define([
         var context = options.context;
         var gl = context._gl;
         var attributes = options.attributes;
+        
+       // console.log(attributes);
+        
         var indexBuffer = options.indexBuffer;
 
         var i;

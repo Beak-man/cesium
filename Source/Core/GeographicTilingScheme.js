@@ -213,10 +213,17 @@ define([
         }
 
         var xTiles = this.getNumberOfXTilesAtLevel(level);
-        var yTiles = this.getNumberOfYTilesAtLevel(level);
+        var yTiles = this.getNumberOfYTilesAtLevel(level);    
 
         var xTileWidth = rectangle.width / xTiles;
         var yTileHeight = rectangle.height / yTiles;
+        
+        // zone couverte par une tuile en radian
+        
+        // var deltaPhi = xTileWidth
+        // var deltatheta = yTileHeight
+        
+     //   console.log((xTileWidth*180.0)/Math.PI + " "+ (yTileHeight*180.0)/Math.PI);
 
         var longitude = position.longitude;
         if (rectangle.east < rectangle.west) {
@@ -236,6 +243,8 @@ define([
         if (!defined(result)) {
             return new Cartesian2(xTileCoordinate, yTileCoordinate);
         }
+
+        
 
         result.x = xTileCoordinate;
         result.y = yTileCoordinate;

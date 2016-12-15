@@ -745,7 +745,13 @@ define([
     var scratch3DToCVEndDir = new Cartesian3();
     var scratch3DToCVEndUp = new Cartesian3();
 
+
+    // cette fonction ne sert qu'a mettre en perspective :  ne contient pas de tuiles...
+
     function morphFrom3DToColumbusView(transitioner, duration, endCamera, complete) {
+        
+        console.log("dans morphFrom3DToColumbusView");
+        
         var scene = transitioner._scene;
         var camera = scene.camera;
 

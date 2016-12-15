@@ -349,7 +349,7 @@ define([
 
 
             } else {
-                circle.material = new Color(1.0, 1.0, 0.0, 0.3);
+                circle.material = new Color(1.0, 1.0, 0.0, 0.2);
             }
 
             if (!GeoJsonDataSource._ellipsoid) {

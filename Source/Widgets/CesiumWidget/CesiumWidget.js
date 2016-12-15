@@ -301,6 +301,7 @@ define([
             if (skyBox !== false) {
                 scene.skyBox = skyBox;
                 scene.sun = new Sun();
+
                 scene.moon = new Moon();
             }
 

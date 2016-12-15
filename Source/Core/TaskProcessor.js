@@ -1,16 +1,16 @@
 /*global define*/
 define([
-        '../ThirdParty/when',
-        './buildModuleUrl',
-        './defaultValue',
-        './defined',
-        './destroyObject',
-        './DeveloperError',
-        './getAbsoluteUri',
-        './isCrossOriginUrl',
-        './RuntimeError',
-        'require'
-    ], function(
+    '../ThirdParty/when',
+    './buildModuleUrl',
+    './defaultValue',
+    './defined',
+    './destroyObject',
+    './DeveloperError',
+    './getAbsoluteUri',
+    './isCrossOriginUrl',
+    './RuntimeError',
+    'require'
+], function (
         when,
         buildModuleUrl,
         defaultValue,
@@ -35,7 +35,7 @@ define([
                 // postMessage might fail with a DataCloneError
                 // if transferring array buffers is not supported.
                 worker.postMessage({
-                    array : array
+                    array: array
                 }, [array.buffer]);
             } catch (e) {
                 TaskProcessor._canTransferArrayBuffer = false;
@@ -44,7 +44,7 @@ define([
 
             var deferred = when.defer();
 
-            worker.onmessage = function(event) {
+            worker.onmessage = function (event) {
                 var array = event.data.array;
 
                 // some versions of Firefox silently fail to transfer typed arrays.
@@ -103,7 +103,7 @@ define([
             var blob;
             try {
                 blob = new Blob([script], {
-                    type : 'application/javascript'
+                    type: 'application/javascript'
                 });
             } catch (e) {
                 var BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
@@ -132,24 +132,29 @@ define([
         worker.postMessage = defaultValue(worker.webkitPostMessage, worker.postMessage);
 
         var bootstrapMessage = {
-            loaderConfig : {},
-            workerModule : TaskProcessor._workerModulePrefix + processor._workerName
+            loaderConfig: {},
+            workerModule: TaskProcessor._workerModulePrefix + processor._workerName
         };
 
         if (defined(TaskProcessor._loaderConfig)) {
+
             bootstrapMessage.loaderConfig = TaskProcessor._loaderConfig;
+
         } else if (defined(require.toUrl)) {
-            bootstrapMessage.loaderConfig.baseUrl =
-                getAbsoluteUri('..', buildModuleUrl('Workers/cesiumWorkerBootstrapper.js'));
+
+            bootstrapMessage.loaderConfig.baseUrl = getAbsoluteUri('..', buildModuleUrl('Workers/cesiumWorkerBootstrapper.js'));
+            
         } else {
+
             bootstrapMessage.loaderConfig.paths = {
-                'Workers' : buildModuleUrl('Workers')
+                'Workers': buildModuleUrl('Workers')
             };
+
         }
 
         worker.postMessage(bootstrapMessage);
 
-        worker.onmessage = function(event) {
+        worker.onmessage = function (event) {
             completeTask(processor, event.data);
         };
 
@@ -207,7 +212,8 @@ define([
      *     });
      * }
      */
-    TaskProcessor.prototype.scheduleTask = function(parameters, transferableObjects) {
+    TaskProcessor.prototype.scheduleTask = function (parameters, transferableObjects) {
+
         if (!defined(this._worker)) {
             this._worker = createWorker(this);
         }
@@ -219,7 +225,8 @@ define([
         ++this._activeTasks;
 
         var processor = this;
-        return when(canTransferArrayBuffer(), function(canTransferArrayBuffer) {
+
+        return when(canTransferArrayBuffer(), function (canTransferArrayBuffer) {
             if (!defined(transferableObjects)) {
                 transferableObjects = emptyTransferableObjectArray;
             } else if (!canTransferArrayBuffer) {
@@ -231,9 +238,9 @@ define([
             processor._deferreds[id] = deferred;
 
             processor._worker.postMessage({
-                id : id,
-                parameters : parameters,
-                canTransferArrayBuffer : canTransferArrayBuffer
+                id: id,
+                parameters: parameters,
+                canTransferArrayBuffer: canTransferArrayBuffer
             }, transferableObjects);
 
             return deferred.promise;
@@ -250,7 +257,7 @@ define([
      *
      * @see TaskProcessor#destroy
      */
-    TaskProcessor.prototype.isDestroyed = function() {
+    TaskProcessor.prototype.isDestroyed = function () {
         return false;
     };
 
@@ -262,7 +269,7 @@ define([
      *
      * @returns {undefined}
      */
-    TaskProcessor.prototype.destroy = function() {
+    TaskProcessor.prototype.destroy = function () {
         if (defined(this._worker)) {
             this._worker.terminate();
         }

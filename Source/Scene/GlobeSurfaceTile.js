@@ -236,6 +236,7 @@ define([
     };
 
     GlobeSurfaceTile.processStateMachine = function(tile, frameState, terrainProvider, imageryLayerCollection, vertexArraysToDestroy) {
+        
         var surfaceTile = tile.data;
         if (!defined(surfaceTile)) {
             surfaceTile = tile.data = new GlobeSurfaceTile();
@@ -331,18 +332,21 @@ define([
     }
 
     function processTerrainStateMachine(tile, frameState, terrainProvider, vertexArraysToDestroy) {
+
         var surfaceTile = tile.data;
         var loaded = surfaceTile.loadedTerrain;
         var upsampled = surfaceTile.upsampledTerrain;
         var suspendUpsampling = false;
 
         if (defined(loaded)) {
+           // console.log(loaded);
             loaded.processLoadStateMachine(frameState, terrainProvider, tile.x, tile.y, tile.level);
 
             // Publish the terrain data on the tile as soon as it is available.
             // We'll potentially need it to upsample child tiles.
             if (loaded.state >= TerrainState.RECEIVED) {
                 if (surfaceTile.terrainData !== loaded.data) {
+                    
                     surfaceTile.terrainData = loaded.data;
 
                     // If there's a water mask included in the terrain data, create a
@@ -355,6 +359,9 @@ define([
             }
 
             if (loaded.state === TerrainState.READY) {
+                
+               // console.log(tile);
+                
                 loaded.publishToTile(tile);
 
                 if (defined(tile.data.vertexArray)) {

@@ -1,72 +1,72 @@
 /*global define*/
 define([
-        '../Core/BoundingRectangle',
-        '../Core/BoundingSphere',
-        '../Core/BoxGeometry',
-        '../Core/Cartesian2',
-        '../Core/Cartesian3',
-        '../Core/Cartesian4',
-        '../Core/Cartographic',
-        '../Core/Color',
-        '../Core/ColorGeometryInstanceAttribute',
-        '../Core/createGuid',
-        '../Core/defaultValue',
-        '../Core/defined',
-        '../Core/defineProperties',
-        '../Core/destroyObject',
-        '../Core/DeveloperError',
-        '../Core/EllipsoidGeometry',
-        '../Core/Event',
-        '../Core/GeographicProjection',
-        '../Core/GeometryInstance',
-        '../Core/GeometryPipeline',
-        '../Core/getTimestamp',
-        '../Core/Intersect',
-        '../Core/Interval',
-        '../Core/JulianDate',
-        '../Core/Math',
-        '../Core/Matrix4',
-        '../Core/mergeSort',
-        '../Core/Occluder',
-        '../Core/ShowGeometryInstanceAttribute',
-        '../Core/Transforms',
-        '../Renderer/ClearCommand',
-        '../Renderer/ComputeEngine',
-        '../Renderer/Context',
-        '../Renderer/ContextLimits',
-        '../Renderer/DrawCommand',
-        '../Renderer/PassState',
-        '../Renderer/ShaderProgram',
-        '../Renderer/ShaderSource',
-        './Camera',
-        './CreditDisplay',
-        './CullingVolume',
-        './DepthPlane',
-        './DeviceOrientationCameraController',
-        './Fog',
-        './FrameState',
-        './FrustumCommands',
-        './FXAA',
-        './GlobeDepth',
-        './MapMode2D',
-        './OIT',
-        './OrthographicFrustum',
-        './Pass',
-        './PerformanceDisplay',
-        './PerInstanceColorAppearance',
-        './PerspectiveFrustum',
-        './PerspectiveOffCenterFrustum',
-        './PickDepth',
-        './Primitive',
-        './PrimitiveCollection',
-        './SceneMode',
-        './SceneTransforms',
-        './SceneTransitioner',
-        './ScreenSpaceCameraController',
-        './ShadowMap',
-        './SunPostProcess',
-        './TweenCollection'
-    ], function(
+    '../Core/BoundingRectangle',
+    '../Core/BoundingSphere',
+    '../Core/BoxGeometry',
+    '../Core/Cartesian2',
+    '../Core/Cartesian3',
+    '../Core/Cartesian4',
+    '../Core/Cartographic',
+    '../Core/Color',
+    '../Core/ColorGeometryInstanceAttribute',
+    '../Core/createGuid',
+    '../Core/defaultValue',
+    '../Core/defined',
+    '../Core/defineProperties',
+    '../Core/destroyObject',
+    '../Core/DeveloperError',
+    '../Core/EllipsoidGeometry',
+    '../Core/Event',
+    '../Core/GeographicProjection',
+    '../Core/GeometryInstance',
+    '../Core/GeometryPipeline',
+    '../Core/getTimestamp',
+    '../Core/Intersect',
+    '../Core/Interval',
+    '../Core/JulianDate',
+    '../Core/Math',
+    '../Core/Matrix4',
+    '../Core/mergeSort',
+    '../Core/Occluder',
+    '../Core/ShowGeometryInstanceAttribute',
+    '../Core/Transforms',
+    '../Renderer/ClearCommand',
+    '../Renderer/ComputeEngine',
+    '../Renderer/Context',
+    '../Renderer/ContextLimits',
+    '../Renderer/DrawCommand',
+    '../Renderer/PassState',
+    '../Renderer/ShaderProgram',
+    '../Renderer/ShaderSource',
+    './Camera',
+    './CreditDisplay',
+    './CullingVolume',
+    './DepthPlane',
+    './DeviceOrientationCameraController',
+    './Fog',
+    './FrameState',
+    './FrustumCommands',
+    './FXAA',
+    './GlobeDepth',
+    './MapMode2D',
+    './OIT',
+    './OrthographicFrustum',
+    './Pass',
+    './PerformanceDisplay',
+    './PerInstanceColorAppearance',
+    './PerspectiveFrustum',
+    './PerspectiveOffCenterFrustum',
+    './PickDepth',
+    './Primitive',
+    './PrimitiveCollection',
+    './SceneMode',
+    './SceneTransforms',
+    './SceneTransitioner',
+    './ScreenSpaceCameraController',
+    './ShadowMap',
+    './SunPostProcess',
+    './TweenCollection'
+], function (
         BoundingRectangle,
         BoundingSphere,
         BoxGeometry,
@@ -224,7 +224,7 @@ define([
             creditContainer.style.color = '#ffffff';
             creditContainer.style['font-size'] = '10px';
             creditContainer.style['padding-right'] = '5px';
-             creditContainer.innerHTML= 'test';
+            creditContainer.innerHTML = 'test';
             canvas.parentNode.appendChild(creditContainer);
         }
 
@@ -278,13 +278,13 @@ define([
         this._fxaa = new FXAA();
 
         this._clearColorCommand = new ClearCommand({
-            color : new Color(),
-            stencil : 0,
-            owner : this
+            color: new Color(),
+            stencil: 0,
+            owner: this
         });
         this._depthClearCommand = new ClearCommand({
-            depth : 1.0,
-            owner : this
+            depth: 1.0,
+            owner: this
         });
 
         this._pickDepths = [];
@@ -562,9 +562,9 @@ define([
          * @type {ShadowMap}
          */
         this.shadowMap = new ShadowMap({
-            context : context,
-            lightCamera : this._sunCamera,
-            enabled : defaultValue(options.shadows, false)
+            context: context,
+            lightCamera: this._sunCamera,
+            enabled: defaultValue(options.shadows, false)
         });
 
         this._terrainExaggeration = defaultValue(options.terrainExaggeration, 1.0);
@@ -583,24 +583,21 @@ define([
         // of celestial and environment effects that need to be updated/rendered in
         // a certain order as well as updating/tracking framebuffer usage.
         this._environmentState = {
-            skyBoxCommand : undefined,
-            skyAtmosphereCommand : undefined,
-            sunDrawCommand : undefined,
-            sunComputeCommand : undefined,
-            moonCommand : undefined,
-
-            isSunVisible : false,
-            isMoonVisible : false,
-            isReadyForAtmosphere : false,
-            isSkyAtmosphereVisible : false,
-
-            clearGlobeDepth : false,
-            useDepthPlane : false,
-
-            originalFramebuffer : undefined,
-            useGlobeDepthFramebuffer : false,
-            useOIT : false,
-            useFXAA : false
+            skyBoxCommand: undefined,
+            skyAtmosphereCommand: undefined,
+            sunDrawCommand: undefined,
+            sunComputeCommand: undefined,
+            moonCommand: undefined,
+            isSunVisible: false,
+            isMoonVisible: false,
+            isReadyForAtmosphere: false,
+            isSkyAtmosphereVisible: false,
+            clearGlobeDepth: false,
+            useDepthPlane: false,
+            originalFramebuffer: undefined,
+            useGlobeDepthFramebuffer: false,
+            useOIT: false,
+            useFXAA: false
         };
 
         this._useWebVR = false;
@@ -628,12 +625,11 @@ define([
          * @type {Canvas}
          * @readonly
          */
-        canvas : {
-            get : function() {
+        canvas: {
+            get: function () {
                 return this._canvas;
             }
         },
-
         /**
          * The drawingBufferWidth of the underlying GL context.
          * @memberof Scene.prototype
@@ -643,12 +639,11 @@ define([
          *
          * @see {@link https://www.khronos.org/registry/webgl/specs/1.0/#DOM-WebGLRenderingContext-drawingBufferWidth|drawingBufferWidth}
          */
-        drawingBufferHeight : {
-            get : function() {
+        drawingBufferHeight: {
+            get: function () {
                 return this._context.drawingBufferHeight;
             }
         },
-
         /**
          * The drawingBufferHeight of the underlying GL context.
          * @memberof Scene.prototype
@@ -658,12 +653,11 @@ define([
          *
          * @see {@link https://www.khronos.org/registry/webgl/specs/1.0/#DOM-WebGLRenderingContext-drawingBufferHeight|drawingBufferHeight}
          */
-        drawingBufferWidth : {
-            get : function() {
+        drawingBufferWidth: {
+            get: function () {
                 return this._context.drawingBufferWidth;
             }
         },
-
         /**
          * The maximum aliased line width, in pixels, supported by this WebGL implementation.  It will be at least one.
          * @memberof Scene.prototype
@@ -673,12 +667,11 @@ define([
          *
          * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glGet.xml|glGet} with <code>ALIASED_LINE_WIDTH_RANGE</code>.
          */
-        maximumAliasedLineWidth : {
-            get : function() {
+        maximumAliasedLineWidth: {
+            get: function () {
                 return ContextLimits.maximumAliasedLineWidth;
             }
         },
-
         /**
          * The maximum length in pixels of one edge of a cube map, supported by this WebGL implementation.  It will be at least 16.
          * @memberof Scene.prototype
@@ -688,12 +681,11 @@ define([
          *
          * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glGet.xml|glGet} with <code>GL_MAX_CUBE_MAP_TEXTURE_SIZE</code>.
          */
-        maximumCubeMapSize : {
-            get : function() {
+        maximumCubeMapSize: {
+            get: function () {
                 return ContextLimits.maximumCubeMapSize;
             }
         },
-
         /**
          * Returns true if the pickPosition function is supported.
          * @memberof Scene.prototype
@@ -701,29 +693,26 @@ define([
          * @type {Boolean}
          * @readonly
          */
-        pickPositionSupported : {
-            get : function() {
+        pickPositionSupported: {
+            get: function () {
                 return this._context.depthTexture;
             }
         },
-
         /**
          * Gets or sets the depth-test ellipsoid.
          * @memberof Scene.prototype
          *
          * @type {Globe}
          */
-        globe : {
-            get: function() {
+        globe: {
+            get: function () {
                 return this._globe;
             },
-
-            set: function(globe) {
+            set: function (globe) {
                 this._globe = this._globe && this._globe.destroy();
                 this._globe = globe;
             }
         },
-
         /**
          * Gets the collection of primitives.
          * @memberof Scene.prototype
@@ -731,12 +720,11 @@ define([
          * @type {PrimitiveCollection}
          * @readonly
          */
-        primitives : {
-            get : function() {
+        primitives: {
+            get: function () {
                 return this._primitives;
             }
         },
-
         /**
          * Gets the collection of ground primitives.
          * @memberof Scene.prototype
@@ -744,12 +732,11 @@ define([
          * @type {PrimitiveCollection}
          * @readonly
          */
-        groundPrimitives : {
-            get : function() {
+        groundPrimitives: {
+            get: function () {
                 return this._groundPrimitives;
             }
         },
-
         /**
          * Gets the camera.
          * @memberof Scene.prototype
@@ -757,8 +744,8 @@ define([
          * @type {Camera}
          * @readonly
          */
-        camera : {
-            get : function() {
+        camera: {
+            get: function () {
                 return this._camera;
             }
         },
@@ -771,12 +758,11 @@ define([
          * @type {ScreenSpaceCameraController}
          * @readonly
          */
-        screenSpaceCameraController : {
-            get : function() {
+        screenSpaceCameraController: {
+            get: function () {
                 return this._screenSpaceCameraController;
             }
         },
-
         /**
          * Get the map projection to use in 2D and Columbus View modes.
          * @memberof Scene.prototype
@@ -786,18 +772,16 @@ define([
          *
          * @default new GeographicProjection()
          */
-        mapProjection : {
-            get: function() {
+        mapProjection: {
+            get: function () {
                 return this._mapProjection;
             },
-			
-			/* ***** NEW ***** */
-			
-			set : function(mapProj){
-				this._mapProjection = mapProj;
-			}
-        },
+            /* ***** NEW ***** */
 
+            set: function (mapProj) {
+                this._mapProjection = mapProj;
+            }
+        },
         /**
          * Gets state information about the current scene. If called outside of a primitive's <code>update</code>
          * function, the previous frame's state is returned.
@@ -808,12 +792,11 @@ define([
          *
          * @private
          */
-        frameState : {
-            get: function() {
+        frameState: {
+            get: function () {
                 return this._frameState;
             }
         },
-
         /**
          * Gets the collection of tweens taking place in the scene.
          * @memberof Scene.prototype
@@ -823,12 +806,11 @@ define([
          *
          * @private
          */
-        tweens : {
-            get : function() {
+        tweens: {
+            get: function () {
                 return this._tweens;
             }
         },
-
         /**
          * Gets the collection of image layers that will be rendered on the globe.
          * @memberof Scene.prototype
@@ -836,27 +818,25 @@ define([
          * @type {ImageryLayerCollection}
          * @readonly
          */
-        imageryLayers : {
-            get : function() {
+        imageryLayers: {
+            get: function () {
                 return this.globe.imageryLayers;
             }
         },
-
         /**
          * The terrain provider providing surface geometry for the globe.
          * @memberof Scene.prototype
          *
          * @type {TerrainProvider}
          */
-        terrainProvider : {
-            get : function() {
+        terrainProvider: {
+            get: function () {
                 return this.globe.terrainProvider;
             },
-            set : function(terrainProvider) {
+            set: function (terrainProvider) {
                 this.globe.terrainProvider = terrainProvider;
             }
         },
-
         /**
          * Gets an event that's raised when the terrain provider is changed
          * @memberof Scene.prototype
@@ -864,12 +844,11 @@ define([
          * @type {Event}
          * @readonly
          */
-        terrainProviderChanged : {
-            get : function() {
+        terrainProviderChanged: {
+            get: function () {
                 return this.globe.terrainProviderChanged;
             }
         },
-
         /**
          * Gets the event that will be raised when an error is thrown inside the <code>render</code> function.
          * The Scene instance and the thrown error are the only two parameters passed to the event handler.
@@ -880,12 +859,11 @@ define([
          * @type {Event}
          * @readonly
          */
-        renderError : {
-            get : function() {
+        renderError: {
+            get: function () {
                 return this._renderError;
             }
         },
-
         /**
          * Gets the event that will be raised at the start of each call to <code>render</code>.  Subscribers to the event
          * receive the Scene instance as the first parameter and the current time as the second parameter.
@@ -894,12 +872,11 @@ define([
          * @type {Event}
          * @readonly
          */
-        preRender : {
-            get : function() {
+        preRender: {
+            get: function () {
                 return this._preRender;
             }
         },
-
         /**
          * Gets the event that will be raised at the end of each call to <code>render</code>.  Subscribers to the event
          * receive the Scene instance as the first parameter and the current time as the second parameter.
@@ -908,23 +885,21 @@ define([
          * @type {Event}
          * @readonly
          */
-        postRender : {
-            get : function() {
+        postRender: {
+            get: function () {
                 return this._postRender;
             }
         },
-
         /**
          * @memberof Scene.prototype
          * @private
          * @readonly
          */
-        context : {
-            get : function() {
+        context: {
+            get: function () {
                 return this._context;
             }
         },
-
         /**
          * This property is for debugging only; it is not for production use.
          * <p>
@@ -943,24 +918,22 @@ define([
          *
          * @default undefined
          */
-        debugFrustumStatistics : {
-            get : function() {
+        debugFrustumStatistics: {
+            get: function () {
                 return this._debugFrustumStatistics;
             }
         },
-
         /**
          * Gets whether or not the scene is optimized for 3D only viewing.
          * @memberof Scene.prototype
          * @type {Boolean}
          * @readonly
          */
-        scene3DOnly : {
-            get : function() {
+        scene3DOnly: {
+            get: function () {
                 return this._frameState.scene3DOnly;
             }
         },
-
         /**
          * Gets whether or not the scene has order independent translucency enabled.
          * Note that this only reflects the original construction option, and there are
@@ -969,35 +942,33 @@ define([
          * @type {Boolean}
          * @readonly
          */
-        orderIndependentTranslucency : {
-            get : function() {
+        orderIndependentTranslucency: {
+            get: function () {
                 return defined(this._oit);
             }
         },
-
         /**
          * Gets the unique identifier for this scene.
          * @memberof Scene.prototype
          * @type {String}
          * @readonly
          */
-        id : {
-            get : function() {
+        id: {
+            get: function () {
                 return this._id;
             }
         },
-
         /**
          * Gets or sets the current mode of the scene.
          * @memberof Scene.prototype
          * @type {SceneMode}
          * @default {@link SceneMode.SCENE3D}
          */
-        mode : {
-            get : function() {
+        mode: {
+            get: function () {
                 return this._mode;
             },
-            set : function(value) {
+            set: function (value) {
                 //>>includeStart('debug', pragmas.debug);
                 if (this.scene3DOnly && value !== SceneMode.SCENE3D) {
                     throw new DeveloperError('Only SceneMode.SCENE3D is valid when scene3DOnly is true.');
@@ -1017,7 +988,6 @@ define([
                 this._mode = value;
             }
         },
-
         /**
          * Gets the number of frustums used in the last frame.
          * @memberof Scene.prototype
@@ -1025,23 +995,21 @@ define([
          *
          * @private
          */
-        numberOfFrustums : {
-            get : function() {
+        numberOfFrustums: {
+            get: function () {
                 return this._frustumCommandsList.length;
             }
         },
-
         /**
          * Gets the scalar used to exaggerate the terrain.
          * @memberof Scene.prototype
          * @type {Number}
          */
-        terrainExaggeration : {
-            get : function() {
+        terrainExaggeration: {
+            get: function () {
                 return this._terrainExaggeration;
             }
         },
-
         /**
          * When <code>true</code>, splits the scene into two viewports with steroscopic views for the left and right eyes.
          * Used for cardboard and WebVR.
@@ -1049,11 +1017,11 @@ define([
          * @type {Boolean}
          * @default false
          */
-        useWebVR : {
-            get : function() {
+        useWebVR: {
+            get: function () {
                 return this._useWebVR;
             },
-            set : function(value) {
+            set: function (value) {
                 this._useWebVR = value;
                 if (this._useWebVR) {
                     this._frameState.creditDisplay.container.style.visibility = 'hidden';
@@ -1073,14 +1041,13 @@ define([
                 }
             }
         },
-
         /**
          * Determines if the 2D map is rotatable or can be scrolled infinitely in the horizontal direction.
          * @memberof Scene.prototype
          * @type {Boolean}
          */
-        mapMode2D : {
-            get : function() {
+        mapMode2D: {
+            get: function () {
                 return this._mapMode2D;
             }
         }
@@ -1100,10 +1067,10 @@ define([
         Cartesian3.multiplyByScalar(camera0.position, scalar, scratchPosition0);
         Cartesian3.multiplyByScalar(camera1.position, scalar, scratchPosition1);
         return Cartesian3.equalsEpsilon(scratchPosition0, scratchPosition1, epsilon) &&
-            Cartesian3.equalsEpsilon(camera0.direction, camera1.direction, epsilon) &&
-            Cartesian3.equalsEpsilon(camera0.up, camera1.up, epsilon) &&
-            Cartesian3.equalsEpsilon(camera0.right, camera1.right, epsilon) &&
-            Matrix4.equalsEpsilon(camera0.transform, camera1.transform, epsilon);
+                Cartesian3.equalsEpsilon(camera0.direction, camera1.direction, epsilon) &&
+                Cartesian3.equalsEpsilon(camera0.up, camera1.up, epsilon) &&
+                Cartesian3.equalsEpsilon(camera0.right, camera1.right, epsilon) &&
+                Matrix4.equalsEpsilon(camera0.transform, camera1.transform, epsilon);
     }
 
     function updateDerivedCommands(scene, command) {
@@ -1151,12 +1118,12 @@ define([
         // TODO: The occluder is the top-level globe. When we add
         //       support for multiple central bodies, this should be the closest one.
         var globe = scene.globe;
-		
+
         if (scene._mode === SceneMode.SCENE3D && defined(globe)) {
             var ellipsoid = globe.ellipsoid;
-			
+
             scratchOccluderBoundingSphere.radius = ellipsoid.minimumRadius;
-			
+
             scratchOccluder = Occluder.fromBoundingSphere(scratchOccluderBoundingSphere, scene._camera.positionWC, scratchOccluder);
             return scratchOccluder;
         }
@@ -1176,7 +1143,7 @@ define([
         frameState.commandList.length = 0;
         frameState.shadowMaps.length = 0;
         frameState.mode = scene._mode;
-        frameState.morphTime = scene.morphTime;		
+        frameState.morphTime = scene.morphTime;
         frameState.mapProjection = scene.mapProjection;
         frameState.frameNumber = frameNumber;
         frameState.time = JulianDate.clone(time, frameState.time);
@@ -1263,9 +1230,9 @@ define([
     function isVisible(command, cullingVolume, occluder) {
         return ((defined(command)) &&
                 ((!defined(command.boundingVolume)) ||
-                 !command.cull ||
-                 ((cullingVolume.computeVisibility(command.boundingVolume) !== Intersect.OUTSIDE) &&
-                  (!defined(occluder) || !command.boundingVolume.isOccluded(occluder)))));
+                        !command.cull ||
+                        ((cullingVolume.computeVisibility(command.boundingVolume) !== Intersect.OUTSIDE) &&
+                                (!defined(occluder) || !command.boundingVolume.isOccluded(occluder)))));
     }
 
     function createPotentiallyVisibleSet(scene) {
@@ -1280,8 +1247,8 @@ define([
 
         if (scene.debugShowFrustums) {
             scene._debugFrustumStatistics = {
-                totalCommands : 0,
-                commandsInFrustums : {}
+                totalCommands: 0,
+                commandsInFrustums: {}
             };
         }
 
@@ -1306,7 +1273,7 @@ define([
         var shadowFar = -Number.MAX_VALUE;
         var shadowClosestObjectSize = Number.MAX_VALUE;
 
-        var occluder = (frameState.mode === SceneMode.SCENE3D) ? frameState.occluder: undefined;
+        var occluder = (frameState.mode === SceneMode.SCENE3D) ? frameState.occluder : undefined;
         var cullingVolume = frameState.cullingVolume;
 
         // get user culling volume minus the far plane.
@@ -1349,7 +1316,7 @@ define([
                     // throw off the near/far fitting for the shadow map. Only update for globe tiles that the
                     // camera isn't inside.
                     if (shadowsEnabled && command.receiveShadows && (distances.start < ShadowMap.MAXIMUM_DISTANCE) &&
-                        !((pass === Pass.GLOBE) && (distances.start < -100.0) && (distances.stop > 100.0))) {
+                            !((pass === Pass.GLOBE) && (distances.start < -100.0) && (distances.stop > 100.0))) {
 
                         // Get the smallest bounding volume the camera is near. This is used to place more shadow detail near the object.
                         var size = distances.stop - distances.start;
@@ -1437,15 +1404,15 @@ define([
         var sp = defaultValue(shaderProgram, command.shaderProgram);
         var fs = sp.fragmentShaderSource.clone();
 
-        fs.sources = fs.sources.map(function(source) {
+        fs.sources = fs.sources.map(function (source) {
             source = ShaderSource.replaceMain(source, 'czm_Debug_main');
             return source;
         });
 
         var newMain =
-            'void main() \n' +
-            '{ \n' +
-            '    czm_Debug_main(); \n';
+                'void main() \n' +
+                '{ \n' +
+                '    czm_Debug_main(); \n';
 
         if (scene.debugShowCommands) {
             if (!defined(command._debugColor)) {
@@ -1471,10 +1438,10 @@ define([
         var attributeLocations = getAttributeLocations(sp);
 
         return ShaderProgram.fromCache({
-            context : context,
-            vertexShaderSource : sp.vertexShaderSource,
-            fragmentShaderSource : fs,
-            attributeLocations : attributeLocations
+            context: context,
+            vertexShaderSource: sp.vertexShaderSource,
+            fragmentShaderSource: fs,
+            attributeLocations: attributeLocations
         });
     }
 
@@ -1486,9 +1453,9 @@ define([
     }
 
     var transformFrom2D = new Matrix4(0.0, 0.0, 1.0, 0.0,
-                                      1.0, 0.0, 0.0, 0.0,
-                                      0.0, 1.0, 0.0, 0.0,
-                                      0.0, 0.0, 0.0, 1.0);
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0);
     transformFrom2D = Matrix4.inverseTransformation(transformFrom2D, transformFrom2D);
 
     function executeCommand(command, scene, context, passState, debugFramebuffer) {
@@ -1525,9 +1492,9 @@ define([
             var center = Cartesian3.clone(boundingVolume.center);
             if (frameState.mode !== SceneMode.SCENE3D) {
                 center = Matrix4.multiplyByPoint(transformFrom2D, center, center);
-				
-				//console.log(frameState.mapProjection);
-				
+
+                //console.log(frameState.mapProjection);
+
                 var projection = frameState.mapProjection;
                 var centerCartographic = projection.unproject(center);
                 center = projection.ellipsoid.cartographicToCartesian(centerCartographic);
@@ -1537,45 +1504,45 @@ define([
                 var radius = boundingVolume.radius;
 
                 geometry = GeometryPipeline.toWireframe(EllipsoidGeometry.createGeometry(new EllipsoidGeometry({
-                    radii : new Cartesian3(radius, radius, radius),
-                    vertexFormat : PerInstanceColorAppearance.FLAT_VERTEX_FORMAT
+                    radii: new Cartesian3(radius, radius, radius),
+                    vertexFormat: PerInstanceColorAppearance.FLAT_VERTEX_FORMAT
                 })));
 
                 scene._debugVolume = new Primitive({
-                    geometryInstances : new GeometryInstance({
-                        geometry : geometry,
-                        modelMatrix : Matrix4.multiplyByTranslation(Matrix4.IDENTITY, center, new Matrix4()),
-                        attributes : {
-                            color : new ColorGeometryInstanceAttribute(1.0, 0.0, 0.0, 1.0)
+                    geometryInstances: new GeometryInstance({
+                        geometry: geometry,
+                        modelMatrix: Matrix4.multiplyByTranslation(Matrix4.IDENTITY, center, new Matrix4()),
+                        attributes: {
+                            color: new ColorGeometryInstanceAttribute(1.0, 0.0, 0.0, 1.0)
                         }
                     }),
-                    appearance : new PerInstanceColorAppearance({
-                        flat : true,
-                        translucent : false
+                    appearance: new PerInstanceColorAppearance({
+                        flat: true,
+                        translucent: false
                     }),
-                    asynchronous : false
+                    asynchronous: false
                 });
             } else {
                 var halfAxes = boundingVolume.halfAxes;
 
                 geometry = GeometryPipeline.toWireframe(BoxGeometry.createGeometry(BoxGeometry.fromDimensions({
-                    dimensions : new Cartesian3(2.0, 2.0, 2.0),
-                    vertexFormat : PerInstanceColorAppearance.FLAT_VERTEX_FORMAT
+                    dimensions: new Cartesian3(2.0, 2.0, 2.0),
+                    vertexFormat: PerInstanceColorAppearance.FLAT_VERTEX_FORMAT
                 })));
 
                 scene._debugVolume = new Primitive({
-                    geometryInstances : new GeometryInstance({
-                        geometry : geometry,
-                        modelMatrix : Matrix4.fromRotationTranslation(halfAxes, center, new Matrix4()),
-                        attributes : {
-                            color : new ColorGeometryInstanceAttribute(1.0, 0.0, 0.0, 1.0)
+                    geometryInstances: new GeometryInstance({
+                        geometry: geometry,
+                        modelMatrix: Matrix4.fromRotationTranslation(halfAxes, center, new Matrix4()),
+                        attributes: {
+                            color: new ColorGeometryInstanceAttribute(1.0, 0.0, 0.0, 1.0)
                         }
                     }),
-                    appearance : new PerInstanceColorAppearance({
-                        flat : true,
-                        translucent : false
+                    appearance: new PerInstanceColorAppearance({
+                        flat: true,
+                        translucent: false
                     }),
-                    asynchronous : false
+                    asynchronous: false
                 });
             }
 
@@ -1647,7 +1614,7 @@ define([
         var frustum;
         if (defined(camera.frustum.fov)) {
             frustum = camera.frustum.clone(scratchPerspectiveFrustum);
-        } else if (defined(camera.frustum.infiniteProjectionMatrix)){
+        } else if (defined(camera.frustum.infiniteProjectionMatrix)) {
             frustum = camera.frustum.clone(scratchPerspectiveOffCenterFrustum);
         } else {
             frustum = camera.frustum.clone(scratchOrthographicFrustum);
@@ -1697,7 +1664,7 @@ define([
         var executeTranslucentCommands;
         if (environmentState.useOIT) {
             if (!defined(scene._executeOITFunction)) {
-                scene._executeOITFunction = function(scene, executeFunction, passState, commands) {
+                scene._executeOITFunction = function (scene, executeFunction, passState, commands) {
                     scene._oit.executeCommands(scene, executeFunction, passState, commands);
                 };
             }
@@ -2222,7 +2189,7 @@ define([
         if (defined(scene.sun) && scene.sunBloom !== scene._sunBloom) {
             if (scene.sunBloom && !useWebVR) {
                 scene._sunPostProcess = new SunPostProcess();
-            } else if(defined(scene._sunPostProcess)){
+            } else if (defined(scene._sunPostProcess)) {
                 scene._sunPostProcess = scene._sunPostProcess.destroy();
             }
 
@@ -2335,7 +2302,7 @@ define([
     /**
      * @private
      */
-    Scene.prototype.initializeFrame = function() {
+    Scene.prototype.initializeFrame = function () {
         // Destroy released shaders once every 120 frames to avoid thrashing the cache
         if (this._shaderFrameCount++ === 120) {
             this._shaderFrameCount = 0;
@@ -2348,7 +2315,7 @@ define([
         if (defined(this._deviceOrientationCameraController)) {
             this._deviceOrientationCameraController.update();
         }
-        
+
         this._camera.update(this._mode);
         this._camera._updateCameraChanged();
     };
@@ -2444,7 +2411,7 @@ define([
     /**
      * @private
      */
-    Scene.prototype.render = function(time) {
+    Scene.prototype.render = function (time) {
         try {
             render(this, time);
         } catch (error) {
@@ -2459,7 +2426,7 @@ define([
     /**
      * @private
      */
-    Scene.prototype.clampLineWidth = function(width) {
+    Scene.prototype.clampLineWidth = function (width) {
         return Math.max(ContextLimits.minimumAliasedLineWidth, Math.min(width, ContextLimits.maximumAliasedLineWidth));
     };
 
@@ -2562,9 +2529,9 @@ define([
      *
      * @exception {DeveloperError} windowPosition is undefined.
      */
-    Scene.prototype.pick = function(windowPosition) {
+    Scene.prototype.pick = function (windowPosition) {
         //>>includeStart('debug', pragmas.debug);
-        if(!defined(windowPosition)) {
+        if (!defined(windowPosition)) {
             throw new DeveloperError('windowPosition is undefined.');
         }
         //>>includeEnd('debug');
@@ -2613,13 +2580,13 @@ define([
      * @exception {DeveloperError} Picking from the depth buffer is not supported. Check pickPositionSupported.
      * @exception {DeveloperError} 2D is not supported. An orthographic projection matrix is not invertible.
      */
-    Scene.prototype.pickPosition = function(windowPosition, result) {
+    Scene.prototype.pickPosition = function (windowPosition, result) {
         if (!this.useDepthPicking) {
             return undefined;
         }
 
         //>>includeStart('debug', pragmas.debug);
-        if(!defined(windowPosition)) {
+        if (!defined(windowPosition)) {
             throw new DeveloperError('windowPosition is undefined.');
         }
         if (!defined(this._globeDepth)) {
@@ -2639,7 +2606,7 @@ define([
         var frustum;
         if (defined(camera.frustum.fov)) {
             frustum = camera.frustum.clone(scratchPerspectiveFrustum);
-        } else if (defined(camera.frustum.infiniteProjectionMatrix)){
+        } else if (defined(camera.frustum.infiniteProjectionMatrix)) {
             frustum = camera.frustum.clone(scratchPerspectiveOffCenterFrustum);
         } else {
             //>>includeStart('debug', pragmas.debug);
@@ -2651,11 +2618,11 @@ define([
         for (var i = 0; i < numFrustums; ++i) {
             var pickDepth = getPickDepth(this, i);
             var pixels = context.readPixels({
-                x : drawingBufferPosition.x,
-                y : drawingBufferPosition.y,
-                width : 1,
-                height : 1,
-                framebuffer : pickDepth.framebuffer
+                x: drawingBufferPosition.x,
+                y: drawingBufferPosition.y,
+                width: 1,
+                height: 1,
+                framebuffer: pickDepth.framebuffer
             });
 
             var packedDepth = Cartesian4.unpack(pixels, 0, scratchPackedDepth);
@@ -2690,7 +2657,7 @@ define([
      * @example
      * var pickedObjects = scene.drillPick(new Cesium.Cartesian2(100.0, 200.0));
      */
-    Scene.prototype.drillPick = function(windowPosition, limit) {
+    Scene.prototype.drillPick = function (windowPosition, limit) {
         // PERFORMANCE_IDEA: This function calls each primitive's update for each pass. Instead
         // we could update the primitive once, and then just execute their commands for each pass,
         // and cull commands for picked primitives.  e.g., base on the command's owner.
@@ -2757,7 +2724,7 @@ define([
     /**
      * Instantly completes an active transition.
      */
-    Scene.prototype.completeMorph = function(){
+    Scene.prototype.completeMorph = function () {
         this._transitioner.completeMorph();
     };
 
@@ -2765,17 +2732,13 @@ define([
      * Asynchronously transitions the scene to 2D.
      * @param {Number} [duration=2.0] The amount of time, in seconds, for transition animations to complete.
      */
-    Scene.prototype.morphTo2D = function(duration) {
+    Scene.prototype.morphTo2D = function (duration) {
         var ellipsoid;
         var globe = this.globe;
         if (defined(globe)) {
             ellipsoid = globe.ellipsoid;
-		//	console.log("============ dans Scene 2127 ==============");
-		//	console.log(ellipsoid);
         } else {
             ellipsoid = this.mapProjection.ellipsoid;
-		//console.log("============ dans Scene 2131 ==============");
-		//	console.log(ellipsoid);
         }
         duration = defaultValue(duration, 2.0);
         this._transitioner.morphTo2D(duration, ellipsoid);
@@ -2785,27 +2748,23 @@ define([
      * Asynchronously transitions the scene to Columbus View.
      * @param {Number} [duration=2.0] The amount of time, in seconds, for transition animations to complete.
      */
-    Scene.prototype.morphToColumbusView = function(duration) {
+    Scene.prototype.morphToColumbusView = function (duration) {
         var ellipsoid;
         var globe = this.globe;
         if (defined(globe)) {
             ellipsoid = globe.ellipsoid;
-		//	console.log("============ dans Scene 2147 ==============");
-		//	console.log(ellipsoid);
         } else {
             ellipsoid = this.mapProjection.ellipsoid;
-		//	console.log("============ dans Scene 2151 ==============");
-		//	console.log(ellipsoid);
         }
         duration = defaultValue(duration, 2.0);
-      this._transitioner.morphToColumbusView(duration, ellipsoid);
+        this._transitioner.morphToColumbusView(duration, ellipsoid);
     };
 
     /**
      * Asynchronously transitions the scene to 3D.
      * @param {Number} [duration=2.0] The amount of time, in seconds, for transition animations to complete.
      */
-    Scene.prototype.morphTo3D = function(duration) {
+    Scene.prototype.morphTo3D = function (duration) {
         var ellipsoid;
         var globe = this.globe;
         if (defined(globe)) {
@@ -2827,7 +2786,7 @@ define([
      *
      * @see Scene#destroy
      */
-    Scene.prototype.isDestroyed = function() {
+    Scene.prototype.isDestroyed = function () {
         return false;
     };
 
@@ -2849,7 +2808,7 @@ define([
      *
      * @see Scene#isDestroyed
      */
-    Scene.prototype.destroy = function() {
+    Scene.prototype.destroy = function () {
         this._tweens.removeAll();
         this._computeEngine = this._computeEngine && this._computeEngine.destroy();
         this._screenSpaceCameraController = this._screenSpaceCameraController && this._screenSpaceCameraController.destroy();
@@ -2877,7 +2836,7 @@ define([
 
         this._context = this._context && this._context.destroy();
         this._frameState.creditDisplay.destroy();
-        if (defined(this._performanceDisplay)){
+        if (defined(this._performanceDisplay)) {
             this._performanceDisplay = this._performanceDisplay && this._performanceDisplay.destroy();
             this._performanceContainer.parentNode.removeChild(this._performanceContainer);
         }
