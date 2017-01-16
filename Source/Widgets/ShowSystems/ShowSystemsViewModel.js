@@ -1114,7 +1114,7 @@ define([
 
             // FONCTION DE RECUPERATION DES WMTS
 
-            getWMTSFunction(that);
+         //   getWMTSFunction(that);
 
 
         });

@@ -12,7 +12,7 @@ define([
 
     /**
      * A widget to show VO data. Called from ShowSystemViewModel.js (main function)
-     *
+     * Must be activated in the "viewerOptions" object located in the PlanetaryCesiumViewer.js file
      * @alias VOData
      * @constructor
      *

@@ -124,11 +124,11 @@ define([
         
         // ============================ test WMTS ==============================
 
-        var wmtsButttn = document.createElement('div');
+      /*  var wmtsButttn = document.createElement('div');
         wmtsButttn.className = 'cesium-button-planet cesium-planetsToolbar-button';
         wmtsButttn.innerHTML = "WMTS";
         wmtsButttn.setAttribute('data-bind', 'click: WMTSCommand');           
-        PlanetsToolbar.appendChild(wmtsButttn);
+        PlanetsToolbar.appendChild(wmtsButttn);*/
 
         // =====================================================================
 

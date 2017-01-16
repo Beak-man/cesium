@@ -59,6 +59,14 @@ define([
 
     var targetMouse;
 
+    /** function to draw lines
+     * 
+     * @param {type} that
+     * @param {type} viewer
+     * @param {type} polyLines
+     * @param {type} polyLinesLabels
+     * @returns {undefined}
+     */
     function drawLinesFunction(that, viewer, polyLines, polyLinesLabels) {
 
         document.onmousemove = getPosition;
@@ -156,7 +164,6 @@ define([
                                     color: Color.BLUE
                                 }),
                                 asynchronous: false
-
                             };
 
                             // Compute the distance between the 2 points
@@ -604,8 +611,6 @@ define([
             //   that.isCircleActive = false; // to prevent servral instance of the same Handlers
         }
     }
-
-
 
     function drawCircleFromTwoPointsFunction(that, viewer, ellipsoid, circleCollection, circlesLabels, polyLinesTmps, polyLinesLabelsTmps) {
 

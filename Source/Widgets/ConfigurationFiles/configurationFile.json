@@ -1,4 +1,4 @@
-{   "homePlanet" : "mars",
+{   "homePlanet" : "venus",
       
     "servers" : {
 
@@ -18,9 +18,9 @@
 		"format"    : "png"
 	    },				
 	
-	"serverVOVenus" : {
+	"serverVOvenus" : {
 	"name"      : "voparis-cdpp",
-	"url"       : "http://voparis-cdpp.obspm.fr/__system__/tap/run/tap/sync",
+	"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
 	"dir"       : "./",
 	"extension" : ".epn_core" 
 	}

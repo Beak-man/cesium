@@ -548,7 +548,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             eventHelper.add(geocoder.viewModel.search.beforeExecute, Viewer.prototype._clearObjects, this);
         }
 
-        console.log(cesiumWidget.scene);
+      //  console.log(cesiumWidget.scene);
 
         // HomeButton
         var homeButton;

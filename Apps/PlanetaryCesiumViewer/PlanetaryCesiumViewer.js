@@ -214,7 +214,7 @@ define([//  Definition des dependances
         navigationInstructionsInitiallyVisible: false,
         showSystems: true,
         tools: true,
-        VOData: false,
+        VOData: true,
         geocoder : false
     }
 
