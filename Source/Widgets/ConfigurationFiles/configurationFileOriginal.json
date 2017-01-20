@@ -36,14 +36,14 @@
 
 "planetarySystem" : {
 		"solarSystem" : {	
-			"mercury" : [""],
+			"mercury" : ["mercury"],
 			"venus"   : ["venus"],
-			"earth"   : ["", ""],
-			"mars"    : ["", "", ""],
-			"jupiter" : ["", "", "", "", ""],
-			"saturn"  : ["saturn", "titan", "", "", "", "", "", ""],
-			"uranus"  : ["", "", "", "", "", ""],
-			"neptune" : ["", ""]
+			"earth"   : ["earth", "moon"],
+			"mars"    : ["mars", "deimos", "phobos"],
+			"jupiter" : ["jupiter", "ganymede", "callisto", "io", "europa"],
+			"saturn"  : ["saturn", "titan", "rhea", "lapetus", "dione", "tethys", "enceladus", "mimas"],
+			"uranus"  : ["uranus", "titania", "oberon", "umbriel", "ariel", "miranda"],
+			"neptune" : ["neptune", "triton"]
 		},
 		
 		"systemsDimensions" : {

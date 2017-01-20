@@ -1192,8 +1192,25 @@ define([
                 naifCodes: naifCode,
                 ellipsoid: that._ellipsoid
             }
+            
+            try {
+                that._voData.viewModel.hidePanel;
+            } catch (e) {
+            }
 
             GeoJsonDataSource.crsModification = obj;
+            
+             /* ================================================================= 
+             ========================= VO WIDGET CALL ==========================
+             =================================================================== */
+
+            if (that._isVOWidgetVisible == true) {
+                that._voData = new VOData(that._viewerContainer, that._viewer, satelliteName);
+            }
+
+            /* ================================================================= 
+             ===================================================================
+             =================================================================== */
 
             showSatelliteView(that, that._viewer, planetName, satelliteName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, naifCode);
             removeButtons(that);

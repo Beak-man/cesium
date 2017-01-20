@@ -52,7 +52,7 @@ define([
 
         var title = document.createElement('div');
         title.className = 'cesium-voData-configContainer-title';
-        title.innerHTML = "VO paris-cdpp VVEX";
+        title.innerHTML = "VO data panel";
         configContainer.appendChild(title);
         
         /* ============================= TABLE ================================= */

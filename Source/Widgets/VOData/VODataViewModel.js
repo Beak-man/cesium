@@ -7,6 +7,7 @@ define([
     '../../Core/GeometryInstance',
     '../../Scene/Material',
     '../../Scene/PerInstanceColorAppearance',
+    '../../Scene/PointPrimitiveCollection',
     '../../Scene/PolylineCollection',
     '../../Core/PolygonGeometry',
     '../../Core/PolylinePipeline',
@@ -21,6 +22,7 @@ define([
         GeometryInstance,
         Material,
         PerInstanceColorAppearance,
+        PointPrimitiveCollection,
         PolylineCollection,
         PolygonGeometry,
         PolylinePipeline,
@@ -74,9 +76,14 @@ define([
 
     function createQuery(that, viewer, planetName, inputObjects, serverUrl, format) {
 
-        var serverName = "serverVO" + planetName;
+        var serverName = "serverVO" + planetName.toLowerCase();
         var xhr = getRequest();
         var xhrVO = getRequest();
+
+        var polygons = viewer.scene.primitives.add(new PrimitiveCollection());
+        var polyLines = viewer.scene.primitives.add(new PolylineCollection());
+        var points = viewer.scene.primitives.add(new PointPrimitiveCollection());
+        var ellipsoid = viewer.scene.globe.ellipsoid;
 
         console.log(serverName);
 
@@ -108,11 +115,11 @@ define([
                                 var jsonData = JSON.parse(data);
                                 var server = jsonData.servers[serverName];
 
-                                console.log(jsonData);
+                            //    console.log(jsonData);
 
                                 var queryPart1 = server.url + "?REQUEST=doQuery&LANG=ADQL&";
 
-                                var queryPart2 = "QUERY=SELECT * from vvex" + server.extension + " where c1min>" + lngMin + "and c2min>" + latMin + "and c1max<" + lngMax + "and c2max<" + latMax + "&FORMAT=" + format;
+                                var queryPart2 = "QUERY=SELECT * from " + server.extension + " where c1min>" + lngMin + "and c2min>" + latMin + "and c1max<" + lngMax + "and c2max<" + latMax + "&FORMAT=" + format;
 
                                 var query = queryPart1 + queryPart2;
 
@@ -125,7 +132,7 @@ define([
 
                                         var data = xhrVO.responseText;
                                         var jsonData = JSON.parse(data);
-                                        console.log(jsonData);
+                                    //    console.log(jsonData);
                                         var dataTab = []
                                         dataTab = jsonData.data;
 
@@ -141,10 +148,21 @@ define([
                                         for (var i = 0; i < dimData; i++) {
                                             var arr = dataTab[i];
 
-                                            var C1Min = parseFloat(arr[23]);
-                                            var C1Max = parseFloat(arr[24]);
-                                            var C2Min = parseFloat(arr[25]);
-                                            var C2Max = parseFloat(arr[26]);
+                                            if (arr.length == 63){
+
+                                             var C1Min = parseFloat(arr[23]);
+                                             var C1Max = parseFloat(arr[24]);
+                                             var C2Min = parseFloat(arr[25]);
+                                             var C2Max = parseFloat(arr[26]);
+                                         } else if (arr.length == 58){
+
+                                            var C1Min = parseFloat(arr[18]);
+                                            var C1Max = parseFloat(arr[19]);
+                                            var C2Min = parseFloat(arr[20]);
+                                            var C2Max = parseFloat(arr[21]);
+                                        }
+
+
 
                                             // if (Math.abs(C1Min) =< dls && Math.abs(C1Min) >= dli && Math.abs(C2Min) =< dls && Math.abs(C1Min) =< dls && Math.abs(C1Min) =< dls &&){
 
@@ -157,12 +175,27 @@ define([
                                                 latMin.push(C2Min);
                                                 latMax.push(C2Max);
 
-                                                // console.log(C1Min, C1Max, C2Min, C1Max);
+
+                                                var geometryType = checkGeometryType(C1Min, C1Max, C2Min, C2Max);
+
+
+                                                if (geometryType == 'points') {
+
+                                                    generatePoints(C1Min, C1Max, C2Min, C2Max, viewer, points, ellipsoid);
+
+                                                } else if (geometryType == 'polygons') {
+
+                                                    generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, polygons, polyLines, ellipsoid);
+
+                                                }
+
+
+
                                             }
                                         }
 
-
-                                        generatePolygons(viewer, lngMin, lngMax, latMin, latMax);
+                                        // generatePoints(lngMin, lngMax, latMin, latMax, viewer);
+                                        // generatePolygons(lngMin, lngMax, latMin, latMax, viewer);
 
                                         // les données sont dans les objets data : valeures 23, 24, 25, 26
                                     }
@@ -181,7 +214,7 @@ define([
 
                         that._query = result;
 
-                        console.log(result);
+                //        console.log(result);
 
                     }).catch(
                     function () {
@@ -212,17 +245,17 @@ define([
 
         var isAllCValid = false;
 
-        if (Math.abs(C1Min) <= dls && Math.abs(C1Min) >= dli && Math.abs(C1Min) < Math.abs(C1Max)) {
+        if (Math.abs(C1Min) <= dls && Math.abs(C1Min) >= dli && Math.abs(C1Min) <= Math.abs(C1Max)) {
             isC1MinValid = true;
         }
-        if (Math.abs(C1Max) <= dls && Math.abs(C1Max) >= dli && Math.abs(C1Max) > Math.abs(C1Min)) {
+        if (Math.abs(C1Max) <= dls && Math.abs(C1Max) >= dli && Math.abs(C1Max) >= Math.abs(C1Min)) {
             isC1MaxValid = true;
         }
 
-        if (Math.abs(C2Min) <= dls && Math.abs(C2Min) >= dli && Math.abs(C2Min) < Math.abs(C2Max)) {
+        if (Math.abs(C2Min) <= dls && Math.abs(C2Min) >= dli && Math.abs(C2Min) <= Math.abs(C2Max)) {
             isC2MinValid = true;
         }
-        if (Math.abs(C2Max) <= dls && Math.abs(C2Max) >= dli && Math.abs(C2Max) > Math.abs(C2Min)) {
+        if (Math.abs(C2Max) <= dls && Math.abs(C2Max) >= dli && Math.abs(C2Max) >= Math.abs(C2Min)) {
             isC2MaxValid = true;
         }
 
@@ -230,9 +263,121 @@ define([
         if (isC1MinValid == true && isC1MaxValid == true && isC2MinValid == true && isC2MaxValid == true) {
             isAllCValid = true;
         }
-
         return isAllCValid;
     }
+
+
+    function checkGeometryType(C1Min, C1Max, C2Min, C2Max) {
+
+        if (C1Min == C1Max && C2Min == C2Max) {
+            return "points";
+        } else {
+            return "polygons";
+        }
+    }
+
+
+    function  generatePoints(lngMin, lngMax, latMin, latMax, viewer, points, ellipsoid) {
+
+        //  var ellipsoid = viewer.scene.globe.ellipsoid;
+        // var points = viewer.scene.primitives.add(new PointPrimitiveCollection());
+
+        var coordX = lngMin;
+        var coordY = latMin;
+
+        var newPoints = {
+            position: Cartesian3.fromDegrees(coordX, coordY, 0, ellipsoid),
+            color: Color.YELLOW,
+        };
+
+     //   console.log(newPoints);
+        points.add(newPoints);
+    //    console.log("point ajouté");
+
+    }
+
+
+    function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, polygons, polyLines, ellipsoid) {
+
+        var polygonsCoord = [];
+
+        var point1 = [lngMin, latMin];
+        var point2 = [lngMax, latMin];
+        var point3 = [lngMax, latMax];
+        var point4 = [lngMin, latMax];
+        var point5 = point1;
+
+        var tabPoints = [point1, point2, point3, point4, point5];
+
+        for (var j = 0; j < tabPoints.length - 1; j++) {
+
+            var pt = tabPoints[j];
+
+            for (var k = 0; k < pt.length; k++) {
+                //   console.log(pt[k]);
+                polygonsCoord.push(pt[k] * (Math.PI / 180.0));
+            }
+        }
+
+        for (var j = 0; j < tabPoints.length - 1; j++) {
+
+            var ptJ = tabPoints[j];
+            var ptJp1 = tabPoints[j + 1];
+
+            var lineTab = [ptJ, ptJp1];
+
+            var arrayRadians = [];
+
+            for (var k = 0; k < lineTab.length; k++) {
+
+                var ptk = lineTab[k];
+
+                for (var l = 0; l < ptk.length; l++) {
+                    arrayRadians.push(ptk[l] * (Math.PI / 180.0));
+                }
+            }
+
+            var newPolyLine = {
+                positions: PolylinePipeline.generateCartesianArc({
+                    positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
+                    ellipsoid: ellipsoid,
+                    width: 10,
+                }),
+                material: Material.fromType('Color', {
+                    color: Color.RED
+                }),
+                asynchronous: false
+            };
+
+            polyLines.add(newPolyLine);
+        }
+
+
+        var polygonsCoordDegree = Cartesian3.fromRadiansArray(polygonsCoord, ellipsoid);
+
+        var polygonInstance = new GeometryInstance({
+            geometry: PolygonGeometry.fromPositions({
+                positions: polygonsCoordDegree,
+                vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT,
+                ellipsoid: ellipsoid,
+                height: 0.0}),
+            attributes: {
+                color: ColorGeometryInstanceAttribute.fromColor(new Color(0.1, 0.1, 0.0, 0.01))
+            }
+        });
+
+        var newPolygon = new Primitive({
+            geometryInstances: polygonInstance,
+            appearance: new PerInstanceColorAppearance({
+                closed: true,
+                translucent: true
+            })
+        });
+
+        polygons.add(newPolygon);
+    }
+
+
 
     /** generate polygons from VO data
      * 
@@ -242,7 +387,7 @@ define([
      * @param {type} latMax
      * @returns {undefined}
      */
-    function generatePolygons(viewer, lngMin, lngMax, latMin, latMax) {
+    function generatePolygonsOld(lngMin, lngMax, latMin, latMax, viewer) {
 
         var ellipsoid = viewer.scene.globe.ellipsoid;
         var polygons = viewer.scene.primitives.add(new PrimitiveCollection());
@@ -270,7 +415,6 @@ define([
                         //   console.log(pt[k]);
                         polygonsCoord.push(pt[k] * (Math.PI / 180.0));
                     }
-
                 }
 
                 for (var j = 0; j < tabPoints.length - 1; j++) {
@@ -285,31 +429,26 @@ define([
                     for (var k = 0; k < lineTab.length; k++) {
 
                         var ptk = lineTab[k];
-                        
+
                         for (var l = 0; l < ptk.length; l++) {
                             arrayRadians.push(ptk[l] * (Math.PI / 180.0));
                         }
                     }
 
-
-
                     var newPolyLine = {
                         positions: PolylinePipeline.generateCartesianArc({
                             positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
                             ellipsoid: ellipsoid,
-                            width : 10,
+                            width: 10,
                         }),
                         material: Material.fromType('Color', {
                             color: Color.RED
                         }),
                         asynchronous: false
                     };
-                    
-                    
-                     polyLines.add(newPolyLine);
-                    
-                }
 
+                    polyLines.add(newPolyLine);
+                }
 
 
                 var polygonsCoordDegree = Cartesian3.fromRadiansArray(polygonsCoord, ellipsoid);
@@ -337,8 +476,6 @@ define([
 
             }
         }
-
-
     }
 
 
@@ -355,7 +492,7 @@ define([
             if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
 
                 var data = xhr.responseText;
-                console.log(data);
+              //  console.log(data);
             }
         }
     }
@@ -388,6 +525,10 @@ define([
         this._inputObjects = inputObjects;
         this._query = null;
         this._format = "json";
+
+        //  this._polygons = viewer.scene.primitives.add(new PrimitiveCollection());
+        //  this._polyLines = viewer.scene.primitives.add(new PolylineCollection());
+        //  this._points = viewer.scene.primitives.add(new PointPrimitiveCollection());
 
         this._serverUrl = '../../Source/Widgets/ConfigurationFiles/configurationFile.json';
 
@@ -442,6 +583,9 @@ define([
         isVOPanelActive: {
             get: function () {
                 return this._isVOPanelActive;
+            },
+            set: function (value) {
+                this._isVOPanelActive = value;
             }
         },
         hidePanel: {

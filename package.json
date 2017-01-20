@@ -30,6 +30,7 @@
     "email": "cesium-dev@googlegroups.com"
   },
   "dependencies": {
+    "mongodb": "^2.2.21",
     "requirejs": "2.3.2"
   },
   "devDependencies": {
@@ -74,7 +75,7 @@
     "build": "gulp build",
     "build-watch": "gulp build-watch",
     "buildApps": "gulp buildApps",
-	"buildPlApps": "gulp buildPlApps",
+    "buildPlApps": "gulp buildPlApps",
     "clean": "gulp clean",
     "cloc": "gulp cloc",
     "combine": "gulp combine",
