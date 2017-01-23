@@ -122,6 +122,8 @@ define([
                                 var queryPart2 = "QUERY=SELECT * from " + server.extension + " where c1min>" + lngMin + "and c2min>" + latMin + "and c1max<" + lngMax + "and c2max<" + latMax + "&FORMAT=" + format;
 
                                 var query = queryPart1 + queryPart2;
+                                
+                                console.log(query);
 
                                 xhrVO.open('GET', query, true);
                                 xhrVO.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -288,6 +290,7 @@ define([
         var newPoints = {
             position: Cartesian3.fromDegrees(coordX, coordY, 0, ellipsoid),
             color: Color.YELLOW,
+            pixelSize : 5
         };
 
      //   console.log(newPoints);
@@ -359,10 +362,9 @@ define([
             geometry: PolygonGeometry.fromPositions({
                 positions: polygonsCoordDegree,
                 vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT,
-                ellipsoid: ellipsoid,
-                height: 0.0}),
+                ellipsoid: ellipsoid}),
             attributes: {
-                color: ColorGeometryInstanceAttribute.fromColor(new Color(0.1, 0.1, 0.0, 0.01))
+                color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.1))
             }
         });
 

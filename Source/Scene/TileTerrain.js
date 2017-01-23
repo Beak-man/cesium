@@ -43,7 +43,7 @@ define([
      */
     function TileTerrain(upsampleDetails) {
 
-        console.log("dans TileTerrain")
+        //console.log("dans TileTerrain")
         /**
          * The current state of the terrain in the terrain processing pipeline.
          * @type {TerrainState}

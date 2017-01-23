@@ -30,12 +30,9 @@
     "email": "cesium-dev@googlegroups.com"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "mongodb": "^2.2.21",
-    "requirejs": "2.3.2"
-=======
+
     "requirejs": "^2.3.2"
->>>>>>> master
+
   },
   "devDependencies": {
     "almond": "^0.3.3",
