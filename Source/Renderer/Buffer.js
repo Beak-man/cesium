@@ -1,22 +1,24 @@
 /*global define*/
 define([
-    '../Core/defaultValue',
-    '../Core/defined',
-    '../Core/defineProperties',
-    '../Core/destroyObject',
-    '../Core/DeveloperError',
-    '../Core/IndexDatatype',
-    './BufferUsage',
-    './WebGLConstants'
-], function (
+
+        '../Core/defaultValue',
+        '../Core/defined',
+        '../Core/defineProperties',
+        '../Core/destroyObject',
+        '../Core/DeveloperError',
+        '../Core/IndexDatatype',
+        '../Core/WebGLConstants',
+        './BufferUsage'
+    ], function(
+
         defaultValue,
         defined,
         defineProperties,
         destroyObject,
         DeveloperError,
         IndexDatatype,
-        BufferUsage,
-        WebGLConstants) {
+        WebGLConstants,
+        BufferUsage) {
     'use strict';
 
     /**
@@ -118,7 +120,7 @@ define([
      *     typedArray : new Float32Array([0, 0, 0]),
      *     usage : BufferUsage.STATIC_DRAW
      * });
-     * 
+     *
      * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glGenBuffer.xml|glGenBuffer}
      * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glBindBuffer.xml|glBindBuffer} with <code>ARRAY_BUFFER</code>
      * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glBufferData.xml|glBufferData} with <code>ARRAY_BUFFER</code>
@@ -153,7 +155,7 @@ define([
      * @param {ArrayBufferView} [options.typedArray] A typed array containing the data to copy to the buffer.
      * @param {Number} [options.sizeInBytes] A <code>Number</code> defining the size of the buffer in bytes. Required if options.typedArray is not given.
      * @param {BufferUsage} options.usage Specifies the expected usage pattern of the buffer. On some GL implementations, this can significantly affect performance. See {@link BufferUsage}.
-     * @param {IndexDatatype} indexDatatype The datatype of indices in the buffer.
+     * @param {IndexDatatype} options.indexDatatype The datatype of indices in the buffer.
      * @returns {IndexBuffer} The index buffer, ready to be attached to a vertex array.
      *
      * @exception {DeveloperError} Must specify either <options.typedArray> or <options.sizeInBytes>, but not both.
@@ -181,7 +183,7 @@ define([
      *     usage : BufferUsage.STATIC_DRAW,
      *     indexDatatype : IndexDatatype.UNSIGNED_SHORT
      * });
-     * 
+     *
      * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glGenBuffer.xml|glGenBuffer}
      * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glBindBuffer.xml|glBindBuffer} with <code>ELEMENT_ARRAY_BUFFER</code>
      * @see {@link https://www.khronos.org/opengles/sdk/docs/man/xhtml/glBufferData.xml|glBufferData} with <code>ELEMENT_ARRAY_BUFFER</code>
