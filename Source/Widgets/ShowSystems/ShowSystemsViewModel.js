@@ -996,7 +996,8 @@ define([
         }
 
         if (that._isVOWidgetVisible == true) {
-            that._voData = new VOData(that._viewerContainer, that._viewer, homePlanet);
+            
+            that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration, homePlanet);
         }
 
         var obj = {
@@ -1150,7 +1151,8 @@ define([
              =================================================================== */
 
             if (that._isVOWidgetVisible == true) {
-                that._voData = new VOData(that._viewerContainer, that._viewer, planetName);
+                console.log(that.configuration);
+                that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration,  planetName);
             }
 
             /* ================================================================= 
@@ -1205,7 +1207,8 @@ define([
              =================================================================== */
 
             if (that._isVOWidgetVisible == true) {
-                that._voData = new VOData(that._viewerContainer, that._viewer, satelliteName);
+                console.log(that.configuration);
+                that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration, satelliteName);
             }
 
             /* ================================================================= 

@@ -18,25 +18,55 @@
 		"format"    : "png"
 	    },				
 	
-	"serverVOvenus" : {
-	"name"      : "voparis-cdpp",
-	"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
-	"dir"       : "./",
-	"extension" : "vvex.epn_core" 
-	},
+	"VOServers" : {
 	
-	"serverVOtitan" : {
-	"name"      : "voparis-cdpp",
-	"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
-	"dir"       : "./",
-	"extension" : "titan.epn_core" 
-	},
+		"venus" : [
+			{
+				"name"      : "voparis-cdpp",
+				"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
+				"dir"       : "./",
+				"extension" : ["vvex.epn_core"],
+			},
+			{
+				"name"      : "voparis-cdpp",
+				"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
+				"dir"       : "./",
+				"extension" : ["vvex.epn_core"] 
+			}
+		],
 	
-	"serverVOmars" : {
-	"name"      : "vo Jacobs University",
-	"url"       : "http://epn1.epn-vespa.jacobs-university.de/__system__/dc_tables/list/form",
-	"dir"       : "./",
-	"extension" : "mars_craters.epn_core" 
+		"titan" : [
+			{
+				"name"      : "voparis-cdpp",
+				"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
+				"dir"       : "./",
+				"extension" : ["titan.epn_core"] 
+			},
+			
+			{
+				"name"      : "voparis-cdpp",
+				"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
+				"dir"       : "./",
+				"extension" : ["titan.epn_core"] 
+			}
+		]
+		,
+	
+		"mars" : [
+			{
+				"name"      : "vo Jacobs University",
+				"url"       : "http://epn1.epn-vespa.jacobs-university.de/__system__/tap/run/tap/sync",
+				"dir"       : "./",
+				"extension" : ["mars_craters.epn_core", "crism.epn_core"] 
+			}, 
+			
+			{
+				"name"      : "vo Jacobs University",
+				"url"       : "http://epn1.epn-vespa.jacobs-university.de/__system__/tap/run/tap/sync",
+				"dir"       : "./",
+				"extension" : ["mars_craters.epn_core", "crism.epn_core"] 
+			}
+		]
 	}
 	
 },

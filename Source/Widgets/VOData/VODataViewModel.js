@@ -13,6 +13,7 @@ define([
     '../../Core/PolylinePipeline',
     '../../Scene/Primitive',
     '../../Scene/PrimitiveCollection',
+    '../../ThirdParty/knockout',
     '../../Core/defineProperties'
 ], function (
         Cartesian3,
@@ -28,6 +29,7 @@ define([
         PolylinePipeline,
         Primitive,
         PrimitiveCollection,
+        knockout,
         defineProperties
         ) {
     "use strict";
@@ -68,11 +70,101 @@ define([
             return true;
         } else {
 
-            console.log("pas que des chiffres");
-            alert("Please, enter a NUMBER type value for the " + inputField.name.toUpperCase() + "in the format : XX.XX");
+            console.log("Input Errors : " + "Please, enter a NUMBER type value for " + inputField.name.toUpperCase() + " in the format : XX.XX");
+            alert("Please, enter a NUMBER type value for " + inputField.name.toUpperCase() + " in the format : XX.XX");
             return false;
         }
     }
+
+    function createQueryV2(that, viewer, planetName, inputObjects, serverUrl, extension, format, color) {
+
+        var polygons = viewer.scene.primitives.add(new PrimitiveCollection());
+        var polyLines = viewer.scene.primitives.add(new PolylineCollection());
+        var points = viewer.scene.primitives.add(new PointPrimitiveCollection());
+        var ellipsoid = viewer.scene.globe.ellipsoid;
+
+        var isLngMinValuesValid = inputValuesTest(inputObjects.lngMin);
+        var isLngMaxValuesValid = inputValuesTest(inputObjects.lngMax);
+        var isLatMinValuesValid = inputValuesTest(inputObjects.latMin);
+        var isLatMaxValuesValid = inputValuesTest(inputObjects.latMax);
+
+        var xhrVO = getRequest();
+
+        if (isLngMinValuesValid && isLngMaxValuesValid && isLatMinValuesValid && isLatMaxValuesValid) {
+
+            var lngMin = parseFloat(inputObjects.lngMin.value);
+            var lngMax = parseFloat(inputObjects.lngMax.value);
+            var latMin = parseFloat(inputObjects.latMin.value);
+            var latMax = parseFloat(inputObjects.latMax.value);
+
+            var queryPart1 = serverUrl + "?REQUEST=doQuery&LANG=ADQL&";
+            var queryPart2 = "QUERY=SELECT * from " + extension + " where c1min>" + lngMin + "and c2min>" + latMin + "and c1max<" + lngMax + "and c2max<" + latMax + "&FORMAT=" + format;
+            var query = queryPart1 + queryPart2;
+
+            xhrVO.open('GET', query, true);
+            xhrVO.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhrVO.send();
+            xhrVO.onreadystatechange = function () {
+
+                var data = xhrVO.responseText;
+                var jsonData = JSON.parse(data);
+                //  console.log(jsonData);
+                var dataTab = []
+                dataTab = jsonData.data;
+
+                var dimData = dataTab.length;
+
+                var lngMin = []; // C1Min
+                var latMin = []; // C2Min
+                var lngMax = []; // C1Max
+                var latMax = []; // C2Max
+                var dls = 361.0; // limit in degree
+                var dli = 0.0; // limit in degree
+
+                for (var i = 0; i < dimData; i++) {
+                    var arr = dataTab[i];
+
+                    if (arr.length == 63) {
+
+                        var C1Min = parseFloat(arr[23]);
+                        var C1Max = parseFloat(arr[24]);
+                        var C2Min = parseFloat(arr[25]);
+                        var C2Max = parseFloat(arr[26]);
+                    } else if (arr.length == 58) {
+
+                        var C1Min = parseFloat(arr[18]);
+                        var C1Max = parseFloat(arr[19]);
+                        var C2Min = parseFloat(arr[20]);
+                        var C2Max = parseFloat(arr[21]);
+                    }
+
+                    var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
+
+                    if (isValuesValid == true) {
+
+                        lngMin.push(C1Min);
+                        lngMax.push(C1Max);
+                        latMin.push(C2Min);
+                        latMax.push(C2Max);
+
+                        var geometryType = checkGeometryType(C1Min, C1Max, C2Min, C2Max);
+
+                        if (geometryType == 'points') {
+
+                            generatePoints(C1Min, C1Max, C2Min, C2Max, viewer, points, ellipsoid, color);
+
+                        } else if (geometryType == 'polygons') {
+
+                            generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, polygons, polyLines, ellipsoid, color);
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
 
     function createQuery(that, viewer, planetName, inputObjects, serverUrl, format) {
 
@@ -115,14 +207,14 @@ define([
                                 var jsonData = JSON.parse(data);
                                 var server = jsonData.servers[serverName];
 
-                            //    console.log(jsonData);
+                                //    console.log(jsonData);
 
                                 var queryPart1 = server.url + "?REQUEST=doQuery&LANG=ADQL&";
 
                                 var queryPart2 = "QUERY=SELECT * from " + server.extension + " where c1min>" + lngMin + "and c2min>" + latMin + "and c1max<" + lngMax + "and c2max<" + latMax + "&FORMAT=" + format;
 
                                 var query = queryPart1 + queryPart2;
-                                
+
                                 console.log(query);
 
                                 xhrVO.open('GET', query, true);
@@ -134,7 +226,7 @@ define([
 
                                         var data = xhrVO.responseText;
                                         var jsonData = JSON.parse(data);
-                                    //    console.log(jsonData);
+                                        //    console.log(jsonData);
                                         var dataTab = []
                                         dataTab = jsonData.data;
 
@@ -150,19 +242,19 @@ define([
                                         for (var i = 0; i < dimData; i++) {
                                             var arr = dataTab[i];
 
-                                            if (arr.length == 63){
+                                            if (arr.length == 63) {
 
-                                             var C1Min = parseFloat(arr[23]);
-                                             var C1Max = parseFloat(arr[24]);
-                                             var C2Min = parseFloat(arr[25]);
-                                             var C2Max = parseFloat(arr[26]);
-                                         } else if (arr.length == 58){
+                                                var C1Min = parseFloat(arr[23]);
+                                                var C1Max = parseFloat(arr[24]);
+                                                var C2Min = parseFloat(arr[25]);
+                                                var C2Max = parseFloat(arr[26]);
+                                            } else if (arr.length == 58) {
 
-                                            var C1Min = parseFloat(arr[18]);
-                                            var C1Max = parseFloat(arr[19]);
-                                            var C2Min = parseFloat(arr[20]);
-                                            var C2Max = parseFloat(arr[21]);
-                                        }
+                                                var C1Min = parseFloat(arr[18]);
+                                                var C1Max = parseFloat(arr[19]);
+                                                var C2Min = parseFloat(arr[20]);
+                                                var C2Max = parseFloat(arr[21]);
+                                            }
 
 
 
@@ -216,7 +308,7 @@ define([
 
                         that._query = result;
 
-                //        console.log(result);
+                        //        console.log(result);
 
                     }).catch(
                     function () {
@@ -279,7 +371,7 @@ define([
     }
 
 
-    function  generatePoints(lngMin, lngMax, latMin, latMax, viewer, points, ellipsoid) {
+    function  generatePoints(lngMin, lngMax, latMin, latMax, viewer, points, ellipsoid, colorPoints) {
 
         //  var ellipsoid = viewer.scene.globe.ellipsoid;
         // var points = viewer.scene.primitives.add(new PointPrimitiveCollection());
@@ -289,18 +381,18 @@ define([
 
         var newPoints = {
             position: Cartesian3.fromDegrees(coordX, coordY, 0, ellipsoid),
-            color: Color.YELLOW,
-            pixelSize : 5
+            color: Color[colorPoints],
+            pixelSize: 5
         };
 
-     //   console.log(newPoints);
+        //   console.log(newPoints);
         points.add(newPoints);
-    //    console.log("point ajouté");
+        //    console.log("point ajouté");
 
     }
 
 
-    function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, polygons, polyLines, ellipsoid) {
+    function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, polygons, polyLines, ellipsoid, colorPolygons) {
 
         var polygonsCoord = [];
 
@@ -347,7 +439,7 @@ define([
                     width: 10,
                 }),
                 material: Material.fromType('Color', {
-                    color: Color.RED
+                    color: Color.YELLOW
                 }),
                 asynchronous: false
             };
@@ -364,7 +456,8 @@ define([
                 vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT,
                 ellipsoid: ellipsoid}),
             attributes: {
-                color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.1))
+                // color: ColorGeometryInstanceAttribute.fromColor(new Color(1.0, 1.0, 0.0, 0.1))
+                color: ColorGeometryInstanceAttribute.fromColor(Color[colorPolygons])
             }
         });
 
@@ -481,23 +574,24 @@ define([
     }
 
 
-
-    function getVOData(query, url) {
-
-        var xhr = getRequest();
-
-        xhr.open('GET', url, true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send();
-        xhr.onreadystatechange = function () {
-
-            if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
-
-                var data = xhr.responseText;
-              //  console.log(data);
-            }
-        }
-    }
+    /*
+     function getVOData(query, url) {
+     
+     var xhr = getRequest();
+     
+     xhr.open('GET', url, true);
+     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+     xhr.send();
+     xhr.onreadystatechange = function () {
+     
+     if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
+     
+     var data = xhr.responseText;
+     //  console.log(data);
+     }
+     }
+     }
+     */
 
     function getRequest() {
         if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -517,7 +611,7 @@ define([
      * @alias VODataViewModel
      * @constructor
      */
-    var VODataViewModel = function (viewer, planetName, configContainer, listContainer, btnContainer, inputObjects) {
+    var VODataViewModel = function (viewer, planetName, configContainer, listContainer, btnContainer, inputObjects, dimServers, dimData, inputTab) {
 
         this._viewer = viewer;
         this._planetName = planetName;
@@ -532,6 +626,15 @@ define([
         //  this._polyLines = viewer.scene.primitives.add(new PolylineCollection());
         //  this._points = viewer.scene.primitives.add(new PointPrimitiveCollection());
 
+        // initialiisation des checkbox;
+
+        for (var i = 0; i < dimServers; i++) {
+            for (var j = 0; j < dimData; j++) {
+                this['showData_' + i + "_" + j] = knockout.observable(false);
+            }
+        }
+
+
         this._serverUrl = '../../Source/Widgets/ConfigurationFiles/configurationFile.json';
 
         this._isVOPanelActive = false;
@@ -544,6 +647,19 @@ define([
 
         this._getDataCommand = createCommand(function () {
 
+            // clean primitives and collections for a new print
+
+            var tabExtension = [];
+            var tabServerUrl = [];
+
+            for (var i = 0; i < inputTab.length; i++) {
+
+                if (inputTab[i].checked == true) {
+                    tabExtension.push(inputTab[i].extension);
+                    tabServerUrl.push(inputTab[i].serverUrl);
+                }
+            }
+
             if (that._viewer.scene.primitives.length > 0) {
                 try {
                     that._viewer._dataSourceCollection.removeAll();
@@ -553,14 +669,20 @@ define([
                 }
             }
 
+            var color = ["RED", "GREEN"];
+
+            if (tabExtension.length > 0){
+
+                for (var i = 0; i < tabExtension.length; i++) {
+                    createQueryV2(that, that._viewer, that._planetName, that._inputObjects, tabServerUrl[i], tabExtension[i], that._format, color[i]);
+                    //  getVOData(that._query);
+                }
+            }
 
 
-            createQuery(that, that._viewer, that._planetName, that._inputObjects, that._serverUrl, that._format);
 
-            // var url = "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT * from vvex.epn_core where c1min>0and c2min>0and c1max<10and c2max<10&FORMAT=json";
-
-            getVOData(that._query);
         });
+
 
         //  knockout.track(this, []);
 
