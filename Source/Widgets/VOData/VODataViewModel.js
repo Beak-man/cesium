@@ -1,12 +1,17 @@
 /*global define*/
 define([
+    '../../Scene/BillboardCollection',
+    '../../Core/BoundingRectangle',
     '../../Core/Cartesian3',
+    '../../Core/Cartographic',
     '../../Core/Color',
     '../../Core/ColorGeometryInstanceAttribute',
     '../createCommand',
     '../../Core/GeometryInstance',
     '../../Scene/Material',
+    '../../Core/Math',
     '../../Scene/PerInstanceColorAppearance',
+    '../../Core/PinBuilder',
     '../../Scene/PointPrimitiveCollection',
     '../../Scene/PolylineCollection',
     '../../Core/PolygonGeometry',
@@ -14,15 +19,22 @@ define([
     '../../Scene/Primitive',
     '../../Scene/PrimitiveCollection',
     '../../ThirdParty/knockout',
-    '../../Core/defineProperties'
+    '../../Core/defineProperties',
+    '../../Core/ScreenSpaceEventHandler',
+    '../../Core/ScreenSpaceEventType',
 ], function (
+        BillboardCollection,
+        BoundingRectangle,
         Cartesian3,
+        Cartographic,
         Color,
         ColorGeometryInstanceAttribute,
         createCommand,
         GeometryInstance,
         Material,
+        CesiumMath,
         PerInstanceColorAppearance,
+        PinBuilder,
         PointPrimitiveCollection,
         PolylineCollection,
         PolygonGeometry,
@@ -30,7 +42,9 @@ define([
         Primitive,
         PrimitiveCollection,
         knockout,
-        defineProperties
+        defineProperties,
+        ScreenSpaceEventHandler,
+        ScreenSpaceEventType
         ) {
     "use strict";
 
@@ -76,11 +90,12 @@ define([
         }
     }
 
-    function createQueryV2(that, viewer, planetName, inputObjects, serverUrl, extension, format, color) {
+    function createQueryV2(that, viewer, resultContainer, handlerLeftClick, planetName, inputObjects, serverUrl, extension, format, color) {
 
         var polygons = viewer.scene.primitives.add(new PrimitiveCollection());
         var polyLines = viewer.scene.primitives.add(new PolylineCollection());
         var points = viewer.scene.primitives.add(new PointPrimitiveCollection());
+        var billboards = viewer.scene.primitives.add(new BillboardCollection());
         var ellipsoid = viewer.scene.globe.ellipsoid;
 
         var isLngMinValuesValid = inputValuesTest(inputObjects.lngMin);
@@ -101,222 +116,249 @@ define([
             var queryPart2 = "QUERY=SELECT * from " + extension + " where c1min>" + lngMin + "and c2min>" + latMin + "and c1max<" + lngMax + "and c2max<" + latMax + "&FORMAT=" + format;
             var query = queryPart1 + queryPart2;
 
+            console.log(query);
+
             xhrVO.open('GET', query, true);
             xhrVO.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhrVO.send();
             xhrVO.onreadystatechange = function () {
 
-                var data = xhrVO.responseText;
-                var jsonData = JSON.parse(data);
-                //  console.log(jsonData);
-                var dataTab = []
-                dataTab = jsonData.data;
+                if (xhrVO.readyState == 4 && xhrVO.status == 200 || xhrVO.status == 0) {
 
-                var dimData = dataTab.length;
 
-                var lngMin = []; // C1Min
-                var latMin = []; // C2Min
-                var lngMax = []; // C1Max
-                var latMax = []; // C2Max
-                var dls = 361.0; // limit in degree
-                var dli = 0.0; // limit in degree
+                    var data = xhrVO.responseText;
+                    // console.log(data);
+                    var jsonData = JSON.parse(data);
+                    console.log(jsonData);
 
-                for (var i = 0; i < dimData; i++) {
-                    var arr = dataTab[i];
+                    var dataTab = []
+                    dataTab = jsonData.data;
 
-                    if (arr.length == 63) {
+                    var columnNomTab = [];
+                    columnNomTab = jsonData.columns;
 
-                        var C1Min = parseFloat(arr[23]);
-                        var C1Max = parseFloat(arr[24]);
-                        var C2Min = parseFloat(arr[25]);
-                        var C2Max = parseFloat(arr[26]);
-                    } else if (arr.length == 58) {
+                    var dimData = dataTab.length;
 
-                        var C1Min = parseFloat(arr[18]);
-                        var C1Max = parseFloat(arr[19]);
-                        var C2Min = parseFloat(arr[20]);
-                        var C2Max = parseFloat(arr[21]);
-                    }
+                    var lngMin = []; // C1Min
+                    var latMin = []; // C2Min
+                    var lngMax = []; // C1Max
+                    var latMax = []; // C2Max
+                    var dls = 361.0; // limit in degree
+                    var dli = 0.0; // limit in degree
 
-                    var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
+                    var count = 0;
 
-                    if (isValuesValid == true) {
+                    var numberColumForCvalues = checkNumColumns(columnNomTab);
 
-                        lngMin.push(C1Min);
-                        lngMax.push(C1Max);
-                        latMin.push(C2Min);
-                        latMax.push(C2Max);
+                    var stockLines = [];
 
-                        var geometryType = checkGeometryType(C1Min, C1Max, C2Min, C2Max);
+                    for (var i = 0; i < dimData; i++) {
+                        var arr = dataTab[i]; // correspond to 1 line in the data file
 
-                        if (geometryType == 'points') {
+                        var C1Min = parseFloat(arr[numberColumForCvalues.c1min]);
+                        var C1Max = parseFloat(arr[numberColumForCvalues.c1max]);
+                        var C2Min = parseFloat(arr[numberColumForCvalues.c2min]);
+                        var C2Max = parseFloat(arr[numberColumForCvalues.c2max]);
 
-                            generatePoints(C1Min, C1Max, C2Min, C2Max, viewer, points, ellipsoid, color);
+                        var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
 
-                        } else if (geometryType == 'polygons') {
+                        if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "text/plain") {
+
+                            var addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
+
+                            if (addToList == true) { // we add coord in tabs and plot data on Cesium
+
+                                lngMin.push(C1Min);
+                                lngMax.push(C1Max);
+                                latMin.push(C2Min);
+                                latMax.push(C2Max);
+                                
+                                stockLines = arr;
+
+                                generatePoints(C1Min, C1Max, C2Min, C2Max, viewer, points, ellipsoid, color);
+                                addPropertiesInPointObject(stockLines, numberColumForCvalues, points, ellipsoid);
+
+                            } else { // else we just stock data line a tab
+
+                                stockLines = arr;
+                                addPropertiesInPointObject(stockLines, numberColumForCvalues, points, ellipsoid);
+
+                            }
+
+                        } else if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "application/x-pds") {
+
+                            lngMin.push(C1Min);
+                            lngMax.push(C1Max);
+                            latMin.push(C2Min);
+                            latMax.push(C2Max);
+
+                            count++;
 
                             generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, polygons, polyLines, ellipsoid, color);
 
                         }
                     }
+
+                    pickingActivation(that, viewer, handlerLeftClick, ellipsoid, billboards, resultContainer);
+
                 }
             }
         }
     }
 
 
-
-    function createQuery(that, viewer, planetName, inputObjects, serverUrl, format) {
-
-        var serverName = "serverVO" + planetName.toLowerCase();
-        var xhr = getRequest();
-        var xhrVO = getRequest();
-
-        var polygons = viewer.scene.primitives.add(new PrimitiveCollection());
-        var polyLines = viewer.scene.primitives.add(new PolylineCollection());
-        var points = viewer.scene.primitives.add(new PointPrimitiveCollection());
-        var ellipsoid = viewer.scene.globe.ellipsoid;
-
-        console.log(serverName);
-
-        var isLngMinValuesValid = inputValuesTest(inputObjects.lngMin);
-        var isLngMaxValuesValid = inputValuesTest(inputObjects.lngMax);
-        var isLatMinValuesValid = inputValuesTest(inputObjects.latMin);
-        var isLatMaxValuesValid = inputValuesTest(inputObjects.latMax);
-
-        if (isLngMinValuesValid && isLngMaxValuesValid && isLatMinValuesValid && isLatMaxValuesValid) {
-
-            var lngMin = parseFloat(inputObjects.lngMin.value);
-            var lngMax = parseFloat(inputObjects.lngMax.value);
-            var latMin = parseFloat(inputObjects.latMin.value);
-            var latMax = parseFloat(inputObjects.latMax.value);
-
-            var p1 = new Promise(
-                    function (resolve, reject) {
-
-                        xhr.open('GET', serverUrl, true);
-
-                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                        xhr.send();
-                        xhr.onload = function () {
-
-                            if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
-
-                                var data = xhr.responseText;
-
-                                var jsonData = JSON.parse(data);
-                                var server = jsonData.servers[serverName];
-
-                                //    console.log(jsonData);
-
-                                var queryPart1 = server.url + "?REQUEST=doQuery&LANG=ADQL&";
-
-                                var queryPart2 = "QUERY=SELECT * from " + server.extension + " where c1min>" + lngMin + "and c2min>" + latMin + "and c1max<" + lngMax + "and c2max<" + latMax + "&FORMAT=" + format;
-
-                                var query = queryPart1 + queryPart2;
-
-                                console.log(query);
-
-                                xhrVO.open('GET', query, true);
-                                xhrVO.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                                xhrVO.send();
-                                xhrVO.onreadystatechange = function () {
-
-                                    if (xhrVO.readyState == 4 && xhrVO.status == 200 || xhrVO.status == 0) {
-
-                                        var data = xhrVO.responseText;
-                                        var jsonData = JSON.parse(data);
-                                        //    console.log(jsonData);
-                                        var dataTab = []
-                                        dataTab = jsonData.data;
-
-                                        var dimData = dataTab.length;
-
-                                        var lngMin = []; // C1Min
-                                        var latMin = []; // C2Min
-                                        var lngMax = []; // C1Max
-                                        var latMax = []; // C2Max
-                                        var dls = 361.0; // limit in degree
-                                        var dli = 0.0; // limit in degree
-
-                                        for (var i = 0; i < dimData; i++) {
-                                            var arr = dataTab[i];
-
-                                            if (arr.length == 63) {
-
-                                                var C1Min = parseFloat(arr[23]);
-                                                var C1Max = parseFloat(arr[24]);
-                                                var C2Min = parseFloat(arr[25]);
-                                                var C2Max = parseFloat(arr[26]);
-                                            } else if (arr.length == 58) {
-
-                                                var C1Min = parseFloat(arr[18]);
-                                                var C1Max = parseFloat(arr[19]);
-                                                var C2Min = parseFloat(arr[20]);
-                                                var C2Max = parseFloat(arr[21]);
-                                            }
-
-
-
-                                            // if (Math.abs(C1Min) =< dls && Math.abs(C1Min) >= dli && Math.abs(C2Min) =< dls && Math.abs(C1Min) =< dls && Math.abs(C1Min) =< dls &&){
-
-                                            var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
-
-                                            if (isValuesValid == true) {
-
-                                                lngMin.push(C1Min);
-                                                lngMax.push(C1Max);
-                                                latMin.push(C2Min);
-                                                latMax.push(C2Max);
-
-
-                                                var geometryType = checkGeometryType(C1Min, C1Max, C2Min, C2Max);
-
-
-                                                if (geometryType == 'points') {
-
-                                                    generatePoints(C1Min, C1Max, C2Min, C2Max, viewer, points, ellipsoid);
-
-                                                } else if (geometryType == 'polygons') {
-
-                                                    generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, polygons, polyLines, ellipsoid);
-
-                                                }
-
-
-
-                                            }
-                                        }
-
-                                        // generatePoints(lngMin, lngMax, latMin, latMax, viewer);
-                                        // generatePolygons(lngMin, lngMax, latMin, latMax, viewer);
-
-                                        // les données sont dans les objets data : valeures 23, 24, 25, 26
-                                    }
-                                }
-
-                                resolve(query);
-
-                            } else {
-                                reject(xhr.status);
-                            }
-                        }
-                    });
-
-            p1.then(
-                    function (result) {
-
-                        that._query = result;
-
-                        //        console.log(result);
-
-                    }).catch(
-                    function () {
-                        console.log("promesse rompue");
-                    });
-        }
-    }
-
+    /*
+     function createQuery(that, viewer, planetName, inputObjects, serverUrl, format) {
+     
+     var serverName = "serverVO" + planetName.toLowerCase();
+     var xhr = getRequest();
+     var xhrVO = getRequest();
+     
+     var polygons = viewer.scene.primitives.add(new PrimitiveCollection());
+     var polyLines = viewer.scene.primitives.add(new PolylineCollection());
+     var points = viewer.scene.primitives.add(new PointPrimitiveCollection());
+     var ellipsoid = viewer.scene.globe.ellipsoid;
+     
+     console.log(serverName);
+     
+     var isLngMinValuesValid = inputValuesTest(inputObjects.lngMin);
+     var isLngMaxValuesValid = inputValuesTest(inputObjects.lngMax);
+     var isLatMinValuesValid = inputValuesTest(inputObjects.latMin);
+     var isLatMaxValuesValid = inputValuesTest(inputObjects.latMax);
+     
+     if (isLngMinValuesValid && isLngMaxValuesValid && isLatMinValuesValid && isLatMaxValuesValid) {
+     
+     var lngMin = parseFloat(inputObjects.lngMin.value);
+     var lngMax = parseFloat(inputObjects.lngMax.value);
+     var latMin = parseFloat(inputObjects.latMin.value);
+     var latMax = parseFloat(inputObjects.latMax.value);
+     
+     var p1 = new Promise(
+     function (resolve, reject) {
+     
+     xhr.open('GET', serverUrl, true);
+     
+     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+     xhr.send();
+     xhr.onload = function () {
+     
+     if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
+     
+     var data = xhr.responseText;
+     
+     var jsonData = JSON.parse(data);
+     var server = jsonData.servers[serverName];
+     
+     //    console.log(jsonData);
+     
+     var queryPart1 = server.url + "?REQUEST=doQuery&LANG=ADQL&";
+     
+     var queryPart2 = "QUERY=SELECT * from " + server.extension + " where c1min>" + lngMin + "and c2min>" + latMin + "and c1max<" + lngMax + "and c2max<" + latMax + "&FORMAT=" + format;
+     
+     var query = queryPart1 + queryPart2;
+     
+     console.log(query);
+     
+     xhrVO.open('GET', query, true);
+     xhrVO.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+     xhrVO.send();
+     xhrVO.onreadystatechange = function () {
+     
+     if (xhrVO.readyState == 4 && xhrVO.status == 200 || xhrVO.status == 0) {
+     
+     var data = xhrVO.responseText;
+     var jsonData = JSON.parse(data);
+     //    console.log(jsonData);
+     var dataTab = []
+     dataTab = jsonData.data;
+     
+     var dimData = dataTab.length;
+     
+     var lngMin = []; // C1Min
+     var latMin = []; // C2Min
+     var lngMax = []; // C1Max
+     var latMax = []; // C2Max
+     var dls = 361.0; // limit in degree
+     var dli = 0.0; // limit in degree
+     
+     for (var i = 0; i < dimData; i++) {
+     var arr = dataTab[i];
+     
+     if (arr.length == 63) {
+     
+     var C1Min = parseFloat(arr[23]);
+     var C1Max = parseFloat(arr[24]);
+     var C2Min = parseFloat(arr[25]);
+     var C2Max = parseFloat(arr[26]);
+     } else if (arr.length == 58) {
+     
+     var C1Min = parseFloat(arr[18]);
+     var C1Max = parseFloat(arr[19]);
+     var C2Min = parseFloat(arr[20]);
+     var C2Max = parseFloat(arr[21]);
+     }
+     
+     
+     
+     // if (Math.abs(C1Min) =< dls && Math.abs(C1Min) >= dli && Math.abs(C2Min) =< dls && Math.abs(C1Min) =< dls && Math.abs(C1Min) =< dls &&){
+     
+     var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
+     
+     if (isValuesValid == true) {
+     
+     lngMin.push(C1Min);
+     lngMax.push(C1Max);
+     latMin.push(C2Min);
+     latMax.push(C2Max);
+     
+     
+     var geometryType = checkGeometryType(C1Min, C1Max, C2Min, C2Max);
+     
+     
+     if (geometryType == 'points') {
+     
+     generatePoints(C1Min, C1Max, C2Min, C2Max, viewer, points, ellipsoid);
+     
+     } else if (geometryType == 'polygons') {
+     
+     generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, polygons, polyLines, ellipsoid);
+     
+     }
+     
+     
+     
+     }
+     }
+     
+     // generatePoints(lngMin, lngMax, latMin, latMax, viewer);
+     // generatePolygons(lngMin, lngMax, latMin, latMax, viewer);
+     
+     // les données sont dans les objets data : valeures 23, 24, 25, 26
+     }
+     }
+     
+     resolve(query);
+     
+     } else {
+     reject(xhr.status);
+     }
+     }
+     });
+     
+     p1.then(
+     function (result) {
+     
+     that._query = result;
+     
+     //        console.log(result);
+     
+     }).catch(
+     function () {
+     console.log("promesse rompue");
+     });
+     }
+     }
+     */
 
     /**Check values 
      * 
@@ -360,7 +402,6 @@ define([
         return isAllCValid;
     }
 
-
     function checkGeometryType(C1Min, C1Max, C2Min, C2Max) {
 
         if (C1Min == C1Max && C2Min == C2Max) {
@@ -370,6 +411,84 @@ define([
         }
     }
 
+    function checkNumColumns(columnNomen) {
+
+        var num = {};
+
+        for (var i = 0; i < columnNomen.length - 1; i++) {
+
+            var columnI = columnNomen[i];
+            var ColumnId = columnI.id;
+
+            if (ColumnId == "c1min") {
+                num[ColumnId] = i;
+            } else if (ColumnId == "c1max") {
+                num[ColumnId] = i;
+            } else if (ColumnId == "c2min") {
+                num[ColumnId] = i;
+            } else if (ColumnId == "c2max") {
+                num[ColumnId] = i;
+            } else if (ColumnId == "c3min") {
+                num[ColumnId] = i;
+            } else if (ColumnId == "c3max") {
+                num[ColumnId] = i;
+            } else if (ColumnId == "access_format") {
+                num[ColumnId] = i;
+            } else if (ColumnId == "measurement_type") {
+                num[ColumnId] = i;
+            } else if (ColumnId == "access_url") {
+                num[ColumnId] = i;
+            }
+        }
+
+        return num;
+    }
+
+    function selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max) {
+
+        var dimTab = lngMin.length;
+
+        // console.log(dimTab);
+
+        var isC1minInList = false;
+        var isC1maxInList = false;
+        var isC2minInList = false;
+        var isC2maxInList = false;
+
+        var addToList = true;
+
+        for (var i = 0; i < dimTab; i++) {
+
+            //   console.log(lngMin[i], lngMax[i], latMin[i], latMax[i]);
+            //   console.log(C1Min, C1Max, C2Min, C2Max);
+            //   console.log(isC1minInList, isC1maxInList, isC2minInList, isC2maxInList);
+
+            if (lngMin[i] == C1Min && lngMax[i] == C1Max && latMin[i] == C2Min && latMax[i] == C2Max) {
+                isC1minInList = true;
+                isC1maxInList = true;
+                isC2minInList = true;
+                isC2maxInList = true;
+
+                break;
+            }
+
+            //   console.log(isC1minInList, isC1maxInList, isC2minInList, isC2maxInList);
+
+        }
+        //  console.log("booleens finaux");
+        //  console.log(isC1minInList, isC1maxInList, isC2minInList, isC2maxInList);
+
+        if (isC1minInList === true && isC1maxInList === true && isC2minInList === true && isC2maxInList === true) {
+            addToList = false;
+            //     console.log(addToList);
+        }
+
+        //console.log(addToList);
+
+
+        return addToList;
+
+    }
 
     function  generatePoints(lngMin, lngMax, latMin, latMax, viewer, points, ellipsoid, colorPoints) {
 
@@ -382,15 +501,13 @@ define([
         var newPoints = {
             position: Cartesian3.fromDegrees(coordX, coordY, 0, ellipsoid),
             color: Color[colorPoints],
-            pixelSize: 5
+            pixelSize: 5,
+            property: "test"
         };
 
         //   console.log(newPoints);
         points.add(newPoints);
-        //    console.log("point ajouté");
-
     }
-
 
     function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, polygons, polyLines, ellipsoid, colorPolygons) {
 
@@ -471,6 +588,130 @@ define([
 
         polygons.add(newPolygon);
     }
+
+
+    function addPropertiesInPointObject(stockLines, numberColumForCvalues, points, ellipsoid) {
+
+        var C1Min = parseFloat(stockLines[numberColumForCvalues.c1min]);
+        var C1Max = parseFloat(stockLines[numberColumForCvalues.c1max]);
+        var C2Min = parseFloat(stockLines[numberColumForCvalues.c2min]);
+        var C2Max = parseFloat(stockLines[numberColumForCvalues.c2max]);
+
+        console.log(C1Min, C2Min);
+        console.log(points);
+
+        var pointsTab = points._pointPrimitives;
+
+        for (var i = 0; i < pointsTab.length; i++) {
+
+            var position = pointsTab[i]._position;
+            console.log(position.x.toFixed(4));
+
+            var cartPos = Cartesian3.fromDegrees(C1Min, C2Min, 0, ellipsoid);
+            console.log(cartPos.x.toFixed(4));
+            
+            if (position.x.toFixed(4) == cartPos.x.toFixed(4)){
+                
+                var prop =  pointsTab[i].properties;
+                
+                if (!prop){
+                    prop =  [];
+                    prop.push(stockLines);
+                    pointsTab[i].properties = prop;   
+                } else {  
+                    prop.push(stockLines);
+                    pointsTab[i].properties = prop;   
+                    
+                }
+ 
+            }
+        }
+        
+        console.log(points._pointPrimitives);
+
+    }
+
+
+    function pickingActivation(that, viewer, handlerLeftClick, ellipsoid, billboards, resultContainer) {
+
+        handlerLeftClick.setInputAction(function (click) {
+
+            var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
+            var pickedObject = viewer.scene.pick(click.position);
+
+            if (pickedObject) {
+
+                console.log(pickedObject);
+
+                var longitudeString, latitudeString;
+                var cartesian = viewer.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid);
+
+                if (cartesian) {
+                    var cartographic = Cartographic.fromCartesian(cartesian);
+                    longitudeString = CesiumMath.toDegrees(cartographic.longitude);
+                    latitudeString = CesiumMath.toDegrees(cartographic.latitude);
+                }
+
+                try {
+                    resultContainer.removeChild(that._divRes);
+
+                    that._divRes = document.createElement("div");
+                    that._divRes.className = 'cesium-voData-divRes';
+                    resultContainer.appendChild(that._divRes);
+
+                    var fieldsetRequest = document.createElement('FIELDSET');
+                    that._divRes.appendChild(fieldsetRequest);
+
+                    var legendRequest = document.createElement('LEGEND');
+                    legendRequest.innerHTML = "Plot parameters";
+                    fieldsetRequest.appendChild(legendRequest);
+
+                } catch (e) {
+
+                    that._divRes = document.createElement("div");
+                    that._divRes.className = 'cesium-voData-divRes';
+                    resultContainer.appendChild(that._divRes);
+
+                    var fieldsetRequest = document.createElement('FIELDSET');
+                    that._divRes.appendChild(fieldsetRequest);
+
+                    var legendRequest = document.createElement('LEGEND');
+                    legendRequest.innerHTML = "Plot parameters";
+                    fieldsetRequest.appendChild(legendRequest);
+
+                }
+
+
+
+
+
+
+
+                /*    var canvas = document.createElement("CANVAS");
+                 canvas.className = 'cesium-voData-canvas';  
+                 canvas.id = 'canvasVOId';
+                 
+                 resultContainer.appendChild(canvas);*/
+
+
+
+            }
+
+        }, ScreenSpaceEventType.LEFT_CLICK);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -573,26 +814,6 @@ define([
         }
     }
 
-
-    /*
-     function getVOData(query, url) {
-     
-     var xhr = getRequest();
-     
-     xhr.open('GET', url, true);
-     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-     xhr.send();
-     xhr.onreadystatechange = function () {
-     
-     if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
-     
-     var data = xhr.responseText;
-     //  console.log(data);
-     }
-     }
-     }
-     */
-
     function getRequest() {
         if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
             var xhr = new XMLHttpRequest();
@@ -611,7 +832,9 @@ define([
      * @alias VODataViewModel
      * @constructor
      */
-    var VODataViewModel = function (viewer, planetName, configContainer, listContainer, btnContainer, inputObjects, dimServers, dimData, inputTab) {
+    var VODataViewModel = function (viewer, planetName, configContainer, listContainer, btnContainer, resultContainer, inputObjects, dimServers, dimData, inputTab) {
+
+        // ************************ initialization *****************************
 
         this._viewer = viewer;
         this._planetName = planetName;
@@ -619,27 +842,22 @@ define([
         this._listContainer = listContainer;
         this._btnContainer = btnContainer;
         this._inputObjects = inputObjects;
+        this._resultContainer = resultContainer;
         this._query = null;
         this._format = "json";
-
-        //  this._polygons = viewer.scene.primitives.add(new PrimitiveCollection());
-        //  this._polyLines = viewer.scene.primitives.add(new PolylineCollection());
-        //  this._points = viewer.scene.primitives.add(new PointPrimitiveCollection());
-
-        // initialiisation des checkbox;
+        this._divRes = null;
 
         for (var i = 0; i < dimServers; i++) {
             for (var j = 0; j < dimData; j++) {
-                this['showData_' + i + "_" + j] = knockout.observable(false);
+                this['showData_' + i + "_" + j] = knockout.observable(true); // METTRE A FALSE
             }
         }
-
-
-        this._serverUrl = '../../Source/Widgets/ConfigurationFiles/configurationFile.json';
 
         this._isVOPanelActive = false;
 
         var that = this;
+
+        // ************************** Commands *********************************
 
         this._showPanelCommand = createCommand(function () {
             showPanel(that, that._configContainer);
@@ -647,7 +865,8 @@ define([
 
         this._getDataCommand = createCommand(function () {
 
-            // clean primitives and collections for a new print
+            removeHandlers(that);
+            that._handlerLeftClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
             var tabExtension = [];
             var tabServerUrl = [];
@@ -671,10 +890,12 @@ define([
 
             var color = ["RED", "GREEN"];
 
-            if (tabExtension.length > 0){
+            if (tabExtension.length > 0) {
 
                 for (var i = 0; i < tabExtension.length; i++) {
-                    createQueryV2(that, that._viewer, that._planetName, that._inputObjects, tabServerUrl[i], tabExtension[i], that._format, color[i]);
+                    createQueryV2(that, that._viewer, that._resultContainer, that._handlerLeftClick, that._planetName, that._inputObjects, tabServerUrl[i], tabExtension[i], that._format, color[i]);
+
+
                     //  getVOData(that._query);
                 }
             }
@@ -720,6 +941,16 @@ define([
             }
         },
     });
+
+
+
+
+
+    function removeHandlers(that) {
+
+        if (that._handlerLeftClick)
+            that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+    }
 
     return VODataViewModel;
 });

@@ -1,4 +1,4 @@
-{   "homePlanet" : "mars",
+{   "homePlanet" : "venus",
       
     "servers" : {
 
@@ -25,7 +25,7 @@
 				"name"      : "voparis-cdpp",
 				"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
 				"dir"       : "./",
-				"extension" : ["vvex.epn_core"],
+				"extension" : ["vvex.epn_core"]
 			},
 			{
 				"name"      : "voparis-cdpp",
@@ -36,13 +36,6 @@
 		],
 	
 		"titan" : [
-			{
-				"name"      : "voparis-cdpp",
-				"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
-				"dir"       : "./",
-				"extension" : ["titan.epn_core"] 
-			},
-			
 			{
 				"name"      : "voparis-cdpp",
 				"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",

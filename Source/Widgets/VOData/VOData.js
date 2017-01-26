@@ -31,9 +31,23 @@ define([
          ======================= VO button in the Menu =========================
          ======================================================================= */
 
+        var icone = '<g><path d="M55.533,32.246c-13.001,0-23.541,10.54-23.541,23.54h47.081C79.073,42.785,68.534,32.246,55.533,32.246z"></path>\
+                        <path d="M22.775,64.357c0,1.014,0.83,1.843,1.843,1.843h61.831c1.014,0,1.843-0.829,1.843-1.843v-2.762\
+                                 c0-1.014-0.829-1.844-1.843-1.844H24.618c-1.013,0-1.843,0.83-1.843,1.844V64.357z"></path>\
+                        <path d="M25.612,85.861c0,1.014,0.829,1.842,1.843,1.842h56.158c1.013,0,1.843-0.828,1.843-1.842V71.844\
+                                 c0-1.014-0.83-1.844-1.843-1.844H27.455c-1.014,0-1.843,0.83-1.843,1.844V85.861z"></path>\
+                        <path d="M79.685,38.122c-0.061-0.083,4.743-5.854,4.743-5.854c0.545-0.643,0.348-1.69-0.441-2.328l-8.576-6.938l0,0\
+	                         c-0.789-0.637-1.893-0.596-2.455,0.092c-0.066,0.081-4.615,5.644-4.615,5.644c-3.883-1.842-8.224-2.874-12.807-2.874v2.867\
+	                         c14.941,0,27.055,12.113,27.055,27.055h2.867C85.455,49.179,83.312,43.072,79.685,38.122z"></path>\
+                        <path d="M83.27,33.652"></path>\
+                       <polygon points="19.054,21.226 27.41,16.833 25.814,26.138 32.574,32.727 23.231,34.084 19.054,42.55 14.875,34.084 5.533,32.727 \
+	                                 12.293,26.138 10.697,16.833 "></polygon>\
+                       <polygon points="40.873,21.314 46.336,24.187 45.292,18.104 49.712,13.795 43.604,12.908 40.873,7.373 38.142,12.908 32.033,13.795 \
+	                                 36.453,18.104 35.41,24.187 "></polygon></g>';
+
         var voDataButton = document.createElement('div');
         voDataButton.className = 'cesium-button cesium-toolbar-button cesium-voData-button';
-        voDataButton.innerHTML = 'VO data';
+        voDataButton.innerHTML = '<svg width="35" height="35" viewBox="0 0 100 100">' + icone + ' </svg>';
         voDataButton.setAttribute('data-bind', 'attr  : { title: "Show VO data" }, event : {click : showPanelCommand}');
         wrapperMenu.appendChild(voDataButton);
 
@@ -130,7 +144,7 @@ define([
 
 
         var fieldsetRequest = document.createElement('FIELDSET');
-        configContainer.appendChild(fieldsetRequest);
+        listContainer.appendChild(fieldsetRequest);
 
 
         var legendRequest = document.createElement('LEGEND');
@@ -140,6 +154,7 @@ define([
         /* ============================= TABLE ================================= */
 
         var tableCoord = document.createElement('TABLE');
+        tableCoord.className = "cesium-voData-tableCoord";
         fieldsetRequest.appendChild(tableCoord);
 
         /* --------------------------- 1st LINE -------------------------------- */
@@ -151,7 +166,7 @@ define([
         tableLine1.appendChild(colomn11);
 
         var labelCell11 = document.createElement('DIV');
-        labelCell11.innerHTML = "Lng min : ";
+        labelCell11.innerHTML = "&Phi; min : ";
         colomn11.appendChild(labelCell11);
 
         var colomn12 = document.createElement('TD');
@@ -160,13 +175,14 @@ define([
         var lngMinInput = document.createElement('INPUT');
         lngMinInput.className = 'cesium-voData-input';
         lngMinInput.name = "Lng min";
+        lngMinInput.value = "0";  // A COMMENTER
         colomn12.appendChild(lngMinInput);
 
         var colomn13 = document.createElement('TD');
         tableLine1.appendChild(colomn13);
 
         var labelCell13 = document.createElement('DIV');
-        labelCell13.innerHTML = "Lng max : ";
+        labelCell13.innerHTML = "&Phi; max : ";
         colomn13.appendChild(labelCell13);
 
         var colomn14 = document.createElement('TD');
@@ -175,6 +191,7 @@ define([
         var lngMaxInput = document.createElement('INPUT');
         lngMaxInput.className = 'cesium-voData-input';
         lngMaxInput.name = "Lng max";
+        lngMaxInput.value = "30"; // A COMMENTER
         colomn14.appendChild(lngMaxInput);
 
         /* --------------------------- 2nd LINE --------------------------------- */
@@ -186,7 +203,7 @@ define([
         tableLine2.appendChild(colomn21);
 
         var labelCell21 = document.createElement('DIV');
-        labelCell21.innerHTML = "Lat min :";
+        labelCell21.innerHTML = "&theta; min :";
         colomn21.appendChild(labelCell21);
 
         var colomn22 = document.createElement('TD');
@@ -195,13 +212,14 @@ define([
         var latMinInput = document.createElement('INPUT');
         latMinInput.className = 'cesium-voData-input';
         latMinInput.name = "Lat min";
+        latMinInput.value = "0"; // A COMMENTER
         colomn22.appendChild(latMinInput);
 
         var colomn23 = document.createElement('TD');
         tableLine2.appendChild(colomn23);
 
         var labelCell23 = document.createElement('DIV');
-        labelCell23.innerHTML = "Lat max :";
+        labelCell23.innerHTML = "&theta; max :";
         colomn23.appendChild(labelCell23);
 
         var colomn24 = document.createElement('TD');
@@ -210,19 +228,27 @@ define([
         var latMaxInput = document.createElement('INPUT');
         latMaxInput.className = 'cesium-voData-input';
         latMaxInput.name = "Lat max";
+        latMaxInput.value = "30"; // A COMMENTER
         colomn24.appendChild(latMaxInput);
 
         /* ========================== BUTTONS ================================= */
 
         var btnContainer = document.createElement('div');
         btnContainer.className = 'cesium-voData-btnContainer';
-        configContainer.appendChild(btnContainer);
+        fieldsetRequest.appendChild(btnContainer);
 
         var sendQueryBtn = document.createElement('BUTTON');
         sendQueryBtn.className = 'cesium-voData-configContainer-button cesium-button-planet';
         sendQueryBtn.innerHTML = 'Send Query';
         sendQueryBtn.setAttribute('data-bind', 'click: getDataCommand');
         btnContainer.appendChild(sendQueryBtn);
+        
+         /* ========================== BUTTONS ================================= */
+         
+         var resultContainer = document.createElement('div');
+        resultContainer.className = 'cesium-voData-resultContainer';
+        configContainer.appendChild(resultContainer);
+         
 
         var inputObjects = {
             lngMin: lngMinInput,
@@ -231,7 +257,7 @@ define([
             latMax: latMaxInput
         }
 
-        var viewModel = new VODataViewModel(viewer, planetName, configContainer, listContainer, btnContainer, inputObjects, server.length, extension.length, inputTab);
+        var viewModel = new VODataViewModel(viewer, planetName, configContainer, listContainer, btnContainer, resultContainer, inputObjects, server.length, extension.length, inputTab);
 
         this._mainContainer = mainContainer;
         this._wrapperMenu = wrapperMenu;
