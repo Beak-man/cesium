@@ -161,8 +161,13 @@ define([
                         var C2Max = parseFloat(arr[numberColumForCvalues.c2max]);
 
                         var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
+                        
+                        
+                        var geomType = checkGeometryType(C1Min, C1Max, C2Min, C2Max);
+                        
+                        
 
-                        if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "text/plain") {
+                        if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "text/plain" || geomType == "points") {
 
                             var addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
 
@@ -172,7 +177,7 @@ define([
                                 lngMax.push(C1Max);
                                 latMin.push(C2Min);
                                 latMax.push(C2Max);
-                                
+
                                 stockLines = arr;
 
                                 generatePoints(C1Min, C1Max, C2Min, C2Max, viewer, points, ellipsoid, color);
@@ -185,7 +190,7 @@ define([
 
                             }
 
-                        } else if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "application/x-pds") {
+                        } else if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "application/x-pds" || arr[numberColumForCvalues.access_format] == "application/x-geotiff") {
 
                             lngMin.push(C1Min);
                             lngMax.push(C1Max);
@@ -193,6 +198,8 @@ define([
                             latMax.push(C2Max);
 
                             count++;
+
+                            // console.log(arr[numberColumForCvalues.access_format]);
 
                             generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, polygons, polyLines, ellipsoid, color);
 
@@ -420,26 +427,39 @@ define([
             var columnI = columnNomen[i];
             var ColumnId = columnI.id;
 
-            if (ColumnId == "c1min") {
-                num[ColumnId] = i;
-            } else if (ColumnId == "c1max") {
-                num[ColumnId] = i;
-            } else if (ColumnId == "c2min") {
-                num[ColumnId] = i;
-            } else if (ColumnId == "c2max") {
-                num[ColumnId] = i;
-            } else if (ColumnId == "c3min") {
-                num[ColumnId] = i;
-            } else if (ColumnId == "c3max") {
-                num[ColumnId] = i;
+            // C1min ou c1min mais pas les deux
+
+            if (ColumnId == "c1min" || ColumnId == "C1min") {
+                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                num[ColumnIdLowerCase] = i;
+            } else if (ColumnId == "c1max" || ColumnId == "C1max") {
+                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                num[ColumnIdLowerCase] = i;
+            } else if (ColumnId == "c2min" || ColumnId == "C2min") {
+                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                num[ColumnIdLowerCase] = i;
+            } else if (ColumnId == "c2max" || ColumnId == "C2max") {
+                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                num[ColumnIdLowerCase] = i;
+            } else if (ColumnId == "c3min" || ColumnId == "C3min") {
+                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                num[ColumnIdLowerCase] = i;
+            } else if (ColumnId == "c3max" || ColumnId == "C3max") {
+                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                num[ColumnIdLowerCase] = i;
             } else if (ColumnId == "access_format") {
-                num[ColumnId] = i;
+                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                num[ColumnIdLowerCase] = i;
             } else if (ColumnId == "measurement_type") {
-                num[ColumnId] = i;
+                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                num[ColumnIdLowerCase] = i;
             } else if (ColumnId == "access_url") {
-                num[ColumnId] = i;
+                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                num[ColumnIdLowerCase] = i;
             }
         }
+        
+        console.log(num);
 
         return num;
     }
@@ -597,37 +617,37 @@ define([
         var C2Min = parseFloat(stockLines[numberColumForCvalues.c2min]);
         var C2Max = parseFloat(stockLines[numberColumForCvalues.c2max]);
 
-        console.log(C1Min, C2Min);
-        console.log(points);
+      //  console.log(C1Min, C2Min);
+      //  console.log(points);
 
         var pointsTab = points._pointPrimitives;
 
         for (var i = 0; i < pointsTab.length; i++) {
 
             var position = pointsTab[i]._position;
-            console.log(position.x.toFixed(4));
+          //  console.log(position.x.toFixed(4));
 
             var cartPos = Cartesian3.fromDegrees(C1Min, C2Min, 0, ellipsoid);
-            console.log(cartPos.x.toFixed(4));
-            
-            if (position.x.toFixed(4) == cartPos.x.toFixed(4)){
-                
-                var prop =  pointsTab[i].properties;
-                
-                if (!prop){
-                    prop =  [];
+       //     console.log(cartPos.x.toFixed(4));
+
+            if (position.x.toFixed(4) == cartPos.x.toFixed(4)) {
+
+                var prop = pointsTab[i].properties;
+
+                if (!prop) {
+                    prop = [];
                     prop.push(stockLines);
-                    pointsTab[i].properties = prop;   
-                } else {  
+                    pointsTab[i].properties = prop;
+                } else {
                     prop.push(stockLines);
-                    pointsTab[i].properties = prop;   
-                    
+                    pointsTab[i].properties = prop;
+
                 }
- 
+
             }
         }
-        
-        console.log(points._pointPrimitives);
+
+      //  console.log(points._pointPrimitives);
 
     }
 
