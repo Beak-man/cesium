@@ -1,4 +1,4 @@
-{   "homePlanet" : "venus",
+{   "homePlanet" : "mars",
       
     "servers" : {
 
@@ -26,12 +26,6 @@
 				"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
 				"dir"       : "./",
 				"extension" : ["vvex.epn_core"]
-			},
-			{
-				"name"      : "voparis-cdpp",
-				"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
-				"dir"       : "./",
-				"extension" : ["vvex.epn_core"] 
 			}
 		],
 	
@@ -42,17 +36,9 @@
 				"dir"       : "./",
 				"extension" : ["titan.epn_core"] 
 			}
-		]
-		,
+		],
 	
 		"mars" : [
-			{
-				"name"      : "vo Jacobs University",
-				"url"       : "http://epn1.epn-vespa.jacobs-university.de/__system__/tap/run/tap/sync",
-				"dir"       : "./",
-				"extension" : ["mars_craters.epn_core", "crism.epn_core"] 
-			}, 
-			
 			{
 				"name"      : "vo Jacobs University",
 				"url"       : "http://epn1.epn-vespa.jacobs-university.de/__system__/tap/run/tap/sync",

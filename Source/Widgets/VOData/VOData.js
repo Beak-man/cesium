@@ -90,17 +90,24 @@ define([
         listServersInField.appendChild(listDescription);
 
         var inputTab = [];
+        var numberOfFilesToRequestPerServer = [];
 
         for (var i = 0; i < server.length; i++) {
 
             var serverI = server[i];
+            
+            console.log(serverI);
+            
             var extension = serverI.extension;
+            numberOfFilesToRequestPerServer.push(extension.length);
 
             var listDT = document.createElement('DT');
             listDT.innerHTML = serverI.name;
             listDescription.appendChild(listDT);
 
             for (var j = 0; j < extension.length; j++) {
+                
+                console.log(i, j);
 
                 var listDD = document.createElement('DD');
                 listDescription.appendChild(listDD);
@@ -175,7 +182,7 @@ define([
         var lngMinInput = document.createElement('INPUT');
         lngMinInput.className = 'cesium-voData-input';
         lngMinInput.name = "Lng min";
-        lngMinInput.value = "0";  // A COMMENTER
+        lngMinInput.value = "270";  // A COMMENTER
         colomn12.appendChild(lngMinInput);
 
         var colomn13 = document.createElement('TD');
@@ -191,7 +198,7 @@ define([
         var lngMaxInput = document.createElement('INPUT');
         lngMaxInput.className = 'cesium-voData-input';
         lngMaxInput.name = "Lng max";
-        lngMaxInput.value = "30"; // A COMMENTER
+        lngMaxInput.value = "300"; // A COMMENTER
         colomn14.appendChild(lngMaxInput);
 
         /* --------------------------- 2nd LINE --------------------------------- */
@@ -212,7 +219,7 @@ define([
         var latMinInput = document.createElement('INPUT');
         latMinInput.className = 'cesium-voData-input';
         latMinInput.name = "Lat min";
-        latMinInput.value = "0"; // A COMMENTER
+        latMinInput.value = "15"; // A COMMENTER
         colomn22.appendChild(latMinInput);
 
         var colomn23 = document.createElement('TD');
@@ -228,7 +235,7 @@ define([
         var latMaxInput = document.createElement('INPUT');
         latMaxInput.className = 'cesium-voData-input';
         latMaxInput.name = "Lat max";
-        latMaxInput.value = "30"; // A COMMENTER
+        latMaxInput.value = "20"; // A COMMENTER
         colomn24.appendChild(latMaxInput);
 
         /* ========================== BUTTONS ================================= */
@@ -256,8 +263,10 @@ define([
             latMin: latMinInput,
             latMax: latMaxInput
         }
+        
+        
 
-        var viewModel = new VODataViewModel(viewer, planetName, configContainer, listContainer, btnContainer, resultContainer, inputObjects, server.length, extension.length, inputTab);
+        var viewModel = new VODataViewModel(viewer, planetName, configContainer, listContainer, btnContainer, resultContainer, inputObjects, server.length, numberOfFilesToRequestPerServer, inputTab);
 
         this._mainContainer = mainContainer;
         this._wrapperMenu = wrapperMenu;

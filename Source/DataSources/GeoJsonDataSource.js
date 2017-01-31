@@ -233,6 +233,10 @@ define([
             }
 
             var description = properties.description;
+            
+            console.log(properties);
+            console.log(nameProperty);
+            
             if (description !== null) {
                 entity.description = !defined(description) ? describe(properties, nameProperty) : new ConstantProperty(description);
             }
@@ -414,6 +418,8 @@ define([
 
             GeoJsonDataSource.flaggedCounter = flaggedCounter;
             GeoJsonDataSource.counter = counter;
+            
+            console.log(entity);
 
             var countObject = {
                 flagged: flaggedCounter,

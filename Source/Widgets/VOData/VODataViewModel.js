@@ -4,15 +4,27 @@ define([
     '../../Core/BoundingRectangle',
     '../../Core/Cartesian3',
     '../../Core/Cartographic',
+    '../../Core/Clock',
     '../../Core/Color',
     '../../Core/ColorGeometryInstanceAttribute',
+    '../../DataSources/ConstantProperty',
+    '../../DataSources/ConstantPositionProperty',
+    '../../Core/defined',
     '../createCommand',
+    '../../Core/createGuid',
+    '../../DataSources/DataSourceDisplay',
+    '../../DataSources/DataSourceCollection',
+    '../../DataSources/EllipseGraphics',
+    '../../DataSources/EntityCollection',
+    '../../DataSources/Entity',
     '../../Core/GeometryInstance',
     '../../Scene/Material',
     '../../Core/Math',
     '../../Scene/PerInstanceColorAppearance',
     '../../Core/PinBuilder',
+    '../../DataSources/PointGraphics',
     '../../Scene/PointPrimitiveCollection',
+    '../../DataSources/Property',
     '../../Scene/PolylineCollection',
     '../../Core/PolygonGeometry',
     '../../Core/PolylinePipeline',
@@ -27,15 +39,27 @@ define([
         BoundingRectangle,
         Cartesian3,
         Cartographic,
+        Clock,
         Color,
         ColorGeometryInstanceAttribute,
+        ConstantProperty,
+        ConstantPositionProperty,
+        defined,
         createCommand,
+        createGuid,
+        DataSourceDisplay,
+        DataSourceCollection,
+        EllipseGraphics,
+        EntityCollection,
+        Entity,
         GeometryInstance,
         Material,
         CesiumMath,
         PerInstanceColorAppearance,
         PinBuilder,
+        PointGraphics,
         PointPrimitiveCollection,
+        Property,
         PolylineCollection,
         PolygonGeometry,
         PolylinePipeline,
@@ -96,6 +120,16 @@ define([
         var polyLines = viewer.scene.primitives.add(new PolylineCollection());
         var points = viewer.scene.primitives.add(new PointPrimitiveCollection());
         var billboards = viewer.scene.primitives.add(new BillboardCollection());
+        var entityCollection = new EntityCollection(viewer.entities.owner);
+
+        var dataSourceDisplay = new DataSourceDisplay({
+            scene: viewer.scene,
+            dataSourceCollection: new DataSourceCollection()
+        });
+
+
+        console.log(viewer.scene);
+
         var ellipsoid = viewer.scene.globe.ellipsoid;
 
         var isLngMinValuesValid = inputValuesTest(inputObjects.lngMin);
@@ -130,6 +164,9 @@ define([
                     // console.log(data);
                     var jsonData = JSON.parse(data);
                     console.log(jsonData);
+                    console.log("==========================================")
+                    console.log("nombre de points : " + jsonData.data.length);
+                    console.log("==========================================")
 
                     var dataTab = []
                     dataTab = jsonData.data;
@@ -161,32 +198,35 @@ define([
                         var C2Max = parseFloat(arr[numberColumForCvalues.c2max]);
 
                         var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
-                        
-                        
+
                         var geomType = checkGeometryType(C1Min, C1Max, C2Min, C2Max);
-                        
-                        
 
-                        if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "text/plain" || geomType == "points") {
+                        if (geomType == "points") {
 
-                            var addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
+                            if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "text/plain") {
 
-                            if (addToList == true) { // we add coord in tabs and plot data on Cesium
+                                var desciprionObject = createDescriptionObject(columnNomTab, arr);
 
-                                lngMin.push(C1Min);
-                                lngMax.push(C1Max);
-                                latMin.push(C2Min);
-                                latMax.push(C2Max);
+                                var addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
 
-                                stockLines = arr;
+                                if (addToList == true) { // we add coord in tabs and plot data on Cesium
 
-                                generatePoints(C1Min, C1Max, C2Min, C2Max, viewer, points, ellipsoid, color);
-                                addPropertiesInPointObject(stockLines, numberColumForCvalues, points, ellipsoid);
+                                    lngMin.push(C1Min);
+                                    lngMax.push(C1Max);
+                                    latMin.push(C2Min);
+                                    latMax.push(C2Max);
 
-                            } else { // else we just stock data line a tab
+                                    stockLines = arr;
 
-                                stockLines = arr;
-                                addPropertiesInPointObject(stockLines, numberColumForCvalues, points, ellipsoid);
+                                    generatePoints(C1Min, C1Max, C2Min, C2Max, desciprionObject, viewer, entityCollection, dataSourceDisplay, ellipsoid, color);
+                                    addPropertiesInPointObject(stockLines, numberColumForCvalues, dataSourceDisplay, ellipsoid);
+
+                                } else { // else we just stock data line a tab
+
+                                    stockLines = arr;
+                                    addPropertiesInPointObject(stockLines, numberColumForCvalues, dataSourceDisplay, ellipsoid);
+
+                                }
 
                             }
 
@@ -458,7 +498,7 @@ define([
                 num[ColumnIdLowerCase] = i;
             }
         }
-        
+
         console.log(num);
 
         return num;
@@ -510,7 +550,67 @@ define([
 
     }
 
-    function  generatePoints(lngMin, lngMax, latMin, latMax, viewer, points, ellipsoid, colorPoints) {
+    function defaultDescribe(properties, nameProperty) {
+
+        var html = '';
+        for (var key in properties) {
+            if (properties.hasOwnProperty(key)) {
+                if (key === nameProperty) {
+                    continue;
+                }
+                var value = properties[key];
+                if (defined(value)) {
+                    if (typeof value === 'object') {
+
+                        html += '<tr><th>' + key + '</th><td>' + defaultDescribe(value) + '</td></tr>';
+                    } else {
+
+                        if (typeof value === 'string') {
+
+                            var beginString = value.slice(0, 7);
+                            if (beginString === "http://" || beginString === "https://" || beginString === "www.") {
+                                html += '<tr><th>' + key + '</th><td><a href=' + value + ' target="_blank">link</a></td></tr>';
+                            }
+                            else {
+                                html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
+                            }
+                        } else {
+                            html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
+                        }
+
+                    }
+                }
+            }
+        }
+
+        if (html.length > 0) {
+            html = '<table class="cesium-infoBox-defaultTable"><tbody>' + html + '</tbody></table>';
+        }
+
+        return html;
+    }
+
+    function createDescriptionObject(columnNameTab, arr) {
+
+
+        var descrip = {};
+
+        for (var i = 0; i < columnNameTab.length; i++) {
+            // console.log(columnNameTab[i].name + " : " + arr[i]);
+
+            // if the value of the description is not null
+            if (arr[i] != null) {
+                descrip[columnNameTab[i].name] = arr[i];
+            }
+        }
+
+        var html = defaultDescribe(descrip, "title");
+
+        return html;
+
+    }
+
+    function  generatePoints(lngMin, lngMax, latMin, latMax, desciprionObject, viewer, entityCollection, dataSourceDisplay, ellipsoid, colorPoints) {
 
         //  var ellipsoid = viewer.scene.globe.ellipsoid;
         // var points = viewer.scene.primitives.add(new PointPrimitiveCollection());
@@ -522,11 +622,52 @@ define([
             position: Cartesian3.fromDegrees(coordX, coordY, 0, ellipsoid),
             color: Color[colorPoints],
             pixelSize: 5,
-            property: "test"
+            show: true
         };
 
-        //   console.log(newPoints);
-        points.add(newPoints);
+        /*  viewer.entities.add({
+         position: Cartesian3.fromDegrees(-75.59777, 40.03883),
+         points: {
+         color: Color[colorPoints],
+         pixelSize: 5,
+         show: true
+         }
+         });*/
+
+        var pos = Cartesian3.fromDegrees(coordX, coordY, 0, ellipsoid);
+
+        var point = new PointGraphics();
+
+        point.outline = new ConstantProperty(true);
+        point.pixelSize = 5.0;
+        point.color = new Color(1.0, 1.0, 0.0, 1.0);
+        point.show = true;
+
+        var position = new ConstantPositionProperty(pos);
+
+        var id = createGuid();
+        // var entity = entityCollection.getOrCreateEntity(id);
+
+        var entityParams = {
+            id: id,
+            point: point,
+            position: position,
+            show: true,
+            name: "VO data",
+            description: new ConstantProperty(desciprionObject)
+        }
+
+        var entity = new Entity(entityParams);
+
+        var entities = dataSourceDisplay.defaultDataSource.entities;
+
+        entities.add(entity);
+
+        var clock = new Clock();
+
+        dataSourceDisplay.update(clock.currentTime);
+
+        console.log(dataSourceDisplay);
     }
 
     function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, polygons, polyLines, ellipsoid, colorPolygons) {
@@ -610,44 +751,47 @@ define([
     }
 
 
-    function addPropertiesInPointObject(stockLines, numberColumForCvalues, points, ellipsoid) {
+    function addPropertiesInPointObject(stockLines, numberColumForCvalues, dataSourceDisplay, ellipsoid) {
 
         var C1Min = parseFloat(stockLines[numberColumForCvalues.c1min]);
         var C1Max = parseFloat(stockLines[numberColumForCvalues.c1max]);
         var C2Min = parseFloat(stockLines[numberColumForCvalues.c2min]);
         var C2Max = parseFloat(stockLines[numberColumForCvalues.c2max]);
 
-      //  console.log(C1Min, C2Min);
-      //  console.log(points);
+        //  console.log(C1Min, C2Min);
+        //  console.log(points);
 
-        var pointsTab = points._pointPrimitives;
+        var pointsTab = dataSourceDisplay.defaultDataSource.entities._entities._array;
 
         for (var i = 0; i < pointsTab.length; i++) {
 
-            var position = pointsTab[i]._position;
-          //  console.log(position.x.toFixed(4));
+            var position = pointsTab[i]._position._value;
+            //  console.log(position.x.toFixed(4));
 
             var cartPos = Cartesian3.fromDegrees(C1Min, C2Min, 0, ellipsoid);
-       //     console.log(cartPos.x.toFixed(4));
+            console.log(cartPos.x.toFixed(4));
 
             if (position.x.toFixed(4) == cartPos.x.toFixed(4)) {
 
-                var prop = pointsTab[i].properties;
 
-                if (!prop) {
-                    prop = [];
-                    prop.push(stockLines);
-                    pointsTab[i].properties = prop;
-                } else {
-                    prop.push(stockLines);
-                    pointsTab[i].properties = prop;
 
-                }
+
+                //  var prop = pointsTab[i].properties;
+
+                /*/  if (!prop) {
+                 prop = [];
+                 prop.push(stockLines);
+                 pointsTab[i].properties = prop;
+                 } else {
+                 prop.push(stockLines);
+                 pointsTab[i].properties = prop;
+                 
+                 }*/
 
             }
         }
 
-      //  console.log(points._pointPrimitives);
+        //  console.log(points._pointPrimitives);
 
     }
 
@@ -854,6 +998,9 @@ define([
      */
     var VODataViewModel = function (viewer, planetName, configContainer, listContainer, btnContainer, resultContainer, inputObjects, dimServers, dimData, inputTab) {
 
+
+
+
         // ************************ initialization *****************************
 
         this._viewer = viewer;
@@ -867,8 +1014,13 @@ define([
         this._format = "json";
         this._divRes = null;
 
+        console.log(dimServers, dimData);
+
         for (var i = 0; i < dimServers; i++) {
-            for (var j = 0; j < dimData; j++) {
+
+            var dim = dimData[i];
+
+            for (var j = 0; j < dim; j++) {
                 this['showData_' + i + "_" + j] = knockout.observable(true); // METTRE A FALSE
             }
         }
@@ -908,7 +1060,7 @@ define([
                 }
             }
 
-            var color = ["RED", "GREEN"];
+            var color = ["YELLOW", "GREEN", "RED", "BLUE"];
 
             if (tabExtension.length > 0) {
 

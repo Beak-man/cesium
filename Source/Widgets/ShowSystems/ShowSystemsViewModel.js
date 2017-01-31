@@ -1215,6 +1215,8 @@ define([
              ===================================================================
              =================================================================== */
 
+             console.log(GeoJsonDataSource.crsFunctionType);
+
             showSatelliteView(that, that._viewer, planetName, satelliteName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, naifCode);
             removeButtons(that);
         });

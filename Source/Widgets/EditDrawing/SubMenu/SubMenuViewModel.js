@@ -77,7 +77,7 @@ define([
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
             /*==================================================================
-             ========================= Valid (VERT) ============================
+             ===================================================================
              =================================================================== */
 
             that._handlerLeft.setInputAction(function (click) {
@@ -95,6 +95,8 @@ define([
                     objectId = pickedObject.id;
                     id = pickedObject.id.id;
                 }
+                
+                console.log(pickedObject.id);
 
                 if (pickedObject.id) {
 

@@ -17,6 +17,8 @@ define([
         var dataSources = that._viewer.dataSources._dataSources;
         var count = 0;
         var countFlagged = 0;
+        
+        console.log(that._viewer);
 
         for (var i = 0; i < dataSources.length; i++) {
             var entities = dataSources[i]._entityCollection._entities._array;
