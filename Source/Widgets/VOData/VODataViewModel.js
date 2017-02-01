@@ -23,6 +23,7 @@ define([
     '../../Scene/PerInstanceColorAppearance',
     '../../Core/PinBuilder',
     '../../DataSources/PointGraphics',
+    '../../DataSources/PolygonGraphics',
     '../../Scene/PointPrimitiveCollection',
     '../../DataSources/Property',
     '../../Scene/PolylineCollection',
@@ -58,6 +59,7 @@ define([
         PerInstanceColorAppearance,
         PinBuilder,
         PointGraphics,
+        PolygonGraphics,
         PointPrimitiveCollection,
         Property,
         PolylineCollection,
@@ -192,39 +194,54 @@ define([
                     for (var i = 0; i < dimData; i++) {
                         var arr = dataTab[i]; // correspond to 1 line in the data file
 
+                        // get longitude and latitudes data 
+
                         var C1Min = parseFloat(arr[numberColumForCvalues.c1min]);
                         var C1Max = parseFloat(arr[numberColumForCvalues.c1max]);
                         var C2Min = parseFloat(arr[numberColumForCvalues.c2min]);
                         var C2Max = parseFloat(arr[numberColumForCvalues.c2max]);
 
+                        // check if these data are valid (i.e between 0 and 360°)
                         var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
 
+                        // check if the we have a point or a polygon
                         var geomType = checkGeometryType(C1Min, C1Max, C2Min, C2Max);
 
+                        // if we have a point
                         if (geomType == "points") {
 
-                            if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "text/plain") {
+                            // if data are valid and if we have a text format or an unknown format 
+                            if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "text/plain" || !arr[numberColumForCvalues.access_format]) {
 
+                                // we create the description object corresponding to the current point
                                 var desciprionObject = createDescriptionObject(columnNomTab, arr);
 
+                                //we check if the coordinate are duplicated
                                 var addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
 
-                                if (addToList == true) { // we add coord in tabs and plot data on Cesium
+                                // if not (i.e we don't have the coordinate il the list)
+                                if (addToList == true) {
 
+                                    // we add coord in tabs and plot data on Cesium
                                     lngMin.push(C1Min);
                                     lngMax.push(C1Max);
                                     latMin.push(C2Min);
                                     latMax.push(C2Max);
 
+                                    //  console.log("avant generate point");
+                                    // generate point
+                                    generatePoints(C1Min, C1Max, C2Min, C2Max, desciprionObject, dataSourceDisplay, ellipsoid, color);
+
+                                    // we get data from requested file corresponding to the current file
                                     stockLines = arr;
 
-                                    generatePoints(C1Min, C1Max, C2Min, C2Max, desciprionObject, viewer, entityCollection, dataSourceDisplay, ellipsoid, color);
-                                    addPropertiesInPointObject(stockLines, numberColumForCvalues, dataSourceDisplay, ellipsoid);
+                                    // add description to the current point
+                                    addPropertiesInPointObject(stockLines, columnNomTab, numberColumForCvalues, dataSourceDisplay, ellipsoid);
 
-                                } else { // else we just stock data line a tab
+                                } else { // else we just stock data line in the right object
 
                                     stockLines = arr;
-                                    addPropertiesInPointObject(stockLines, numberColumForCvalues, dataSourceDisplay, ellipsoid);
+                                    addPropertiesInPointObject(stockLines, columnNomTab, numberColumForCvalues, dataSourceDisplay, ellipsoid);
 
                                 }
 
@@ -232,16 +249,21 @@ define([
 
                         } else if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "application/x-pds" || arr[numberColumForCvalues.access_format] == "application/x-geotiff") {
 
-                            lngMin.push(C1Min);
-                            lngMax.push(C1Max);
-                            latMin.push(C2Min);
-                            latMax.push(C2Max);
 
-                            count++;
+                            var desciprionObject = createDescriptionObject(columnNomTab, arr);
+                            var addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
 
-                            // console.log(arr[numberColumForCvalues.access_format]);
+                            // if not (i.e we don't have the coordinate il the list)
+                            if (addToList == true) {
 
-                            generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, polygons, polyLines, ellipsoid, color);
+                                lngMin.push(C1Min);
+                                lngMax.push(C1Max);
+                                latMin.push(C2Min);
+                                latMax.push(C2Max);
+
+
+                                generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, desciprionObject, dataSourceDisplay, ellipsoid, color);
+                            }
 
                         }
                     }
@@ -568,7 +590,13 @@ define([
                         if (typeof value === 'string') {
 
                             var beginString = value.slice(0, 7);
-                            if (beginString === "http://" || beginString === "https://" || beginString === "www.") {
+                            var regex1 = /http:/;
+                            var regex2 = /https:/;
+                            var regex3 = /www./;
+                            var regex4 = /ftp:/;
+
+                            //    if (beginString == "http://" || beginString === "https://" || beginString === "www."|| beginString === "ftp://") {
+                            if (regex1.test(beginString) || regex2.test(beginString) || regex3.test(beginString) || regex4.test(beginString)) {
                                 html += '<tr><th>' + key + '</th><td><a href=' + value + ' target="_blank">link</a></td></tr>';
                             }
                             else {
@@ -600,39 +628,25 @@ define([
 
             // if the value of the description is not null
             if (arr[i] != null) {
-                descrip[columnNameTab[i].name] = arr[i];
+                descrip[columnNameTab[i].name.toLowerCase()] = arr[i];
             }
         }
 
         var html = defaultDescribe(descrip, "title");
 
-        return html;
+        var returnObject = {
+            html: html,
+            object: descrip
+        }
+
+        return returnObject;
 
     }
 
-    function  generatePoints(lngMin, lngMax, latMin, latMax, desciprionObject, viewer, entityCollection, dataSourceDisplay, ellipsoid, colorPoints) {
-
-        //  var ellipsoid = viewer.scene.globe.ellipsoid;
-        // var points = viewer.scene.primitives.add(new PointPrimitiveCollection());
+    function  generatePoints(lngMin, lngMax, latMin, latMax, desciprionObject, dataSourceDisplay, ellipsoid, colorPoints) {
 
         var coordX = lngMin;
         var coordY = latMin;
-
-        var newPoints = {
-            position: Cartesian3.fromDegrees(coordX, coordY, 0, ellipsoid),
-            color: Color[colorPoints],
-            pixelSize: 5,
-            show: true
-        };
-
-        /*  viewer.entities.add({
-         position: Cartesian3.fromDegrees(-75.59777, 40.03883),
-         points: {
-         color: Color[colorPoints],
-         pixelSize: 5,
-         show: true
-         }
-         });*/
 
         var pos = Cartesian3.fromDegrees(coordX, coordY, 0, ellipsoid);
 
@@ -640,13 +654,12 @@ define([
 
         point.outline = new ConstantProperty(true);
         point.pixelSize = 5.0;
-        point.color = new Color(1.0, 1.0, 0.0, 1.0);
+        point.color = colorPoints;
         point.show = true;
 
         var position = new ConstantPositionProperty(pos);
 
         var id = createGuid();
-        // var entity = entityCollection.getOrCreateEntity(id);
 
         var entityParams = {
             id: id,
@@ -654,10 +667,13 @@ define([
             position: position,
             show: true,
             name: "VO data",
-            description: new ConstantProperty(desciprionObject)
+            description: new ConstantProperty(desciprionObject.html)
         }
 
         var entity = new Entity(entityParams);
+
+        entity.descriptionTab = [];
+        entity.descriptionTab.push(desciprionObject.object);
 
         var entities = dataSourceDisplay.defaultDataSource.entities;
 
@@ -667,10 +683,76 @@ define([
 
         dataSourceDisplay.update(clock.currentTime);
 
-        console.log(dataSourceDisplay);
+        // console.log(dataSourceDisplay);
     }
 
-    function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, polygons, polyLines, ellipsoid, colorPolygons) {
+    function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, desciprionObject, dataSourceDisplay, ellipsoid, colorPolygons) {
+
+        // array wich contains coordinates to draw polygons
+        var polygonsCoord = [];
+
+        // points for polygons
+        var point1 = [lngMin, latMin];
+        var point2 = [lngMax, latMin];
+        var point3 = [lngMax, latMax];
+        var point4 = [lngMin, latMax];
+        var point5 = point1;
+
+        var tabPoints = [point1, point2, point3, point4, point5];
+
+        // push points in polygonsCoord array
+        for (var i = 0; i < tabPoints.length - 1; i++) {
+
+            var pt = tabPoints[i];
+
+            for (var j = 0; j < pt.length; j++) {
+                polygonsCoord.push(pt[j] * (Math.PI / 180.0));
+            }
+        }
+
+        // draw Polygons
+
+        var polygon = new PolygonGraphics();
+
+        colorPolygons.alpha = 0.3
+
+        polygon.hierarchy = Cartesian3.fromRadiansArray(polygonsCoord);
+        polygon.fill = true;
+        polygon.show = true;
+        polygon.material = colorPolygons;
+        polygon.outlineColor = Color.YELLOW;
+        polygon.outlineWidth = new ConstantProperty(5.0);
+        polygon.outline = new ConstantProperty(true);
+
+        var id = createGuid();
+
+        var entityParams = {
+            id: id,
+            polygon: polygon,
+            show: true,
+            name: "VO data",
+            description: new ConstantProperty(desciprionObject.html)
+        }
+
+        var entity = new Entity(entityParams);
+
+        entity.descriptionTab = [];
+        entity.descriptionTab.push(desciprionObject.object);
+
+        var entities = dataSourceDisplay.defaultDataSource.entities;
+
+        entities.add(entity);
+
+        var clock = new Clock();
+
+        dataSourceDisplay.update(clock.currentTime);
+
+        //  console.log(dataSourceDisplay);
+
+    }
+
+
+    function generatePolygonsOld2(lngMin, lngMax, latMin, latMax, viewer, polygons, polyLines, ellipsoid, colorPolygons) {
 
         var polygonsCoord = [];
 
@@ -695,6 +777,7 @@ define([
         for (var j = 0; j < tabPoints.length - 1; j++) {
 
             var ptJ = tabPoints[j];
+
             var ptJp1 = tabPoints[j + 1];
 
             var lineTab = [ptJ, ptJp1];
@@ -725,7 +808,6 @@ define([
             polyLines.add(newPolyLine);
         }
 
-
         var polygonsCoordDegree = Cartesian3.fromRadiansArray(polygonsCoord, ellipsoid);
 
         var polygonInstance = new GeometryInstance({
@@ -750,8 +832,7 @@ define([
         polygons.add(newPolygon);
     }
 
-
-    function addPropertiesInPointObject(stockLines, numberColumForCvalues, dataSourceDisplay, ellipsoid) {
+    function addPropertiesInPointObject(stockLines, columnNomTab, numberColumForCvalues, dataSourceDisplay, ellipsoid) {
 
         var C1Min = parseFloat(stockLines[numberColumForCvalues.c1min]);
         var C1Max = parseFloat(stockLines[numberColumForCvalues.c1max]);
@@ -769,32 +850,19 @@ define([
             //  console.log(position.x.toFixed(4));
 
             var cartPos = Cartesian3.fromDegrees(C1Min, C2Min, 0, ellipsoid);
-            console.log(cartPos.x.toFixed(4));
 
             if (position.x.toFixed(4) == cartPos.x.toFixed(4)) {
 
+                //  console.log("coordinates duplicated : " + cartPos.x.toFixed(4) + " " + cartPos.y.toFixed(4));
 
-
-
-                //  var prop = pointsTab[i].properties;
-
-                /*/  if (!prop) {
-                 prop = [];
-                 prop.push(stockLines);
-                 pointsTab[i].properties = prop;
-                 } else {
-                 prop.push(stockLines);
-                 pointsTab[i].properties = prop;
-                 
-                 }*/
-
+                var desciprionObject = createDescriptionObject(columnNomTab, stockLines);
+                pointsTab[i].descriptionTab.push(desciprionObject.object);
             }
         }
 
         //  console.log(points._pointPrimitives);
 
     }
-
 
     function pickingActivation(that, viewer, handlerLeftClick, ellipsoid, billboards, resultContainer) {
 
@@ -1060,7 +1128,14 @@ define([
                 }
             }
 
-            var color = ["YELLOW", "GREEN", "RED", "BLUE"];
+            var color = [];
+            
+            color.push(new Color(1.0, 0.0, 0.0, 1.0));
+            color.push(new Color(0.0, 1.0, 0.0, 1.0));
+            color.push(new Color(0.0, 0.0, 1.0, 1.0));
+            color.push(new Color(1.0, 0.0, 1.0, 1.0));
+            color.push(new Color(0.1, 0.4, 0.8, 1.0));
+            color.push(new Color(0.5, 0.5, 1.0, 1.0));
 
             if (tabExtension.length > 0) {
 

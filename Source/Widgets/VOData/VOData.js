@@ -182,7 +182,7 @@ define([
         var lngMinInput = document.createElement('INPUT');
         lngMinInput.className = 'cesium-voData-input';
         lngMinInput.name = "Lng min";
-        lngMinInput.value = "270";  // A COMMENTER
+        lngMinInput.value = "0";  // A COMMENTER
         colomn12.appendChild(lngMinInput);
 
         var colomn13 = document.createElement('TD');
@@ -198,7 +198,7 @@ define([
         var lngMaxInput = document.createElement('INPUT');
         lngMaxInput.className = 'cesium-voData-input';
         lngMaxInput.name = "Lng max";
-        lngMaxInput.value = "300"; // A COMMENTER
+        lngMaxInput.value = "70"; // A COMMENTER
         colomn14.appendChild(lngMaxInput);
 
         /* --------------------------- 2nd LINE --------------------------------- */
@@ -219,7 +219,7 @@ define([
         var latMinInput = document.createElement('INPUT');
         latMinInput.className = 'cesium-voData-input';
         latMinInput.name = "Lat min";
-        latMinInput.value = "15"; // A COMMENTER
+        latMinInput.value = "0"; // A COMMENTER
         colomn22.appendChild(latMinInput);
 
         var colomn23 = document.createElement('TD');
@@ -235,7 +235,7 @@ define([
         var latMaxInput = document.createElement('INPUT');
         latMaxInput.className = 'cesium-voData-input';
         latMaxInput.name = "Lat max";
-        latMaxInput.value = "20"; // A COMMENTER
+        latMaxInput.value = "50"; // A COMMENTER
         colomn24.appendChild(latMaxInput);
 
         /* ========================== BUTTONS ================================= */
@@ -264,8 +264,6 @@ define([
             latMax: latMaxInput
         }
         
-        
-
         var viewModel = new VODataViewModel(viewer, planetName, configContainer, listContainer, btnContainer, resultContainer, inputObjects, server.length, numberOfFilesToRequestPerServer, inputTab);
 
         this._mainContainer = mainContainer;
