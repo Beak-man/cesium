@@ -288,7 +288,7 @@ define([
                             });
 
 
-                            
+
 
                         } else if (names[i].indexOf(strTest) == -1) { // for npoles et spoles maps
 
@@ -338,11 +338,11 @@ define([
 
                                 //  console.log("before SingleTileImageryProvider");
 
-                          /*      imageryProvidersTab[i] = new SingleTileImageryProvider({
-                                    url: "http://planetarymaps.usgs.gov/cgi-bin/mapserv?format=image/jpeg&service=WMS&bbox=-2357030,-2357030,2357030,2357030&srs=EPSG:32661&version=1.1.1&request=GetMap&styles=&map=/maps/mars/mars_npole.map&=&layers=MOLA_color_north&width=2048&height=2048",
-                                    rectangle: rect,
-                                    ellipsoid: that._ellipsoid,
-                                });*/
+                                /*      imageryProvidersTab[i] = new SingleTileImageryProvider({
+                                 url: "http://planetarymaps.usgs.gov/cgi-bin/mapserv?format=image/jpeg&service=WMS&bbox=-2357030,-2357030,2357030,2357030&srs=EPSG:32661&version=1.1.1&request=GetMap&styles=&map=/maps/mars/mars_npole.map&=&layers=MOLA_color_north&width=2048&height=2048",
+                                 rectangle: rect,
+                                 ellipsoid: that._ellipsoid,
+                                 });*/
 
 
                                 //    console.log(imageryProvidersTab[i]);
@@ -357,7 +357,7 @@ define([
                                     ellipsoid: that._ellipsoid,
                                     enablePickFeatures: false
                                 });
-                               //    console.log(imageryProvidersTab[i]);
+                                //    console.log(imageryProvidersTab[i]);
                             }
                         }
                     }
@@ -995,10 +995,19 @@ define([
         } catch (e) {
         }
 
+        /* ================================================================= 
+         ========================= VO WIDGET CALL ==========================
+         =================================================================== */
+
         if (that._isVOWidgetVisible == true) {
-            
+
             that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration, homePlanet);
+
         }
+
+        /* ================================================================= 
+         ===================================================================
+         =================================================================== */
 
         var obj = {
             naifCodes: naifCode,
@@ -1012,27 +1021,27 @@ define([
     }
 
 
-/*
-    function getWMTSFunction(that) {
-        
-        console.log(that._ellipsoid);
-
-        var planetMars = new WebMapTileServiceImageryProvider({
-            url:  'https://api.nasa.gov/mars-wmts/catalog/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly',
-            ellipsoid: that._ellipsoid,
-            style: 'default',
-            tileMatrixSetID: 'default028mm',
-            layer: ' Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly',
-            format: 'image/jpg',
-        });
-
-        console.log(planetMars.url);
-
-        that._viewer.imageryLayers.addImageryProvider(planetMars);
-        console.log(that._viewer.imageryLayers);
-    }
-
-*/
+    /*
+     function getWMTSFunction(that) {
+     
+     console.log(that._ellipsoid);
+     
+     var planetMars = new WebMapTileServiceImageryProvider({
+     url:  'https://api.nasa.gov/mars-wmts/catalog/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly',
+     ellipsoid: that._ellipsoid,
+     style: 'default',
+     tileMatrixSetID: 'default028mm',
+     layer: ' Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly',
+     format: 'image/jpg',
+     });
+     
+     console.log(planetMars.url);
+     
+     that._viewer.imageryLayers.addImageryProvider(planetMars);
+     console.log(that._viewer.imageryLayers);
+     }
+     
+     */
     /* ================================================================================================================== */
     /* ================================================ Main functions ================================================== */
     /* ================================================================================================================== */
@@ -1115,7 +1124,7 @@ define([
 
             // FONCTION DE RECUPERATION DES WMTS
 
-         //   getWMTSFunction(that);
+            //   getWMTSFunction(that);
 
 
         });
@@ -1151,8 +1160,7 @@ define([
              =================================================================== */
 
             if (that._isVOWidgetVisible == true) {
-                console.log(that.configuration);
-                that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration,  planetName);
+                that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration, planetName);
             }
 
             /* ================================================================= 
@@ -1194,15 +1202,15 @@ define([
                 naifCodes: naifCode,
                 ellipsoid: that._ellipsoid
             }
-            
+
             try {
                 that._voData.viewModel.hidePanel;
             } catch (e) {
             }
 
             GeoJsonDataSource.crsModification = obj;
-            
-             /* ================================================================= 
+
+            /* ================================================================= 
              ========================= VO WIDGET CALL ==========================
              =================================================================== */
 
@@ -1215,7 +1223,7 @@ define([
              ===================================================================
              =================================================================== */
 
-             console.log(GeoJsonDataSource.crsFunctionType);
+            console.log(GeoJsonDataSource.crsFunctionType);
 
             showSatelliteView(that, that._viewer, planetName, satelliteName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, naifCode);
             removeButtons(that);

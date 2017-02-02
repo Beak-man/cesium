@@ -150,7 +150,12 @@ define([
 
                                         objectType.color = colorObjectN;
                                         objectType.outlineColor._value = colorObjectN;
-                                        objectType.outlineWidth._value = 3;
+                                        objectType.outlineWidth._value = 1;
+
+                                        if(!objectId.properties){
+                                             objectId.properties = {};
+                                        }
+                                        
 
                                         var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
                                         objectId.properties.flagColor = rgba;

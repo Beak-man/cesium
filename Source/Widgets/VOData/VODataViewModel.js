@@ -19,6 +19,7 @@ define([
     '../../DataSources/Entity',
     '../../Core/GeometryInstance',
     '../../Scene/Material',
+    '../../DataSources/ColorMaterialProperty',
     '../../Core/Math',
     '../../Scene/PerInstanceColorAppearance',
     '../../Core/PinBuilder',
@@ -55,6 +56,7 @@ define([
         Entity,
         GeometryInstance,
         Material,
+        ColorMaterialProperty,
         CesiumMath,
         PerInstanceColorAppearance,
         PinBuilder,
@@ -129,8 +131,7 @@ define([
             dataSourceCollection: new DataSourceCollection()
         });
 
-
-        console.log(viewer.scene);
+        console.log(viewer);
 
         var ellipsoid = viewer.scene.globe.ellipsoid;
 
@@ -261,14 +262,13 @@ define([
                                 latMin.push(C2Min);
                                 latMax.push(C2Max);
 
-
                                 generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, desciprionObject, dataSourceDisplay, ellipsoid, color);
                             }
 
                         }
                     }
 
-                    pickingActivation(that, viewer, handlerLeftClick, ellipsoid, billboards, resultContainer);
+                    pickingActivation(that, viewer, dataSourceDisplay, handlerLeftClick, ellipsoid, billboards, resultContainer);
 
                 }
             }
@@ -595,7 +595,6 @@ define([
                             var regex3 = /www./;
                             var regex4 = /ftp:/;
 
-                            //    if (beginString == "http://" || beginString === "https://" || beginString === "www."|| beginString === "ftp://") {
                             if (regex1.test(beginString) || regex2.test(beginString) || regex3.test(beginString) || regex4.test(beginString)) {
                                 html += '<tr><th>' + key + '</th><td><a href=' + value + ' target="_blank">link</a></td></tr>';
                             }
@@ -627,7 +626,7 @@ define([
             // console.log(columnNameTab[i].name + " : " + arr[i]);
 
             // if the value of the description is not null
-            if (arr[i] != null) {
+            if (arr[i] != null && arr[i] != "") {
                 descrip[columnNameTab[i].name.toLowerCase()] = arr[i];
             }
         }
@@ -655,6 +654,9 @@ define([
         point.outline = new ConstantProperty(true);
         point.pixelSize = 5.0;
         point.color = colorPoints;
+        point.outlineColor = colorPoints;
+        point.outlineWidth = 1.0;
+        point.properties = {};
         point.show = true;
 
         var position = new ConstantPositionProperty(pos);
@@ -670,6 +672,8 @@ define([
             description: new ConstantProperty(desciprionObject.html)
         }
 
+
+
         var entity = new Entity(entityParams);
 
         entity.descriptionTab = [];
@@ -683,7 +687,7 @@ define([
 
         dataSourceDisplay.update(clock.currentTime);
 
-        // console.log(dataSourceDisplay);
+        //  console.log(dataSourceDisplay);
     }
 
     function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, desciprionObject, dataSourceDisplay, ellipsoid, colorPolygons) {
@@ -717,11 +721,12 @@ define([
         colorPolygons.alpha = 0.3
 
         polygon.hierarchy = Cartesian3.fromRadiansArray(polygonsCoord);
-        polygon.fill = true;
+        polygon.fill = false;
+        polygon.height = 0;
         polygon.show = true;
         polygon.material = colorPolygons;
-        polygon.outlineColor = Color.YELLOW;
-        polygon.outlineWidth = new ConstantProperty(5.0);
+        polygon.outlineColor = Color.BLUE;
+        polygon.outlineWidth = 10.0;
         polygon.outline = new ConstantProperty(true);
 
         var id = createGuid();
@@ -750,7 +755,6 @@ define([
         //  console.log(dataSourceDisplay);
 
     }
-
 
     function generatePolygonsOld2(lngMin, lngMax, latMin, latMax, viewer, polygons, polyLines, ellipsoid, colorPolygons) {
 
@@ -844,6 +848,8 @@ define([
 
         var pointsTab = dataSourceDisplay.defaultDataSource.entities._entities._array;
 
+        //   console.log(pointsTab);
+
         for (var i = 0; i < pointsTab.length; i++) {
 
             var position = pointsTab[i]._position._value;
@@ -864,87 +870,106 @@ define([
 
     }
 
-    function pickingActivation(that, viewer, handlerLeftClick, ellipsoid, billboards, resultContainer) {
+    var previousObject;
+    function pickingActivation(that, viewer, dataSourceDisplay, handlerLeftClick, ellipsoid, billboards, resultContainer) {
+
 
         handlerLeftClick.setInputAction(function (click) {
 
-            var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
-            var pickedObject = viewer.scene.pick(click.position);
+            var clock = new Clock();
+            dataSourceDisplay.update(clock.currentTime);
 
-            if (pickedObject) {
-
-                console.log(pickedObject);
-
-                var longitudeString, latitudeString;
-                var cartesian = viewer.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid);
-
-                if (cartesian) {
-                    var cartographic = Cartographic.fromCartesian(cartesian);
-                    longitudeString = CesiumMath.toDegrees(cartographic.longitude);
-                    latitudeString = CesiumMath.toDegrees(cartographic.latitude);
-                }
-
-                try {
-                    resultContainer.removeChild(that._divRes);
-
-                    that._divRes = document.createElement("div");
-                    that._divRes.className = 'cesium-voData-divRes';
-                    resultContainer.appendChild(that._divRes);
-
-                    var fieldsetRequest = document.createElement('FIELDSET');
-                    that._divRes.appendChild(fieldsetRequest);
-
-                    var legendRequest = document.createElement('LEGEND');
-                    legendRequest.innerHTML = "Plot parameters";
-                    fieldsetRequest.appendChild(legendRequest);
-
-                } catch (e) {
-
-                    that._divRes = document.createElement("div");
-                    that._divRes.className = 'cesium-voData-divRes';
-                    resultContainer.appendChild(that._divRes);
-
-                    var fieldsetRequest = document.createElement('FIELDSET');
-                    that._divRes.appendChild(fieldsetRequest);
-
-                    var legendRequest = document.createElement('LEGEND');
-                    legendRequest.innerHTML = "Plot parameters";
-                    fieldsetRequest.appendChild(legendRequest);
-
-                }
-
-
-
-
-
-
-
-                /*    var canvas = document.createElement("CANVAS");
-                 canvas.className = 'cesium-voData-canvas';  
-                 canvas.id = 'canvasVOId';
-                 
-                 resultContainer.appendChild(canvas);*/
-
-
-
-            }
+            /* var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
+             var pickedObject = viewer.scene.pick(click.position);
+             
+             if (that._previousObject != null) {
+             try {
+             that._previousObject.fill = false;
+             } catch (e) {
+             console.log(e);
+             }
+             }
+             
+             if (pickedObject) {
+             
+             console.log(pickedObject);
+             console.log(that._previousObject);
+             
+             
+             try {
+             if (that._previousObject != null) {
+             that._previousObject.fill = false;
+             var clock = new Clock();
+             dataSourceDisplay.update(clock.currentTime);
+             }
+             } catch (e) {
+             console.log(e);
+             }
+             
+             if (pickedObject.id.polygon) {
+             pickedObject.id.polygon.fill = true;
+             }
+             
+             var longitudeString, latitudeString;
+             var cartesian = viewer.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid);
+             
+             if (cartesian) {
+             var cartographic = Cartographic.fromCartesian(cartesian);
+             longitudeString = CesiumMath.toDegrees(cartographic.longitude);
+             latitudeString = CesiumMath.toDegrees(cartographic.latitude);
+             }
+             
+             /*     try {
+             resultContainer.removeChild(that._divRes);
+             
+             that._divRes = document.createElement("div");
+             that._divRes.className = 'cesium-voData-divRes';
+             resultContainer.appendChild(that._divRes);
+             
+             var fieldsetRequest = document.createElement('FIELDSET');
+             that._divRes.appendChild(fieldsetRequest);
+             
+             var legendRequest = document.createElement('LEGEND');
+             legendRequest.innerHTML = "Plot parameters";
+             fieldsetRequest.appendChild(legendRequest);
+             
+             } catch (e) {
+             
+             that._divRes = document.createElement("div");
+             that._divRes.className = 'cesium-voData-divRes';
+             resultContainer.appendChild(that._divRes);
+             
+             var fieldsetRequest = document.createElement('FIELDSET');
+             that._divRes.appendChild(fieldsetRequest);
+             
+             var legendRequest = document.createElement('LEGEND');
+             legendRequest.innerHTML = "Plot parameters";
+             fieldsetRequest.appendChild(legendRequest);
+             
+             }*\
+             
+             that._previousObject = pickedObject.id.polygon;
+             
+             // update scene
+             
+             console.log(dataSourceDisplay);
+             var clock = new Clock();
+             dataSourceDisplay.update(clock.currentTime);
+             
+             
+             /*    var canvas = document.createElement("CANVAS");
+             canvas.className = 'cesium-voData-canvas';  
+             canvas.id = 'canvasVOId';
+             
+             resultContainer.appendChild(canvas);*\
+             
+             
+             
+             }*/
 
         }, ScreenSpaceEventType.LEFT_CLICK);
+
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /** generate polygons from VO data
@@ -1081,15 +1106,14 @@ define([
         this._query = null;
         this._format = "json";
         this._divRes = null;
-
-        console.log(dimServers, dimData);
+        this._dataSourceDisplay = null;
 
         for (var i = 0; i < dimServers; i++) {
 
             var dim = dimData[i];
 
             for (var j = 0; j < dim; j++) {
-                this['showData_' + i + "_" + j] = knockout.observable(true); // METTRE A FALSE
+                this['showData_' + i + "_" + j] = knockout.observable(false); // METTRE A FALSE
             }
         }
 
@@ -1105,8 +1129,21 @@ define([
 
         this._getDataCommand = createCommand(function () {
 
+            that._previousObject = null;
+
+            console.log(that._dataSourceDisplay);
+            console.log(viewer);
+
+            try {
+                //   that._dataSourceDisplay.destroy();
+                //  that._dataSourceDisplay.dataSourceCollection.removeAll(true);
+            } catch (e) {
+                console.log(e);
+            }
+
             removeHandlers(that);
             that._handlerLeftClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
+            console.log("handler created");
 
             var tabExtension = [];
             var tabServerUrl = [];
@@ -1129,8 +1166,8 @@ define([
             }
 
             var color = [];
-            
-            color.push(new Color(1.0, 0.0, 0.0, 1.0));
+
+            color.push(new Color(1.0, 1.0, 0.0, 1.0));
             color.push(new Color(0.0, 1.0, 0.0, 1.0));
             color.push(new Color(0.0, 0.0, 1.0, 1.0));
             color.push(new Color(1.0, 0.0, 1.0, 1.0));
@@ -1187,6 +1224,12 @@ define([
                 }
             }
         },
+        cleanDataSourceDisplay: {
+            get: function () {
+                this._DataSourceDisplay.destroy();
+            }
+        }
+
     });
 
 
@@ -1197,6 +1240,7 @@ define([
 
         if (that._handlerLeftClick)
             that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        console.log("handler removed");
     }
 
     return VODataViewModel;

@@ -87,6 +87,13 @@
   // border: yellowgreen thick solid;
 }
 
+.cesium-voData-infosServers{
+    width : 100%;
+    height: 100%;
+    vertical-align: middle;
+    text-align: center;
+}
+
 /*
 .cesium-voData-canvas{
     width: 389px;
