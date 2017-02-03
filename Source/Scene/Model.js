@@ -21,13 +21,16 @@ define([
         '../Core/getStringFromTypedArray',
         '../Core/IndexDatatype',
         '../Core/loadArrayBuffer',
+        '../Core/loadCRN',
         '../Core/loadImage',
         '../Core/loadImageFromTypedArray',
+        '../Core/loadKTX',
         '../Core/loadText',
         '../Core/Math',
         '../Core/Matrix2',
         '../Core/Matrix3',
         '../Core/Matrix4',
+        '../Core/PixelFormat',
         '../Core/PrimitiveType',
         '../Core/Quaternion',
         '../Core/Queue',
@@ -84,13 +87,16 @@ define([
         getStringFromTypedArray,
         IndexDatatype,
         loadArrayBuffer,
+        loadCRN,
         loadImage,
         loadImageFromTypedArray,
+        loadKTX,
         loadText,
         CesiumMath,
         Matrix2,
         Matrix3,
         Matrix4,
+        PixelFormat,
         PrimitiveType,
         Quaternion,
         Queue,
@@ -671,8 +677,10 @@ define([
         this._pickIds = [];
 
         // CESIUM_RTC extension
-        this._rtcCenter = undefined;    // in world coordinates
+        this._rtcCenter = undefined;    // reference to either 3D or 2D
         this._rtcCenterEye = undefined; // in eye coordinates
+        this._rtcCenter3D = undefined;  // in world coordinates
+        this._rtcCenter2D = undefined;  // in projected world coordinates
     }
 
     defineProperties(Model.prototype, {
@@ -1392,21 +1400,73 @@ define([
             loadResources.texturesToCreate.enqueue({
                 id : id,
                 image : image,
-                bufferView : undefined
+                bufferView : image.bufferView,
+                width : image.width,
+                height : image.height,
+                internalFormat : image.internalFormat
             });
         };
     }
 
-    function parseTextures(model) {
+    var ktxRegex = /(^data:image\/ktx)|(\.ktx$)/i;
+    var crnRegex = /(^data:image\/crn)|(\.crn$)/i;
+
+    function parseTextures(model, context) {
         var images = model.gltf.images;
         var textures = model.gltf.textures;
         for (var id in textures) {
             if (textures.hasOwnProperty(id)) {
                 var gltfImage = images[textures[id].source];
+                var extras = gltfImage.extras;
+
+                var binary = undefined;
+                var uri = undefined;
+
+                // First check for a compressed texture
+                if (defined(extras) && defined(extras.compressedImage3DTiles)) {
+                    var crunch = extras.compressedImage3DTiles.crunch;
+                    var s3tc = extras.compressedImage3DTiles.s3tc;
+                    var pvrtc = extras.compressedImage3DTiles.pvrtc1;
+                    var etc1 = extras.compressedImage3DTiles.etc1;
+
+                    if (context.s3tc && defined(crunch)) {
+                        if (defined(crunch.extensions)&& defined(crunch.extensions.KHR_binary_glTF)) {
+                            binary = crunch.extensions.KHR_binary_glTF;
+                        } else {
+                            uri = crunch.uri;
+                        }
+                    } else if (context.s3tc && defined(s3tc)) {
+                        if (defined(s3tc.extensions)&& defined(s3tc.extensions.KHR_binary_glTF)) {
+                            binary = s3tc.extensions.KHR_binary_glTF;
+                        } else {
+                            uri = s3tc.uri;
+                        }
+                    } else if (context.pvrtc && defined(pvrtc)) {
+                        if (defined(pvrtc.extensions)&& defined(pvrtc.extensions.KHR_binary_glTF)) {
+                            binary = pvrtc.extensions.KHR_binary_glTF;
+                        } else {
+                            uri = pvrtc.uri;
+                        }
+                    } else if (context.etc1 && defined(etc1)) {
+                        if (defined(etc1.extensions)&& defined(etc1.extensions.KHR_binary_glTF)) {
+                            binary = etc1.extensions.KHR_binary_glTF;
+                        } else {
+                            uri = etc1.uri;
+                        }
+                    }
+                }
+
+                // No compressed texture, so image references either uri (external or base64-encoded) or bufferView
+                if (!defined(binary) && !defined(uri)) {
+                    if (defined(gltfImage.extensions) && defined(gltfImage.extensions.KHR_binary_glTF)) {
+                        binary = gltfImage.extensions.KHR_binary_glTF;
+                    } else {
+                        uri = new Uri(gltfImage.uri);
+                    }
+                }
 
                 // Image references either uri (external or base64-encoded) or bufferView
-                if (defined(gltfImage.extensions) && defined(gltfImage.extensions.KHR_binary_glTF)) {
-                    var binary = gltfImage.extensions.KHR_binary_glTF;
+                if (defined(binary)) {
                     model._loadResources.texturesToCreateFromBufferView.enqueue({
                         id : id,
                         image : undefined,
@@ -1415,9 +1475,16 @@ define([
                     });
                 } else {
                     ++model._loadResources.pendingTextureLoads;
-                    var uri = new Uri(gltfImage.uri);
+                    uri = new Uri(uri);
                     var imagePath = uri.resolve(model._baseUri).toString();
-                    loadImage(imagePath).then(imageLoad(model, id)).otherwise(getFailedLoadFunction(model, 'image', imagePath));
+
+                    if (ktxRegex.test(imagePath)) {
+                        loadKTX(imagePath).then(imageLoad(model, id)).otherwise(getFailedLoadFunction(model, 'image', imagePath));
+                    } else if (crnRegex.test(imagePath)) {
+                        loadCRN(imagePath).then(imageLoad(model, id)).otherwise(getFailedLoadFunction(model, 'image', imagePath));
+                    } else {
+                        loadImage(imagePath).then(imageLoad(model, id)).otherwise(getFailedLoadFunction(model, 'image', imagePath));
+                    }
                 }
             }
         }
@@ -1558,13 +1625,13 @@ define([
         model._runtime.meshesByName = runtimeMeshesByName;
     }
 
-    function parse(model) {
+    function parse(model, context) {
         if (!model._loadRendererResourcesFromCache) {
             parseBuffers(model);
             parseBufferViews(model);
             parseShaders(model);
             parsePrograms(model);
-            parseTextures(model);
+            parseTextures(model, context);
         }
         parseMaterials(model);
         parseMeshes(model);
@@ -1951,12 +2018,20 @@ define([
             var gltf = model.gltf;
             var bufferView = gltf.bufferViews[gltfTexture.bufferView];
 
-            var onload = getOnImageCreatedFromTypedArray(loadResources, gltfTexture);
             var onerror = getFailedLoadFunction(model, 'image', 'id: ' + gltfTexture.id + ', bufferView: ' + gltfTexture.bufferView);
-            loadImageFromTypedArray(loadResources.getBuffer(bufferView), gltfTexture.mimeType).
-                then(onload).otherwise(onerror);
 
-            ++loadResources.pendingBufferViewToImage;
+            if (gltfTexture.mimeType === 'image/ktx') {
+                loadKTX(loadResources.getBuffer(bufferView)).then(imageLoad(model, gltfTexture.id)).otherwise(onerror);
+                ++model._loadResources.pendingTextureLoads;
+            } else if (gltfTexture.mimeType === 'image/crn') {
+                loadCRN(loadResources.getBuffer(bufferView)).then(imageLoad(model, gltfTexture.id)).otherwise(onerror);
+                ++model._loadResources.pendingTextureLoads;
+            } else {
+                var onload = getOnImageCreatedFromTypedArray(loadResources, gltfTexture);
+                loadImageFromTypedArray(loadResources.getBuffer(bufferView), gltfTexture.mimeType)
+                    .then(onload).otherwise(onerror);
+                ++loadResources.pendingBufferViewToImage;
+            }
         }
     }
 
@@ -1990,46 +2065,62 @@ define([
         var rendererSamplers = model._rendererResources.samplers;
         var sampler = rendererSamplers[texture.sampler];
 
+        var internalFormat = gltfTexture.internalFormat;
+
         var mipmap =
-            (sampler.minificationFilter === TextureMinificationFilter.NEAREST_MIPMAP_NEAREST) ||
-            (sampler.minificationFilter === TextureMinificationFilter.NEAREST_MIPMAP_LINEAR) ||
-            (sampler.minificationFilter === TextureMinificationFilter.LINEAR_MIPMAP_NEAREST) ||
-            (sampler.minificationFilter === TextureMinificationFilter.LINEAR_MIPMAP_LINEAR);
+            (!(defined(internalFormat) && PixelFormat.isCompressedFormat(internalFormat))) &&
+            ((sampler.minificationFilter === TextureMinificationFilter.NEAREST_MIPMAP_NEAREST) ||
+             (sampler.minificationFilter === TextureMinificationFilter.NEAREST_MIPMAP_LINEAR) ||
+             (sampler.minificationFilter === TextureMinificationFilter.LINEAR_MIPMAP_NEAREST) ||
+             (sampler.minificationFilter === TextureMinificationFilter.LINEAR_MIPMAP_LINEAR));
         var requiresNpot = mipmap ||
             (sampler.wrapS === TextureWrap.REPEAT) ||
             (sampler.wrapS === TextureWrap.MIRRORED_REPEAT) ||
             (sampler.wrapT === TextureWrap.REPEAT) ||
             (sampler.wrapT === TextureWrap.MIRRORED_REPEAT);
 
-        var source = gltfTexture.image;
-        var npot = !CesiumMath.isPowerOfTwo(source.width) || !CesiumMath.isPowerOfTwo(source.height);
-
-        if (requiresNpot && npot) {
-            // WebGL requires power-of-two texture dimensions for mipmapping and REPEAT/MIRRORED_REPEAT wrap modes.
-            var canvas = document.createElement('canvas');
-            canvas.width = CesiumMath.nextPowerOfTwo(source.width);
-            canvas.height = CesiumMath.nextPowerOfTwo(source.height);
-            var canvasContext = canvas.getContext('2d');
-            canvasContext.drawImage(source, 0, 0, source.width, source.height, 0, 0, canvas.width, canvas.height);
-            source = canvas;
-        }
-
         var tx;
+        var source = gltfTexture.image;
 
-        if (texture.target === WebGLConstants.TEXTURE_2D) {
+        if (defined(internalFormat) && texture.target === WebGLConstants.TEXTURE_2D) {
             tx = new Texture({
                 context : context,
-                source : source,
-                pixelFormat : texture.internalFormat,
-                pixelDatatype : texture.type,
-                sampler : sampler,
-                flipY : false
+                source : {
+                    arrayBufferView : gltfTexture.bufferView
+                },
+                width : gltfTexture.width,
+                height : gltfTexture.height,
+                pixelFormat : internalFormat,
+                sampler : sampler
             });
-        }
-        // GLTF_SPEC: Support TEXTURE_CUBE_MAP.  https://github.com/KhronosGroup/glTF/issues/40
+        } else if (defined(source)) {
+            var npot = !CesiumMath.isPowerOfTwo(source.width) || !CesiumMath.isPowerOfTwo(source.height);
 
-        if (mipmap) {
-            tx.generateMipmap();
+            if (requiresNpot && npot) {
+                // WebGL requires power-of-two texture dimensions for mipmapping and REPEAT/MIRRORED_REPEAT wrap modes.
+                var canvas = document.createElement('canvas');
+                canvas.width = CesiumMath.nextPowerOfTwo(source.width);
+                canvas.height = CesiumMath.nextPowerOfTwo(source.height);
+                var canvasContext = canvas.getContext('2d');
+                canvasContext.drawImage(source, 0, 0, source.width, source.height, 0, 0, canvas.width, canvas.height);
+                source = canvas;
+            }
+
+            if (texture.target === WebGLConstants.TEXTURE_2D) {
+                tx = new Texture({
+                    context : context,
+                    source : source,
+                    pixelFormat : texture.internalFormat,
+                    pixelDatatype : texture.type,
+                    sampler : sampler,
+                    flipY : false
+                });
+            }
+            // GLTF_SPEC: Support TEXTURE_CUBE_MAP.  https://github.com/KhronosGroup/glTF/issues/40
+
+            if (mipmap) {
+                tx.generateMipmap();
+            }
         }
 
         model._rendererResources.textures[gltfTexture.id] = tx;
@@ -2494,10 +2585,13 @@ define([
             // CESIUM_RTC extension
             var mvRtc = new Matrix4();
             return function() {
-                Matrix4.getTranslation(uniformState.model, scratchTranslationRtc);
-                Cartesian3.add(scratchTranslationRtc, model._rtcCenter, scratchTranslationRtc);
-                Matrix4.multiplyByPoint(uniformState.view, scratchTranslationRtc, scratchTranslationRtc);
-                return Matrix4.setTranslation(uniformState.modelView, scratchTranslationRtc, mvRtc);
+                if (defined(model._rtcCenter)) {
+                    Matrix4.getTranslation(uniformState.model, scratchTranslationRtc);
+                    Cartesian3.add(scratchTranslationRtc, model._rtcCenter, scratchTranslationRtc);
+                    Matrix4.multiplyByPoint(uniformState.view, scratchTranslationRtc, scratchTranslationRtc);
+                    return Matrix4.setTranslation(uniformState.modelView, scratchTranslationRtc, mvRtc);
+                }
+                return uniformState.modelView;
             };
         },
         MODELVIEWPROJECTION : function(uniformState, model) {
@@ -3325,6 +3419,7 @@ define([
     }
 
     var scratchNodeStack = [];
+    var scratchComputedTranslation = new Cartesian4();
     var scratchComputedMatrixIn2D = new Matrix4();
 
     function updateNodeHierarchyModelMatrix(model, modelTransformChanged, justLoaded, projection) {
@@ -3338,7 +3433,20 @@ define([
         var computedModelMatrix = model._computedModelMatrix;
 
         if (model._mode !== SceneMode.SCENE3D) {
-            computedModelMatrix = Transforms.basisTo2D(projection, computedModelMatrix, scratchComputedMatrixIn2D);
+            var translation = Matrix4.getColumn(computedModelMatrix, 3, scratchComputedTranslation);
+            if (!Cartesian4.equals(translation, Cartesian4.UNIT_W)) {
+                computedModelMatrix = Transforms.basisTo2D(projection, computedModelMatrix, scratchComputedMatrixIn2D);
+                model._rtcCenter = model._rtcCenter3D;
+            } else {
+                var center = model.boundingSphere.center;
+                var to2D = Transforms.wgs84To2DModelMatrix(projection, center, scratchComputedMatrixIn2D);
+                computedModelMatrix = Matrix4.multiply(to2D, computedModelMatrix, scratchComputedMatrixIn2D);
+
+                if (defined(model._rtcCenter)) {
+                    Matrix4.setTranslation(computedModelMatrix, Cartesian4.UNIT_W, computedModelMatrix);
+                    model._rtcCenter = model._rtcCenter2D;
+                }
+            }
         }
 
         for (var i = 0; i < length; ++i) {
@@ -4091,12 +4199,24 @@ define([
             if (this._state !== ModelState.FAILED) {
                 var extensions = this.gltf.extensions;
                 if (defined(extensions) && defined(extensions.CESIUM_RTC)) {
-                    this._rtcCenter = Cartesian3.fromArray(extensions.CESIUM_RTC.center);
-                    this._rtcCenterEye = new Cartesian3();
+                    var center = Cartesian3.fromArray(extensions.CESIUM_RTC.center);
+                    if (!Cartesian3.equals(center, Cartesian3.ZERO)) {
+                        this._rtcCenter3D = center;
+
+                        var projection = frameState.mapProjection;
+                        var ellipsoid = projection.ellipsoid;
+                        var cartographic = ellipsoid.cartesianToCartographic(this._rtcCenter3D);
+                        var projectedCart = projection.project(cartographic);
+                        Cartesian3.fromElements(projectedCart.z, projectedCart.x, projectedCart.y, projectedCart);
+                        this._rtcCenter2D = projectedCart;
+
+                        this._rtcCenterEye = new Cartesian3();
+                        this._rtcCenter = this._rtcCenter3D;
+                    }
                 }
 
                 this._loadResources = new LoadResources();
-                parse(this);
+                parse(this, context);
             }
         }
 

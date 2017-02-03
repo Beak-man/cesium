@@ -748,34 +748,45 @@ define([
             u_scaleAndBias: function () {
                 return this.properties.scaleAndBias;
             },
+
+            u_dayTextureSplit : function() {
+                return this.properties.dayTextureSplit;
+            },
+
             // make a separate object so that changes to the properties are seen on
             // derived commands that combine another uniform map with this one.
-            properties: {
-                initialColor: new Cartesian4(0.0, 0.0, 0.5, 1.0),
-                zoomedOutOceanSpecularIntensity: 0.5,
-                oceanNormalMap: undefined,
-                lightingFadeDistance: new Cartesian2(6500000.0, 9000000.0),
-                center3D: undefined,
-                rtc: new Cartesian3(),
-                modifiedModelView: new Matrix4(),
-                tileRectangle: new Cartesian4(),
-                dayTextures: [],
-                dayTextureTranslationAndScale: [],
-                dayTextureTexCoordsRectangle: [],
-                dayTextureUseWebMercatorT: [],
-                dayTextureAlpha: [],
-                dayTextureBrightness: [],
-                dayTextureContrast: [],
-                dayTextureHue: [],
-                dayTextureSaturation: [],
-                dayTextureOneOverGamma: [],
-                dayIntensity: 0.0,
-                southAndNorthLatitude: new Cartesian2(),
-                southMercatorYAndOneOverHeight: new Cartesian2(),
-                waterMask: undefined,
-                waterMaskTranslationAndScale: new Cartesian4(),
-                minMaxHeight: new Cartesian2(),
-                scaleAndBias: new Matrix4()
+            properties : {
+                initialColor : new Cartesian4(0.0, 0.0, 0.5, 1.0),
+                zoomedOutOceanSpecularIntensity : 0.5,
+                oceanNormalMap : undefined,
+                lightingFadeDistance : new Cartesian2(6500000.0, 9000000.0),
+
+                center3D : undefined,
+                rtc : new Cartesian3(),
+                modifiedModelView : new Matrix4(),
+                tileRectangle : new Cartesian4(),
+
+                dayTextures : [],
+                dayTextureTranslationAndScale : [],
+                dayTextureTexCoordsRectangle : [],
+                dayTextureUseWebMercatorT : [],
+                dayTextureAlpha : [],
+                dayTextureBrightness : [],
+                dayTextureContrast : [],
+                dayTextureHue : [],
+                dayTextureSaturation : [],
+                dayTextureOneOverGamma : [],
+                dayTextureSplit : [],
+                dayIntensity : 0.0,
+
+                southAndNorthLatitude : new Cartesian2(),
+                southMercatorYAndOneOverHeight : new Cartesian2(),
+
+                waterMask : undefined,
+                waterMaskTranslationAndScale : new Cartesian4(),
+
+                minMaxHeight : new Cartesian2(),
+                scaleAndBias : new Matrix4()
             }
         };
 
@@ -1065,6 +1076,7 @@ define([
             var applySaturation = false;
             var applyGamma = false;
             var applyAlpha = false;
+            var applySplit = false;
 
             while (numberOfDayTextures < maxTextures && imageryIndex < imageryLen) {
                 var tileImagery = tileImageryCollection[imageryIndex];
@@ -1122,6 +1134,9 @@ define([
                 uniformMapProperties.dayTextureOneOverGamma[numberOfDayTextures] = 1.0 / imageryLayer.gamma;
                 applyGamma = applyGamma || uniformMapProperties.dayTextureOneOverGamma[numberOfDayTextures] !== 1.0 / ImageryLayer.DEFAULT_GAMMA;
 
+                uniformMapProperties.dayTextureSplit[numberOfDayTextures] = imageryLayer.splitDirection;
+                applySplit = applySplit || uniformMapProperties.dayTextureSplit[numberOfDayTextures] !== 0.0;
+
                 if (defined(imagery.credits)) {
                     var creditDisplay = frameState.creditDisplay;
                     var credits = imagery.credits;
@@ -1143,7 +1158,7 @@ define([
             uniformMapProperties.minMaxHeight.y = encoding.maximumHeight;
             Matrix4.clone(encoding.matrix, uniformMapProperties.scaleAndBias);
 
-            command.shaderProgram = tileProvider._surfaceShaderSet.getShaderProgram(frameState, surfaceTile, numberOfDayTextures, applyBrightness, applyContrast, applyHue, applySaturation, applyGamma, applyAlpha, showReflectiveOcean, showOceanWaves, tileProvider.enableLighting, hasVertexNormals, useWebMercatorProjection, applyFog);
+            command.shaderProgram = tileProvider._surfaceShaderSet.getShaderProgram(frameState, surfaceTile, numberOfDayTextures, applyBrightness, applyContrast, applyHue, applySaturation, applyGamma, applyAlpha, applySplit, showReflectiveOcean, showOceanWaves, tileProvider.enableLighting, hasVertexNormals, useWebMercatorProjection, applyFog);
             command.castShadows = castShadows;
             command.receiveShadows = receiveShadows;
             command.renderState = renderState;

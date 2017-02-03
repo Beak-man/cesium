@@ -42,6 +42,7 @@ define([
         './Camera',
         './CreditDisplay',
         './CullingVolume',
+        './DebugCameraPrimitive',
         './DepthPlane',
         './DeviceOrientationCameraController',
         './Fog',
@@ -109,6 +110,7 @@ define([
         Camera,
         CreditDisplay,
         CullingVolume,
+        DebugCameraPrimitive,
         DepthPlane,
         DeviceOrientationCameraController,
         Fog,
@@ -516,6 +518,20 @@ define([
          * @default 1
          */
         this.debugShowDepthFrustum = 1;
+
+        /**
+         * This property is for debugging only; it is not for production use.
+         * <p>
+         * When <code>true</code>, draws outlines to show the boundaries of the camera frustums
+         * </p>
+         *
+         * @type Boolean
+         *
+         * @default false
+         */
+        this.debugShowFrustumPlanes = false;
+        this._debugShowFrustumPlanes = false;
+        this._debugFrustumPlanes = undefined;
 
         /**
          * When <code>true</code>, enables Fast Approximate Anti-aliasing even when order independent translucency
@@ -1053,8 +1069,36 @@ define([
             get: function () {
                 return this._mapMode2D;
             }
+        },
+
+         /**
+         * Gets or sets the position of the Imagery splitter within the viewport.  Valid values are between 0.0 and 1.0.
+         * @memberof Scene.prototype
+         *
+         * @type {Number}
+         */
+        imagerySplitPosition : {
+            get: function() {
+                return this._frameState.imagerySplitPosition;
+            },
+
+            set: function(value) {
+                this._frameState.imagerySplitPosition = value;
+            }
         }
     });
+
+    /**
+     * Determines if a compressed texture format is supported.
+     * @param {String} format The texture format. May be the name of the format or the WebGL extension name, e.g. s3tc or WEBGL_compressed_texture_s3tc.
+     * @return {boolean} Whether or not the format is supported.
+     */
+    Scene.prototype.getCompressedTextureFormatSupported = function(format) {
+        var context = this.context;
+        return ((format === 'WEBGL_compressed_texture_s3tc' || format === 's3tc') && context.s3tc) ||
+               ((format === 'WEBGL_compressed_texture_pvrtc' || format === 'pvrtc') && context.pvrtc) ||
+               ((format === 'WEBGL_compressed_texture_etc1' || format === 'etc1') && context.etc1);
+    };
 
     var scratchPosition0 = new Cartesian3();
     var scratchPosition1 = new Cartesian3();
@@ -1392,6 +1436,15 @@ define([
                 (near < frustumCommandsList[0].near || far > frustumCommandsList[numberOfFrustums - 1].far)))) {
             updateFrustums(near, far, farToNearRatio, numFrustums, frustumCommandsList, is2D, scene.nearToFarDistance2D);
             createPotentiallyVisibleSet(scene);
+        }
+
+        var frustumSplits = frameState.frustumSplits;
+        frustumSplits.length = numFrustums + 1;
+        for (var j = 0; j < numFrustums; ++j) {
+            frustumSplits[j] = frustumCommandsList[j].near;
+            if (j === numFrustums - 1) {
+                frustumSplits[j + 1] = frustumCommandsList[j].far;
+            }
         }
     }
 
@@ -2156,6 +2209,25 @@ define([
         }
     }
 
+    function updateDebugFrustumPlanes(scene) {
+        var frameState = scene._frameState;
+        if (scene.debugShowFrustumPlanes !== scene._debugShowFrustumPlanes) {
+            if (scene.debugShowFrustumPlanes) {
+                scene._debugFrustumPlanes = new DebugCameraPrimitive({
+                    camera: scene.camera,
+                    updateOnChange: false
+                });
+            } else {
+                scene._debugFrustumPlanes = scene._debugFrustumPlanes && scene._debugFrustumPlanes.destroy();
+            }
+            scene._debugShowFrustumPlanes = scene.debugShowFrustumPlanes;
+        }
+
+        if (defined(scene._debugFrustumPlanes)) {
+            scene._debugFrustumPlanes.update(frameState);
+        } 
+    }
+
     function updateShadowMaps(scene) {
         var frameState = scene._frameState;
         var shadowMaps = frameState.shadowMaps;
@@ -2207,6 +2279,7 @@ define([
         scene._groundPrimitives.update(frameState);
         scene._primitives.update(frameState);
 
+        updateDebugFrustumPlanes(scene);
         updateShadowMaps(scene);
 
         if (scene._globe) {
@@ -2862,6 +2935,7 @@ define([
         this._sunPostProcess = this._sunPostProcess && this._sunPostProcess.destroy();
         this._depthPlane = this._depthPlane && this._depthPlane.destroy();
         this._transitioner.destroy();
+        this._debugFrustumPlanes = this._debugFrustumPlanes && this._debugFrustumPlanes.destroy();
 
         if (defined(this._globeDepth)) {
             this._globeDepth.destroy();
