@@ -57,6 +57,7 @@ if (buildingRelease) {
 }
 
 var sourceFiles = ['Source/**/*.js',
+                   'Source/**/*.json',
                    '!Source/*.js',
                    '!Source/Workers/**',
                    '!Source/ThirdParty/Workers/**',
@@ -137,6 +138,9 @@ gulp.task('clean', function(done) {
 });
 
 gulp.task('requirejs', function(done) {
+    console.log(process.argv[3]);
+     console.log(process.argv[3].substring(2));
+    
     var config = JSON.parse(new Buffer(process.argv[3].substring(2), 'base64').toString('utf8'));
     requirejs.optimize(config, function() {
         done();
@@ -1214,7 +1218,7 @@ function buildCesiumViewer() {
             pragmas : {
                 debug : false
             },
-            cssIn : 'Apps/CesiumViewer/PlanetaryCesiumViewer.css',
+            cssIn : 'Apps/CesiumViewer/CesiumViewer.css',
             out : cesiumViewerCss
         })
     );
