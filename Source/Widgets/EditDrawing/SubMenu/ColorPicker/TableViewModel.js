@@ -111,7 +111,7 @@ define([
                     color: this._selectedColor,
                     normalizedColor: this._colorObjectN,
                     property: colorProperty
-                }
+                };
                 return returnObject;
                 
                 } else {
@@ -120,7 +120,7 @@ define([
                     
                 }
             }
-        },
+        }
     });
 
     return TableViewModel;

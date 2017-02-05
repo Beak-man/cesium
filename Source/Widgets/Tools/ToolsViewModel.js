@@ -252,7 +252,7 @@ define([
 
             return cursor;
         }
-        ;
+        
 
     }
 

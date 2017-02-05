@@ -172,14 +172,14 @@ define([
         var that = this;
         createUI(viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, that, isWidgetVisible);
 
-    }
+    };
 
     defineProperties(ShowSystems.prototype, {
         viewModel: {
             get: function () {
                 return this._viewModel;
             }
-        },
+        }
     });
 
     return ShowSystems;

@@ -109,7 +109,7 @@ define([
             top: legendContainerTop,
             middle: legendContainerMiddle,
             bottom: legendContainerBottom
-        }
+        };
 
         /* ======================= Menu bar buttons ============================ */
 
@@ -358,7 +358,7 @@ define([
             get: function () {
                 return this._flagCounter;
             }
-        },
+        }
         
     });
    

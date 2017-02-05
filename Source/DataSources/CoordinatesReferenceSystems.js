@@ -6,6 +6,7 @@ define(['../Core/Cartesian3',
         Cartesian3,
         Ellipsoid,
         queryToObject) {
+    'use strict';
 
 
     // we define two "crsFunction" functions : One for the default case  ==> defaultCrsFunction	
@@ -40,18 +41,21 @@ define(['../Core/Cartesian3',
 
         } else if (naifCodes) {
 
+         var SRS;
+         var codeIAU;
+
             var naifCode = {
                 planet: parseInt(naifCodes[0]),
                 satellite: parseInt(naifCodes[1])
-            }
+            };
 
             if (naifCode.satellite === 0) {
-                var codeIAU = (naifCode.planet * 100 + 99) * 100;
-                var SRS = 'IAU2000:' + codeIAU;
+                codeIAU = (naifCode.planet * 100 + 99) * 100;
+                SRS = 'IAU2000:' + codeIAU;
 
             } else if (naifCode.satellite !== 0) {
-                var codeIAU = (naifCode.planet * 100 + naifCode.satellite) * 100;
-                var SRS = 'IAU2000:' + codeIAU;
+                codeIAU = (naifCode.planet * 100 + naifCode.satellite) * 100;
+                SRS = 'IAU2000:' + codeIAU;
             }
 
             crsNames[SRS] = CustomizedCrsFunction;
@@ -71,7 +75,7 @@ define(['../Core/Cartesian3',
          */
 
 
-    }
+    };
     return CoordinatesReferenceSystems;
 
 });

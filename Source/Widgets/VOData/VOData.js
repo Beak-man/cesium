@@ -282,7 +282,7 @@ define([
             lngMax: lngMaxInput,
             latMin: latMinInput,
             latMax: latMaxInput
-        }
+        };
 
         var viewModel = new VODataViewModel(viewer, planetName, configContainer, listContainer, btnContainer, resultContainer, inputObjects, server.length, numberOfFilesToRequestPerServer, inputTab);
 
@@ -327,7 +327,7 @@ define([
                     return false;
                 }
             }
-        },
+        }
     });
 
     return VOData;

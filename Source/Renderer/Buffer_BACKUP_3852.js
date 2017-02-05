@@ -1,16 +1,5 @@
 /*global define*/
 define([
-<<<<<<< HEAD
-    '../Core/defaultValue',
-    '../Core/defined',
-    '../Core/defineProperties',
-    '../Core/destroyObject',
-    '../Core/DeveloperError',
-    '../Core/IndexDatatype',
-    './BufferUsage',
-    './WebGLConstants'
-], function (
-=======
         '../Core/defaultValue',
         '../Core/defined',
         '../Core/defineProperties',
@@ -20,7 +9,6 @@ define([
         '../Core/WebGLConstants',
         './BufferUsage'
     ], function(
->>>>>>> master
         defaultValue,
         defined,
         defineProperties,
@@ -141,8 +129,6 @@ define([
             throw new DeveloperError('options.context is required.');
         }
         //>>includeEnd('debug');
-
-        console.log
 
         return new Buffer({
             context: options.context,

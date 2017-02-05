@@ -145,7 +145,7 @@ define([
                 propertyName: that._propertyNameContainer.value,
                 propertyValue: that._propertyValueContainer.value,
                 color: that._selectedColor
-            }
+            };
 
             console.log(that._viewer.colorAssignation);
             that._assignPropertyToColorContainer.style.visibility = "hidden";
@@ -338,6 +338,7 @@ define([
         this._tableViewModel = new TableViewModel(this, this._viewer);
 
         if (!this._viewer.colorAssignation) {
+            
             this._viewer.colorAssignation = {};
         } else if (this._viewer.colorAssignation) {
             buildLegend(this);
@@ -367,7 +368,7 @@ define([
 
         this._movePanelCommand = createCommand(function () {
             removeHandlers(that);
-            movePanel(that, that._legendObject.container, viewer)
+            movePanel(that, that._legendObject.container, viewer);
         });
 
         this._readConfigFileCommand = createCommand(function (d, e) {
@@ -486,7 +487,7 @@ define([
                 if (this._handlerMove)
                     this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
             }
-        },
+        }
     });
 
     function getPosition(e) {

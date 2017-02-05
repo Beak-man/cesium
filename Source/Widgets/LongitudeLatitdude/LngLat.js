@@ -57,7 +57,7 @@ define([
                 container.appendChild(element);
 
                 knockout.applyBindings(viewModel, element);
-            }
+            };
 
             defineProperties(LngLat.prototype, {
                 /**
@@ -81,7 +81,7 @@ define([
                     get: function () {
                         return this._viewModel;
                     }
-                },
+                }
             });
 
 

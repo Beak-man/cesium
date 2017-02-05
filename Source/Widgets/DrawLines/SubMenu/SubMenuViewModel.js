@@ -27,7 +27,7 @@ define([
     '../../../Scene/PrimitiveCollection',
     '../../../Core/ScreenSpaceEventHandler',
     '../../../Core/ScreenSpaceEventType',
-    '../../../Scene/VerticalOrigin',
+    '../../../Scene/VerticalOrigin'
 ], function (
         CesiumMath,
         Cartesian3,
@@ -314,7 +314,7 @@ define([
                     x: beforeLastpolylineLabel._position.x,
                     y: beforeLastpolylineLabel._position.y,
                     z: beforeLastpolylineLabel._position.z
-                }
+                };
 
                 // create the label for the total distance
 
@@ -409,7 +409,7 @@ define([
 
                     //  console.log(polyLines);
 
-                } else if (dimPoly == 1) {
+                } else if (dimPoly === 1) {
 
                     var polyline = polyLines._polylines[dimPoly - 1];
                     var polylineLabel = polyLinesLabels._labels[dimLabel - 1];
@@ -422,7 +422,7 @@ define([
 
                     arrayRadians = [];
 
-                } else if (dimPoly == 0) {
+                } else if (dimPoly === 0) {
 
                     arrayRadians = [];
 
@@ -559,7 +559,7 @@ define([
                     });
 
                     circleCollection.remove(newPrim);
-                    circleCollection.add(newPrimFill)
+                    circleCollection.add(newPrimFill);
 
                 }, ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
@@ -595,7 +595,7 @@ define([
                                 }
                                 continueWhile = false;
                             } else {
-                                if (dim == 0) {
+                                if (dim === 0) {
                                     continueWhile = false;
                                 }
                                 else {
@@ -836,17 +836,17 @@ define([
                     try {
                         polyLinesTmps.removeAll();
                     } catch (e) {
-                        console.log(e)
+                        console.log(e);
                     }
                     try {
                         polyLinesLabelsTmps.removeAll();
                     } catch (e) {
-                        console.log(e)
+                        console.log(e);
                     }
 
                     arrayRadians = [];
 
-                } else if (dimPolyLines == 0) {
+                } else if (dimPolyLines === 0) {
 
                     var dim = circleCollection._primitives.length;
                     var dimLabel = circlesLabels._labels.length;
@@ -871,7 +871,7 @@ define([
                                     }
                                     continueWhile = false;
                                 } else {
-                                    if (dim == 0) {
+                                    if (dim === 0) {
                                         continueWhile = false;
                                     }
                                     else {
@@ -950,11 +950,11 @@ define([
             selectedLine1 = 0;
         }
 
-        if (selectedLine2 > 2 && indexI != 2) {
+        if (selectedLine2 > 2 && indexI !== 2) {
             selectedLine2 = 0;
         }
 
-        if (selectedLine2 > 2 && indexI == 2) {
+        if (selectedLine2 > 2 && indexI === 2) {
             selectedLine2 = indexI - 1;
         }
 
@@ -1249,12 +1249,12 @@ define([
                     try {
                         polyLinesTmps.removeAll();
                     } catch (e) {
-                        console.log(e)
+                        console.log(e);
                     }
                     try {
                         polyLinesLabelsTmps.removeAll();
                     } catch (e) {
-                        console.log(e)
+                        console.log(e);
                     }
 
                     arrayRadians = [];
@@ -1285,7 +1285,7 @@ define([
                                     }
                                     continueWhile = false;
                                 } else {
-                                    if (dim == 0) {
+                                    if (dim === 0) {
                                         continueWhile = false;
                                     }
                                     else {
@@ -1503,7 +1503,7 @@ define([
                             geometry: PolygonGeometry.fromPositions({
                                 positions: polygonsCoordDegree,
                                 vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT,
-                                ellipsoid: ellipsoid, }),
+                                ellipsoid: ellipsoid }),
                             attributes: {
                                 color: ColorGeometryInstanceAttribute.fromColor(new Color(0.0, 0.0, 1.0, 0.3))
                             }
@@ -1612,7 +1612,7 @@ define([
                     style: LabelStyle.FILL,
                     horizontalOrigin: HorizontalOrigin.CENTER,
                     verticalOrigin: VerticalOrigin.TOP,
-                    translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0),
+                    translucencyByDistance: new NearFarScalar(8.0e6, 1.0, 8.0e7, 0.0)
                 };
 
                 polyLinesLabelsTmPolygons.add(finalLabelPolyline);
@@ -1663,7 +1663,7 @@ define([
                         geometry: PolygonGeometry.fromPositions({
                             positions: polygonsCoordDegree,
                             vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT,
-                            ellipsoid: ellipsoid, }),
+                            ellipsoid: ellipsoid }),
                         attributes: {
                             color: ColorGeometryInstanceAttribute.fromColor(new Color(0.0, 0.0, 1.0, 0.3))
                         }
@@ -1681,7 +1681,7 @@ define([
 
                     oldPolygons = newPolygon;
 
-                } else if (dim == 1) {
+                } else if (dim === 1) {
 
                     console.log("dim == 1");
 
@@ -1695,7 +1695,7 @@ define([
 
                     coordLinesForPolygonsRadians = [];
 
-                } else if (dim == 0) {
+                } else if (dim === 0) {
 
                     console.log("dim == 0");
 
@@ -1714,7 +1714,7 @@ define([
         polygon: createPolygonGeoJsonObect,
         point: createPointGeoJsonObect,
         polyline: createPolylineGeoJsonObect
-    }
+    };
 
     function createEllipseGeoJsonObect(that, geoJsonDataSource) {
 
@@ -1766,7 +1766,7 @@ define([
         featurePolygons.geometry = geoJsonPolygons;
         featurePolygons.properties = {
             Name: "Polygons"
-        }
+        };
 
         return featurePolygons;
     }
@@ -1904,7 +1904,7 @@ define([
                         featurePolylines.properties = {
                             Name: "Line",
                             Total_distance: totalLengthPath
-                        }
+                        };
                     }
 
                     // push in the final object
@@ -2000,7 +2000,7 @@ define([
                         var lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
                         var lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
 
-                        if (j == 0) { 
+                        if (j === 0) { 
 
                             var firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
                             var firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
@@ -2020,8 +2020,8 @@ define([
                     geoJsonPolygons.coordinates.push(polygonsPoints);
                     featurePolygons.geometry = geoJsonPolygons;
                     featurePolygons.properties = {
-                        Name: "Polygons",
-                    }
+                        Name: "Polygons"
+                    };
 
                     geoJsonObject.features.push(featurePolygons);
                 }
@@ -2117,7 +2117,7 @@ define([
                     that._linkDownload.parentElement.removeChild(that._linkDownload);
                     that._wrapperSaveSubMenu.parentElement.removeChild(that._wrapperSaveSubMenu);
                 } catch (e) {
-                    console.log(e)
+                    console.log(e);
                 }
 
                 that._isSaveButtonActivate = false;
@@ -2378,7 +2378,7 @@ define([
 
                 //   collectionsInitialization(this);
             }
-        },
+        }
     });
 
 // ================================================================================================================================

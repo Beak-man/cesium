@@ -1,6 +1,6 @@
 /*global define*/
 define(['./freezeObject', './Math'], function (freezeObject, CesiumMath) {
-
+'use strict';
     var EllipsoidType = function (Ellipsoid, endUserOptions) {
 
         if (typeof endUserOptions === 'undefined') {
@@ -58,7 +58,7 @@ define(['./freezeObject', './Math'], function (freezeObject, CesiumMath) {
                             x: parseFloat(dimensionSizeTab[0]),
                             y: parseFloat(dimensionSizeTab[1]),
                             z: parseFloat(dimensionSizeTab[2])
-                        }
+                        };
 
                         /**
                          * An Ellipsoid instance initialized with customized radii.
@@ -72,31 +72,31 @@ define(['./freezeObject', './Math'], function (freezeObject, CesiumMath) {
 
                 // A NETTOYER
 
-                if (endUserOptions.ellipsoidType.toString().toUpperCase() == 'WGS84' || endUserOptions.ellipsoidType.toString().toUpperCase() == 'EARTHIAU2000') {
+                if (endUserOptions.ellipsoidType.toString().toUpperCase() === 'WGS84' || endUserOptions.ellipsoidType.toString().toUpperCase() === 'EARTHIAU2000') {
                     Ellipsoid.WGS84 = freezeObject(new Ellipsoid(6378137.0, 6378137.0, 6356752.3142451793));
                     //Ellipsoid.WGS84 = freezeObject(new Ellipsoid(3396190.0, 3396190.0, 3376200.0));
 
                     Ellipsoid.EARTHIAU2000 = freezeObject(new Ellipsoid(6378137.0, 6378137.0, 6356752.3142451793));
 
-                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() == 'JUPITERIAU2000') {
+                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() === 'JUPITERIAU2000') {
                     Ellipsoid.JUPITERIAU2000 = freezeObject(new Ellipsoid(71492000.0, 71492000.0, 66864000.0));
 
-                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() == 'VENUSIAU2000') {
+                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() === 'VENUSIAU2000') {
                     Ellipsoid.VENUSIAU2000 = freezeObject(new Ellipsoid(6051000.8, 6051000.8, 6051000.8));
 
-                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() == 'MARSIAU2000') {
+                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() === 'MARSIAU2000') {
                     Ellipsoid.MARSIAU2000 = freezeObject(new Ellipsoid(3396190.0, 3396190.0, 3376200.0));
 
-                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() == 'MERCURYIAU2000') {
+                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() === 'MERCURYIAU2000') {
                     Ellipsoid.MERCURYIAU2000 = freezeObject(new Ellipsoid(2497000.0, 2497000.0, 2497000.0));
 
-                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() == 'SATURNIAU2000') {
+                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() === 'SATURNIAU2000') {
                     Ellipsoid.SATURNIAU2000 = freezeObject(new Ellipsoid(60268000.0, 60268000., 54359000.0));
 
-                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() == 'URANUSIAU2000') {
+                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() === 'URANUSIAU2000') {
                     Ellipsoid.URANUSIAU2000 = freezeObject(new Ellipsoid(25559000.0, 25559000.0, 23562000.0));
 
-                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() == 'NEPTUNEIAU2000') {
+                } else if (endUserOptions.ellipsoidType.toString().toUpperCase() === 'NEPTUNEIAU2000') {
                     Ellipsoid.NEPTUNEIAU2000 = freezeObject(new Ellipsoid(24764000.0, 24764000.0, 24341000.0));
 
                 } else {
@@ -108,7 +108,7 @@ define(['./freezeObject', './Math'], function (freezeObject, CesiumMath) {
 
         }
         ;
-    }
+    };
 
     return EllipsoidType;
 

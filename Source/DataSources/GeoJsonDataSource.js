@@ -424,7 +424,7 @@ define([
             var countObject = {
                 flagged: flaggedCounter,
                 total: counter
-            }
+            };
 
             try {
                 GeoJsonDataSource._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.flagCounter.viewModel.counterUpdateOnLoad = countObject;
@@ -498,8 +498,8 @@ define([
                 });
 
                 dataSource._promises.push(promise);
-            })) 
-        }
+            })); 
+        };
     }
 
 
@@ -739,7 +739,7 @@ define([
         this._pinBuilder = new PinBuilder();
         this._ellipsoid = null;
         this._entityCluster = new EntityCluster();
-    }
+    };
 
     /**
      * Creates a Promise to a new instance loaded with the provided GeoJSON or TopoJSON data.

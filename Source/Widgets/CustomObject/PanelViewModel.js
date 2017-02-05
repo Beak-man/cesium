@@ -28,7 +28,7 @@ define([
                 knockout,
                 createCommand,
                 WebMapServiceImageryProvider) {
-            'use strict'
+            'use strict';
 
 
             function testInputValues(inputField) {
@@ -39,7 +39,7 @@ define([
 
                     console.log("pas que des chiffres");
                     alert("Please, enter a NUMBER type value for the " + inputField.name.toUpperCase() + " axis");
-                    return false
+                    return false;
                 }
             }
 
@@ -55,8 +55,8 @@ define([
                         x: parseFloat(that._elementsForAxis.x.value),
                         y: parseFloat(that._elementsForAxis.y.value),
                         z: parseFloat(that._elementsForAxis.z.value)
-                    }
-
+                    };
+                    
                     that._ellipsoid = freezeObject(new Ellipsoid(axisParameters.x, axisParameters.y, axisParameters.z));
                     Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // A MODIFIER 
                     
@@ -178,7 +178,7 @@ define([
                         urlLayer: data.layerUrl,
                         layer: data.layer,
                         object: that._planet
-                    }
+                    };
 
                     var imageryProvider = new WebMapServiceImageryProvider({
                         url: data.layerUrl,
@@ -204,7 +204,7 @@ define([
                 //   xhr.send();
 
                 xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
+                    if (xhr.readyState === 4 && xhr.status === 200 || xhr.status === 0) {
 
                         var data = xhr.responseXML;
                         try {
@@ -219,7 +219,7 @@ define([
                             var layers = capability[0].getElementsByTagName("Layer");
 
                             var names = [];
-                            var title = []
+                            var title = [];
                             var abstract = [];
                             var layerName = [];
                             var layer = [];
@@ -236,7 +236,7 @@ define([
                                 try {
                                     abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
                                 } catch (e) {
-                                    abstract[i] = "abstract unavailable"
+                                    abstract[i] = "abstract unavailable";
                                 }
 
                                 crs = layers[0].getElementsByTagName("CRS")[0].textContent;
@@ -247,8 +247,8 @@ define([
                                 var finalLayerName = '';
 
                                 for (var j = 0; j < nameLowCaseTab.length; j++) {
-                                    if (j == 0) {
-                                        var MajName = nameLowCaseTab[j].replace(nameLowCaseTab[j].charAt(0), nameLowCaseTab[j].charAt(0).toUpperCase())
+                                    if (j === 0) {
+                                        var MajName = nameLowCaseTab[j].replace(nameLowCaseTab[j].charAt(0), nameLowCaseTab[j].charAt(0).toUpperCase());
                                         finalLayerName += MajName + ' ';
 
                                     } else {
@@ -265,7 +265,7 @@ define([
                                     layerName: finalLayerName,
                                     layerUrl: finalUrl,
                                     layer: layer[i]
-                                }
+                                };
 
                                 that.availableLayers.push(infosLayers);
                             }
@@ -274,10 +274,10 @@ define([
                             //  console.log(e);
                         }
 
-                    } else if (xhr.readyState == 4 && xhr.status == 404) {
+                    } else if (xhr.readyState === 4 && xhr.status === 404) {
                         console.log("Oh no, it does not exist!");
                     }
-                }
+                };
                 xhr.send();
             }
 
@@ -304,7 +304,7 @@ define([
                     var configuration = {
                         layers: that._layersArray,
                         objectName: configName
-                    }
+                    };
 
                     viewer.customObject.viewModel.setAvailableObjects = configuration;
 
@@ -320,7 +320,7 @@ define([
                     
                      that.availableLayers.removeAll();
 
-                } else if (addedLayerObject().length == 0) {
+                } else if (addedLayerObject().length === 0) {
                     alert("Please, select at least ONE layer.");
                 }
 
@@ -424,7 +424,7 @@ define([
                     get: function () {
                         return this._loadCommand;
                     }
-                },
+                }
             });
 
 

@@ -26,7 +26,7 @@ define([
                 ScreenSpaceEventType,
                 knockout,
                 createCommand) {
-            "use strict"
+            "use strict";
 
             function initialization(that) {
 

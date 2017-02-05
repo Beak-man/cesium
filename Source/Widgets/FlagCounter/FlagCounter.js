@@ -18,7 +18,7 @@ define([
 		c0.065-0.059,0.126-0.12,0.185-0.185l0.001-0.001v0c0.431-0.476,0.7-1.1,0.7-1.792C85.645,48.972,85.169,48.153,84.448,47.672z\
 		 M49.912,67.567c-9.702,0-17.567-7.865-17.567-17.567c0-9.701,7.865-17.566,17.567-17.566c9.702,0,17.568,7.865,17.568,17.566\
 		C67.48,59.702,59.614,67.567,49.912,67.567z"/>\
-	        <circle cx="49.99" cy="50.077" r="8.512"/></g>'
+	        <circle cx="49.99" cy="50.077" r="8.512"/></g>';
 
 
     /**
@@ -75,7 +75,7 @@ define([
         var flyButton = document.createElement('div');
         flyButton.className = 'cesium-button cesium-toolbar-button';
         flyButton.innerHTML = '<svg width="35" height="35" viewBox="10 10 100 100">' + eyeIcon + ' </svg>';
-        ;
+        
         flyButton.setAttribute('data-bind', 'attr  : { title: "See unflagged entity" }, event : {click : flyCommand}');
         buttonContainer.appendChild(flyButton);
 

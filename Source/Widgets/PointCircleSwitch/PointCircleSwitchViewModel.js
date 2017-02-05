@@ -10,7 +10,7 @@ define([
         ) {
     "use strict";
 
-    function  Initialize(that) {
+    function  initialize(that) {
 
         var dataSources = that._viewer.dataSources;
 
@@ -50,7 +50,7 @@ define([
         var that = this;
         this._switchCommand = createCommand(function () {
              that.isSwitchActive = !that.isSwitchActive;
-            Initialize(that);
+            initialize(that);
         });
 
         knockout.track(this, ['isPanelToolVisibleSwitch', 'isSwitchActive']);

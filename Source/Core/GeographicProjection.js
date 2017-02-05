@@ -64,7 +64,7 @@ define([
 
             set: function (ellipsoid) {
                 this._ellipsoid = ellipsoid;
-            },
+            }
             /* *********************************************************************************************************** */
         }
     });
@@ -93,39 +93,40 @@ define([
 
         //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
 
-        
-      /*   
+
+         
          var x = cartographic.longitude * semimajorAxis;
          var y = cartographic.latitude * semimajorAxis;
          var z = cartographic.height;
          
-         */
+        
 
         //  ==================== Projection Sinusoidale ===============================
 
-        
-        var phi = cartographic.longitude;
+
+    /*    var phi = cartographic.longitude;
         var theta = cartographic.latitude;
 
-          var x = ((phi * Math.cos(theta))) / (2.0 * Math.PI);
-         var y = (theta / (Math.PI));
-         var z = cartographic.height;
-         
-         x = x * semimajorAxis;
-         y = y * semimajorAxis;
-         
-
-        // ===================== Projection stereographique ======================
-
-      /*  var argum = (Math.PI / 2.0 - theta) / 2.0;
-        var Rtheta = Math.tan(argum);
-
-        var x = Rtheta * Math.sin(phi) / 2;
-        var y = -Rtheta * Math.cos(phi) / 2;
+        var x = ((phi * Math.cos(theta))) / (2.0 * Math.PI);
+        var y = (theta / (Math.PI));
         var z = cartographic.height;
 
         x = x * semimajorAxis;
-        y = y * semimajorAxis;*/
+        y = y * semimajorAxis;
+        */
+
+
+        // ===================== Projection stereographique ======================
+
+        /*  var argum = (Math.PI / 2.0 - theta) / 2.0;
+         var Rtheta = Math.tan(argum);
+         
+         var x = Rtheta * Math.sin(phi) / 2;
+         var y = -Rtheta * Math.cos(phi) / 2;
+         var z = cartographic.height;
+         
+         x = x * semimajorAxis;
+         y = y * semimajorAxis;*/
 
         if (!defined(result)) {
             return new Cartesian3(x, y, z);
@@ -164,29 +165,29 @@ define([
 
         //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
 
-        /*
-          var longitude = cartesian.x * oneOverSemimajorAxis;
-         var latitude = cartesian.y * oneOverSemimajorAxis;
-         var height = cartesian.z;
-        */
+
+        var longitude = cartesian.x * oneOverSemimajorAxis;
+        var latitude = cartesian.y * oneOverSemimajorAxis;
+        var height = cartesian.z;
+
 
         //  ====================================================================
 
 
         // ==========================Sinusoidale ==============================
 
-        var longitude = ((cartesian.x * 2.0 * Math.PI)) / (Math.cos(cartesian.y)) * oneOverSemimajorAxis;
-        var latitude = cartesian.y * Math.PI * oneOverSemimajorAxis;
-        var height = cartesian.z;
-        
+        //   var longitude = ((cartesian.x * 2.0 * Math.PI)) / (Math.cos(cartesian.y)) * oneOverSemimajorAxis;
+        //   var latitude = cartesian.y * Math.PI * oneOverSemimajorAxis;
+        //   var height = cartesian.z;
+
         // ======================== Stereographique ============================
-        
-     /*   var sqrtTerme = Math.sqrt(cartesian.x*cartesian.x + cartesian.y*cartesian.y)
-        var atanTerme = Math.atan(4.0*sqrtTerme);
-        
-        var latitude = Math.PI/2.0 - atanTerme;
-        var longitude = Math.atan2(cartesian.x, cartesian.y);
-        var height = cartesian.z;*/
+
+        /*   var sqrtTerme = Math.sqrt(cartesian.x*cartesian.x + cartesian.y*cartesian.y)
+         var atanTerme = Math.atan(4.0*sqrtTerme);
+         
+         var latitude = Math.PI/2.0 - atanTerme;
+         var longitude = Math.atan2(cartesian.x, cartesian.y);
+         var height = cartesian.z;*/
 
         if (!defined(result)) {
             return new Cartographic(longitude, latitude, height);

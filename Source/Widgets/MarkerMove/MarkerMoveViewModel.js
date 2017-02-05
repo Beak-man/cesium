@@ -9,7 +9,7 @@ define([
     '../../ThirdParty/knockout',
     '../../Core/defineProperties',
     '../../Core/ScreenSpaceEventHandler',
-    '../../Core/ScreenSpaceEventType',
+    '../../Core/ScreenSpaceEventType'
 ], function (
         CesiumMath,
         Color,
@@ -24,7 +24,7 @@ define([
 
     function markerMoveView(toolbar, scene, viewer, that) {
 
-        if (that._isActive == true) {
+        if (that._isActive === true) {
 
             // Mouse Event initialization
             that._handlerLeft = new ScreenSpaceEventHandler(scene.canvas);
@@ -65,11 +65,11 @@ define([
 
                     if (!lastEntity) {
                         lastEntity = entity;
-                    } else if (lastEntity && lastEntity != entity) {
+                    } else if (lastEntity && lastEntity !== entity) {
                         lastEntity._billboard.color = new Color(1.0, 1.0, 1.0, 1.0);
                         lastEntity = entity;
 
-                    } else if (lastEntity && lastEntity == entity) {
+                    } else if (lastEntity && lastEntity === entity) {
                         lastEntity._billboard.color = new Color(1.0, 0.0, 0.0, 1.0);
                         lastEntity = entity;
                     }
@@ -97,7 +97,7 @@ define([
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
 
-        } else if (that._isActive == false) {
+        } else if (that._isActive === false) {
 
             if (that._handlerLeft)
                 that._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
@@ -108,7 +108,7 @@ define([
             var wrapper = document.getElementById("wrapper");
 
             if (link) {
-                wrapper.removeChild(link)
+                wrapper.removeChild(link);
             }
         }
     }
@@ -278,12 +278,12 @@ define([
             handlerRight: {
                 get: function () {
                     return this._handlerRight;
-                },
+                }
             },
             handlerLeft: {
                 get: function () {
                     return this._handlerLeft;
-                },
+                }
             },
             dropDownVisible: {
                 get: function () {
@@ -296,9 +296,9 @@ define([
             isPanelToolVisibleMarkerMove: {
                 get: function () {
                     return this._isPanelToolVisibleMarkerMove;
-                },
-            },
-        },
+                }
+            }
+        }
     });
 
     MarkerMoveViewModel.prototype.destroy = function () {

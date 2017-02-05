@@ -59,7 +59,7 @@ define([
             that._handlerRight.setInputAction(function (click) {
 
                 var pickedObject = null;
-                
+
                 // we pick an object with a click mouse
                 pickedObject = viewer.scene.pick(click.position);
 
@@ -95,7 +95,7 @@ define([
                     objectId = pickedObject.id;
                     id = pickedObject.id.id;
                 }
-                
+
                 console.log(pickedObject.id);
 
                 if (pickedObject.id) {
@@ -106,7 +106,7 @@ define([
 
                             var objectType = objectId[that._propertiesNames[i]];
 
-                            if (that._propertiesNames[i] == "ellipse" || that._propertiesNames[i] == 'point') {
+                            if (that._propertiesNames[i] === "ellipse" || that._propertiesNames[i] === 'point') {
 
                                 var objectTypeEllipse = objectId['ellipse'];
                                 var objectTypePoint = objectId['point'];
@@ -114,7 +114,7 @@ define([
                                 try {
                                     var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
 
-                                    if (getColorObject != null) {
+                                    if (getColorObject !== null) {
 
                                         var colorObjectN = getColorObject.normalizedColor;
                                         var colorObject = getColorObject.color;
@@ -142,7 +142,7 @@ define([
 
                                     var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
 
-                                    if (getColorObject != null) {
+                                    if (getColorObject !== null) {
 
                                         var colorObjectN = getColorObject.normalizedColor;
                                         var colorObject = getColorObject.color;
@@ -152,10 +152,10 @@ define([
                                         objectType.outlineColor._value = colorObjectN;
                                         objectType.outlineWidth._value = 1;
 
-                                        if(!objectId.properties){
-                                             objectId.properties = {};
+                                        if (!objectId.properties) {
+                                            objectId.properties = {};
                                         }
-                                        
+
 
                                         var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
                                         objectId.properties.flagColor = rgba;
@@ -173,7 +173,7 @@ define([
 
                     var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
 
-                    if (getColorObject != null) {
+                    if (getColorObject !== null) {
 
                         var colorObjectN = getColorObject.normalizedColor;
                         var colorObject = getColorObject.color;
@@ -182,7 +182,7 @@ define([
                         var appearance = new MaterialAppearance({
                             material: Material.fromType('Color', {color: colorObjectN}),
                             faceForward: true
-                        })
+                        });
 
                         if (objectPrimitive.material) { // for polylines
 
@@ -210,7 +210,7 @@ define([
         polygon: createPolygonGeoJsonObect,
         point: createPointGeoJsonObect,
         polyline: createPolylineGeoJsonObect
-    }
+    };
 
     function createEllipseGeoJsonObect(that, geoJsonDataSource) {
 
@@ -262,7 +262,7 @@ define([
         featurePolygons.geometry = geoJsonPolygons;
         featurePolygons.properties = {
             Name: "Polygons"
-        }
+        };
 
         return featurePolygons;
     }
@@ -375,7 +375,7 @@ define([
                         featurePolylines.properties = {
                             Name: "Line",
                             Total_distance: totalLengthPath
-                        }
+                        };
                     }
                     geoJsonObject.features.push(featurePolylines);
                 }
@@ -445,7 +445,7 @@ define([
                         var lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
                         var lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
 
-                        if (j == 0) { 
+                        if (j === 0) {
 
                             var firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
                             var firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
@@ -456,7 +456,7 @@ define([
                             polygonsPoints.push(coordFirstPoint);
                             polygonsPoints.push(coordLastPoint);
 
-                        } else { 
+                        } else {
                             var coordLastPoint = [lastPositionLng, lastPositionLat];
                             polygonsPoints.push(coordLastPoint);
                         }
@@ -466,7 +466,7 @@ define([
                     featurePolygons.geometry = geoJsonPolygons;
                     featurePolygons.properties = {
                         Name: "Polygons"
-                    }
+                    };
 
                     geoJsonObject.features.push(featurePolygons);
                 }
@@ -554,7 +554,7 @@ define([
                     that._linkDownload.parentElement.removeChild(that._linkDownload);
                     that._wrapperSaveSubMenu.parentElement.removeChild(that._wrapperSaveSubMenu);
                 } catch (e) {
-                    console.log(e)
+                    console.log(e);
                 }
 
                 that._isSaveButtonActivate = false;
@@ -657,10 +657,12 @@ define([
         },
         removeAllCommands: {
             get: function () {
-                if (this._handlerLeft)
+                if (this._handlerLeft) {
                     this._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerRight)
+                }
+                if (this._handlerRight) {
                     this._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                }
             }
         },
         removeAllHandlers: {
@@ -670,7 +672,7 @@ define([
                 if (this._handlerRight)
                     this._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
             }
-        },
+        }
     });
 
 // ================================================================================================================================

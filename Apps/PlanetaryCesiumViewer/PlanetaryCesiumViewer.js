@@ -41,7 +41,7 @@ define([//  Definition des dependances
     'Cesium/Widgets/Viewer/viewerDragDropMixin',
     'Cesium/Widgets/createCommand',
     'Cesium/ThirdParty/knockout',
-    'Cesium/ThirdParty/when',
+    'Cesium/ThirdParty/when'
 ], function (
         Cartesian3,
         createOpenStreetMapImageryProvider,
@@ -216,12 +216,12 @@ define([//  Definition des dependances
         tools: true,
         VOData: true,
         geocoder : false
-    }
+    };
 
     function viewerCreation(configuration) {
 
         try {
-            viewerOptions.configuration = configuration // contains configuration (see ./sources/widget/ConfigurationFiles/ )
+            viewerOptions.configuration = configuration ;// contains configuration (see ./sources/widget/ConfigurationFiles/ )
             viewer = new Viewer('cesiumContainer', viewerOptions);
 
         } catch (exception) {

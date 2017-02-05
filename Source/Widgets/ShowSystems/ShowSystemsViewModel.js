@@ -79,11 +79,11 @@ define([
             configContainer.style.left = that._windowsMove;
 
             setTimeout(function () {
-                moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen)
+                moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen);
             }, 900);
         }
         else {
-            moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen)
+            moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen);
         }
     }
 
@@ -106,11 +106,11 @@ define([
             configContainer.style.left = that._windowsMove;
 
             setTimeout(function () {
-                moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen)
+                moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen);
             }, 900);
         }
         else {
-            moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen)
+            moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen);
         }
     }
 
@@ -168,7 +168,7 @@ define([
         listContainer.innerHTML = '';
 
         xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
+            if (xhr.readyState === 4 && xhr.status === 200 || xhr.status === 0) {
                 var data = xhr.responseXML;
                 try {
 
@@ -178,7 +178,7 @@ define([
                     var layersIni = capability[0].getElementsByTagName("Layer");
 
                     var names = [];
-                    var title = []
+                    var title = [];
                     var abstract = [];
                     var layerName = [];
                     var layer = [];
@@ -186,7 +186,7 @@ define([
 
                     var crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
 
-                    var PlanetName = pn.replace(pn.charAt(0), pn.charAt(0).toUpperCase())
+                    var PlanetName = pn.replace(pn.charAt(0), pn.charAt(0).toUpperCase());
 
                     listContainer2 = document.createElement('div');
                     listContainer2.setAttribute('id', 'listId');
@@ -234,8 +234,8 @@ define([
                         var finalLayerName = '';
 
                         for (var j = 0; j < nameLowCaseTab.length; j++) {
-                            if (j == 0) {
-                                var MajName = nameLowCaseTab[j].replace(nameLowCaseTab[j].charAt(0), nameLowCaseTab[j].charAt(0).toUpperCase())
+                            if (j === 0) {
+                                var MajName = nameLowCaseTab[j].replace(nameLowCaseTab[j].charAt(0), nameLowCaseTab[j].charAt(0).toUpperCase());
                                 finalLayerName += MajName + ' ';
 
                             } else {
@@ -290,9 +290,9 @@ define([
 
 
 
-                        } else if (names[i].indexOf(strTest) == -1) { // for npoles et spoles maps
+                        } else if (names[i].indexOf(strTest) === -1) { // for npoles et spoles maps
 
-                            if (crs == "EPSG:32761" || crs == "EPSG:32661") {
+                            if (crs === "EPSG:32761" || crs === "EPSG:32661") {
 
                                 var bboxAttributesTab = layersIni[0].getElementsByTagName("BoundingBox")[0].attributes;
 
@@ -311,7 +311,7 @@ define([
                                     ellipsoid: that._ellipsoid,
                                     rectangle: rect,
                                     numberOfLevelZeroTilesX: 1,
-                                    numberOfLevelZeroTilesY: 1,
+                                    numberOfLevelZeroTilesY: 1
                                 };
 
                                 //   console.log(tilngSchemeOptions);
@@ -372,14 +372,14 @@ define([
                     xhrNomen.send();
 
                     xhrNomen.onreadystatechange = function () {
-                        if (xhrNomen.readyState == 4 && xhrNomen.status == 200 || xhrNomen.status == 0) {
+                        if (xhrNomen.readyState === 4 && xhrNomen.status === 200 || xhrNomen.status === 0) {
 
                             var data = xhrNomen.responseXML;
 
                             try {
 
                                 var nomenNames = [];
-                                var nomenTitle = []
+                                var nomenTitle = [];
                                 var nomenAbstract = [];
                                 var nomenLayerName = [];
                                 var nomenLayer = [];
@@ -415,15 +415,15 @@ define([
                                         abstrNomm = nomenAbstract[i].replace(/\n/g, " ");
                                     }
 
-                                    if (nomenNames[i] == "NOMENCLATURE_180") {
+                                    if (nomenNames[i] === "NOMENCLATURE_180") {
 
                                         var nameLowCase = nomenNames[i].toLowerCase();
                                         var nameLowCaseTab = nameLowCase.split("_");
                                         var finalNomenLayerName = '';
 
                                         for (var j = 0; j < nameLowCaseTab.length; j++) {
-                                            if (j == 0) {
-                                                var MajName = nameLowCaseTab[j].replace(nameLowCaseTab[j].charAt(0), nameLowCaseTab[j].charAt(0).toUpperCase())
+                                            if (j === 0) {
+                                                var MajName = nameLowCaseTab[j].replace(nameLowCaseTab[j].charAt(0), nameLowCaseTab[j].charAt(0).toUpperCase());
                                                 finalNomenLayerName += MajName + ' ';
 
                                             } else {
@@ -477,7 +477,7 @@ define([
                                             layers: nomenLayer[i],
                                             credit: 'USGS @ wms.wr.usgs.gov',
                                             ellipsoid: that._ellipsoid,
-                                            enablePickFeatures: false,
+                                            enablePickFeatures: false
                                         });
 
                                         nomenLayerName.push(finalNomenLayerName);
@@ -503,12 +503,12 @@ define([
                                 knockout.applyBindings(listViewModel, listContainer2);
                             }
                         }
-                    }
+                    };
                 } catch (e) {
                     //  console.log(e);
                 }
             }
-        }
+        };
     }
 
 
@@ -540,7 +540,7 @@ define([
         xhr.send();
 
         listContainer.innerHTML = '';
-        var satelliteName = sn.replace(sn.charAt(0), sn.charAt(0).toUpperCase())
+        var satelliteName = sn.replace(sn.charAt(0), sn.charAt(0).toUpperCase());
 
         /* === set some HTML containers for the vizualisation === */
 
@@ -558,7 +558,7 @@ define([
         listShow.appendChild(tableList);
 
         xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
+            if (xhr.readyState === 4 && xhr.status === 200 || xhr.status === 0) {
                 var data = xhr.responseXML;
 
                 try {
@@ -620,8 +620,8 @@ define([
                             var finalLayerName = '';
 
                             for (var j = 0; j < nameLowerCaseTab.length; j++) {
-                                if (j == 0) {
-                                    var MajName = nameLowerCaseTab[j].replace(nameLowerCaseTab[j].charAt(0), nameLowerCaseTab[j].charAt(0).toUpperCase())
+                                if (j === 0) {
+                                    var MajName = nameLowerCaseTab[j].replace(nameLowerCaseTab[j].charAt(0), nameLowerCaseTab[j].charAt(0).toUpperCase());
                                     finalLayerName += MajName + ' ';
 
                                 } else {
@@ -649,7 +649,7 @@ define([
                             colomn2.appendChild(document.createTextNode(finalLayerName));
 
                             var colomn3 = document.createElement('TD');
-                            tableLine.appendChild(colomn3)
+                            tableLine.appendChild(colomn3);
 
                             /* ==== set the range type of the input HTML tag ==== */
 
@@ -688,7 +688,7 @@ define([
                     xhrNomen.send();
 
                     xhrNomen.onreadystatechange = function () {
-                        if (xhrNomen.readyState == 4 && xhrNomen.status == 200 || xhrNomen.status == 0) {
+                        if (xhrNomen.readyState === 4 && xhrNomen.status === 200 || xhrNomen.status === 0) {
 
                             var data = xhrNomen.responseXML;
 
@@ -697,7 +697,7 @@ define([
                                 // Declaration of arrays 
 
                                 var nomenNames = [];
-                                var nomenTitle = []
+                                var nomenTitle = [];
                                 var nomenAbstract = [];
                                 var nomenLayerName = [];
                                 var nomenLayer = [];
@@ -748,15 +748,15 @@ define([
 
                                     // first letter in MAJ
 
-                                    if (nomenNames[i] == "NOMENCLATURE_180") {
+                                    if (nomenNames[i] === "NOMENCLATURE_180") {
 
                                         var nameLowCase = nomenNames[i].toLowerCase();
                                         var nameLowCaseTab = nameLowCase.split("_");
                                         var finalNomenLayerName = '';
 
                                         for (var j = 0; j < nameLowCaseTab.length; j++) {
-                                            if (j == 0) {
-                                                var MajName = nameLowCaseTab[j].replace(nameLowCaseTab[j].charAt(0), nameLowCaseTab[j].charAt(0).toUpperCase())
+                                            if (j === 0) {
+                                                var MajName = nameLowCaseTab[j].replace(nameLowCaseTab[j].charAt(0), nameLowCaseTab[j].charAt(0).toUpperCase());
                                                 finalNomenLayerName += MajName + ' ';
 
                                             } else {
@@ -840,12 +840,12 @@ define([
                                 knockout.applyBindings(listViewModel, listContainer2);
                             }
                         }
-                    }
+                    };
                 } catch (e) {
 
                 }
             }
-        }
+        };
     }
 
     /**
@@ -856,7 +856,7 @@ define([
      */
     function showSystemButtons(that, index) {
 
-        if (that.isShowSystemActive && that.previousIndex == index) {
+        if (that.isShowSystemActive && that.previousIndex === index) {
 
             for (var i = 0; i < that._solarSystemSize; i++) {
                 that["buttonVisible_" + i] = false;
@@ -865,7 +865,7 @@ define([
             cancelFunction(that);
             that.isShowSystemActive = false;
 
-        } else if (!that.isShowSystemActive && that.previousIndex != index) {
+        } else if (!that.isShowSystemActive && that.previousIndex !== index) {
 
             for (var i = 0; i < that._solarSystemSize; i++) {
                 that["buttonVisible_" + i] = false;
@@ -877,7 +877,7 @@ define([
             that.isShowSystemActive = true;
             that.previousIndex = index;
 
-        } else if (!that.isShowSystemActive && that.previousIndex == index) {
+        } else if (!that.isShowSystemActive && that.previousIndex === index) {
 
             for (var i = 0; i < that._solarSystemSize; i++) {
                 that["buttonVisible_" + i] = false;
@@ -889,7 +889,7 @@ define([
             that.isShowSystemActive = true;
             that.previousIndex = index;
 
-        } else if (that.isShowSystemActive && that.previousIndex != index) {
+        } else if (that.isShowSystemActive && that.previousIndex !== index) {
 
             for (var i = 0; i < that._solarSystemSize; i++) {
                 that["buttonVisible_" + i] = false;
@@ -968,7 +968,7 @@ define([
 
         for (var planet in configuration.planetarySystem.system) {
 
-            if (planet == homePlanet) {
+            if (planet === homePlanet) {
                 naifCode = [count, 0];
                 break;
             } else {
@@ -999,7 +999,7 @@ define([
          ========================= VO WIDGET CALL ==========================
          =================================================================== */
 
-        if (that._isVOWidgetVisible == true) {
+        if (that._isVOWidgetVisible === true) {
 
             that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration, homePlanet);
 
@@ -1012,7 +1012,7 @@ define([
         var obj = {
             naifCodes: naifCode,
             ellipsoid: that._ellipsoid
-        }
+        };
 
         GeoJsonDataSource.crsModification = obj;
         showPlanetView(that, that._viewer, homePlanet, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen);
@@ -1099,7 +1099,7 @@ define([
                 x: 3390000,
                 y: 3390000,
                 z: 3360000
-            }
+            };
 
             listContainer.innerHTML = "";
             //  configContainer.innerHTML = "";
@@ -1118,7 +1118,7 @@ define([
             var obj = {
                 naifCodes: naifCode,
                 ellipsoid: that._ellipsoid
-            }
+            };
 
             GeoJsonDataSource.crsModification = obj;
 
@@ -1138,7 +1138,7 @@ define([
                 x: parseFloat(stringVectorTab[0]),
                 y: parseFloat(stringVectorTab[1]),
                 z: parseFloat(stringVectorTab[2])
-            }
+            };
 
             initializeScene(that, objectDimensions);
             initializeMarkerMoveWidget(that);
@@ -1159,7 +1159,7 @@ define([
              ========================= VO WIDGET CALL ==========================
              =================================================================== */
 
-            if (that._isVOWidgetVisible == true) {
+            if (that._isVOWidgetVisible === true) {
                 that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration, planetName);
             }
 
@@ -1172,7 +1172,7 @@ define([
             var obj = {
                 naifCodes: naifCode,
                 ellipsoid: that._ellipsoid
-            }
+            };
 
             GeoJsonDataSource.crsModification = obj;
             showPlanetView(that, that._viewer, planetName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen);
@@ -1189,8 +1189,8 @@ define([
             var objectDimensions = {
                 x: parseFloat(stringVectorTab[0]),
                 y: parseFloat(stringVectorTab[1]),
-                z: parseFloat(stringVectorTab[2]),
-            }
+                z: parseFloat(stringVectorTab[2])
+            };
 
             initializeScene(that, objectDimensions);
             initializeMarkerMoveWidget(that);
@@ -1201,7 +1201,7 @@ define([
             var obj = {
                 naifCodes: naifCode,
                 ellipsoid: that._ellipsoid
-            }
+            };
 
             try {
                 that._voData.viewModel.hidePanel;
@@ -1214,7 +1214,7 @@ define([
              ========================= VO WIDGET CALL ==========================
              =================================================================== */
 
-            if (that._isVOWidgetVisible == true) {
+            if (that._isVOWidgetVisible === true) {
                 console.log(that.configuration);
                 that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration, satelliteName);
             }
@@ -1335,9 +1335,9 @@ define([
         },
         WMTSCommand: {
             get: function () {
-                return this._wmtsCommand
+                return this._wmtsCommand;
             }
-        },
+        }
     });
 
     /* ================================================================================================================== */

@@ -35,7 +35,7 @@ define([
     '../../ThirdParty/knockout',
     '../../Core/defineProperties',
     '../../Core/ScreenSpaceEventHandler',
-    '../../Core/ScreenSpaceEventType',
+    '../../Core/ScreenSpaceEventType'
 ], function (
         BillboardCollection,
         BoundingRectangle,
@@ -160,18 +160,18 @@ define([
             xhrVO.send();
             xhrVO.onreadystatechange = function () {
 
-                if (xhrVO.readyState == 4 && xhrVO.status == 200 || xhrVO.status == 0) {
+                if (xhrVO.readyState === 4 && xhrVO.status === 200 || xhrVO.status === 0) {
 
 
                     var data = xhrVO.responseText;
                     // console.log(data);
                     var jsonData = JSON.parse(data);
                     console.log(jsonData);
-                    console.log("==========================================")
+                    console.log("==========================================");
                     console.log("nombre de points : " + jsonData.data.length);
-                    console.log("==========================================")
+                    console.log("==========================================");
 
-                    var dataTab = []
+                    var dataTab = [];
                     dataTab = jsonData.data;
 
                     var columnNomTab = [];
@@ -209,10 +209,10 @@ define([
                         var geomType = checkGeometryType(C1Min, C1Max, C2Min, C2Max);
 
                         // if we have a point
-                        if (geomType == "points") {
+                        if (geomType === "points") {
 
                             // if data are valid and if we have a text format or an unknown format 
-                            if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "text/plain" || !arr[numberColumForCvalues.access_format]) {
+                            if (isValuesValid === true && arr[numberColumForCvalues.access_format] === "text/plain" || !arr[numberColumForCvalues.access_format]) {
 
                                 // we create the description object corresponding to the current point
                                 var desciprionObject = createDescriptionObject(columnNomTab, arr);
@@ -221,7 +221,7 @@ define([
                                 var addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
 
                                 // if not (i.e we don't have the coordinate il the list)
-                                if (addToList == true) {
+                                if (addToList === true) {
 
                                     // we add coord in tabs and plot data on Cesium
                                     lngMin.push(C1Min);
@@ -248,14 +248,14 @@ define([
 
                             }
 
-                        } else if (isValuesValid == true && arr[numberColumForCvalues.access_format] == "application/x-pds" || arr[numberColumForCvalues.access_format] == "application/x-geotiff") {
+                        } else if (isValuesValid === true && arr[numberColumForCvalues.access_format] === "application/x-pds" || arr[numberColumForCvalues.access_format] === "application/x-geotiff") {
 
 
                             var desciprionObject = createDescriptionObject(columnNomTab, arr);
                             var addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
 
                             // if not (i.e we don't have the coordinate il the list)
-                            if (addToList == true) {
+                            if (addToList === true) {
 
                                 lngMin.push(C1Min);
                                 lngMax.push(C1Max);
@@ -271,7 +271,7 @@ define([
                     pickingActivation(that, viewer, dataSourceDisplay, handlerLeftClick, ellipsoid, billboards, resultContainer);
 
                 }
-            }
+            };
         }
     }
 
@@ -465,7 +465,7 @@ define([
         }
 
 
-        if (isC1MinValid == true && isC1MaxValid == true && isC2MinValid == true && isC2MaxValid == true) {
+        if (isC1MinValid === true && isC1MaxValid === true && isC2MinValid === true && isC2MaxValid === true) {
             isAllCValid = true;
         }
         return isAllCValid;
@@ -473,7 +473,7 @@ define([
 
     function checkGeometryType(C1Min, C1Max, C2Min, C2Max) {
 
-        if (C1Min == C1Max && C2Min == C2Max) {
+        if (C1Min === C1Max && C2Min === C2Max) {
             return "points";
         } else {
             return "polygons";
@@ -491,31 +491,31 @@ define([
 
             // C1min ou c1min mais pas les deux
 
-            if (ColumnId == "c1min" || ColumnId == "C1min") {
+            if (ColumnId === "c1min" || ColumnId === "C1min") {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId == "c1max" || ColumnId == "C1max") {
+            } else if (ColumnId === "c1max" || ColumnId === "C1max") {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId == "c2min" || ColumnId == "C2min") {
+            } else if (ColumnId === "c2min" || ColumnId === "C2min") {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId == "c2max" || ColumnId == "C2max") {
+            } else if (ColumnId === "c2max" || ColumnId === "C2max") {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId == "c3min" || ColumnId == "C3min") {
+            } else if (ColumnId === "c3min" || ColumnId === "C3min") {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId == "c3max" || ColumnId == "C3max") {
+            } else if (ColumnId === "c3max" || ColumnId === "C3max") {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId == "access_format") {
+            } else if (ColumnId === "access_format") {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId == "measurement_type") {
+            } else if (ColumnId === "measurement_type") {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId == "access_url") {
+            } else if (ColumnId === "access_url") {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             }
@@ -545,7 +545,7 @@ define([
             //   console.log(C1Min, C1Max, C2Min, C2Max);
             //   console.log(isC1minInList, isC1maxInList, isC2minInList, isC2maxInList);
 
-            if (lngMin[i] == C1Min && lngMax[i] == C1Max && latMin[i] == C2Min && latMax[i] == C2Max) {
+            if (lngMin[i] === C1Min && lngMax[i] === C1Max && latMin[i] === C2Min && latMax[i] === C2Max) {
                 isC1minInList = true;
                 isC1maxInList = true;
                 isC2minInList = true;
@@ -626,7 +626,7 @@ define([
             // console.log(columnNameTab[i].name + " : " + arr[i]);
 
             // if the value of the description is not null
-            if (arr[i] != null && arr[i] != "") {
+            if (arr[i] !== null && arr[i] !== "") {
                 descrip[columnNameTab[i].name.toLowerCase()] = arr[i];
             }
         }
@@ -636,7 +636,7 @@ define([
         var returnObject = {
             html: html,
             object: descrip
-        }
+        };
 
         return returnObject;
 
@@ -670,7 +670,7 @@ define([
             show: true,
             name: "VO data",
             description: new ConstantProperty(desciprionObject.html)
-        }
+        };
 
 
 
@@ -718,7 +718,7 @@ define([
 
         var polygon = new PolygonGraphics();
 
-        colorPolygons.alpha = 0.3
+        colorPolygons.alpha = 0.3;
 
         polygon.hierarchy = Cartesian3.fromRadiansArray(polygonsCoord);
         polygon.fill = false;
@@ -737,7 +737,7 @@ define([
             show: true,
             name: "VO data",
             description: new ConstantProperty(desciprionObject.html)
-        }
+        };
 
         var entity = new Entity(entityParams);
 
@@ -801,7 +801,7 @@ define([
                 positions: PolylinePipeline.generateCartesianArc({
                     positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
                     ellipsoid: ellipsoid,
-                    width: 10,
+                    width: 10
                 }),
                 material: Material.fromType('Color', {
                     color: Color.YELLOW
@@ -857,7 +857,7 @@ define([
 
             var cartPos = Cartesian3.fromDegrees(C1Min, C2Min, 0, ellipsoid);
 
-            if (position.x.toFixed(4) == cartPos.x.toFixed(4)) {
+            if (position.x.toFixed(4) === cartPos.x.toFixed(4)) {
 
                 //  console.log("coordinates duplicated : " + cartPos.x.toFixed(4) + " " + cartPos.y.toFixed(4));
 
@@ -1032,7 +1032,7 @@ define([
                         positions: PolylinePipeline.generateCartesianArc({
                             positions: Cartesian3.fromRadiansArray(arrayRadians, ellipsoid),
                             ellipsoid: ellipsoid,
-                            width: 10,
+                            width: 10
                         }),
                         material: Material.fromType('Color', {
                             color: Color.RED
@@ -1150,7 +1150,7 @@ define([
 
             for (var i = 0; i < inputTab.length; i++) {
 
-                if (inputTab[i].checked == true) {
+                if (inputTab[i].checked === true) {
                     tabExtension.push(inputTab[i].extension);
                     tabServerUrl.push(inputTab[i].serverUrl);
                 }

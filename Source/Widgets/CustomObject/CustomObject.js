@@ -329,8 +329,8 @@ define([
                 var elementsForAxis = {
                     x: inputXparameter,
                     y: inputYparameter,
-                    z: inputZparameter,
-                }
+                    z: inputZparameter
+                };
 
                 // creation du model pour cette vue (i.e CustomObject)
                 var viewModel = new CustomObjectViewModel(configContainer, ellipsoidParametersContainer, ellipsoidTextureContainer, layerInformationContainer, loadConfigContainer, viewer);
@@ -352,7 +352,7 @@ define([
                 xhr.send();
                 xhr.onreadystatechange = function () {
 
-                    if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
+                    if (xhr.readyState === 4 && xhr.status === 200 || xhr.status === 0) {
 
                         var data = xhr.responseText;
                         var jsonData = JSON.parse(data);
@@ -363,7 +363,7 @@ define([
                         xhrPlanetarSystem.send();
                         xhrPlanetarSystem.onreadystatechange = function () {
 
-                            if (xhrPlanetarSystem.readyState == 4 && xhrPlanetarSystem.status == 200 || xhrPlanetarSystem.status == 0) {
+                            if (xhrPlanetarSystem.readyState === 4 && xhrPlanetarSystem.status === 200 || xhrPlanetarSystem.status === 0) {
 
                                 var data = xhrPlanetarSystem.responseText;
                                 var jsonDataPlanets = JSON.parse(data);
@@ -371,9 +371,9 @@ define([
 
                                 createPanel(jsonData, solarSystem, viewerContainer, customToolbar, viewer, that);
                             }
-                        }
+                        };
                     }
-                }
+                };
             }
 
             function getXMLHttpRequest() {
@@ -397,7 +397,7 @@ define([
                 var urlPlanetarySystem = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
 
                 getServerData(xhr, xhrPlanetarySystem, 'GET', urlServer, urlPlanetarySystem, true, viewerContainer, customToolbar, viewer, that);
-            }
+            };
 
             defineProperties(CustomObject.prototype, {
                 /**
@@ -426,7 +426,7 @@ define([
                     get: function () {
                         return this._panelViewModel;
                     }
-                },
+                }
             });
 
             return CustomObject;

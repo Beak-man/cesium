@@ -66,7 +66,7 @@ define([
     var circle2Icon = '<g><circle style="fill:none; stroke:#fff; stroke-width:20;" cx="150" cy="150" r="145" id="circle"/>\
                           <circle style="fill:#fff; stroke:#fff; stroke-width:20;" cx="10" cy="150" r="20" id="circle"/>\\n\
                           <circle style="fill:#fff; stroke:#fff; stroke-width:20;" cx="290" cy="150" r="20" id="circle"/>\
-	<path style="fill:none;stroke:#fff;stroke-width:20;" d="M 28.8,150 271.2,150 300, 150 z" id="triangle"/></g>'
+	<path style="fill:none;stroke:#fff;stroke-width:20;" d="M 28.8,150 271.2,150 300, 150 z" id="triangle"/></g>';
 
     var circle3Icon = '<g><circle style="fill:none; stroke:#fff; stroke-width:20;" cx="150" cy="150" r="145" id="circle"/>\
 	<path style="fill:none;stroke:#fff;stroke-width:20;" d="M 28.8,80 271.2,80 150,290 ,80 z" id="triangle"/></g>';
@@ -202,7 +202,7 @@ define([
                     return false;
                 }
             }
-        },
+        }
     });
 
     return SubMenu;

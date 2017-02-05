@@ -130,7 +130,7 @@ define([
         }
         //>>includeEnd('debug');
 
-        console.log
+        console.log;
 
         return new Buffer({
             context: options.context,

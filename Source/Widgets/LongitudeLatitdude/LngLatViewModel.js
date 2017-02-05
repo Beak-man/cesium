@@ -16,7 +16,7 @@ define([
                 ScreenSpaceEventType,
                 knockout,
                 createCommand) {
-            "use strict"
+            "use strict";
 
             function lngLatView(that, mainContainer, scene) {
 
@@ -25,7 +25,7 @@ define([
                     var coordViewModel = {
                         longitude: null,
                         latitude: null
-                    }
+                    };
 
                     knockout.track(coordViewModel);
                     var ellipsoid = scene.globe.ellipsoid;
@@ -143,7 +143,7 @@ define([
                             this._coodDiv = null;
                         }
                     }
-                },
+                }
             });
 
             return LngLatPanelViewModel;
