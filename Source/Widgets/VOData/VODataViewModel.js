@@ -267,7 +267,8 @@ define([
 
                         }
                     }
-
+                    console.log("================= dataSourceDisplay =======================");
+                    console.log(dataSourceDisplay);
                     pickingActivation(that, viewer, dataSourceDisplay, handlerLeftClick, ellipsoid, billboards, resultContainer);
 
                 }
@@ -687,7 +688,7 @@ define([
 
         dataSourceDisplay.update(clock.currentTime);
 
-        //  console.log(dataSourceDisplay);
+
     }
 
     function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, desciprionObject, dataSourceDisplay, ellipsoid, colorPolygons) {

@@ -985,7 +985,7 @@ define([
 
             if (projection instanceof WebMercatorProjection) {
 
-                consoole.log("dans le GlobeSurfaceTileProvider : utilisation du WebMercatorProjection");
+               // console.log("dans le GlobeSurfaceTileProvider : utilisation du WebMercatorProjection");
 
                 southLatitude = tile.rectangle.south;
                 northLatitude = tile.rectangle.north;
