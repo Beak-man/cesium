@@ -25,6 +25,7 @@ define([
     '../../Core/PinBuilder',
     '../../DataSources/PointGraphics',
     '../../DataSources/PolygonGraphics',
+    '../../DataSources/PolylineGraphics',
     '../../Scene/PointPrimitiveCollection',
     '../../DataSources/Property',
     '../../Scene/PolylineCollection',
@@ -62,6 +63,7 @@ define([
         PinBuilder,
         PointGraphics,
         PolygonGraphics,
+        PolylineGraphics,
         PointPrimitiveCollection,
         Property,
         PolylineCollection,
@@ -181,8 +183,10 @@ define([
 
                     var lngMin = []; // C1Min
                     var latMin = []; // C2Min
+                    var altMin = []; // C3Min
                     var lngMax = []; // C1Max
                     var latMax = []; // C2Max
+                    var altMax = []; // C3Max
                     var dls = 361.0; // limit in degree
                     var dli = 0.0; // limit in degree
 
@@ -201,6 +205,8 @@ define([
                         var C1Max = parseFloat(arr[numberColumForCvalues.c1max]);
                         var C2Min = parseFloat(arr[numberColumForCvalues.c2min]);
                         var C2Max = parseFloat(arr[numberColumForCvalues.c2max]);
+                        var C3Min = parseFloat(arr[numberColumForCvalues.c3min]);
+                        var C3Max = parseFloat(arr[numberColumForCvalues.c3max]);
 
                         // check if these data are valid (i.e between 0 and 360°)
                         var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
@@ -228,10 +234,12 @@ define([
                                     lngMax.push(C1Max);
                                     latMin.push(C2Min);
                                     latMax.push(C2Max);
+                                    latMin.push(C3Min);
+                                    latMax.push(C3Max);
 
                                     //  console.log("avant generate point");
                                     // generate point
-                                    generatePoints(C1Min, C1Max, C2Min, C2Max, desciprionObject, dataSourceDisplay, ellipsoid, color);
+                                    generatePoints(C1Min, C1Max, C2Min, C2Max, C3Min, C3Max, desciprionObject, dataSourceDisplay, ellipsoid, color);
 
                                     // we get data from requested file corresponding to the current file
                                     stockLines = arr;
@@ -640,10 +648,9 @@ define([
         };
 
         return returnObject;
-
     }
 
-    function  generatePoints(lngMin, lngMax, latMin, latMax, desciprionObject, dataSourceDisplay, ellipsoid, colorPoints) {
+    function  generatePoints(lngMin, lngMax, latMin, latMax, altMin, altMax, desciprionObject, dataSourceDisplay, ellipsoid, colorPoints) {
 
         var coordX = lngMin;
         var coordY = latMin;
@@ -673,8 +680,6 @@ define([
             description: new ConstantProperty(desciprionObject.html)
         };
 
-
-
         var entity = new Entity(entityParams);
 
         entity.descriptionTab = [];
@@ -684,11 +689,52 @@ define([
 
         entities.add(entity);
 
+        if (altMin && altMax && altMin < altMax) {
+
+            var polyline = new PolylineGraphics();
+            polyline.width = 2.0;
+            polyline.show = true;
+            polyline.material = new ColorMaterialProperty(colorPoints);
+
+            var ptIni = [coordX, coordY, altMin];
+            var ptMax = [coordX, coordY, altMax];
+
+            var coord = [];
+            coord.push(ptIni);
+            coord.push(ptMax);
+
+            var posi = coordinatesArrayToCartesianArray(coord, ellipsoid);
+
+            polyline.positions = posi;
+
+            var id2 = createGuid();
+
+            var polylineEntityParams = {
+                id: id2,
+                polyline: polyline,
+                position: posi,
+                show: true,
+                name: "VO data",
+                description: new ConstantProperty(desciprionObject.html)
+            };
+
+            var entity = new Entity(polylineEntityParams);
+            entities.add(entity);
+        }
+
         var clock = new Clock();
-
         dataSourceDisplay.update(clock.currentTime);
+    }
 
+    function coordinatesArrayToCartesianArray(coordinates, ellipsoid) {
+        var positions = new Array(coordinates.length);
 
+        for (var i = 0; i < coordinates.length; i++) {
+          //  console.log(coordinates[i][0], coordinates[i][1], coordinates[i][2] * 1000.0);
+            positions[i] = Cartesian3.fromDegrees(coordinates[i][0], coordinates[i][1], coordinates[i][2] * 1000.0, ellipsoid);
+        }
+
+        return positions;
     }
 
     function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, desciprionObject, dataSourceDisplay, ellipsoid, colorPolygons) {

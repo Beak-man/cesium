@@ -233,10 +233,10 @@ define([
             }
 
             var description = properties.description;
-            
+
             console.log(properties);
             console.log(nameProperty);
-            
+
             if (description !== null) {
                 entity.description = !defined(description) ? describe(properties, nameProperty) : new ConstantProperty(description);
             }
@@ -260,6 +260,7 @@ define([
             }
 
         }
+        
         return positions;
     }
 
@@ -418,7 +419,7 @@ define([
 
             GeoJsonDataSource.flaggedCounter = flaggedCounter;
             GeoJsonDataSource.counter = counter;
-            
+
             console.log(entity);
 
             var countObject = {
@@ -467,7 +468,7 @@ define([
                 canvasOrPromise = dataSource._pinBuilder.fromColor(color, size);
             }
 
-           dataSource._promises.push(when(canvasOrPromise, function (dataUrl) {
+            dataSource._promises.push(when(canvasOrPromise, function (dataUrl) {
                 var billboard = new BillboardGraphics();
                 billboard.verticalOrigin = new ConstantProperty(VerticalOrigin.BOTTOM);
                 billboard.image = new ConstantProperty(dataUrl);
@@ -498,8 +499,9 @@ define([
                 });
 
                 dataSource._promises.push(promise);
-            })); 
-        };
+            }));
+        }
+        ;
     }
 
 
@@ -550,17 +552,29 @@ define([
         var polyline = new PolylineGraphics();
         polyline.material = material;
         polyline.width = widthProperty;
+        polyline.show = true;
 
         polyline.positions = new ConstantProperty(coordinatesArrayToCartesianArray(coordinates, crsFunction));
 
         var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
         var graphics;
+
         if (options.clampToGround) {
-            graphics = new CorridorGraphics();
+         /*   graphics = new CorridorGraphics();
             entity.corridor = graphics;
+            entity.corridor.show = true;
+            console.log("dans corridors");*/
+            
+            graphics = new PolylineGraphics();
+            entity.polyline = graphics;
+            entity.polyline.show = true;
+           // console.log("dans polyline");
+            
         } else {
             graphics = new PolylineGraphics();
             entity.polyline = graphics;
+            entity.polyline.show = true;
+           // console.log("dans polyline");
         }
 
         graphics.material = material;
@@ -574,8 +588,6 @@ define([
 
     function processMultiLineString(dataSource, geoJson, geometry, crsFunction, options) {
         var lineStrings = geometry.coordinates;
-
-        console.log(lineStrings);
 
         for (var i = 0; i < lineStrings.length; i++) {
             createLineString(dataSource, geoJson, crsFunction, lineStrings[i], options);
@@ -656,7 +668,6 @@ define([
         var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
         entity.polygon = polygon;
         entity.polygon.ellipsoid = GeoJsonDataSource._ellipsoid;
-
     }
 
     function processPolygon(dataSource, geoJson, geometry, crsFunction, options) {
@@ -1142,7 +1153,7 @@ define([
          ***************************************************************************************************************************** */
 
         var crs = geoJson.crs;
-      //  var crsFunction = crs !== null ? defaultCrsFunction : null;
+        //  var crsFunction = crs !== null ? defaultCrsFunction : null;
 
         if (defined(crs)) {
             if (!defined(crs.properties)) {
