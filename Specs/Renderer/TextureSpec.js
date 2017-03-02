@@ -6,19 +6,13 @@ defineSuite([
         'Core/loadImage',
         'Core/loadKTX',
         'Core/PixelFormat',
-        'Core/PrimitiveType',
-        'Renderer/Buffer',
-        'Renderer/BufferUsage',
         'Renderer/ClearCommand',
         'Renderer/ContextLimits',
-        'Renderer/DrawCommand',
         'Renderer/PixelDatatype',
         'Renderer/Sampler',
-        'Renderer/ShaderProgram',
         'Renderer/TextureMagnificationFilter',
         'Renderer/TextureMinificationFilter',
         'Renderer/TextureWrap',
-        'Renderer/VertexArray',
         'Specs/createContext',
         'ThirdParty/when'
     ], function(
@@ -28,19 +22,13 @@ defineSuite([
         loadImage,
         loadKTX,
         PixelFormat,
-        PrimitiveType,
-        Buffer,
-        BufferUsage,
         ClearCommand,
         ContextLimits,
-        DrawCommand,
         PixelDatatype,
         Sampler,
-        ShaderProgram,
         TextureMagnificationFilter,
         TextureMinificationFilter,
         TextureWrap,
-        VertexArray,
         createContext,
         when) {
     'use strict';
@@ -297,7 +285,8 @@ defineSuite([
         expect({
             context : cxt,
             fragmentShader : fs,
-            uniformMap : uniformMap
+            uniformMap : uniformMap,
+            epsilon : 1
         }).contextToRender([0, 0, 127, 127]);
 
         texture.destroy();
