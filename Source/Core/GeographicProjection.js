@@ -95,16 +95,16 @@ define([
 
 
          
-         var x = cartographic.longitude * semimajorAxis;
+      /*   var x = cartographic.longitude * semimajorAxis;
          var y = cartographic.latitude * semimajorAxis;
-         var z = cartographic.height;
+         var z = cartographic.height;*/
          
         
 
         //  ==================== Projection Sinusoidale ===============================
 
 
-    /*    var phi = cartographic.longitude;
+        var phi = cartographic.longitude;
         var theta = cartographic.latitude;
 
         var x = ((phi * Math.cos(theta))) / (2.0 * Math.PI);
@@ -113,7 +113,7 @@ define([
 
         x = x * semimajorAxis;
         y = y * semimajorAxis;
-        */
+        
 
 
         // ===================== Projection stereographique ======================
@@ -166,9 +166,9 @@ define([
         //  ======== CLACUL POUR LA PROJECTION CLASSIQUE : NE PAS EFFACER =========
 
 
-        var longitude = cartesian.x * oneOverSemimajorAxis;
+      /*  var longitude = cartesian.x * oneOverSemimajorAxis;
         var latitude = cartesian.y * oneOverSemimajorAxis;
-        var height = cartesian.z;
+        var height = cartesian.z;*/
 
 
         //  ====================================================================
@@ -176,9 +176,9 @@ define([
 
         // ==========================Sinusoidale ==============================
 
-        //   var longitude = ((cartesian.x * 2.0 * Math.PI)) / (Math.cos(cartesian.y)) * oneOverSemimajorAxis;
-        //   var latitude = cartesian.y * Math.PI * oneOverSemimajorAxis;
-        //   var height = cartesian.z;
+           var longitude = ((cartesian.x * 2.0 * Math.PI)) / (Math.cos(cartesian.y)) * oneOverSemimajorAxis;
+           var latitude = cartesian.y * Math.PI * oneOverSemimajorAxis;
+           var height = cartesian.z;
 
         // ======================== Stereographique ============================
 
