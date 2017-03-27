@@ -207,6 +207,7 @@ define([
                         var C2Max = parseFloat(arr[numberColumForCvalues.c2max]);
                         var C3Min = parseFloat(arr[numberColumForCvalues.c3min]);
                         var C3Max = parseFloat(arr[numberColumForCvalues.c3max]);
+                        var unitC3 = columnNomTab[numberColumForCvalues.c3max].unit;
 
                         // check if these data are valid (i.e between 0 and 360°)
                         var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
@@ -214,19 +215,21 @@ define([
                         // check if the we have a point or a polygon
                         var geomType = checkGeometryType(C1Min, C1Max, C2Min, C2Max);
 
+                        console.log(geomType, isValuesValid, arr[numberColumForCvalues.access_format]);
+
                         // if we have a point
                         if (geomType === "points") {
 
                             // if data are valid and if we have a text format or an unknown format 
-                            if (isValuesValid === true && arr[numberColumForCvalues.access_format] === "text/plain" || !arr[numberColumForCvalues.access_format]) {
-
+                            // if (isValuesValid === true && arr[numberColumForCvalues.access_format] === "text/plain" || !arr[numberColumForCvalues.access_format]) {
+                            if (isValuesValid === true) {
                                 // we create the description object corresponding to the current point
                                 var desciprionObject = createDescriptionObject(columnNomTab, arr);
 
                                 //we check if the coordinate are duplicated
-                                var addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
+                                var addToList = selectionData(lngMin, lngMax, latMin, latMax, altMin, altMax, C1Min, C1Max, C2Min, C2Max, C3Min, C3Max);
 
-                                // if not (i.e we don't have the coordinate il the list)
+                                // if not (i.e we don't have the coordinate in the list)
                                 if (addToList === true) {
 
                                     // we add coord in tabs and plot data on Cesium
@@ -234,14 +237,14 @@ define([
                                     lngMax.push(C1Max);
                                     latMin.push(C2Min);
                                     latMax.push(C2Max);
-                                    latMin.push(C3Min);
-                                    latMax.push(C3Max);
+                                    altMin.push(C3Min);
+                                    altMax.push(C3Max);
 
                                     //  console.log("avant generate point");
                                     // generate point
-                                    generatePoints(C1Min, C1Max, C2Min, C2Max, C3Min, C3Max, desciprionObject, dataSourceDisplay, ellipsoid, color);
+                                    generatePoints(C1Min, C1Max, C2Min, C2Max, C3Min, C3Max, unitC3, desciprionObject, dataSourceDisplay, ellipsoid, color);
 
-                                    // we get data from requested file corresponding to the current file
+                                    // we get data from requested file
                                     stockLines = arr;
 
                                     // add description to the current point
@@ -535,7 +538,7 @@ define([
         return num;
     }
 
-    function selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max) {
+    function selectionData(lngMin, lngMax, latMin, latMax, altMin, altMax, C1Min, C1Max, C2Min, C2Max, C3Min, C3Max) {
 
         var dimTab = lngMin.length;
 
@@ -545,6 +548,8 @@ define([
         var isC1maxInList = false;
         var isC2minInList = false;
         var isC2maxInList = false;
+        var isC3minInList = false;
+        var isC3maxInList = false;
 
         var addToList = true;
 
@@ -554,7 +559,7 @@ define([
             //   console.log(C1Min, C1Max, C2Min, C2Max);
             //   console.log(isC1minInList, isC1maxInList, isC2minInList, isC2maxInList);
 
-            if (lngMin[i] === C1Min && lngMax[i] === C1Max && latMin[i] === C2Min && latMax[i] === C2Max) {
+            if (lngMin[i] === C1Min && lngMax[i] === C1Max && latMin[i] === C2Min && latMax[i] === C2Max && altMin[i] === C3Min && altMax[i] === C3Max) {
                 isC1minInList = true;
                 isC1maxInList = true;
                 isC2minInList = true;
@@ -569,7 +574,7 @@ define([
         //  console.log("booleens finaux");
         //  console.log(isC1minInList, isC1maxInList, isC2minInList, isC2maxInList);
 
-        if (isC1minInList === true && isC1maxInList === true && isC2minInList === true && isC2maxInList === true) {
+        if (isC1minInList === true && isC1maxInList === true && isC2minInList === true && isC2maxInList === true && isC3minInList === true && isC3maxInList === true) {
             addToList = false;
             //     console.log(addToList);
         }
@@ -605,10 +610,13 @@ define([
                             var regex4 = /ftp:/;
 
                             if (regex1.test(beginString) || regex2.test(beginString) || regex3.test(beginString) || regex4.test(beginString)) {
+
                                 html += '<tr><th>' + key + '</th><td><a href=' + value + ' target="_blank">link</a></td></tr>';
-                            }
-                            else {
+
+                            } else {
+
                                 html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
+
                             }
                         } else {
                             html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
@@ -650,12 +658,21 @@ define([
         return returnObject;
     }
 
-    function  generatePoints(lngMin, lngMax, latMin, latMax, altMin, altMax, desciprionObject, dataSourceDisplay, ellipsoid, colorPoints) {
+    function  generatePoints(lngMin, lngMax, latMin, latMax, altMin, altMax, unitAlt, desciprionObject, dataSourceDisplay, ellipsoid, colorPoints) {
 
         var coordX = lngMin;
         var coordY = latMin;
+        var coordZ = 0;
+        if (altMin && altMax) {
+            if (unitAlt == 'm') {
+                coordZ = (altMax - altMin) / 2.0;
+            } else if (unitAlt == 'km') {
+                coordZ = (altMax - altMin) / 2.0;
+                coordZ = coordZ*1000.0;
+            }
+        }
 
-        var pos = Cartesian3.fromDegrees(coordX, coordY, 0, ellipsoid);
+        var pos = Cartesian3.fromDegrees(coordX, coordY, coordZ, ellipsoid);
 
         var point = new PointGraphics();
 
@@ -689,38 +706,38 @@ define([
 
         entities.add(entity);
 
-        if (altMin && altMax && altMin < altMax) {
-
-            var polyline = new PolylineGraphics();
-            polyline.width = 2.0;
-            polyline.show = true;
-            polyline.material = new ColorMaterialProperty(colorPoints);
-
-            var ptIni = [coordX, coordY, altMin];
-            var ptMax = [coordX, coordY, altMax];
-
-            var coord = [];
-            coord.push(ptIni);
-            coord.push(ptMax);
-
-            var posi = coordinatesArrayToCartesianArray(coord, ellipsoid);
-
-            polyline.positions = posi;
-
-            var id2 = createGuid();
-
-            var polylineEntityParams = {
-                id: id2,
-                polyline: polyline,
-                position: posi,
-                show: true,
-                name: "VO data",
-                description: new ConstantProperty(desciprionObject.html)
-            };
-
-            var entity = new Entity(polylineEntityParams);
-            entities.add(entity);
-        }
+        /* if (altMin && altMax && altMin < altMax) {
+         
+         var polyline = new PolylineGraphics();
+         polyline.width = 2.0;
+         polyline.show = true;
+         polyline.material = new ColorMaterialProperty(colorPoints);
+         
+         var ptIni = [coordX, coordY, altMin];
+         var ptMax = [coordX, coordY, altMax];
+         
+         var coord = [];
+         coord.push(ptIni);
+         coord.push(ptMax);
+         
+         var posi = coordinatesArrayToCartesianArray(coord, ellipsoid);
+         
+         polyline.positions = posi;
+         
+         var id2 = createGuid();
+         
+         var polylineEntityParams = {
+         id: id2,
+         polyline: polyline,
+         position: posi,
+         show: true,
+         name: "VO data",
+         description: new ConstantProperty(desciprionObject.html)
+         };
+         
+         var entity = new Entity(polylineEntityParams);
+         entities.add(entity);
+         }*/
 
         var clock = new Clock();
         dataSourceDisplay.update(clock.currentTime);
@@ -730,7 +747,7 @@ define([
         var positions = new Array(coordinates.length);
 
         for (var i = 0; i < coordinates.length; i++) {
-          //  console.log(coordinates[i][0], coordinates[i][1], coordinates[i][2] * 1000.0);
+            //  console.log(coordinates[i][0], coordinates[i][1], coordinates[i][2] * 1000.0);
             positions[i] = Cartesian3.fromDegrees(coordinates[i][0], coordinates[i][1], coordinates[i][2] * 1000.0, ellipsoid);
         }
 

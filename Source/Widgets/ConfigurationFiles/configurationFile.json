@@ -35,6 +35,13 @@
 				"url"       : "http://voparis-tap-planeto.obspm.fr/__system__/tap/run/tap/sync",
 				"dir"       : "./",
 				"extension" : ["titan.epn_core"] 
+			},
+			{
+			"name"      : "dc.zah.uni-heidelberg.de",
+			"url"       : "http://dc.zah.uni-heidelberg.de/__system__/tap/run/tap/sync",
+			"dir"       : "./",
+			"extension" : ["titan.epn_core"] 
+			
 			}
 		],
 	
