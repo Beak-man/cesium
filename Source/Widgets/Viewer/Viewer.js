@@ -37,6 +37,7 @@ define([
         '../HomeButton/HomeButton',
         '../InfoBox/InfoBox',
         '../NavigationHelpButton/NavigationHelpButton',
+        '../ProjectionPicker/ProjectionPicker',
         '../SceneModePicker/SceneModePicker',
         '../SelectionIndicator/SelectionIndicator',
         '../subscribeAndEvaluate',
@@ -89,6 +90,7 @@ define([
         HomeButton,
         InfoBox,
         NavigationHelpButton,
+        ProjectionPicker,
         SceneModePicker,
         SelectionIndicator,
         subscribeAndEvaluate,
@@ -197,6 +199,7 @@ function enableVRUI(viewer, enabled) {
 var geocoder = viewer._geocoder;
         var homeButton = viewer._homeButton;
         var sceneModePicker = viewer._sceneModePicker;
+        var projectionPicker = viewer._projectionPicker;
         var baseLayerPicker = viewer._baseLayerPicker;
         var animation = viewer._animation;
         var timeline = viewer._timeline;
@@ -205,154 +208,160 @@ var geocoder = viewer._geocoder;
         var selectionIndicator = viewer._selectionIndicator;
         var visibility = enabled ? 'hidden' : 'visible';
         if (defined(geocoder)) {
-geocoder.container.style.visibility = visibility;
-}
-if (defined(homeButton)) {
-homeButton.container.style.visibility = visibility;
-}
-if (defined(sceneModePicker)) {
-sceneModePicker.container.style.visibility = visibility;
-}
-if (defined(baseLayerPicker)) {
-baseLayerPicker.container.style.visibility = visibility;
-}
-if (defined(animation)) {
-animation.container.style.visibility = visibility;
-}
-if (defined(timeline)) {
-timeline.container.style.visibility = visibility;
-}
-if (defined(fullscreenButton) && fullscreenButton.viewModel.isFullscreenEnabled) {
-fullscreenButton.container.style.visibility = visibility;
-}
-if (defined(infoBox)) {
-infoBox.container.style.visibility = visibility;
-}
-if (defined(selectionIndicator)) {
-selectionIndicator.container.style.visibility = visibility;
-}
 
-if (viewer._container) {
-var right = enabled || !defined(fullscreenButton) ? 0 : fullscreenButton.container.clientWidth;
-        viewer._vrButton.container.style.right = right + 'px';
-        viewer.forceResize();
-}
-}
+            geocoder.container.style.visibility = visibility;
+        }
+        if (defined(homeButton)) {
+            homeButton.container.style.visibility = visibility;
+        }
+        if(defined(sceneModePicker)) {
+            sceneModePicker.container.style.visibility = visibility;
+        }
+        if (defined(projectionPicker)) {
+            projectionPicker.container.style.visibility = visibility;
+        }
+        if(defined(baseLayerPicker)) {
+            baseLayerPicker.container.style.visibility = visibility;
+        }
+        if (defined(animation)) {
+            animation.container.style.visibility = visibility;
+        }
+        if (defined(timeline)) {
+            timeline.container.style.visibility = visibility;
+        }
+        if (defined(fullscreenButton) && fullscreenButton.viewModel.isFullscreenEnabled) {
+            fullscreenButton.container.style.visibility = visibility;
+        }
+        if (defined(infoBox)) {
+            infoBox.container.style.visibility = visibility;
+        }
+        if (defined(selectionIndicator)) {
+            selectionIndicator.container.style.visibility = visibility;
+        }
 
-/**
- * A base widget for building applications.  It composites all of the standard Cesium widgets into one reusable package.
- * The widget can always be extended by using mixins, which add functionality useful for a variety of applications.
- *
- * @alias Viewer
- * @constructor
- *
- * @param {Element|String} container The DOM element or ID that will contain the widget.
- * @param {Object} [options] Object with the following properties:
- * @param {Boolean} [options.animation=true] If set to false, the Animation widget will not be created.
- * @param {Boolean} [options.baseLayerPicker=true] If set to false, the BaseLayerPicker widget will not be created.
- * @param {Boolean} [options.fullscreenButton=true] If set to false, the FullscreenButton widget will not be created.
- * @param {Boolean} [options.vrButton=false] If set to true, the VRButton widget will be created.
- * @param {Boolean} [options.geocoder=true] If set to false, the Geocoder widget will not be created.
- * @param {Boolean} [options.homeButton=true] If set to false, the HomeButton widget will not be created.
- * @param {Boolean} [options.infoBox=true] If set to false, the InfoBox widget will not be created.
- * @param {Boolean} [options.sceneModePicker=true] If set to false, the SceneModePicker widget will not be created.
- * @param {Boolean} [options.selectionIndicator=true] If set to false, the SelectionIndicator widget will not be created.
- * @param {Boolean} [options.timeline=true] If set to false, the Timeline widget will not be created.
- * @param {Boolean} [options.navigationHelpButton=true] If set to false, the navigation help button will not be created.
- * @param {Boolean} [options.navigationInstructionsInitiallyVisible=true] True if the navigation instructions should initially be visible, or false if the should not be shown until the user explicitly clicks the button.
- * @param {Boolean} [options.scene3DOnly=false] When <code>true</code>, each geometry instance will only be rendered in 3D to save GPU memory.
- * @param {Clock} [options.clock=new Clock()] The clock to use to control current time.
- * @param {ProviderViewModel} [options.selectedImageryProviderViewModel] The view model for the current base imagery layer, if not supplied the first available base layer is used.  This value is only valid if options.baseLayerPicker is set to true.
- * @param {ProviderViewModel[]} [options.imageryProviderViewModels=createDefaultImageryProviderViewModels()] The array of ProviderViewModels to be selectable from the BaseLayerPicker.  This value is only valid if options.baseLayerPicker is set to true.
- * @param {ProviderViewModel} [options.selectedTerrainProviderViewModel] The view model for the current base terrain layer, if not supplied the first available base layer is used.  This value is only valid if options.baseLayerPicker is set to true.
- * @param {ProviderViewModel[]} [options.terrainProviderViewModels=createDefaultTerrainProviderViewModels()] The array of ProviderViewModels to be selectable from the BaseLayerPicker.  This value is only valid if options.baseLayerPicker is set to true.
- * @param {ImageryProvider} [options.imageryProvider=new BingMapsImageryProvider()] The imagery provider to use.  This value is only valid if options.baseLayerPicker is set to false.
- * @param {TerrainProvider} [options.terrainProvider=new EllipsoidTerrainProvider()] The terrain provider to use
- * @param {SkyBox} [options.skyBox] The skybox used to render the stars.  When <code>undefined</code>, the default stars are used.
- * @param {SkyAtmosphere} [options.skyAtmosphere] Blue sky, and the glow around the Earth's limb.  Set to <code>false</code> to turn it off.
- * @param {Element|String} [options.fullscreenElement=document.body] The element or id to be placed into fullscreen mode when the full screen button is pressed.
- * @param {Boolean} [options.useDefaultRenderLoop=true] True if this widget should control the render loop, false otherwise.
- * @param {Number} [options.targetFrameRate] The target frame rate when using the default render loop.
- * @param {Boolean} [options.showRenderLoopErrors=true] If true, this widget will automatically display an HTML panel to the user containing the error, if a render loop error occurs.
- * @param {Boolean} [options.automaticallyTrackDataSourceClocks=true] If true, this widget will automatically track the clock settings of newly added DataSources, updating if the DataSource's clock changes.  Set this to false if you want to configure the clock independently.
- * @param {Object} [options.contextOptions] Context and WebGL creation properties corresponding to <code>options</code> passed to {@link Scene}.
- * @param {SceneMode} [options.sceneMode=SceneMode.SCENE3D] The initial scene mode.
- * @param {MapProjection} [options.mapProjection=new GeographicProjection()] The map projection to use in 2D and Columbus View modes.
- * @param {Globe} [options.globe=new Globe(mapProjection.ellipsoid)] The globe to use in the scene.  If set to <code>false</code>, no globe will be added.
- * @param {Boolean} [options.orderIndependentTranslucency=true] If true and the configuration supports it, use order independent translucency.
- * @param {Element|String} [options.creditContainer] The DOM element or ID that will contain the {@link CreditDisplay}.  If not specified, the credits are added to the bottom of the widget itself.
- * @param {DataSourceCollection} [options.dataSources=new DataSourceCollection()] The collection of data sources visualized by the widget.  If this parameter is provided,
- *                               the instance is assumed to be owned by the caller and will not be destroyed when the viewer is destroyed.
- * @param {Number} [options.terrainExaggeration=1.0] A scalar used to exaggerate the terrain. Note that terrain exaggeration will not modify any other primitive as they are positioned relative to the ellipsoid.
- * @param {Boolean} [options.shadows=false] Determines if shadows are cast by the sun.
- * @param {ShadowMode} [options.terrainShadows=ShadowMode.RECEIVE_ONLY] Determines if the terrain casts or receives shadows from the sun.
- * @param {MapMode2D} [options.mapMode2D=MapMode2D.INFINITE_SCROLL] Determines if the 2D map is rotatable or can be scrolled infinitely in the horizontal direction.
- *
- * @exception {DeveloperError} Element with id "container" does not exist in the document.
- * @exception {DeveloperError} options.imageryProvider is not available when using the BaseLayerPicker widget, specify options.selectedImageryProviderViewModel instead.
- * @exception {DeveloperError} options.terrainProvider is not available when using the BaseLayerPicker widget, specify options.selectedTerrainProviderViewModel instead.
- * @exception {DeveloperError} options.selectedImageryProviderViewModel is not available when not using the BaseLayerPicker widget, specify options.imageryProvider instead.
- * @exception {DeveloperError} options.selectedTerrainProviderViewModel is not available when not using the BaseLayerPicker widget, specify options.terrainProvider instead.
- *
- * @see Animation
- * @see BaseLayerPicker
- * @see CesiumWidget
- * @see FullscreenButton
- * @see HomeButton
- * @see SceneModePicker
- * @see Timeline
- * @see viewerDragDropMixin
- *
- * @demo {@link http://cesiumjs.org/Cesium/Apps/Sandcastle/index.html?src=Hello%20World.html|Cesium Sandcastle Hello World Demo}
- *
- * @example
- * //Initialize the viewer widget with several custom options and mixins.
- * var viewer = new Cesium.Viewer('cesiumContainer', {
- *     //Start in Columbus Viewer
- *     sceneMode : Cesium.SceneMode.COLUMBUS_VIEW,
- *     //Use standard Cesium terrain
- *     terrainProvider : new Cesium.CesiumTerrainProvider({
- *         url : 'https://assets.agi.com/stk-terrain/world'
- *     }),
- *     //Hide the base layer picker
- *     baseLayerPicker : false,
- *     //Use OpenStreetMaps
- *     imageryProvider : Cesium.createOpenStreetMapImageryProvider({
- *         url : 'https://a.tile.openstreetmap.org/'
- *     }),
- *     // Use high-res stars downloaded from https://github.com/AnalyticalGraphicsInc/cesium-assets
- *     skyBox : new Cesium.SkyBox({
- *         sources : {
- *           positiveX : 'stars/TychoSkymapII.t3_08192x04096_80_px.jpg',
- *           negativeX : 'stars/TychoSkymapII.t3_08192x04096_80_mx.jpg',
- *           positiveY : 'stars/TychoSkymapII.t3_08192x04096_80_py.jpg',
- *           negativeY : 'stars/TychoSkymapII.t3_08192x04096_80_my.jpg',
- *           positiveZ : 'stars/TychoSkymapII.t3_08192x04096_80_pz.jpg',
- *           negativeZ : 'stars/TychoSkymapII.t3_08192x04096_80_mz.jpg'
- *         }
- *     }),
- *     // Show Columbus View map with Web Mercator projection
- *     mapProjection : new Cesium.WebMercatorProjection()
- * });
- *
- * //Add basic drag and drop functionality
- * viewer.extend(Cesium.viewerDragDropMixin);
- *
- * //Show a pop-up alert if we encounter an error when processing a dropped file
- * viewer.dropError.addEventListener(function(dropHandler, name, error) {
- *     console.log(error);
- *     window.alert(error);
- * });
- */
-function Viewer(container, options) {
+        if (viewer._container) {
+            var right = enabled || !defined(fullscreenButton) ? 0 : fullscreenButton.container.clientWidth;
+            viewer._vrButton.container.style.right = right + 'px';
 
-//>>includeStart('debug', pragmas.debug);
-if (!defined(container)) {
-throw new DeveloperError('container is required.');
-}
-//>>includeEnd('debug');
+            viewer.forceResize();
+        }
+    }
 
-container = getElement(container);
+    /**
+     * A base widget for building applications.  It composites all of the standard Cesium widgets into one reusable package.
+     * The widget can always be extended by using mixins, which add functionality useful for a variety of applications.
+     *
+     * @alias Viewer
+     * @constructor
+     *
+     * @param {Element|String} container The DOM element or ID that will contain the widget.
+     * @param {Object} [options] Object with the following properties:
+     * @param {Boolean} [options.animation=true] If set to false, the Animation widget will not be created.
+     * @param {Boolean} [options.baseLayerPicker=true] If set to false, the BaseLayerPicker widget will not be created.
+     * @param {Boolean} [options.fullscreenButton=true] If set to false, the FullscreenButton widget will not be created.
+     * @param {Boolean} [options.vrButton=false] If set to true, the VRButton widget will be created.
+     * @param {Boolean} [options.geocoder=true] If set to false, the Geocoder widget will not be created.
+     * @param {Boolean} [options.homeButton=true] If set to false, the HomeButton widget will not be created.
+     * @param {Boolean} [options.infoBox=true] If set to false, the InfoBox widget will not be created.
+     * @param {Boolean} [options.sceneModePicker=true] If set to false, the SceneModePicker widget will not be created.
+     * @param {Boolean} [options.selectionIndicator=true] If set to false, the SelectionIndicator widget will not be created.
+     * @param {Boolean} [options.timeline=true] If set to false, the Timeline widget will not be created.
+     * @param {Boolean} [options.navigationHelpButton=true] If set to false, the navigation help button will not be created.
+     * @param {Boolean} [options.navigationInstructionsInitiallyVisible=true] True if the navigation instructions should initially be visible, or false if the should not be shown until the user explicitly clicks the button.
+     * @param {Boolean} [options.scene3DOnly=false] When <code>true</code>, each geometry instance will only be rendered in 3D to save GPU memory.
+     * @param {Clock} [options.clock=new Clock()] The clock to use to control current time.
+     * @param {ProviderViewModel} [options.selectedImageryProviderViewModel] The view model for the current base imagery layer, if not supplied the first available base layer is used.  This value is only valid if options.baseLayerPicker is set to true.
+     * @param {ProviderViewModel[]} [options.imageryProviderViewModels=createDefaultImageryProviderViewModels()] The array of ProviderViewModels to be selectable from the BaseLayerPicker.  This value is only valid if options.baseLayerPicker is set to true.
+     * @param {ProviderViewModel} [options.selectedTerrainProviderViewModel] The view model for the current base terrain layer, if not supplied the first available base layer is used.  This value is only valid if options.baseLayerPicker is set to true.
+     * @param {ProviderViewModel[]} [options.terrainProviderViewModels=createDefaultTerrainProviderViewModels()] The array of ProviderViewModels to be selectable from the BaseLayerPicker.  This value is only valid if options.baseLayerPicker is set to true.
+     * @param {ImageryProvider} [options.imageryProvider=new BingMapsImageryProvider()] The imagery provider to use.  This value is only valid if options.baseLayerPicker is set to false.
+     * @param {TerrainProvider} [options.terrainProvider=new EllipsoidTerrainProvider()] The terrain provider to use
+     * @param {SkyBox} [options.skyBox] The skybox used to render the stars.  When <code>undefined</code>, the default stars are used.
+     * @param {SkyAtmosphere} [options.skyAtmosphere] Blue sky, and the glow around the Earth's limb.  Set to <code>false</code> to turn it off.
+     * @param {Element|String} [options.fullscreenElement=document.body] The element or id to be placed into fullscreen mode when the full screen button is pressed.
+     * @param {Boolean} [options.useDefaultRenderLoop=true] True if this widget should control the render loop, false otherwise.
+     * @param {Number} [options.targetFrameRate] The target frame rate when using the default render loop.
+     * @param {Boolean} [options.showRenderLoopErrors=true] If true, this widget will automatically display an HTML panel to the user containing the error, if a render loop error occurs.
+     * @param {Boolean} [options.automaticallyTrackDataSourceClocks=true] If true, this widget will automatically track the clock settings of newly added DataSources, updating if the DataSource's clock changes.  Set this to false if you want to configure the clock independently.
+     * @param {Object} [options.contextOptions] Context and WebGL creation properties corresponding to <code>options</code> passed to {@link Scene}.
+     * @param {SceneMode} [options.sceneMode=SceneMode.SCENE3D] The initial scene mode.
+     * @param {MapProjection} [options.mapProjection=new GeographicProjection()] The map projection to use in 2D and Columbus View modes.
+     * @param {Globe} [options.globe=new Globe(mapProjection.ellipsoid)] The globe to use in the scene.  If set to <code>false</code>, no globe will be added.
+     * @param {Boolean} [options.orderIndependentTranslucency=true] If true and the configuration supports it, use order independent translucency.
+     * @param {Element|String} [options.creditContainer] The DOM element or ID that will contain the {@link CreditDisplay}.  If not specified, the credits are added to the bottom of the widget itself.
+     * @param {DataSourceCollection} [options.dataSources=new DataSourceCollection()] The collection of data sources visualized by the widget.  If this parameter is provided,
+     *                               the instance is assumed to be owned by the caller and will not be destroyed when the viewer is destroyed.
+     * @param {Number} [options.terrainExaggeration=1.0] A scalar used to exaggerate the terrain. Note that terrain exaggeration will not modify any other primitive as they are positioned relative to the ellipsoid.
+     * @param {Boolean} [options.shadows=false] Determines if shadows are cast by the sun.
+     * @param {ShadowMode} [options.terrainShadows=ShadowMode.RECEIVE_ONLY] Determines if the terrain casts or receives shadows from the sun.
+     * @param {MapMode2D} [options.mapMode2D=MapMode2D.INFINITE_SCROLL] Determines if the 2D map is rotatable or can be scrolled infinitely in the horizontal direction.
+     * @param {Boolean} [options.projectionPicker=false] If set to true, the ProjectionPicker widget will be created.
+     *
+     * @exception {DeveloperError} Element with id "container" does not exist in the document.
+     * @exception {DeveloperError} options.imageryProvider is not available when using the BaseLayerPicker widget, specify options.selectedImageryProviderViewModel instead.
+     * @exception {DeveloperError} options.terrainProvider is not available when using the BaseLayerPicker widget, specify options.selectedTerrainProviderViewModel instead.
+     * @exception {DeveloperError} options.selectedImageryProviderViewModel is not available when not using the BaseLayerPicker widget, specify options.imageryProvider instead.
+     * @exception {DeveloperError} options.selectedTerrainProviderViewModel is not available when not using the BaseLayerPicker widget, specify options.terrainProvider instead.
+     *
+     * @see Animation
+     * @see BaseLayerPicker
+     * @see CesiumWidget
+     * @see FullscreenButton
+     * @see HomeButton
+     * @see SceneModePicker
+     * @see Timeline
+     * @see viewerDragDropMixin
+     *
+     * @demo {@link http://cesiumjs.org/Cesium/Apps/Sandcastle/index.html?src=Hello%20World.html|Cesium Sandcastle Hello World Demo}
+     *
+     * @example
+     * //Initialize the viewer widget with several custom options and mixins.
+     * var viewer = new Cesium.Viewer('cesiumContainer', {
+     *     //Start in Columbus Viewer
+     *     sceneMode : Cesium.SceneMode.COLUMBUS_VIEW,
+     *     //Use standard Cesium terrain
+     *     terrainProvider : new Cesium.CesiumTerrainProvider({
+     *         url : 'https://assets.agi.com/stk-terrain/world'
+     *     }),
+     *     //Hide the base layer picker
+     *     baseLayerPicker : false,
+     *     //Use OpenStreetMaps
+     *     imageryProvider : Cesium.createOpenStreetMapImageryProvider({
+     *         url : 'https://a.tile.openstreetmap.org/'
+     *     }),
+     *     // Use high-res stars downloaded from https://github.com/AnalyticalGraphicsInc/cesium-assets
+     *     skyBox : new Cesium.SkyBox({
+     *         sources : {
+     *           positiveX : 'stars/TychoSkymapII.t3_08192x04096_80_px.jpg',
+     *           negativeX : 'stars/TychoSkymapII.t3_08192x04096_80_mx.jpg',
+     *           positiveY : 'stars/TychoSkymapII.t3_08192x04096_80_py.jpg',
+     *           negativeY : 'stars/TychoSkymapII.t3_08192x04096_80_my.jpg',
+     *           positiveZ : 'stars/TychoSkymapII.t3_08192x04096_80_pz.jpg',
+     *           negativeZ : 'stars/TychoSkymapII.t3_08192x04096_80_mz.jpg'
+     *         }
+     *     }),
+     *     // Show Columbus View map with Web Mercator projection
+     *     mapProjection : new Cesium.WebMercatorProjection()
+     * });
+     *
+     * //Add basic drag and drop functionality
+     * viewer.extend(Cesium.viewerDragDropMixin);
+     *
+     * //Show a pop-up alert if we encounter an error when processing a dropped file
+     * viewer.dropError.addEventListener(function(dropHandler, name, error) {
+     *     console.log(error);
+     *     window.alert(error);
+     * });
+     */
+    function Viewer(container, options) {
+        //>>includeStart('debug', pragmas.debug);
+        if (!defined(container)) {
+            throw new DeveloperError('container is required.');
+        }
+        //>>includeEnd('debug');
+
+        container = getElement(container);
+
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         options.showSystems = defaultValue(options.showSystems, false);
         options.tools = defaultValue(options.tools, false);
@@ -594,8 +603,15 @@ var sceneModePicker;
 sceneModePicker = new SceneModePicker(toolbar, cesiumWidget.scene);
 }
 
-// BaseLayerPicker
-var baseLayerPicker;
+
+        var projectionPicker;
+        if (options.projectionPicker) {
+            projectionPicker = new ProjectionPicker(toolbar, cesiumWidget.scene);
+        }
+
+        // BaseLayerPicker
+        var baseLayerPicker;
+
         var baseLayerPickerDropDown;
         if (createBaseLayerPicker) {
 var imageryProviderViewModels = defaultValue(options.imageryProviderViewModels, createDefaultImageryProviderViewModels());
@@ -729,6 +745,7 @@ this._baseLayerPickerDropDown = baseLayerPickerDropDown;
         this._showGrid = defaultValue(showGrid, null); /* *** NEW *** */
         this._pointCircleSwitch = defaultValue(pointCircleSwitch, null); /* *** NEW *** */
         this._sceneModePicker = sceneModePicker;
+        this._projectionPicker = projectionPicker;
         this._baseLayerPicker = baseLayerPicker;
         this._navigationHelpButton = navigationHelpButton;
         this._animation = animation;
@@ -928,6 +945,18 @@ return this._container;
         return this._sceneModePicker;
         }
         },
+        /**
+         * Gets the ProjectionPicker.
+         * @memberof Viewer.prototype
+         * @type {ProjectionPicker}
+         * @readonly
+         */
+        projectionPicker : {
+            get : function() {
+                return this._projectionPicker;
+            }
+        },
+
         /**
          * Gets the BaseLayerPicker.
          * @memberof Viewer.prototype
@@ -1499,6 +1528,10 @@ return this._container;
 
         if (defined(this._sceneModePicker)) {
         this._sceneModePicker = this._sceneModePicker.destroy();
+        }
+
+        if (defined(this._projectionPicker)) {
+            this._projectionPicker = this._projectionPicker.destroy();
         }
 
         if (defined(this._baseLayerPicker)) {
