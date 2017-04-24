@@ -1,32 +1,31 @@
 // 275.484,39.095 ==> Coordonnees du stade
-// 256.955,42.127 ==> coordonnées des cercles de cultures
+// 256.955,42.127 ==> coordonnï¿½es des cercles de cultures
 
 /*global define*/
 define([
-    '../../../Core/Math',
-    '../../../Core/Cartesian3',
-    './ColorPicker/ColorPicker',
-    '../../createCommand',
-    '../../../Core/defineProperties',
-    '../../../DataSources/GeoJsonDataSource',
-    '../../../ThirdParty/knockout',
-    '../../../Scene/Material',
-    '../../../Scene/MaterialAppearance',
-    '../../../Core/ScreenSpaceEventHandler',
-    '../../../Core/ScreenSpaceEventType'
-], function (
-        CesiumMath,
+        '../../../Core/Cartesian3',
+        '../../../Core/defineProperties',
+        '../../../Core/Math',
+        '../../../Core/ScreenSpaceEventHandler',
+        '../../../Core/ScreenSpaceEventType',
+        '../../../DataSources/GeoJsonDataSource',
+        '../../../Scene/Material',
+        '../../../Scene/MaterialAppearance',
+        '../../../ThirdParty/knockout',
+        '../../createCommand',
+        './ColorPicker/ColorPicker'
+    ], function(
         Cartesian3,
-        ColorPicker,
-        createCommand,
         defineProperties,
+        CesiumMath,
+        ScreenSpaceEventHandler,
+        ScreenSpaceEventType,
         GeoJsonDataSource,
-        knockout,
         Material,
         MaterialAppearance,
-        ScreenSpaceEventHandler,
-        ScreenSpaceEventType
-        ) {
+        knockout,
+        createCommand,
+        ColorPicker) {
     "use strict";
 
     function flagFunctionV2(that, viewer) {

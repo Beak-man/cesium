@@ -1,81 +1,80 @@
 /*global define*/
 define([
-    '../../Scene/BillboardCollection',
-    '../../Core/BoundingRectangle',
-    '../../Core/Cartesian3',
-    '../../Core/Cartographic',
-    '../../Core/Clock',
-    '../../Core/Color',
-    '../../Core/ColorGeometryInstanceAttribute',
-    '../../DataSources/ConstantProperty',
-    '../../DataSources/ConstantPositionProperty',
-    '../../Core/defined',
-    '../createCommand',
-    '../../Core/createGuid',
-    '../../DataSources/DataSourceDisplay',
-    '../../DataSources/DataSourceCollection',
-    '../../DataSources/EllipseGraphics',
-    '../../DataSources/EntityCollection',
-    '../../DataSources/Entity',
-    '../../Core/GeometryInstance',
-    '../../Scene/Material',
-    '../../DataSources/ColorMaterialProperty',
-    '../../Core/Math',
-    '../../Scene/PerInstanceColorAppearance',
-    '../../Core/PinBuilder',
-    '../../DataSources/PointGraphics',
-    '../../DataSources/PolygonGraphics',
-    '../../DataSources/PolylineGraphics',
-    '../../Scene/PointPrimitiveCollection',
-    '../../DataSources/Property',
-    '../../Scene/PolylineCollection',
-    '../../Core/PolygonGeometry',
-    '../../Core/PolylinePipeline',
-    '../../Scene/Primitive',
-    '../../Scene/PrimitiveCollection',
-    '../../ThirdParty/knockout',
-    '../../Core/defineProperties',
-    '../../Core/ScreenSpaceEventHandler',
-    '../../Core/ScreenSpaceEventType'
-], function (
-        BillboardCollection,
+        '../../Core/BoundingRectangle',
+        '../../Core/Cartesian3',
+        '../../Core/Cartographic',
+        '../../Core/Clock',
+        '../../Core/Color',
+        '../../Core/ColorGeometryInstanceAttribute',
+        '../../Core/createGuid',
+        '../../Core/defined',
+        '../../Core/defineProperties',
+        '../../Core/GeometryInstance',
+        '../../Core/Math',
+        '../../Core/PinBuilder',
+        '../../Core/PolygonGeometry',
+        '../../Core/PolylinePipeline',
+        '../../Core/ScreenSpaceEventHandler',
+        '../../Core/ScreenSpaceEventType',
+        '../../DataSources/ColorMaterialProperty',
+        '../../DataSources/ConstantPositionProperty',
+        '../../DataSources/ConstantProperty',
+        '../../DataSources/DataSourceCollection',
+        '../../DataSources/DataSourceDisplay',
+        '../../DataSources/EllipseGraphics',
+        '../../DataSources/Entity',
+        '../../DataSources/EntityCollection',
+        '../../DataSources/PointGraphics',
+        '../../DataSources/PolygonGraphics',
+        '../../DataSources/PolylineGraphics',
+        '../../DataSources/Property',
+        '../../Scene/BillboardCollection',
+        '../../Scene/Material',
+        '../../Scene/PerInstanceColorAppearance',
+        '../../Scene/PointPrimitiveCollection',
+        '../../Scene/PolylineCollection',
+        '../../Scene/Primitive',
+        '../../Scene/PrimitiveCollection',
+        '../../ThirdParty/knockout',
+        '../createCommand'
+    ], function(
         BoundingRectangle,
         Cartesian3,
         Cartographic,
         Clock,
         Color,
         ColorGeometryInstanceAttribute,
-        ConstantProperty,
-        ConstantPositionProperty,
-        defined,
-        createCommand,
         createGuid,
-        DataSourceDisplay,
-        DataSourceCollection,
-        EllipseGraphics,
-        EntityCollection,
-        Entity,
+        defined,
+        defineProperties,
         GeometryInstance,
-        Material,
-        ColorMaterialProperty,
         CesiumMath,
-        PerInstanceColorAppearance,
         PinBuilder,
+        PolygonGeometry,
+        PolylinePipeline,
+        ScreenSpaceEventHandler,
+        ScreenSpaceEventType,
+        ColorMaterialProperty,
+        ConstantPositionProperty,
+        ConstantProperty,
+        DataSourceCollection,
+        DataSourceDisplay,
+        EllipseGraphics,
+        Entity,
+        EntityCollection,
         PointGraphics,
         PolygonGraphics,
         PolylineGraphics,
-        PointPrimitiveCollection,
         Property,
+        BillboardCollection,
+        Material,
+        PerInstanceColorAppearance,
+        PointPrimitiveCollection,
         PolylineCollection,
-        PolygonGeometry,
-        PolylinePipeline,
         Primitive,
         PrimitiveCollection,
         knockout,
-        defineProperties,
-        ScreenSpaceEventHandler,
-        ScreenSpaceEventType
-        ) {
+        createCommand) {
     "use strict";
 
     function showPanel(that, configContainer) {
@@ -209,7 +208,7 @@ define([
                         var C3Max = parseFloat(arr[numberColumForCvalues.c3max]);
                         var unitC3 = columnNomTab[numberColumForCvalues.c3max].unit;
 
-                        // check if these data are valid (i.e between 0 and 360°)
+                        // check if these data are valid (i.e between 0 and 360ï¿½)
                         var isValuesValid = checkCValues(C1Min, C1Max, C2Min, C2Max);
 
                         // check if the we have a point or a polygon
@@ -414,7 +413,7 @@ define([
      // generatePoints(lngMin, lngMax, latMin, latMax, viewer);
      // generatePolygons(lngMin, lngMax, latMin, latMax, viewer);
      
-     // les données sont dans les objets data : valeures 23, 24, 25, 26
+     // les donnï¿½es sont dans les objets data : valeures 23, 24, 25, 26
      }
      }
      

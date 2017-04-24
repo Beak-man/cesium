@@ -3,19 +3,19 @@
  */
 
 define([
-    '../../Core/Math',
-    '../../Core/defineProperties',
-    '../../Core/ScreenSpaceEventHandler',
-    '../../Core/ScreenSpaceEventType',
-    '../../ThirdParty/knockout',
-    '../createCommand'],
-        function (
-                CesiumMath,
-                defineProperties,
-                ScreenSpaceEventHandler,
-                ScreenSpaceEventType,
-                knockout,
-                createCommand) {
+        '../../Core/defineProperties',
+        '../../Core/Math',
+        '../../Core/ScreenSpaceEventHandler',
+        '../../Core/ScreenSpaceEventType',
+        '../../ThirdParty/knockout',
+        '../createCommand'
+    ], function(
+        defineProperties,
+        CesiumMath,
+        ScreenSpaceEventHandler,
+        ScreenSpaceEventType,
+        knockout,
+        createCommand) {
             "use strict";
 
             function lngLatView(that, mainContainer, scene) {

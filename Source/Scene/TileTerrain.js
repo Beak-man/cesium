@@ -1,19 +1,19 @@
 /*global define*/
 define([
-    '../Core/BoundingSphere',
-    '../Core/Cartesian3',
-    '../Core/defined',
-    '../Core/DeveloperError',
-    '../Core/IndexDatatype',
-    '../Core/OrientedBoundingBox',
-    '../Core/TileProviderError',
-    '../Renderer/Buffer',
-    '../Renderer/BufferUsage',
-    '../Renderer/VertexArray',
-    '../ThirdParty/when',
-    './TerrainState',
-    './TileBoundingBox'
-], function (
+        '../Core/BoundingSphere',
+        '../Core/Cartesian3',
+        '../Core/defined',
+        '../Core/DeveloperError',
+        '../Core/IndexDatatype',
+        '../Core/OrientedBoundingBox',
+        '../Core/TileProviderError',
+        '../Renderer/Buffer',
+        '../Renderer/BufferUsage',
+        '../Renderer/VertexArray',
+        '../ThirdParty/when',
+        './TerrainState',
+        './TileBoundingBox'
+    ], function(
         BoundingSphere,
         Cartesian3,
         defined,

@@ -1,13 +1,13 @@
 /*global define*/
 define([
-    '../../Core/defineProperties',
-    '../getElement',
-    '../../ThirdParty/knockout',
-    './MarkerMoveViewModel'
-], function (
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        '../getElement',
+        './MarkerMoveViewModel'
+    ], function(
         defineProperties,
-        getElement,
         knockout,
+        getElement,
         MarkerMoveViewModel) {
     "use strict";
 

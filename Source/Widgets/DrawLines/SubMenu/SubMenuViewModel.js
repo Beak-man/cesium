@@ -1,60 +1,59 @@
 // 275.484,39.095 ==> Coordonnees du stade
-// 256.955,42.127 ==> coordonnées des cercles de cultures
+// 256.955,42.127 ==> coordonnï¿½es des cercles de cultures
 
 /*global define*/
 define([
-    '../../../Core/Math',
     '../../../Core/Cartesian3',
     '../../../Core/CircleGeometry',
     '../../../Core/CircleOutlineGeometry',
     '../../../Core/Color',
     '../../../Core/ColorGeometryInstanceAttribute',
-    '../../createCommand',
     '../../../Core/defineProperties',
-    '../../../DataSources/GeoJsonDataSource',
     '../../../Core/GeometryInstance',
-    '../../../ThirdParty/knockout',
+    '../../../Core/Math',
+    '../../../Core/NearFarScalar',
+    '../../../Core/PolygonGeometry',
+    '../../../Core/PolylinePipeline',
+    '../../../Core/ScreenSpaceEventHandler',
+    '../../../Core/ScreenSpaceEventType',
+    '../../../DataSources/GeoJsonDataSource',
     '../../../Scene/HorizontalOrigin',
     '../../../Scene/LabelCollection',
     '../../../Scene/LabelStyle',
     '../../../Scene/Material',
-    '../../../Core/NearFarScalar',
-    '../../../Core/PolygonGeometry',
-    '../../../Scene/PolylineCollection',
-    '../../../Core/PolylinePipeline',
     '../../../Scene/PerInstanceColorAppearance',
+    '../../../Scene/PolylineCollection',
     '../../../Scene/Primitive',
     '../../../Scene/PrimitiveCollection',
-    '../../../Core/ScreenSpaceEventHandler',
-    '../../../Core/ScreenSpaceEventType',
-    '../../../Scene/VerticalOrigin'
+    '../../../Scene/VerticalOrigin',
+    '../../../ThirdParty/knockout',
+    '../../createCommand'
 ], function (
-        CesiumMath,
         Cartesian3,
         CircleGeometry,
         CircleOutlineGeometry,
         Color,
         ColorGeometryInstanceAttribute,
-        createCommand,
         defineProperties,
-        GeoJsonDataSource,
         GeometryInstance,
-        knockout,
+        CesiumMath,
+        NearFarScalar,
+        PolygonGeometry,
+        PolylinePipeline,
+        ScreenSpaceEventHandler,
+        ScreenSpaceEventType,
+        GeoJsonDataSource,
         HorizontalOrigin,
         LabelCollection,
         LabelStyle,
         Material,
-        NearFarScalar,
-        PolygonGeometry,
-        PolylineCollection,
-        PolylinePipeline,
         PerInstanceColorAppearance,
+        PolylineCollection,
         Primitive,
         PrimitiveCollection,
-        ScreenSpaceEventHandler,
-        ScreenSpaceEventType,
-        VerticalOrigin
-        ) {
+        VerticalOrigin,
+        knockout,
+        createCommand) {
     "use strict";
 
     var targetMouse;
@@ -152,7 +151,7 @@ define([
                         // If we have 2 points (i.e 4 components in arrayRadians), then
 
                         if (arrayRadians.length === 4) {
-                            
+
                             // create an object which contains parameters to draw a line
 
                             newPolyLine = {
@@ -202,7 +201,7 @@ define([
 
                             // If there is more than 1 line in the collection, 
                             // wer remove the before last one
-                            
+
                             console.log(polyLines._polylines);
 
                             if (dim > 1) {
@@ -362,8 +361,6 @@ define([
                 var dimPoly = polyLines._polylines.length;
                 var dimLabel = polyLinesLabels._labels.length;
 
-                console.log(polyLines._polylines);
-
                 // if there is at least one
 
                 if (dimPoly > 1) {
@@ -373,8 +370,8 @@ define([
 
                     var ua = navigator.userAgent;
                     var pattern = /Firefox/g;
-                   
-                   var beforeLastPolyline = polyLines._polylines[dimPoly - 2];
+
+                    var beforeLastPolyline = polyLines._polylines[dimPoly - 2];
 
                     if (pattern.test(ua)) {
 
@@ -479,7 +476,7 @@ define([
                                     center: cartesianCartographicCircleCenter,
                                     radius: circleRadius,
                                     ellipsoid: ellipsoid,
-                                    height : 0
+                                    height: 0
                                 });
 
                                 var circleOutlineInstance = new GeometryInstance({
@@ -537,13 +534,13 @@ define([
                     var cartesianCircleCenter = newPrim._boundingSphereWC[0].center;
                     var radius = circleRadius = newPrim._boundingSphereWC[0].radius;
 
-                   // console.log(circleRadius);
+                    // console.log(circleRadius);
 
                     var circleGeometry = new CircleGeometry({
                         center: cartesianCircleCenter,
                         radius: circleRadius,
                         ellipsoid: ellipsoid,
-                        height : 0,
+                        height: 0,
                         vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT
                     });
 
@@ -627,7 +624,7 @@ define([
             that._handlerMouseMoveCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
 
-             // Variables initialization
+            // Variables initialization
 
             var arrayRadians = [];
             var ellipsoid = viewer.scene.globe.ellipsoid;
@@ -640,19 +637,19 @@ define([
                 var newLine;
 
                 // we get the cartesians coordinates of the clicked point
-                
+
                 var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
 
 
                 // If the coordinates are not null and if we are on the canvas, then...
-                
+
                 if (cartesian && targetMouse === "[object HTMLCanvasElement]") {
 
 
                     // we change the cartesians coordinates into cartographics coordinates (lng, lat. coordinates are in rad
-                    
+
                     var cartographic = ellipsoid.cartesianToCartographic(cartesian);
-                    
+
                     // we begin to fill the arrayRadians array which contains the start and final point coordinates of the line
 
                     arrayRadians.push(cartographic.longitude);
@@ -677,7 +674,7 @@ define([
                                 center: middlePoint,
                                 radius: diameter / 2.0,
                                 ellipsoid: ellipsoid,
-                                height : 0,
+                                height: 0,
                                 vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT
                             });
 
@@ -729,19 +726,19 @@ define([
 
                     that._handlerMouseMoveCircle.setInputAction(function (mouvement) {
 
-                        // on recupere les coordonnées de chaque point survolé par la souris
+                        // on recupere les coordonnï¿½es de chaque point survolï¿½ par la souris
                         // we get thet coordinate of each point under the cursor
 
                         var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
 
-                         // If the coordinates are not null and if we are on the canvas, then...
+                        // If the coordinates are not null and if we are on the canvas, then...
 
                         if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
 
                             // we change the coordinate...
 
                             var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
-                            
+
                             // new coordiates pushed in the array. The "if" condition is implemented in order to replace the final point and hence 
                             // draw a single line
 
@@ -891,7 +888,7 @@ define([
             //  that.isCircleFromTwoPointsActive = false; // to prevent servral instance of the same Handlers
         }
     }
-    
+
     // mathematical process to get the center of a circle drawn with 3 points
 
     function  computeMedianPoint(P1, P2) {
@@ -1103,7 +1100,7 @@ define([
                                 center: centerPosition,
                                 radius: diameter / 2.0,
                                 ellipsoid: ellipsoid,
-                                height : 0,
+                                height: 0,
                                 vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT
                             });
 
@@ -1141,7 +1138,7 @@ define([
                         polyLinesTmps.removeAll();
                         polyLinesLabelsTmps.removeAll();
 
-                      //  console.log(polyLinesTmps);
+                        //  console.log(polyLinesTmps);
                     } else {
 
                         that._handlerMouseMoveCircle.setInputAction(function (mouvement) {
@@ -1260,7 +1257,7 @@ define([
                     arrayRadians = [];
                     polyLinesCoord = [];
 
-                } else if (dimPolyLines == 0) {
+                } else if (dimPolyLines === 0) {
 
                     var dim = circleCollection._primitives.length;
                     var dimLabel = circlesLabels._labels.length;
@@ -1325,41 +1322,41 @@ define([
             // 
             // We create a tmp collection of polyline (polyLinesTmp) to help users to build a polygone on the map. 
             // polyLinesTmp is destroyed at each time that a new polygone is built and it is destroy when we leave the widget
-            
+
             var coordLinesForPolygonsRadians = []; // ==>  4 components array
             var polygonsCoord = []; // ==> array which contains the point to build a polygon
             var oldLabel;
             var oldPolygons;
 
             // we get the ellipsoid  
-            
+
             var ellipsoid = viewer.scene.globe.ellipsoid;
 
 
             //  EVENT : left click 
-            
+
             that._handlerLeftClick.setInputAction(function (click) {
 
                 //  Undo desable 
                 that._undoIsactivated = false;
 
                 // Declaration of a new line : Objet used to draw a line;
-                
+
                 var newPolyLine;
 
                 // we get the cartesians coordinates of the clicked point
-                
+
                 var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
 
                 // if the coordinates are not null and we are on the canvas then...
-                
+
                 if (cartesian && targetMouse === "[object HTMLCanvasElement]") {
-                    
+
                     //we transforme the coordinates (x, y, z) to cartographic (long, lat) in rad
-                    
+
                     var cartographic = ellipsoid.cartesianToCartographic(cartesian);
 
-                    
+
                     if (!that._undoIsactivated) {
                         coordLinesForPolygonsRadians.push(cartographic.longitude);
                         coordLinesForPolygonsRadians.push(cartographic.latitude);
@@ -1368,24 +1365,24 @@ define([
                     }
 
                     // EVENT : mouse move
-                    
+
                     that._handlerMove.setInputAction(function (mouvement) {
 
                         // we get the coordinates of each point under the cursor
-                        
+
                         var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
 
                         // if the coordinates are not null and we are on the canvas then...
-                        
+
                         if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
 
                             //we transforme the coordinates (x, y, z) to cartographic (long, lat) in rad
-                            
+
                             var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
-                            
+
                             // if we already have the final point in the coordLinesForPolygonsRadians array then we change it in order
                             // to create animate the motion of the line. 
-                            
+
                             if (coordLinesForPolygonsRadians[2] && coordLinesForPolygonsRadians[3]) {
                                 coordLinesForPolygonsRadians[2] = cartographicMovePosition.longitude;
                                 coordLinesForPolygonsRadians[3] = cartographicMovePosition.latitude;
@@ -1395,13 +1392,13 @@ define([
                             }
                         }
 
-                        
+
                         // if we have the start and final point, then...
-                        
+
                         if (coordLinesForPolygonsRadians.length === 4) {
 
                             // we create a new line
-                            
+
                             newPolyLine = {
                                 positions: PolylinePipeline.generateCartesianArc({
                                     positions: Cartesian3.fromRadiansArray(coordLinesForPolygonsRadians, ellipsoid),
@@ -1413,7 +1410,7 @@ define([
                             };
 
                             // distance between the start and final point
-                            
+
                             var startPoint = Cartesian3.fromRadians(coordLinesForPolygonsRadians[0], coordLinesForPolygonsRadians[1], cartographic.height, ellipsoid);
                             var endPoint = Cartesian3.fromRadians(coordLinesForPolygonsRadians[2], coordLinesForPolygonsRadians[3], cartographicMovePosition.height, ellipsoid);
                             var distance = Cartesian3.distance(endPoint, startPoint);
@@ -1421,10 +1418,10 @@ define([
 
 
                             // Ici, on construit le label qui renseigne sur la distance entre les points de 
-                            // depart et d'arrivé
-                            
+                            // depart et d'arrivï¿½
+
                             // label the indicate the distance between the start and final point
-                            
+
                             var newLabelPolyline = {
                                 position: cartesianMovePosition,
                                 text: 'D = ' + distanceTrunc + ' m',
@@ -1439,19 +1436,19 @@ define([
                             };
 
                             //  add the line
-                            
+
                             polyLinesTmpPolygons.add(newPolyLine);
 
                             // add the label
-                            
+
                             polyLinesLabelsTmPolygons.add(newLabelPolyline);
 
-                            // Dans les lignes suivantes, on verifie si il y a déja un tracé de ligne.
-                            // Si oui, alors on retir la ligne précedente ansi que son label associé.
+                            // Dans les lignes suivantes, on verifie si il y a dï¿½ja un tracï¿½ de ligne.
+                            // Si oui, alors on retir la ligne prï¿½cedente ansi que son label associï¿½.
                             // Cela donne un effet de dynamisme dans le rendu
-                            
+
                             // we remove the old line and the old label in order to keep only one line on the scene
-                            
+
                             var dim = polyLinesTmpPolygons._polylines.length;
                             var dimLabel = polyLinesLabelsTmPolygons._labels.length;
 
@@ -1462,12 +1459,12 @@ define([
                                 var primitiveLabel = polyLinesLabelsTmPolygons._labels[dimLabel - 2];
                                 polyLinesLabelsTmPolygons.remove(primitiveLabel);
                             }
-                            
+
                             // If Undo is desabled then ew clean the vector wich contains the coordinate of the line in order to create another one
                             // In order to create an unbroken line, we keep the final point of the previous line and it become the start point of the new line
-                            
+
                             // if Undo is activated (with a righ click), then we recover the old coordinate to modify the la drawn ligne
-                            
+
                             if (!that._undoIsactivated) {
                                 coordLinesForPolygonsRadians = [];
                                 coordLinesForPolygonsRadians.push(cartographic.longitude);
@@ -1479,7 +1476,7 @@ define([
                             }
 
                             // we recover the last label
-                            
+
                             oldLabel = newLabelPolyline;
                         }
 
@@ -1488,13 +1485,13 @@ define([
                     polyLinesTmpPolygons.add(newPolyLine);
                     polyLinesLabelsTmPolygons.add(oldLabel);
 
-                    // Il faut au minimum 3 points afin de tracer un polygon (donc 6 coordonnées). 
+                    // Il faut au minimum 3 points afin de tracer un polygon (donc 6 coordonnï¿½es). 
                     // Donc si il y a au moins 6 composantes dans le vecteur polygonsCoord, alors 
-                    // on commence le tracé du polygon
-                    
+                    // on commence le tracï¿½ du polygon
+
                     // we need 3 point to draw a polygone (hence 6 coordinates). hence, if we have at least 
                     // 6 components in the polygonsCoord vector then, we begin to draw the polygone
-                    
+
                     if (polygonsCoord.length >= 6) {
 
                         var polygonsCoordDegree = Cartesian3.fromRadiansArray(polygonsCoord, ellipsoid);
@@ -1503,7 +1500,7 @@ define([
                             geometry: PolygonGeometry.fromPositions({
                                 positions: polygonsCoordDegree,
                                 vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT,
-                                ellipsoid: ellipsoid }),
+                                ellipsoid: ellipsoid}),
                             attributes: {
                                 color: ColorGeometryInstanceAttribute.fromColor(new Color(0.0, 0.0, 1.0, 0.3))
                             }
@@ -1534,20 +1531,20 @@ define([
             that._handlerMiddleClick.setInputAction(function () {
 
                 // we clean the position vector
-                
+
                 coordLinesForPolygonsRadians = [];
                 polygonsCoord = [];
                 oldPolygons = null;
 
                 // On recupere le nombre de lignes ansi que le nombre labels
-                
+
                 // we get the number of lines and the number of polygon
-                
+
                 var dim = polyLinesTmpPolygons._polylines.length;
                 var dimLabel = polyLinesLabelsTmPolygons._labels.length;
 
                 // we get the last line and label to destroy them
-                
+
                 var polyline = polyLinesTmpPolygons._polylines[dim - 1];
                 var polylineLabel = polyLinesLabelsTmPolygons._labels[dimLabel - 1];
 
@@ -1556,7 +1553,7 @@ define([
 
                 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
                 that._handlerMove = new ScreenSpaceEventHandler(viewer.scene.canvas);
-                
+
                 var dimSegment = polyLinesTmpPolygons._polylines.length;
 
                 var firstLine = polyLinesTmpPolygons._polylines[0];
@@ -1580,9 +1577,9 @@ define([
                 polyLinesTmpPolygons.add(finalPolyLine);
 
                 // on reevalue la dimension de polyLinesTmp._polylines car une nouvelle
-                // ligne a été introduite. Cela est important pour le calcul de la distance
+                // ligne a ï¿½tï¿½ introduite. Cela est important pour le calcul de la distance
                 // totale
-                
+
                 // we re-evaluate the dimension of polyLinesTmp._polylines for the computation of the
                 // total distance
 
@@ -1663,7 +1660,7 @@ define([
                         geometry: PolygonGeometry.fromPositions({
                             positions: polygonsCoordDegree,
                             vertexFormat: PerInstanceColorAppearance.VERTEX_FORMAT,
-                            ellipsoid: ellipsoid }),
+                            ellipsoid: ellipsoid}),
                         attributes: {
                             color: ColorGeometryInstanceAttribute.fromColor(new Color(0.0, 0.0, 1.0, 0.3))
                         }
@@ -1828,19 +1825,19 @@ define([
     function saveData(that, container) {
 
         // get all primitives
-        
+
         var primitives = that._viewer.scene.primitives._primitives;
         var crs = GeoJsonDataSource.crsFunctionType;
 
         // Declaration de l'Objet geoJson a enrigstrer dans un fichier
-       //  Declaration of the geoJson object which will be saved in a file
-        
-        
+        //  Declaration of the geoJson object which will be saved in a file
+
+
         var geoJsonObject = {};
         geoJsonObject.type = "FeatureCollection";
         geoJsonObject.features = [];
         geoJsonObject.crs = crs.crs;
-        
+
         for (var i = 0; i < primitives.length; i++) {
 
             // if the primitive is a polyline then ...
@@ -1848,57 +1845,57 @@ define([
             if (primitives[i].associatedObject === "polylines" && primitives[i]._polylines.length > 0) {
 
                 // Declaration of the featureObject object (see geojson specifications)
-                
+
                 var featurePolylines = {};
                 featurePolylines.type = "Feature";
-                
+
                 // declaration of the object witch will contains all start and final points of each lines
-                
+
                 var jsonPolylineGeometry = {};
                 jsonPolylineGeometry.type = "MultiLineString";
                 jsonPolylineGeometry.coordinates = [];
 
-                
+
                 // get all polylines contained in primitive[i]
-                
+
                 var polylines = primitives[i]._polylines;
 
                 // we get label coresponding to the total distance of the trajectory
-                
+
                 var labels = primitives[i + 1]._labels;
-                
+
                 var totalLengthPath = labels[labels.length - 1]._text;
-                
+
                 if (polylines.length > 0) {
 
                     for (var j = 0; j < polylines.length; j++) {
-                        
+
                         var positions = polylines[j]._positions;
-                        
+
                         // get star and final point
-                        
+
                         var firstPosition = positions[0];
                         var lastPosition = positions[positions.length - 1];
 
-                        // On passe des coordonnées cartésiennes aux coordonnées cartographiques
+                        // On passe des coordonnï¿½es cartï¿½siennes aux coordonnï¿½es cartographiques
                         // coordinate transformation : cartesian ==> cartographic
-                        
+
                         var cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
                         var cartographicLastPosition = that._ellipsoid.cartesianToCartographic(lastPosition);
 
                         // Rad --> Degrees 
-                        
+
                         var firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
                         var firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
                         var lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
                         var lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
-                        
+
                         // coordinate vector of the line
-                        
+
                         var line = [[firstPositionLng, firstPositionLat], [lastPositionLng, lastPositionLat]];
 
                         // we push the last vector in the property named "coordinates" of the geoJsonPolyline object
-                        
+
                         jsonPolylineGeometry.coordinates.push(line);
                         featurePolylines.geometry = jsonPolylineGeometry;
                         featurePolylines.properties = {
@@ -1908,7 +1905,7 @@ define([
                     }
 
                     // push in the final object
-                    
+
                     geoJsonObject.features.push(featurePolylines);
                 }
             }
@@ -1917,19 +1914,19 @@ define([
             // if the primive is a circle
 
             if (primitives[i].associatedObject === "circleGeomtry") {
-                
+
                 // get all circle contained in the primitive[i]
-                
+
                 var circles = primitives[i]._primitives;
 
                 if (circles.length > 0) {
-                    
+
                     // we go throught the circle array
 
                     for (var j = 0; j < circles.length; j++) {
 
                         // get the coordinate of the center
-                        
+
                         var centerCoordinates = circles[j]._boundingSpheres[0].center;
                         var circleRadius = circles[j]._boundingSpheres[0].radius;
                         var circleSurface = CesiumMath.PI * circleRadius * circleRadius;
@@ -1960,47 +1957,47 @@ define([
             }
 
             // if the primitive is a polygon then ...
-            
+
             if (primitives[i].associatedObject === "polylinesTmpPolygons") {
 
                 // declaration of the featureObject object which contains all lines 
-                
+
                 var featurePolygons = {};
                 featurePolygons.type = "Feature";
-                
+
                 // declaration of the object which contains all coordinates of the start and final points
-                
+
                 var geoJsonPolygons = {};
                 geoJsonPolygons.type = "Polygon";
                 geoJsonPolygons.coordinates = [];
-                
+
                 // get all polylines contained in  primitive[i]
-                
+
                 var polylines = primitives[i]._polylines;
                 var polygonsPoints = [];
-                
+
                 if (polylines.length > 0) {
 
                     for (var j = 0; j < polylines.length - 1; j++) {
-                        
+
                         var positions = polylines[j]._positions;
 
                         // get first and last points of a given line
-                        
+
                         var firstPosition = positions[0];
                         var lastPosition = positions[positions.length - 1];
 
                         // Cartesian to cartographic
-                        
+
                         var cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
                         var cartographicLastPosition = that._ellipsoid.cartesianToCartographic(lastPosition);
 
                         // Rad to Degres
-                        
+
                         var lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
                         var lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
 
-                        if (j === 0) { 
+                        if (j === 0) {
 
                             var firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
                             var firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
@@ -2027,9 +2024,9 @@ define([
                 }
             }
         }
-        
+
         // we check if there is loaded data
-        
+
         if (that._viewer.geoJsonData) {
 
             // if yes, then whe get its
@@ -2043,7 +2040,7 @@ define([
                 var dimGeoJsonDataSource = geoJsonDataSource.length;
 
                 // we determine what kind of data it is
-                
+
                 for (var l = 0; l < dimGeoJsonDataSource; l++) {
 
                     var geoJsonData = geoJsonDataSource[l];
@@ -2222,14 +2219,14 @@ define([
                     var collection = collectionsInitialization(that);
                     that._viewer.geoJsonData = null;
                 } catch (e) {
-                  //  console.log(e)
+                    //  console.log(e)
                 }
             } else {
                 try {
                     removeHandlers(that);
                     that._viewer.geoJsonData = null;
                 } catch (e) {
-                  //  console.log(e)
+                    //  console.log(e)
                 }
             }
 
@@ -2237,7 +2234,7 @@ define([
                 that._linkDownload.parentElement.removeChild(that._linkDownload);
                 that._wrapperSaveSubMenu.parentElement.removeChild(that._wrapperSaveSubMenu);
             } catch (e) {
-               // console.log(e)
+                // console.log(e)
             }
 
 
@@ -2329,25 +2326,34 @@ define([
                 this.isCircleFromTwoPointsActive = false;
                 this.isCircleFromThreePointsActive = false;
 
-                if (this._handlerLeftClick)
+                if (this._handlerLeftClick) {
                     this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerMiddleClick)
+                }
+                if (this._handlerMiddleClick) {
                     this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-                if (this._handlerRightClick)
+                }
+                if (this._handlerRightClick) {
                     this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerDblLeftClick)
+                }
+                if (this._handlerDblLeftClick) {
                     this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMove)
+                }
+                if (this._handlerMove) {
                     this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                }
 
-                if (this._handlerLeftClickCircle)
+                if (this._handlerLeftClickCircle) {
                     this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerRightClickCircle)
+                }
+                if (this._handlerRightClickCircle) {
                     this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerLeftDblClickCircle)
+                }
+                if (this._handlerLeftDblClickCircle) {
                     this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMouseMoveCircle)
+                }
+                if (this._handlerMouseMoveCircle) {
                     this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                }
 
 
                 //   collectionsInitialization(this);
@@ -2356,25 +2362,34 @@ define([
         removeAllHandlers: {
             get: function () {
 
-                if (this._handlerLeftClick)
+                if (this._handlerLeftClick){
                     this._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerMiddleClick)
+                }
+                if (this._handlerMiddleClick){
                     this._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-                if (this._handlerRightClick)
+                }
+                if (this._handlerRightClick){
                     this._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerDblLeftClick)
+                }
+                if (this._handlerDblLeftClick){
                     this._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMove)
+                }
+                if (this._handlerMove){
                     this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                }
 
-                if (this._handlerLeftClickCircle)
+                if (this._handlerLeftClickCircle){
                     this._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerRightClickCircle)
+                }
+                if (this._handlerRightClickCircle){
                     this._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-                if (this._handlerLeftDblClickCircle)
+                }
+                if (this._handlerLeftDblClickCircle){
                     this._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-                if (this._handlerMouseMoveCircle)
+                }
+                if (this._handlerMouseMoveCircle){
                     this._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                }
 
                 //   collectionsInitialization(this);
             }
@@ -2402,7 +2417,7 @@ define([
 
 
         if (primitives.length === 0) {
-            
+
             // the following order must be respected : Object - label of the objet - object - label of the objet - etc...
 
             polyLines = that._viewer.scene.primitives.add(new PolylineCollection());
@@ -2631,25 +2646,34 @@ define([
 
     function removeHandlers(that) {
 
-        if (that._handlerLeftClick)
+        if (that._handlerLeftClick){
             that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-        if (that._handlerMiddleClick)
+        }
+        if (that._handlerMiddleClick){
             that._handlerMiddleClick.removeInputAction(ScreenSpaceEventType.MIDDLE_CLICK);
-        if (that._handlerRightClick)
+        }
+        if (that._handlerRightClick){
             that._handlerRightClick.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-        if (that._handlerDblLeftClick)
+        }
+        if (that._handlerDblLeftClick){
             that._handlerDblLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-        if (that._handlerMove)
+        }
+        if (that._handlerMove){
             that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+        }
 
-        if (that._handlerLeftClickCircle)
+        if (that._handlerLeftClickCircle){
             that._handlerLeftClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-        if (that._handlerRightClickCircle)
+        }
+        if (that._handlerRightClickCircle){
             that._handlerRightClickCircle.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
-        if (that._handlerLeftDblClickCircle)
+        }
+        if (that._handlerLeftDblClickCircle){
             that._handlerLeftDblClickCircle.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-        if (that._handlerMouseMoveCircle)
+    }
+        if (that._handlerMouseMoveCircle){
             that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+        }
 
 
 

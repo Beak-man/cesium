@@ -1,15 +1,14 @@
 /*global define*/
 define([
-    '../../../../Core/Color',
-    '../../../createCommand',
-    '../../../../Core/defineProperties',
-    '../../../../ThirdParty/knockout'
-], function (
+        '../../../../Core/Color',
+        '../../../../Core/defineProperties',
+        '../../../../ThirdParty/knockout',
+        '../../../createCommand'
+    ], function(
         Color,
-        createCommand,
         defineProperties,
-        knockout
-        ) {
+        knockout,
+        createCommand) {
     "use strict";
 
     function  pickColor(that, color) {

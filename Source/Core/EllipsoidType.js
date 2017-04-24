@@ -1,5 +1,10 @@
 /*global define*/
-define(['./freezeObject', './Math'], function (freezeObject, CesiumMath) {
+define([
+        './freezeObject',
+        './Math'
+    ], function(
+        freezeObject,
+        CesiumMath) {
 'use strict';
     var EllipsoidType = function (Ellipsoid, endUserOptions) {
 

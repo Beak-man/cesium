@@ -1,14 +1,14 @@
 /*global define*/
 define([
-    '../Core/defaultValue',
-    '../Core/defined',
-    '../Core/defineProperties',
-    '../Core/destroyObject',
-    '../Core/DeveloperError',
-    '../Core/IndexDatatype',
-    './BufferUsage',
-    './WebGLConstants'
-], function (
+        '../Core/defaultValue',
+        '../Core/defined',
+        '../Core/defineProperties',
+        '../Core/destroyObject',
+        '../Core/DeveloperError',
+        '../Core/IndexDatatype',
+        './BufferUsage',
+        './WebGLConstants'
+    ], function(
         defaultValue,
         defined,
         defineProperties,

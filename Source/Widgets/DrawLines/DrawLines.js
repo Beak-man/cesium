@@ -1,25 +1,25 @@
 /*global define*/
 define([
-    '../../Core/Color',
-    '../../Core/defined',
-    '../../Core/defineProperties',
-    '../../Core/destroyObject',
-    '../../Core/DeveloperError',
-    '../../ThirdParty/knockout',
-    '../getElement',
-    '../../Core/ScreenSpaceEventHandler',
-    '../../Core/ScreenSpaceEventType',
-    './DrawLinesViewModel'
-], function (
+        '../../Core/Color',
+        '../../Core/defined',
+        '../../Core/defineProperties',
+        '../../Core/destroyObject',
+        '../../Core/DeveloperError',
+        '../../Core/ScreenSpaceEventHandler',
+        '../../Core/ScreenSpaceEventType',
+        '../../ThirdParty/knockout',
+        '../getElement',
+        './DrawLinesViewModel'
+    ], function(
         Color,
         defined,
         defineProperties,
         destroyObject,
         DeveloperError,
-        knockout,
-        getElement,
         ScreenSpaceEventHandler,
         ScreenSpaceEventType,
+        knockout,
+        getElement,
         DrawLinesViewModel) {
     "use strict";
 

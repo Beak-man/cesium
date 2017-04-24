@@ -6,5 +6,7 @@ require({
         Cesium : '../../Source'
     }
     
-}, ['PlanetaryCesiumViewer'], function() {
+}, [
+        'PlanetaryCesiumViewer'
+    ], function() {
 });

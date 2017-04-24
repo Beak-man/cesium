@@ -1,13 +1,12 @@
 /*global define*/
 define([
-    '../../Core/defineProperties',
-    '../../ThirdParty/knockout',
-    './PointCircleSwitchViewModel'
-], function (
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        './PointCircleSwitchViewModel'
+    ], function(
         defineProperties,
         knockout,
-        PointCircleSwitchViewModel
-        ) {
+        PointCircleSwitchViewModel) {
     "use strict";
 
     /**

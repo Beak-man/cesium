@@ -1,13 +1,12 @@
 /*global define*/
 define([
-    '../../Core/defineProperties',
-    '../../ThirdParty/knockout',
-    './ShowGridViewModel'
-], function (
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        './ShowGridViewModel'
+    ], function(
         defineProperties,
         knockout,
-        ShowGridViewModel
-        ) {
+        ShowGridViewModel) {
     "use strict";
 
     /**

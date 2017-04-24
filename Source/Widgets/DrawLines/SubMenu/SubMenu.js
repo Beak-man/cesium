@@ -1,13 +1,12 @@
 /*global define*/
 define([
-    '../../../Core/defineProperties',
-    '../../../ThirdParty/knockout',
-    './SubMenuViewModel'
-], function (
+        '../../../Core/defineProperties',
+        '../../../ThirdParty/knockout',
+        './SubMenuViewModel'
+    ], function(
         defineProperties,
         knockout,
-        SubMenuViewModel
-        ) {
+        SubMenuViewModel) {
     "use strict";
 
 

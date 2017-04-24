@@ -1,18 +1,18 @@
 /*global define*/
 define([
-    './Cartesian3',
-    './defaultValue',
-    './defineProperties',
-    './defined',
-    './DeveloperError',
-    '../ThirdParty/when'
-], function(
-    Cartesian3,
-    defaultValue,
-    defineProperties,
-    defined,
-    DeveloperError,
-    when) {
+        '../ThirdParty/when',
+        './Cartesian3',
+        './defaultValue',
+        './defined',
+        './defineProperties',
+        './DeveloperError'
+    ], function(
+        when,
+        Cartesian3,
+        defaultValue,
+        defined,
+        defineProperties,
+        DeveloperError) {
     'use strict';
 
     /**

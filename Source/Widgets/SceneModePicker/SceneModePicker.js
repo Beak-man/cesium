@@ -1,15 +1,15 @@
 
 /*global define*/
 define([
-    '../../Core/defined',
-    '../../Core/defineProperties',
-    '../../Core/destroyObject',
-    '../../Core/DeveloperError',
-    '../../Core/FeatureDetection',
-    '../../ThirdParty/knockout',
-    '../getElement',
-    './SceneModePickerViewModel'
-], function (
+        '../../Core/defined',
+        '../../Core/defineProperties',
+        '../../Core/destroyObject',
+        '../../Core/DeveloperError',
+        '../../Core/FeatureDetection',
+        '../../ThirdParty/knockout',
+        '../getElement',
+        './SceneModePickerViewModel'
+    ], function(
         defined,
         defineProperties,
         destroyObject,

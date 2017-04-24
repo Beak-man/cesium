@@ -1,13 +1,12 @@
 /*global define*/
 define([
-    '../../Core/defineProperties',
-    '../../ThirdParty/knockout',
-    './EditDrawingViewModel'
-], function (
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        './EditDrawingViewModel'
+    ], function(
         defineProperties,
         knockout,
-        EditDrawingViewModel
-        ) {
+        EditDrawingViewModel) {
     "use strict";
 
     /**

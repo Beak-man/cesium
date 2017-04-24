@@ -1,15 +1,14 @@
 /*global define*/
 define([
-    '../../Core/defineProperties',
-    '../../DataSources/GeoJsonDataSource',
-    '../../ThirdParty/knockout',
-    './FlagCounterViewModel'
-], function (
+        '../../Core/defineProperties',
+        '../../DataSources/GeoJsonDataSource',
+        '../../ThirdParty/knockout',
+        './FlagCounterViewModel'
+    ], function(
         defineProperties,
         GeoJsonDataSource,
         knockout,
-        FlagCounterViewModel
-        ) {
+        FlagCounterViewModel) {
     "use strict";
 
     var eyeIcon = '<g><path d="M84.448,47.672L67.712,30.936l-0.116,0.116c-4.632-4.325-10.847-6.977-17.685-6.977c-7.679,0-14.575,3.341-19.322,8.646\

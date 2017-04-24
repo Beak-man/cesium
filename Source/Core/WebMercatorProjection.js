@@ -125,7 +125,7 @@ define([
     WebMercatorProjection.prototype.project = function(cartographic, result) {
         var semimajorAxis = this._semimajorAxis;
         
-        // Calcul des coordonnées x, y z
+        // Calcul des coordonnï¿½es x, y z
         
         var x = cartographic.longitude * semimajorAxis;
         var y = WebMercatorProjection.geodeticLatitudeToMercatorAngle(cartographic.latitude) * semimajorAxis;

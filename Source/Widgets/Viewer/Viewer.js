@@ -31,28 +31,28 @@ define([
         '../BaseLayerPicker/createDefaultTerrainProviderViewModels',
         '../CesiumWidget/CesiumWidget',
         '../ClockViewModel',
+        '../CustomObject/CustomObject',
+        '../DrawLines/DrawLines',
+        '../EditDrawing/EditDrawing',
         '../FullscreenButton/FullscreenButton',
         '../Geocoder/Geocoder',
         '../getElement',
         '../HomeButton/HomeButton',
         '../InfoBox/InfoBox',
+        '../LongitudeLatitdude/LngLat',
+        '../MarkerMove/MarkerMove',
         '../NavigationHelpButton/NavigationHelpButton',
+        '../PointCircleSwitch/PointCircleSwitch',
         '../ProjectionPicker/ProjectionPicker',
         '../SceneModePicker/SceneModePicker',
         '../SelectionIndicator/SelectionIndicator',
+        '../ShowGrid/ShowGrid',
+        '../ShowSystems/ShowSystems',
         '../subscribeAndEvaluate',
         '../Timeline/Timeline',
-        '../VRButton/VRButton',
-        '../LongitudeLatitdude/LngLat', /* *** NEW *** */
-        '../MarkerMove/MarkerMove', /* *** NEW *** */
-        '../ShowSystems/ShowSystems', /* *** NEW *** */
-        '../Tools/Tools', /* *** NEW *** */
-        '../DrawLines/DrawLines', /* *** NEW *** */
-        '../CustomObject/CustomObject', /* *** NEW *** */
-        '../EditDrawing/EditDrawing', /* *** NEW *** */
-        '../ShowGrid/ShowGrid', /* *** NEW *** */
-        '../PointCircleSwitch/PointCircleSwitch' /* *** NEW *** */
-], function(
+        '../Tools/Tools',
+        '../VRButton/VRButton'
+    ], function(
         BoundingSphere,
         Cartesian3,
         defaultValue,
@@ -84,27 +84,27 @@ define([
         createDefaultTerrainProviderViewModels,
         CesiumWidget,
         ClockViewModel,
+        CustomObject,
+        DrawLines,
+        EditDrawing,
         FullscreenButton,
         Geocoder,
         getElement,
         HomeButton,
         InfoBox,
+        LngLat,
+        MarkerMove,
         NavigationHelpButton,
+        PointCircleSwitch,
         ProjectionPicker,
         SceneModePicker,
         SelectionIndicator,
+        ShowGrid,
+        ShowSystems,
         subscribeAndEvaluate,
         Timeline,
-        VRButton,
-        LngLat, /* *** NEW *** */
-        MarkerMove, /* *** NEW *** */
-        ShowSystems, /* *** NEW *** */
-        Tools, /* *** NEW *** */
-        DrawLines, /* *** NEW *** */
-        CustomObject, /* *** NEW *** */
-        EditDrawing, /* *** NEW *** */
-        ShowGrid, /* *** NEW *** */
-        PointCircleSwitch /* *** NEW *** */) {
+        Tools,
+        VRButton) {
 'use strict';
         var boundingSphereScratch = new BoundingSphere();
         function onTimelineScrubfunction(e) {

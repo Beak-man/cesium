@@ -84,7 +84,7 @@ define([
         titleTool.appendChild(modifyElement);
 		*/
 		
-		// l'idée consiste a recuperer l'element HTML dans viewer.infoBox.frame.contentDocument.all et de l'injecter dans 
+		// l'idï¿½e consiste a recuperer l'element HTML dans viewer.infoBox.frame.contentDocument.all et de l'injecter dans 
 		// viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties ou bien directement dans 
 		// l'objet geoJson contenu dans l'objet viewer
 		

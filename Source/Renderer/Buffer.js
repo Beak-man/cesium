@@ -1,6 +1,5 @@
 /*global define*/
 define([
-
         '../Core/defaultValue',
         '../Core/defined',
         '../Core/defineProperties',
@@ -10,7 +9,6 @@ define([
         '../Core/WebGLConstants',
         './BufferUsage'
     ], function(
-
         defaultValue,
         defined,
         defineProperties,

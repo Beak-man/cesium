@@ -1,13 +1,13 @@
 /*global define*/
 define([
-    '../createCommand',
-    '../../Core/defineProperties',
-    '../../ThirdParty/knockout',
-], function (
-        createCommand,
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        '../createCommand',
+        
+    ], function(
         defineProperties,
-        knockout
-        ) {
+        knockout,
+        createCommand) {
     "use strict";
 
     function  initialize(that) {

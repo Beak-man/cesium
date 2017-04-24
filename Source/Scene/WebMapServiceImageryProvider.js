@@ -1,20 +1,20 @@
 /*global define*/
 define([
-    '../Core/combine',
-    '../Core/defaultValue',
-    '../Core/defined',
-    '../Core/defineProperties',
-    '../Core/DeveloperError',
-    '../Core/freezeObject',
-    '../Core/GeographicTilingScheme',
-    '../Core/objectToQuery',
-    '../Core/queryToObject',
-    '../Core/StereographicTilingScheme',
-    '../Core/WebMercatorTilingScheme',
-    '../ThirdParty/Uri',
-    './GetFeatureInfoFormat',
-    './UrlTemplateImageryProvider'
-], function (
+        '../Core/combine',
+        '../Core/defaultValue',
+        '../Core/defined',
+        '../Core/defineProperties',
+        '../Core/DeveloperError',
+        '../Core/freezeObject',
+        '../Core/GeographicTilingScheme',
+        '../Core/objectToQuery',
+        '../Core/queryToObject',
+        '../Core/StereographicTilingScheme',
+        '../Core/WebMercatorTilingScheme',
+        '../ThirdParty/Uri',
+        './GetFeatureInfoFormat',
+        './UrlTemplateImageryProvider'
+    ], function(
         combine,
         defaultValue,
         defined,

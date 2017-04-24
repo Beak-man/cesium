@@ -7,9 +7,9 @@ define([
         './DeveloperError',
         './Ellipsoid',
         './GeographicProjection',
-        './WebMercatorProjection',
         './Math',
-        './Rectangle'
+        './Rectangle',
+        './WebMercatorProjection'
     ], function(
         Cartesian2,
         defaultValue,
@@ -18,9 +18,9 @@ define([
         DeveloperError,
         Ellipsoid,
         GeographicProjection,
-        WebMercatorProjection,
         CesiumMath,
-        Rectangle) {
+        Rectangle,
+        WebMercatorProjection) {
     'use strict';
 
     /**
@@ -46,9 +46,9 @@ define([
      
         options = defaultValue(options, {}); // on recupere les options
         this._ellipsoid = defaultValue(options.ellipsoid, Ellipsoid.WGS84); // on recupere l'ellipsoid
-        this._rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE); // region selectionnée définie par ses coordonnées (lng, lat)
-       // this._projection = new GeographicProjection(this._ellipsoid); // projection calculée a partir de GeographicProjection ==> objet = {ellipsoid, semimajorAxis, 1/semimajorAxis}
-        this._projection = new WebMercatorProjection(this._ellipsoid); // projection calculée a partir de GeographicProjection ==> objet = {ellipsoid, semimajorAxis, 1/semimajorAxis}
+        this._rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE); // region selectionnï¿½e dï¿½finie par ses coordonnï¿½es (lng, lat)
+       // this._projection = new GeographicProjection(this._ellipsoid); // projection calculï¿½e a partir de GeographicProjection ==> objet = {ellipsoid, semimajorAxis, 1/semimajorAxis}
+        this._projection = new WebMercatorProjection(this._ellipsoid); // projection calculï¿½e a partir de GeographicProjection ==> objet = {ellipsoid, semimajorAxis, 1/semimajorAxis}
 
         this._numberOfLevelZeroTilesX = defaultValue(options.numberOfLevelZeroTilesX, 1);
         this._numberOfLevelZeroTilesY = defaultValue(options.numberOfLevelZeroTilesY, 1);
