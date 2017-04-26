@@ -1,20 +1,20 @@
 /*global define*/
 define([
-    './BingMapsApi',
-    './defaultValue',
-    './defined',
-    './defineProperties',
-    './DeveloperError',
-    './loadJsonp',
-    './Rectangle'
-], function(
-    BingMapsApi,
-    defaultValue,
-    defined,
-    defineProperties,
-    DeveloperError,
-    loadJsonp,
-    Rectangle) {
+        './BingMapsApi',
+        './defaultValue',
+        './defined',
+        './defineProperties',
+        './DeveloperError',
+        './loadJsonp',
+        './Rectangle'
+    ], function(
+        BingMapsApi,
+        defaultValue,
+        defined,
+        defineProperties,
+        DeveloperError,
+        loadJsonp,
+        Rectangle) {
     'use strict';
 
     var url = 'https://dev.virtualearth.net/REST/v1/Locations';

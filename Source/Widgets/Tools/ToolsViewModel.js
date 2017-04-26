@@ -1,16 +1,16 @@
 /*global define*/
 define([
-    '../createCommand',
-    '../../Core/defineProperties',
-    '../../Core/ScreenSpaceEventHandler',
-    '../../Core/ScreenSpaceEventType',
-    '../../ThirdParty/knockout'
-], function (
-        createCommand,
+        '../../Core/defineProperties',
+        '../../Core/ScreenSpaceEventHandler',
+        '../../Core/ScreenSpaceEventType',
+        '../../ThirdParty/knockout',
+        '../createCommand'
+    ], function(
         defineProperties,
         ScreenSpaceEventHandler,
         ScreenSpaceEventType,
-        knockout) {
+        knockout,
+        createCommand) {
     "use strict";
 
     var cursor;

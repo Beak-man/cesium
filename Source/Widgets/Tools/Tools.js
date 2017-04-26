@@ -1,9 +1,9 @@
 /*global define*/
 define([
-    '../../Core/defineProperties',
-    '../../ThirdParty/knockout',
-    './ToolsViewModel'
-], function (
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        './ToolsViewModel'
+    ], function(
         defineProperties,
         knockout,
         ToolsViewModel) {

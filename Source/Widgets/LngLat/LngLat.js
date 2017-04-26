@@ -4,13 +4,13 @@
 
 /*global define*/
 define([
-    '../../Core/defineProperties',
-    './LngLatViewModel',
-    '../../ThirdParty/knockout'],
-        function (
-                defineProperties,
-                LngLatPanelViewModel,
-                knockout) {
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        './LngLatViewModel'
+    ], function(
+        defineProperties,
+        knockout,
+        LngLatPanelViewModel) {
             "use strict";
 
             var icone = '<g><path style="fill:#fff;" d="M95.31,0.006\

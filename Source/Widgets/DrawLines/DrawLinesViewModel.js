@@ -1,15 +1,14 @@
 /*global define*/
 define([
-    '../createCommand',
-    '../../Core/defineProperties',
-    '../../ThirdParty/knockout',
-    './SubMenu/SubMenu'
-], function (
-        createCommand,
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        '../createCommand',
+        './SubMenu/SubMenu'
+    ], function(
         defineProperties,
         knockout,
-        SubMenu
-        ) {
+        createCommand,
+        SubMenu) {
     "use strict";
 
     function  InitializeDrawLines(that) {

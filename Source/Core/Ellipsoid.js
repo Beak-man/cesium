@@ -6,9 +6,9 @@ define([
         './defined',
         './defineProperties',
         './DeveloperError',
+        './EllipsoidType',
         './freezeObject',
         './Math',
-        './EllipsoidType',
         './scaleToGeodeticSurface'
     ], function(
         Cartesian3,
@@ -17,9 +17,9 @@ define([
         defined,
         defineProperties,
         DeveloperError,
+        EllipsoidType,
         freezeObject,
         CesiumMath,
-        EllipsoidType,
         scaleToGeodeticSurface) {
     'use strict';
     function initialize(ellipsoid, x, y, z) {

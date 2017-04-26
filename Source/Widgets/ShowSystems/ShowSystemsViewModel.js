@@ -1,57 +1,56 @@
 /*global define*/
 define([
-    '../../Scene/Camera',
-    '../../Core/Cartesian3',
-    '../../Core/Color',
-    '../createCommand',
-    '../../Core/Ellipsoid',
-    '../../Core/EllipsoidTerrainProvider',
-    './FooterViewModel',
-    '../../Core/freezeObject',
-    '../../Core/GeographicProjection',
-    '../../Core/GeographicTilingScheme',
-    '../../DataSources/GeoJsonDataSource',
-    '../../Scene/Globe',
-    '../../ThirdParty/knockout',
-    '../../Core/defineProperties',
-    './ListViewModel',
-    '../../Core/Matrix4',
-    '../../Core/Rectangle',
-    '../../Scene/SingleTileImageryProvider',
-    '../../Core/ScreenSpaceEventType',
-    '../../Core/StereographicTilingScheme',
-    '../VOData/VOData',
-    '../../Scene/WebMapServiceImageryProvider',
-    '../../Core/WebMercatorProjection',
-    '../../Core/WebMercatorTilingScheme',
-    '../../Scene/WebMapTileServiceImageryProvider'
-], function (
-        Camera,
+        '../../Core/Cartesian3',
+        '../../Core/Color',
+        '../../Core/defineProperties',
+        '../../Core/Ellipsoid',
+        '../../Core/EllipsoidTerrainProvider',
+        '../../Core/freezeObject',
+        '../../Core/GeographicProjection',
+        '../../Core/GeographicTilingScheme',
+        '../../Core/Matrix4',
+        '../../Core/Rectangle',
+        '../../Core/ScreenSpaceEventType',
+        '../../Core/StereographicTilingScheme',
+        '../../Core/WebMercatorProjection',
+        '../../Core/WebMercatorTilingScheme',
+        '../../DataSources/GeoJsonDataSource',
+        '../../Scene/Camera',
+        '../../Scene/Globe',
+        '../../Scene/SingleTileImageryProvider',
+        '../../Scene/WebMapServiceImageryProvider',
+        '../../Scene/WebMapTileServiceImageryProvider',
+        '../../ThirdParty/knockout',
+        '../createCommand',
+        '../VOData/VOData',
+        './FooterViewModel',
+        './ListViewModel'
+    ], function(
         Cartesian3,
         Color,
-        createCommand,
+        defineProperties,
         Ellipsoid,
         EllipsoidTerrainProvider,
-        FooterViewModel,
         freezeObject,
         GeographicProjection,
         GeographicTilingScheme,
-        GeoJsonDataSource,
-        Globe,
-        knockout,
-        defineProperties,
-        ListViewModel,
         Matrix4,
         Rectangle,
-        SingleTileImageryProvider,
         ScreenSpaceEventType,
         StereographicTilingScheme,
-        VOData,
-        WebMapServiceImageryProvider,
         WebMercatorProjection,
         WebMercatorTilingScheme,
-        WebMapTileServiceImageryProvider
-        ) {
+        GeoJsonDataSource,
+        Camera,
+        Globe,
+        SingleTileImageryProvider,
+        WebMapServiceImageryProvider,
+        WebMapTileServiceImageryProvider,
+        knockout,
+        createCommand,
+        VOData,
+        FooterViewModel,
+        ListViewModel) {
     "use strict";
 
     // Call function order : 
@@ -375,6 +374,8 @@ define([
                         if (xhrNomen.readyState === 4 && xhrNomen.status === 200 || xhrNomen.status === 0) {
 
                             var data = xhrNomen.responseXML;
+                            
+                            console.log(data);
 
                             try {
 
@@ -498,6 +499,8 @@ define([
 
                             } catch (e) {
 
+                                 console.log(e);
+
                                 listViewModel = new ListViewModel(viewer, layerName.length, layerName, imageryProvidersTab);
                                 knockout.cleanNode(listContainer2);
                                 knockout.applyBindings(listViewModel, listContainer2);
@@ -505,7 +508,7 @@ define([
                         }
                     };
                 } catch (e) {
-                    //  console.log(e);
+                      console.log(e);
                 }
             }
         };

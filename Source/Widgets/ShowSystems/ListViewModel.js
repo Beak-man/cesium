@@ -2,16 +2,16 @@
 
 /*global define*/
 define([
-    '../createCommand',
-    '../../Core/defaultValue',
-    '../../ThirdParty/knockout',
-    '../../Core/defineProperties',
-], function (
-        createCommand,
+        '../../Core/defaultValue',
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        '../createCommand',
+        
+    ], function(
         defaultValue,
+        defineProperties,
         knockout,
-        defineProperties
-        ) {
+        createCommand) {
     "use strict";
 
     var viewModel = {

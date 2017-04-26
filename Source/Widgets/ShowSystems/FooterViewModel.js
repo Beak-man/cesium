@@ -2,14 +2,14 @@
 
 /*global define*/
 define([
-    '../createCommand',
-    '../../ThirdParty/knockout',
-    '../../Core/defineProperties',
-], function (
-        createCommand,
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        '../createCommand',
+        
+    ], function(
+        defineProperties,
         knockout,
-        defineProperties
-        ) {
+        createCommand) {
     "use strict";
 
     function showPanel(footerToolbar, configContainer, btnShowPanel) {

@@ -2,24 +2,23 @@
 
 /*global define*/
 define([
-    '../../Core/Math',
-    '../../Core/Color',
-    '../createCommand',
-    '../../Core/destroyObject',
-    '../../ThirdParty/knockout',
-    '../../Core/defineProperties',
-    '../../Core/ScreenSpaceEventHandler',
-    '../../Core/ScreenSpaceEventType'
-], function (
-        CesiumMath,
+        '../../Core/Color',
+        '../../Core/defineProperties',
+        '../../Core/destroyObject',
+        '../../Core/Math',
+        '../../Core/ScreenSpaceEventHandler',
+        '../../Core/ScreenSpaceEventType',
+        '../../ThirdParty/knockout',
+        '../createCommand'
+    ], function(
         Color,
-        createCommand,
-        destroyObject,
-        knockout,
         defineProperties,
+        destroyObject,
+        CesiumMath,
         ScreenSpaceEventHandler,
-        ScreenSpaceEventType
-        ) {
+        ScreenSpaceEventType,
+        knockout,
+        createCommand) {
     "use strict";
 
     function markerMoveView(toolbar, scene, viewer, that) {

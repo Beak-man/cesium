@@ -37,7 +37,7 @@ define([
          console.log("*************************************************************************");
          */
 
-        // définition de l'ellipsoid
+        // dï¿½finition de l'ellipsoid
 
         this._ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84); // ellipsoid
         this._semimajorAxis = this._ellipsoid.maximumRadius; // rayon max
@@ -98,8 +98,6 @@ define([
         var x = cartographic.longitude * semimajorAxis;
         var y = cartographic.latitude * semimajorAxis;
         var z = cartographic.height;
-
-
 
         //  ==================== Projection Sinusoidale ===============================
 
@@ -176,7 +174,8 @@ define([
 
         // ==========================Sinusoidale ==============================
 
-        /* var longitude = ((cartesian.x * 2.0 * Math.PI)) / (Math.cos(cartesian.y)) * oneOverSemimajorAxis;
+
+        /*  var longitude = ((cartesian.x * 2.0 * Math.PI)) / (Math.cos(cartesian.y)) * oneOverSemimajorAxis;
          var latitude = cartesian.y * Math.PI * oneOverSemimajorAxis;
          var height = cartesian.z;*/
 

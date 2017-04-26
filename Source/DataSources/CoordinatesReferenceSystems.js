@@ -1,8 +1,9 @@
 /*global define*/
-define(['../Core/Cartesian3',
-    '../Core/Ellipsoid',
-    '../Core/queryToObject'
-], function (
+define([
+        '../Core/Cartesian3',
+        '../Core/Ellipsoid',
+        '../Core/queryToObject'
+    ], function(
         Cartesian3,
         Ellipsoid,
         queryToObject) {

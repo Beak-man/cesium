@@ -1,15 +1,15 @@
 /*global define*/
 define([
-    '../createCommand',
-    '../../Core/Cartesian3',
-    '../../Core/defineProperties',
-    '../../ThirdParty/knockout',
-], function (
-        createCommand,
+        '../../Core/Cartesian3',
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        '../createCommand',
+        
+    ], function(
         Cartesian3,
         defineProperties,
-        knockout
-        ) {
+        knockout,
+        createCommand) {
     "use strict";
 
     function initialization(that) {

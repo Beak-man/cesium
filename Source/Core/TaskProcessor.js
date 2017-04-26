@@ -1,16 +1,16 @@
 /*global define*/
 define([
-    '../ThirdParty/when',
-    './buildModuleUrl',
-    './defaultValue',
-    './defined',
-    './destroyObject',
-    './DeveloperError',
-    './getAbsoluteUri',
-    './isCrossOriginUrl',
-    './RuntimeError',
-    'require'
-], function (
+        '../ThirdParty/when',
+        './buildModuleUrl',
+        './defaultValue',
+        './defined',
+        './destroyObject',
+        './DeveloperError',
+        './getAbsoluteUri',
+        './isCrossOriginUrl',
+        './RuntimeError',
+        'require'
+    ], function(
         when,
         buildModuleUrl,
         defaultValue,

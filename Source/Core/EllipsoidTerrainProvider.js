@@ -1,15 +1,15 @@
 /*global define*/
 define([
-    '../ThirdParty/when',
-    './defaultValue',
-    './defined',
-    './defineProperties',
-    './Ellipsoid',
-    './Event',
-    './GeographicTilingScheme',
-    './HeightmapTerrainData',
-    './TerrainProvider'
-], function (
+        '../ThirdParty/when',
+        './defaultValue',
+        './defined',
+        './defineProperties',
+        './Ellipsoid',
+        './Event',
+        './GeographicTilingScheme',
+        './HeightmapTerrainData',
+        './TerrainProvider'
+    ], function(
         when,
         defaultValue,
         defined,

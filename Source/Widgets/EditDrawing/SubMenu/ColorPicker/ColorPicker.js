@@ -1,15 +1,14 @@
 /*global define*/
 define([
-    '../../../../Core/defineProperties',
-    '../../../../ThirdParty/knockout',
-    '../../../FlagCounter/FlagCounter',
-    './ColorPickerViewModel'
-], function (
+        '../../../../Core/defineProperties',
+        '../../../../ThirdParty/knockout',
+        '../../../FlagCounter/FlagCounter',
+        './ColorPickerViewModel'
+    ], function(
         defineProperties,
         knockout,
         FlagCounter,
-        ColorPickerViewModel
-        ) {
+        ColorPickerViewModel) {
     "use strict";
 
     var closeIcon = '<g><g><path d="M4.712,69.854l-4.69,28.273c-0.086,0.512,0.082,1.034,0.449,1.401c0.002,0.003,0.002,0.003,0.002,0.003\

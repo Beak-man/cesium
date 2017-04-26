@@ -1,22 +1,23 @@
 /*global define*/
 define([
-    '../Core/Cartesian3',
-    '../Core/Cartographic',
-    '../Core/defined',
-    '../Core/destroyObject',
-    '../Core/DeveloperError',
-    '../Core/EasingFunction',
-    '../Core/Math',
-    '../Core/Matrix4',
-    '../Core/Ray',
-    '../Core/ScreenSpaceEventHandler',
-    '../Core/ScreenSpaceEventType',
-    '../Core/Transforms',
-    './Camera',
-    './OrthographicFrustum',
-    './PerspectiveFrustum',
-    './SceneMode'
-], function (
+        '../Core/Cartesian3',
+        '../Core/Cartographic',
+        '../Core/defined',
+        '../Core/destroyObject',
+        '../Core/DeveloperError',
+        '../Core/EasingFunction',
+        '../Core/Math',
+        '../Core/Matrix4',
+        '../Core/Ray',
+        '../Core/ScreenSpaceEventHandler',
+        '../Core/ScreenSpaceEventType',
+        '../Core/Transforms',
+        './Camera',
+        './OrthographicFrustum',
+        './OrthographicOffCenterFrustum',
+        './PerspectiveFrustum',
+        './SceneMode'
+    ], function(
         Cartesian3,
         Cartographic,
         defined,
@@ -31,6 +32,7 @@ define([
         Transforms,
         Camera,
         OrthographicFrustum,
+        OrthographicOffCenterFrustum,
         PerspectiveFrustum,
         SceneMode) {
     'use strict';
@@ -50,6 +52,7 @@ define([
         this._morphHandler = undefined;
         this._morphCancelled = false;
         this._completeMorph = undefined;
+        this._morphToOrthographic = false;
     }
 
     SceneTransitioner.prototype.completeMorph = function () {
@@ -65,6 +68,7 @@ define([
 
         var scene = this._scene;
         this._previousMode = scene.mode;
+        this._morphToOrthographic = scene.camera.frustum instanceof OrthographicFrustum;
 
         if (this._previousMode === SceneMode.SCENE2D || this._previousMode === SceneMode.MORPHING) {
             return;
@@ -94,7 +98,8 @@ define([
     var scratchToCVSurfacePosition = new Cartesian3();
     var scratchToCVCartographic = new Cartographic();
     var scratchToCVToENU = new Matrix4();
-    var scratchToCVFrustum = new PerspectiveFrustum();
+    var scratchToCVFrustumPerspective = new PerspectiveFrustum();
+    var scratchToCVFrustumOrthographic = new OrthographicFrustum();
     var scratchToCVCamera = {
         position: undefined,
         direction: undefined,
@@ -166,9 +171,16 @@ define([
             }
         }
 
-        var frustum = scratchToCVFrustum;
-        frustum.aspectRatio = scene.drawingBufferWidth / scene.drawingBufferHeight;
-        frustum.fov = CesiumMath.toRadians(60.0);
+        var frustum;
+        if (this._morphToOrthographic) {
+            frustum = scratchToCVFrustumOrthographic;
+            frustum.width = scene.camera.frustum.right - scene.camera.frustum.left;
+            frustum.aspectRatio = scene.drawingBufferWidth / scene.drawingBufferHeight;
+        } else {
+            frustum = scratchToCVFrustumPerspective;
+            frustum.aspectRatio = scene.drawingBufferWidth / scene.drawingBufferHeight;
+            frustum.fov = CesiumMath.toRadians(60.0);
+        }
 
         var cameraCV = scratchToCVCamera;
         cameraCV.position = position;
@@ -364,16 +376,14 @@ define([
         transitioner._currentTweens.push(tween);
     }
 
-    var scratch2DTo3DFrustum = new PerspectiveFrustum();
+    var scratch2DTo3DFrustumPersp = new PerspectiveFrustum();
+    var scratch2DTo3DFrustumOrtho = new OrthographicFrustum();
 
     function morphFrom2DTo3D(transitioner, duration, ellipsoid) {
         duration /= 3.0;
 
         var scene = transitioner._scene;
         var camera = scene.camera;
-        var frustum = scratch2DTo3DFrustum;
-        frustum.aspectRatio = scene.drawingBufferWidth / scene.drawingBufferHeight;
-        frustum.fov = CesiumMath.toRadians(60.0);
 
         var camera3D;
         if (duration > 0.0) {
@@ -387,8 +397,6 @@ define([
 
             camera3D = getColumbusViewTo3DCamera(transitioner, ellipsoid);
         }
-
-        camera3D.frustum = frustum;
 
         var complete = complete3DCallback(camera3D);
         createMorphHandler(transitioner, complete);
@@ -420,6 +428,28 @@ define([
             camera.position.z = 2.0 * scene.mapProjection.ellipsoid.maximumRadius;
         }
 
+        var morph;
+        var frustum;
+        if (transitioner._morphToOrthographic) {
+            morph = function() {
+                frustum = scratch2DTo3DFrustumOrtho;
+                frustum.aspectRatio = scene.drawingBufferWidth / scene.drawingBufferHeight;
+                frustum.width = camera.frustum.right - camera.frustum.left;
+                camera.frustum = frustum;
+                morphFromColumbusViewTo3D(transitioner, duration, camera3D, complete);
+            };
+        } else {
+            morph = function() {
+                frustum = scratch2DTo3DFrustumPersp;
+                frustum.aspectRatio = scene.drawingBufferWidth / scene.drawingBufferHeight;
+                frustum.fov = CesiumMath.toRadians(60.0);
+                camera3D.frustum = frustum;
+                morphOrthographicToPerspective(transitioner, duration, camera3D, function() {
+                    morphFromColumbusViewTo3D(transitioner, duration, camera3D, complete);
+                });
+            };
+        }
+
         if (duration > 0.0) {
             var tween = scene.tweens.add({
                 duration: duration,
@@ -433,16 +463,14 @@ define([
                 update: update,
                 complete: function () {
                     scene._mode = SceneMode.MORPHING;
-                    morphOrthographicToPerspective(transitioner, duration, camera3D, function () {
-                        morphFromColumbusViewTo3D(transitioner, duration, camera3D, complete);
-                    });
+                    morph();
+
                 }
             });
             transitioner._currentTweens.push(tween);
         } else {
-            morphOrthographicToPerspective(transitioner, duration, camera3D, function () {
-                morphFromColumbusViewTo3D(transitioner, duration, camera3D, complete);
-            });
+            morph();
+
         }
     }
 
@@ -454,6 +482,10 @@ define([
     function morphPerspectiveToOrthographic(transitioner, duration, endCamera, updateHeight, complete) {
         var scene = transitioner._scene;
         var camera = scene.camera;
+
+        if (camera.frustum instanceof OrthographicFrustum) {
+            return;
+        }
 
         var startFOV = camera.frustum.fov;
         var endFOV = CesiumMath.RADIANS_PER_DEGREE * 0.5;
@@ -489,7 +521,7 @@ define([
     var scratchCVTo2DEndPos = new Cartesian3();
     var scratchCVTo2DEndDir = new Cartesian3();
     var scratchCVTo2DEndUp = new Cartesian3();
-    var scratchCVTo2DFrustum = new OrthographicFrustum();
+    var scratchCVTo2DFrustum = new OrthographicOffCenterFrustum();
     var scratchCVTo2DRay = new Ray();
     var scratchCVTo2DPickPos = new Cartesian3();
     var scratchCVTo2DCamera = {
@@ -555,6 +587,7 @@ define([
             columbusViewMorph(startUp, endUp, value.time, camera.up);
             Cartesian3.cross(camera.direction, camera.up, camera.right);
             Cartesian3.normalize(camera.right, camera.right);
+            camera._adjustOrthographicFrustum(true);
         }
 
         function updateHeight(camera, height) {
@@ -580,13 +613,15 @@ define([
 
     var scratch3DTo2DCartographic = new Cartographic();
     var scratch3DTo2DCamera = {
-        position: new Cartesian3(),
-        direction: new Cartesian3(),
-        up: new Cartesian3(),
-        position2D: new Cartesian3(),
-        direction2D: new Cartesian3(),
-        up2D: new Cartesian3(),
-        frustum: new OrthographicFrustum()
+
+        position : new Cartesian3(),
+        direction : new Cartesian3(),
+        up : new Cartesian3(),
+        position2D : new Cartesian3(),
+        direction2D : new Cartesian3(),
+        up2D : new Cartesian3(),
+        frustum : new OrthographicOffCenterFrustum()
+
     };
     var scratch3DTo2DEndCamera = {
         position: new Cartesian3(),
@@ -711,7 +746,8 @@ define([
         var endDir = Cartesian3.clone(cameraCV.direction, scratch3DToCVEndDir);
         var endUp = Cartesian3.clone(cameraCV.up, scratch3DToCVEndUp);
         scene._mode = SceneMode.MORPHING;
-        morphOrthographicToPerspective(transitioner, 0.0, cameraCV, function() {
+
+        function morph() {
             camera.frustum = cameraCV.frustum.clone();
 
             var startPos = Cartesian3.clone(camera.position, scratch3DToCVStartPos);
@@ -742,7 +778,13 @@ define([
                 }
             });
             transitioner._currentTweens.push(tween);
-        });
+        }
+
+        if (transitioner._morphToOrthographic) {
+            morph();
+        } else {
+            morphOrthographicToPerspective(transitioner, 0.0, cameraCV, morph);
+        }
     }
 
     var scratch3DToCVStartPos = new Cartesian3();
@@ -780,6 +822,7 @@ define([
             columbusViewMorph(startUp, endUp, value.time, camera.up);
             Cartesian3.cross(camera.direction, camera.up, camera.right);
             Cartesian3.normalize(camera.right, camera.right);
+            camera._adjustOrthographicFrustum(true);
         }
         
         var tween = scene.tweens.add({
@@ -837,10 +880,6 @@ define([
                 Cartesian3.clone(camera3D.up, camera.up);
                 Cartesian3.cross(camera.direction, camera.up, camera.right);
                 Cartesian3.normalize(camera.right, camera.right);
-
-                if (defined(camera3D.frustum)) {
-                    camera.frustum = camera3D.frustum.clone();
-                }
             }
 
             var wasMorphing = defined(transitioner._completeMorph);
@@ -882,7 +921,6 @@ define([
             scene.morphTime = SceneMode.getMorphTime(SceneMode.COLUMBUS_VIEW);
 
             destroyMorphHandler(transitioner);
-            scene.camera.frustum = cameraCV.frustum.clone();
 
             if (transitioner._previousModeMode !== SceneMode.MORPHING || transitioner._morphCancelled) {
                 transitioner._morphCancelled = false;

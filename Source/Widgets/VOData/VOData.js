@@ -1,13 +1,12 @@
 /*global define*/
 define([
-    '../../Core/defineProperties',
-    '../../ThirdParty/knockout',
-    './VODataViewModel'
-], function (
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        './VODataViewModel'
+    ], function(
         defineProperties,
         knockout,
-        VODataViewModel
-        ) {
+        VODataViewModel) {
     "use strict";
 
     /**

@@ -1,23 +1,23 @@
 /*global define*/
 define([
-    '../../Core/defineProperties',
-    './CustomObjectViewModel',
-    '../getElement',
-    '../../ThirdParty/knockout',
-    "./PanelViewModel"],
-        function (
-                defineProperties,
-                CustomObjectViewModel,
-                getElement,
-                knockout,
-                PanelViewModel) {
+        "./PanelViewModel",
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        '../getElement',
+        './CustomObjectViewModel'
+    ], function(
+        PanelViewModel,
+        defineProperties,
+        knockout,
+        getElement,
+        CustomObjectViewModel) {
             "use strict";
 
             function createPanel(jsonData, solarSystem, viewerContainer, customToolbar, viewer, that) {
 
                 var container = getElement(customToolbar);
 
-                // creation de la liste pour afficher les différentes configurations
+                // creation de la liste pour afficher les diffï¿½rentes configurations
                 var selectElement = document.createElement('SELECT');
                 selectElement.className = 'cesium-customObject-select';
                 selectElement.style.cssText = 'text-align : center; font-family : Arial';
@@ -30,7 +30,7 @@ define([
                 option.text = "------------------------";
                 selectElement.appendChild(option);*/
 
-                // creation du bouton custom pour activer la fonctionnalité 
+                // creation du bouton custom pour activer la fonctionnalitï¿½ 
                 var btnElement = document.createElement('div');
                 btnElement.className = 'cesium-planetsToolbar-button cesium-button-planet';
                 btnElement.innerHTML = 'Custom';
@@ -38,7 +38,7 @@ define([
                 btnElement.setAttribute('data-bind', 'attr: { title: "Create or load a custom object" }, click: customCommand');
                 container.appendChild(btnElement);
 
-                // creation du panneau pour l'affichage des paramètres : containr principal
+                // creation du panneau pour l'affichage des paramï¿½tres : containr principal
                 var configContainer = document.createElement('div');
                 configContainer.className = 'cesium-customObject-configContainer';
                 viewerContainer.appendChild(configContainer);
@@ -339,7 +339,7 @@ define([
                 var panelViewModel = new PanelViewModel(jsonData, solarSystem, elementsForAxis, selectElementSatelliteTexture, tableLayerInfo, viewer);
                 that._panelViewModel = panelViewModel;
 
-                // application du binding pour attacher le model à la vue
+                // application du binding pour attacher le model ï¿½ la vue
                 knockout.applyBindings(viewModel, container);
                 knockout.applyBindings(panelViewModel, configContainer);
 

@@ -1,13 +1,13 @@
 /*global define*/
 define([
-    './Cartesian3',
-    './Cartographic',
-    './defaultValue',
-    './defined',
-    './defineProperties',
-    './DeveloperError',
-    './Ellipsoid'
-], function (
+        './Cartesian3',
+        './Cartographic',
+        './defaultValue',
+        './defined',
+        './defineProperties',
+        './DeveloperError',
+        './Ellipsoid'
+    ], function(
         Cartesian3,
         Cartographic,
         defaultValue,

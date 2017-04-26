@@ -1,19 +1,19 @@
 /*global define*/
 define([
-    '../../Core/Color',
-    '../createCommand',
-    '../../Core/defineProperties',
-    '../../Core/defaultValue',
-    '../../ThirdParty/knockout',
-    '../../Scene/GridImageryProvider',
-], function (
+        '../../Core/Color',
+        '../../Core/defaultValue',
+        '../../Core/defineProperties',
+        '../../Scene/GridImageryProvider',
+        '../../ThirdParty/knockout',
+        '../createCommand',
+        
+    ], function(
         Color,
-        createCommand,
-        defineProperties,
         defaultValue,
+        defineProperties,
+        GridImageryProvider,
         knockout,
-        GridImageryProvider
-        ) {
+        createCommand) {
     "use strict";
 
     function addGridLayerOption(that, imageryLayers, name, imageryProvider, alpha, show) {

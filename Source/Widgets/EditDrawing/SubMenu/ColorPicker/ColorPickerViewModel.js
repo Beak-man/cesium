@@ -1,23 +1,22 @@
 /*global define*/
 define([
-    '../../../../Core/Color',
-    '../../../createCommand',
-    '../../../../Core/defined',
-    '../../../../Core/defineProperties',
-    '../../../../Core/ScreenSpaceEventHandler',
-    '../../../../Core/ScreenSpaceEventType',
-    '../../../../ThirdParty/knockout',
-    './TableViewModel'
-], function (
+        '../../../../Core/Color',
+        '../../../../Core/defined',
+        '../../../../Core/defineProperties',
+        '../../../../Core/ScreenSpaceEventHandler',
+        '../../../../Core/ScreenSpaceEventType',
+        '../../../../ThirdParty/knockout',
+        '../../../createCommand',
+        './TableViewModel'
+    ], function(
         Color,
-        createCommand,
         defined,
         defineProperties,
         ScreenSpaceEventHandler,
         ScreenSpaceEventType,
         knockout,
-        TableViewModel
-        ) {
+        createCommand,
+        TableViewModel) {
     "use strict";
 
     var cursor;
@@ -54,15 +53,15 @@ define([
 
                 var cursorPosition = cursor;
 
-                if (cursorPosition.x > sizePageX - container.offsetWidth) { // Bloque le container à droite
+                if (cursorPosition.x > sizePageX - container.offsetWidth) { // Bloque le container ï¿½ droite
 
                     container.style.left = sizePageX - container.offsetWidth + "px";
 
-                } else if (cursorPosition.x < container.offsetWidth / 2 || cursorPosition.x < 0) { // Bloque le container à gauche
+                } else if (cursorPosition.x < container.offsetWidth / 2 || cursorPosition.x < 0) { // Bloque le container ï¿½ gauche
 
                     container.style.left = "0px";
 
-                } else if (cursorPosition.x >= container.offsetWidth / 2 && cursorPosition.x <= sizePageX - container.offsetWidth / 2) { // déplacement du container
+                } else if (cursorPosition.x >= container.offsetWidth / 2 && cursorPosition.x <= sizePageX - container.offsetWidth / 2) { // dï¿½placement du container
 
                     //    container.style.left = cursorPosition.x - (container.offsetWidth / 11) + "px";
                     container.style.left = cursorPosition.x - 6 + "px";

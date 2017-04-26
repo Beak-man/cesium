@@ -1,9 +1,10 @@
 /*global define*/
 define([
-    '../../Core/defineProperties',
-    '../../ThirdParty/knockout',
-    './ShowSystemsViewModel',
-], function (
+        '../../Core/defineProperties',
+        '../../ThirdParty/knockout',
+        './ShowSystemsViewModel',
+        
+    ], function(
         defineProperties,
         knockout,
         ShowSystemsViewModel) {
@@ -50,7 +51,7 @@ define([
                     window[name + 'Wrapper'].appendChild(window[name + 'SystemButton']);
                 }
 
-                // go throught the planetary system (j=0 is the planète. J>0 is it satellites
+                // go throught the planetary system (j=0 is the planï¿½te. J>0 is it satellites
                 for (var j = 0; j < planetarySystem.length; j++) {
 
                     if (j == 0) {
