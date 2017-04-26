@@ -135,16 +135,13 @@ gulp.task('uglifyPlApps', function () {
   return uglifyPlanetaryCesiumViewer();
 });
 
-// A decommenter pour le clean
-
-/* 
 gulp.task('clean', function (done) {
     filesToClean.forEach(function (file) {
         rimraf.sync(file);
     });
     done();
 });
-*/
+
 
 gulp.task('requirejs', function (done) {
     console.log(process.argv[3]);
