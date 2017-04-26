@@ -36,6 +36,7 @@ define([//  Definition des dependances
     'Cesium/Scene/SkyBox',
     'Cesium/Scene/Globe',
     //'Cesium/Core/GeoServerTerrainProvider',
+    'Cesium/Widgets/ConfigurationFile/ConfigurationFile',
     'Cesium/Widgets/Viewer/Viewer',
     'Cesium/Widgets/Viewer/viewerCesiumInspectorMixin',
     'Cesium/Widgets/Viewer/viewerDragDropMixin',
@@ -77,6 +78,7 @@ define([//  Definition des dependances
         SkyAtmosphere,
         SkyBox,
         Globe,
+        ConfigurationFile,
         Viewer,
         viewerCesiumInspectorMixin,
         viewerDragDropMixin,
@@ -234,9 +236,6 @@ define([//  Definition des dependances
             return;
         }
 
-        var xhr = getXMLHttpRequest();
-        var url = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
-
         viewer.extend(viewerDragDropMixin);
         if (endUserOptions.inspector) {
             viewer.extend(viewerCesiumInspectorMixin);
@@ -339,50 +338,14 @@ define([//  Definition des dependances
      ======================== READ CONFIGURATION FILES =========================
      =========================================================================== */
 
-    function getXMLHttpRequest() {
-        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-            var xhr = new XMLHttpRequest();
-        } else if (typeof ActiveXObject !== " undefined") {
-            var xhr = new ActiveXObject("Microsoft.XMLHTTP"); // activeX pour IE
-        } else {
-            console.log("AJAX don't available on this browser");
-            var xhr = null;
-        }
-        return xhr;
-    }
 
     // Solar system configuration : 
 
     if (viewerOptions.showSystems == true) {
-
-        var xhr = getXMLHttpRequest();
-
-        // var urlConfig = '../../Source/Widgets/ConfigurationFiles/configurationFile.json';
-
-        xhr.open('GET', urlConfig, true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send();
-        xhr.onreadystatechange = function () {
-
-            if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
-
-                var data = xhr.responseText;
-                var jsonData = JSON.parse(data);
-
-                var configuration = {};
-
-                configuration = {
-                    homePlanet: jsonData.homePlanet,
-                    servers: jsonData.servers,
-                    planetarySystem: {
-                        system: jsonData.planetarySystem.solarSystem,
-                        dimension: jsonData.planetarySystem.systemsDimensions
-                    }
-                };
-
-                viewerCreation(configuration);
-            }
-        };
+        
+        var conf = new ConfigurationFile();        
+        viewerCreation(conf.config);
+        
     } else if (viewerOptions.showSystems == false || viewerOptions.showSystems == 'undefined') {
 
         var imageryProvider = new createOpenStreetMapImageryProvider({

@@ -42,12 +42,11 @@ define([
         '../subscribeAndEvaluate',
         '../Timeline/Timeline',
         '../VRButton/VRButton',
-        '../LongitudeLatitdude/LngLat', /* *** NEW *** */
+        '../LngLat/LngLat', /* *** NEW *** */
         '../MarkerMove/MarkerMove', /* *** NEW *** */
         '../ShowSystems/ShowSystems', /* *** NEW *** */
         '../Tools/Tools', /* *** NEW *** */
         '../DrawLines/DrawLines', /* *** NEW *** */
-        '../CustomObject/CustomObject', /* *** NEW *** */
         '../EditDrawing/EditDrawing', /* *** NEW *** */
         '../ShowGrid/ShowGrid', /* *** NEW *** */
         '../PointCircleSwitch/PointCircleSwitch' /* *** NEW *** */
@@ -99,7 +98,6 @@ define([
         ShowSystems, /* *** NEW *** */
         Tools, /* *** NEW *** */
         DrawLines, /* *** NEW *** */
-        CustomObject, /* *** NEW *** */
         EditDrawing, /* *** NEW *** */
         ShowGrid, /* *** NEW *** */
         PointCircleSwitch /* *** NEW *** */) {

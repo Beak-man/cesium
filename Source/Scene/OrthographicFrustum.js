@@ -104,8 +104,14 @@ define([
                 frustum.near !== frustum._near || frustum.far !== frustum._far) {
 
             //>>includeStart('debug', pragmas.debug);
+            
+            console.log(frustum.left , frustum.right);
+            
             if (frustum.left > frustum.right) {
-                throw new DeveloperError('right must be greater than left.');
+                
+                frustum.left = frustum.right - 1.0;
+                
+              //  throw new DeveloperError('right must be greater than left.');
             }
             if (frustum.bottom > frustum.top) {
                 throw new DeveloperError('top must be greater than bottom.');
