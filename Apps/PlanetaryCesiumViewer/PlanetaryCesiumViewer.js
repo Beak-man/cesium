@@ -37,6 +37,7 @@ define([
         'Cesium/ThirdParty/knockout',
         'Cesium/ThirdParty/when',
         'Cesium/Widgets/createCommand',
+        'Cesium/Widgets/ConfigurationFiles/ConfigurationFile',
         'Cesium/Widgets/Viewer/Viewer',
         'Cesium/Widgets/Viewer/viewerCesiumInspectorMixin',
         'Cesium/Widgets/Viewer/viewerDragDropMixin'
@@ -78,6 +79,7 @@ define([
         knockout,
         when,
         createCommand,
+        ConfigurationFile,
         Viewer,
         viewerCesiumInspectorMixin,
         viewerDragDropMixin) {
@@ -95,7 +97,7 @@ define([
 
     // URL of the configuration file
 
-    var urlConfig = '../../Source/Widgets/ConfigurationFiles/configurationFile.json';
+    var urlConfig = '../../Source/Widgets/ConfigurationFiles/ConfigurationFile.json';
 
 
     // Here, we use the request to create the "endUserOptions" object.
@@ -232,8 +234,6 @@ define([
             return;
         }
 
-        var xhr = getXMLHttpRequest();
-        var url = '../../Source/Widgets/ConfigurationFiles/SolarSystemConfig.json';
 
         viewer.extend(viewerDragDropMixin);
         if (endUserOptions.inspector) {
@@ -350,37 +350,16 @@ define([
     }
 
     // Solar system configuration : 
-
-    if (viewerOptions.showSystems == true) {
-
-        var xhr = getXMLHttpRequest();
-
-        // var urlConfig = '../../Source/Widgets/ConfigurationFiles/configurationFile.json';
-
-        xhr.open('GET', urlConfig, true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send();
-        xhr.onreadystatechange = function () {
-
-            if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 0) {
-
-                var data = xhr.responseText;
-                var jsonData = JSON.parse(data);
-
-                var configuration = {};
-
-                configuration = {
-                    homePlanet: jsonData.homePlanet,
-                    servers: jsonData.servers,
-                    planetarySystem: {
-                        system: jsonData.planetarySystem.solarSystem,
-                        dimension: jsonData.planetarySystem.systemsDimensions
-                    }
-                };
-
-                viewerCreation(configuration);
-            }
-        };
+     
+     var cf = new ConfigurationFile();
+     
+    console.log(cf.config);
+    
+    if (viewerOptions.showSystems == true) {   
+        
+        var cf = new ConfigurationFile();
+         viewerCreation(cf.config);
+        
     } else if (viewerOptions.showSystems == false || viewerOptions.showSystems == 'undefined') {
 
         var imageryProvider = new createOpenStreetMapImageryProvider({

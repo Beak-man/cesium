@@ -1,91 +1,91 @@
 /*global define*/
 define([
-        '../Core/BoundingRectangle',
-        '../Core/Cartesian2',
-        '../Core/Cartesian3',
-        '../Core/Cartographic',
-        '../Core/ClockRange',
-        '../Core/ClockStep',
-        '../Core/Color',
-        '../Core/CornerType',
-        '../Core/createGuid',
-        '../Core/defaultValue',
-        '../Core/defined',
-        '../Core/defineProperties',
-        '../Core/DeveloperError',
-        '../Core/Ellipsoid',
-        '../Core/Event',
-        '../Core/ExtrapolationType',
-        '../Core/getAbsoluteUri',
-        '../Core/getFilenameFromUri',
-        '../Core/HermitePolynomialApproximation',
-        '../Core/isArray',
-        '../Core/Iso8601',
-        '../Core/JulianDate',
-        '../Core/LagrangePolynomialApproximation',
-        '../Core/LinearApproximation',
-        '../Core/loadJson',
-        '../Core/Math',
-        '../Core/NearFarScalar',
-        '../Core/Quaternion',
-        '../Core/Rectangle',
-        '../Core/ReferenceFrame',
-        '../Core/RuntimeError',
-        '../Core/Spherical',
-        '../Core/TimeInterval',
-        '../Core/TimeIntervalCollection',
-        '../Scene/ColorBlendMode',
-        '../Scene/HeightReference',
-        '../Scene/HorizontalOrigin',
-        '../Scene/LabelStyle',
-        '../Scene/ShadowMode',
-        '../Scene/VerticalOrigin',
-        '../ThirdParty/Uri',
-        '../ThirdParty/when',
-        './BillboardGraphics',
-        './BoxGraphics',
-        './ColorMaterialProperty',
-        './CompositeMaterialProperty',
-        './CompositePositionProperty',
-        './CompositeProperty',
-        './ConstantPositionProperty',
-        './ConstantProperty',
-        './CorridorGraphics',
-        './CylinderGraphics',
-        './DataSource',
-        './DataSourceClock',
-        './EllipseGraphics',
-        './EllipsoidGraphics',
-        './EntityCluster',
-        './EntityCollection',
-        './GridMaterialProperty',
-        './ImageMaterialProperty',
-        './LabelGraphics',
-        './ModelGraphics',
-        './NodeTransformationProperty',
-        './PathGraphics',
-        './PointGraphics',
-        './PolygonGraphics',
-        './PolylineArrowMaterialProperty',
-        './PolylineDashMaterialProperty',
-        './PolylineGlowMaterialProperty',
-        './PolylineGraphics',
-        './PolylineOutlineMaterialProperty',
-        './PositionPropertyArray',
-        './PropertyArray',
-        './PropertyBag',
-        './RectangleGraphics',
-        './ReferenceProperty',
-        './Rotation',
-        './SampledPositionProperty',
-        './SampledProperty',
-        './StripeMaterialProperty',
-        './StripeOrientation',
-        './TimeIntervalCollectionPositionProperty',
-        './TimeIntervalCollectionProperty',
-        './VelocityVectorProperty',
-        './WallGraphics'
-    ], function(
+    '../Core/BoundingRectangle',
+    '../Core/Cartesian2',
+    '../Core/Cartesian3',
+    '../Core/Cartographic',
+    '../Core/ClockRange',
+    '../Core/ClockStep',
+    '../Core/Color',
+    '../Core/CornerType',
+    '../Core/createGuid',
+    '../Core/defaultValue',
+    '../Core/defined',
+    '../Core/defineProperties',
+    '../Core/DeveloperError',
+    '../Core/Ellipsoid',
+    '../Core/Event',
+    '../Core/ExtrapolationType',
+    '../Core/getAbsoluteUri',
+    '../Core/getFilenameFromUri',
+    '../Core/HermitePolynomialApproximation',
+    '../Core/isArray',
+    '../Core/Iso8601',
+    '../Core/JulianDate',
+    '../Core/LagrangePolynomialApproximation',
+    '../Core/LinearApproximation',
+    '../Core/loadJson',
+    '../Core/Math',
+    '../Core/NearFarScalar',
+    '../Core/Quaternion',
+    '../Core/Rectangle',
+    '../Core/ReferenceFrame',
+    '../Core/RuntimeError',
+    '../Core/Spherical',
+    '../Core/TimeInterval',
+    '../Core/TimeIntervalCollection',
+    '../Scene/ColorBlendMode',
+    '../Scene/HeightReference',
+    '../Scene/HorizontalOrigin',
+    '../Scene/LabelStyle',
+    '../Scene/ShadowMode',
+    '../Scene/VerticalOrigin',
+    '../ThirdParty/Uri',
+    '../ThirdParty/when',
+    './BillboardGraphics',
+    './BoxGraphics',
+    './ColorMaterialProperty',
+    './CompositeMaterialProperty',
+    './CompositePositionProperty',
+    './CompositeProperty',
+    './ConstantPositionProperty',
+    './ConstantProperty',
+    './CorridorGraphics',
+    './CylinderGraphics',
+    './DataSource',
+    './DataSourceClock',
+    './EllipseGraphics',
+    './EllipsoidGraphics',
+    './EntityCluster',
+    './EntityCollection',
+    './GridMaterialProperty',
+    './ImageMaterialProperty',
+    './LabelGraphics',
+    './ModelGraphics',
+    './NodeTransformationProperty',
+    './PathGraphics',
+    './PointGraphics',
+    './PolygonGraphics',
+    './PolylineArrowMaterialProperty',
+    './PolylineDashMaterialProperty',
+    './PolylineGlowMaterialProperty',
+    './PolylineGraphics',
+    './PolylineOutlineMaterialProperty',
+    './PositionPropertyArray',
+    './PropertyArray',
+    './PropertyBag',
+    './RectangleGraphics',
+    './ReferenceProperty',
+    './Rotation',
+    './SampledPositionProperty',
+    './SampledProperty',
+    './StripeMaterialProperty',
+    './StripeOrientation',
+    './TimeIntervalCollectionPositionProperty',
+    './TimeIntervalCollectionProperty',
+    './VelocityVectorProperty',
+    './WallGraphics'
+], function (
         BoundingRectangle,
         Cartesian2,
         Cartesian3,
@@ -445,14 +445,14 @@ define([
         } else if (czmlInterval.hasOwnProperty('cartesian2')) {
             return Cartesian2;
         } else if (czmlInterval.hasOwnProperty('cartesian') ||
-                   czmlInterval.hasOwnProperty('unitCartesian') ||
-                   czmlInterval.hasOwnProperty('unitSpherical') ||
-                   czmlInterval.hasOwnProperty('spherical') ||
-                   czmlInterval.hasOwnProperty('cartographicRadians') ||
-                   czmlInterval.hasOwnProperty('cartographicDegrees')) {
+                czmlInterval.hasOwnProperty('unitCartesian') ||
+                czmlInterval.hasOwnProperty('unitSpherical') ||
+                czmlInterval.hasOwnProperty('spherical') ||
+                czmlInterval.hasOwnProperty('cartographicRadians') ||
+                czmlInterval.hasOwnProperty('cartographicDegrees')) {
             return Cartesian3;
         } else if (czmlInterval.hasOwnProperty('rgba') ||
-                   czmlInterval.hasOwnProperty('rgbaf')) {
+                czmlInterval.hasOwnProperty('rgbaf')) {
             return Color;
         } else if (czmlInterval.hasOwnProperty('colorBlendMode')) {
             return ColorBlendMode;
@@ -471,7 +471,7 @@ define([
         } else if (czmlInterval.hasOwnProperty('nearFarScalar')) {
             return NearFarScalar;
         } else if (czmlInterval.hasOwnProperty('object') ||
-                   czmlInterval.hasOwnProperty('value')) {
+                czmlInterval.hasOwnProperty('value')) {
             return Object;
         } else if (czmlInterval.hasOwnProperty('unitQuaternion')) {
             return Quaternion;
@@ -482,7 +482,7 @@ define([
         } else if (czmlInterval.hasOwnProperty('stripeOrientation')) {
             return StripeOrientation;
         } else if (czmlInterval.hasOwnProperty('wsen') ||
-                   czmlInterval.hasOwnProperty('wsenDegrees')) {
+                czmlInterval.hasOwnProperty('wsenDegrees')) {
             return Rectangle;
         } else if (czmlInterval.hasOwnProperty('uri')) {
             return Uri;
@@ -553,17 +553,17 @@ define([
     }
 
     var interpolators = {
-        HERMITE : HermitePolynomialApproximation,
-        LAGRANGE : LagrangePolynomialApproximation,
-        LINEAR : LinearApproximation
+        HERMITE: HermitePolynomialApproximation,
+        LAGRANGE: LagrangePolynomialApproximation,
+        LINEAR: LinearApproximation
     };
 
     function updateInterpolationSettings(packetData, property) {
         var interpolationAlgorithm = packetData.interpolationAlgorithm;
         if (defined(interpolationAlgorithm) || defined(packetData.interpolationDegree)) {
             property.setInterpolationOptions({
-                interpolationAlgorithm : interpolators[interpolationAlgorithm],
-                interpolationDegree : packetData.interpolationDegree
+                interpolationAlgorithm: interpolators[interpolationAlgorithm],
+                interpolationDegree: packetData.interpolationDegree
             });
         }
 
@@ -938,8 +938,8 @@ define([
             //See if we already have data at that interval.
             var thisIntervals = property.intervals;
             existingInterval = thisIntervals.findInterval({
-                start : combinedInterval.start,
-                stop : combinedInterval.stop
+                start: combinedInterval.start,
+                stop: combinedInterval.stop
             });
             if (defined(existingInterval)) {
                 //We have an interval, but we need to make sure the
@@ -1107,7 +1107,7 @@ define([
     function processArrayPacketData(object, propertyName, packetData, entityCollection) {
         var references = packetData.references;
         if (defined(references)) {
-            var properties = references.map(function(reference) {
+            var properties = references.map(function (reference) {
                 return makeReference(entityCollection, reference);
             });
 
@@ -1144,7 +1144,7 @@ define([
 
     function processPositionsPacketData(object, propertyName, positionsData, entityCollection) {
         if (defined(positionsData.references)) {
-            var properties = positionsData.references.map(function(reference) {
+            var properties = positionsData.references.map(function (reference) {
                 return makeReference(entityCollection, reference);
             });
 
@@ -1217,7 +1217,7 @@ define([
     }
 
     var iso8601Scratch = {
-        iso8601 : undefined
+        iso8601: undefined
     };
 
     function processAlignedAxis(billboard, packetData, interval, sourceUri, entityCollection) {
@@ -1392,11 +1392,11 @@ define([
             var clock = documentPacket.clock;
             if (!defined(clock)) {
                 documentPacket.clock = {
-                    interval : clockPacket.interval,
-                    currentTime : clockPacket.currentTime,
-                    range : clockPacket.range,
-                    step : clockPacket.step,
-                    multiplier : clockPacket.multiplier
+                    interval: clockPacket.interval,
+                    currentTime: clockPacket.currentTime,
+                    range: clockPacket.range,
+                    step: clockPacket.step,
+                    multiplier: clockPacket.multiplier
                 };
             } else {
                 clock.interval = defaultValue(clockPacket.interval, clock.interval);
@@ -1900,9 +1900,9 @@ define([
 
         DataSource.setLoading(dataSource, true);
 
-        return when(promise, function(czml) {
+        return when(promise, function (czml) {
             return loadCzml(dataSource, czml, sourceUri, clear);
-        }).otherwise(function(error) {
+        }).otherwise(function (error) {
             DataSource.setLoading(dataSource, false);
             dataSource._error.raiseEvent(dataSource, error);
             console.log(error);
@@ -1956,16 +1956,18 @@ define([
      * @demo {@link http://cesiumjs.org/Cesium/Apps/Sandcastle/index.html?src=CZML.html|Cesium Sandcastle CZML Demo}
      */
     function CzmlDataSource(name) {
-        this._name = name;
-        this._changed = new Event();
-        this._error = new Event();
-        this._isLoading = false;
-        this._loading = new Event();
-        this._clock = undefined;
-        this._documentPacket = new DocumentPacket();
-        this._version = undefined;
-        this._entityCollection = new EntityCollection(this);
-        this._entityCluster = new EntityCluster();
+        if (this) {
+            this._name = name;
+            this._changed = new Event();
+            this._error = new Event();
+            this._isLoading = false;
+            this._loading = new Event();
+            this._clock = undefined;
+            this._documentPacket = new DocumentPacket();
+            this._version = undefined;
+            this._entityCollection = new EntityCollection(this);
+            this._entityCluster = new EntityCluster();
+        }
     }
 
     /**
@@ -1976,7 +1978,7 @@ define([
      * @param {String} [options.sourceUri] Overrides the url to use for resolving relative links.
      * @returns {Promise.<CzmlDataSource>} A promise that resolves to the new instance once the data is processed.
      */
-    CzmlDataSource.load = function(czml, options) {
+    CzmlDataSource.load = function (czml, options) {
         return new CzmlDataSource().load(czml, options);
     };
 
@@ -1986,8 +1988,8 @@ define([
          * @memberof CzmlDataSource.prototype
          * @type {String}
          */
-        name : {
-            get : function() {
+        name: {
+            get: function () {
                 return this._name;
             }
         },
@@ -1998,8 +2000,8 @@ define([
          * @memberof CzmlDataSource.prototype
          * @type {DataSourceClock}
          */
-        clock : {
-            get : function() {
+        clock: {
+            get: function () {
                 return this._clock;
             }
         },
@@ -2008,8 +2010,8 @@ define([
          * @memberof CzmlDataSource.prototype
          * @type {EntityCollection}
          */
-        entities : {
-            get : function() {
+        entities: {
+            get: function () {
                 return this._entityCollection;
             }
         },
@@ -2018,8 +2020,8 @@ define([
          * @memberof CzmlDataSource.prototype
          * @type {Boolean}
          */
-        isLoading : {
-            get : function() {
+        isLoading: {
+            get: function () {
                 return this._isLoading;
             }
         },
@@ -2028,8 +2030,8 @@ define([
          * @memberof CzmlDataSource.prototype
          * @type {Event}
          */
-        changedEvent : {
-            get : function() {
+        changedEvent: {
+            get: function () {
                 return this._changed;
             }
         },
@@ -2038,8 +2040,8 @@ define([
          * @memberof CzmlDataSource.prototype
          * @type {Event}
          */
-        errorEvent : {
-            get : function() {
+        errorEvent: {
+            get: function () {
                 return this._error;
             }
         },
@@ -2048,8 +2050,8 @@ define([
          * @memberof CzmlDataSource.prototype
          * @type {Event}
          */
-        loadingEvent : {
-            get : function() {
+        loadingEvent: {
+            get: function () {
                 return this._loading;
             }
         },
@@ -2058,26 +2060,25 @@ define([
          * @memberof CzmlDataSource.prototype
          * @type {Boolean}
          */
-        show : {
-            get : function() {
+        show: {
+            get: function () {
                 return this._entityCollection.show;
             },
-            set : function(value) {
+            set: function (value) {
                 this._entityCollection.show = value;
             }
         },
-
         /**
          * Gets or sets the clustering options for this data source. This object can be shared between multiple data sources.
          *
          * @memberof CzmlDataSource.prototype
          * @type {EntityCluster}
          */
-        clustering : {
-            get : function() {
+        clustering: {
+            get: function () {
                 return this._entityCluster;
             },
-            set : function(value) {
+            set: function (value) {
                 //>>includeStart('debug', pragmas.debug);
                 if (!defined(value)) {
                     throw new DeveloperError('value must be defined.');
@@ -2124,7 +2125,7 @@ define([
      * @param {String} [options.sourceUri] Overrides the url to use for resolving relative links.
      * @returns {Promise.<CzmlDataSource>} A promise that resolves to this instances once the data is processed.
      */
-    CzmlDataSource.prototype.process = function(czml, options) {
+    CzmlDataSource.prototype.process = function (czml, options) {
         return load(this, czml, options, false);
     };
 
@@ -2136,7 +2137,7 @@ define([
      * @param {String} [options.sourceUri] Overrides the url to use for resolving relative links.
      * @returns {Promise.<CzmlDataSource>} A promise that resolves to this instances once the data is processed.
      */
-    CzmlDataSource.prototype.load = function(czml, options) {
+    CzmlDataSource.prototype.load = function (czml, options) {
         return load(this, czml, options, true);
     };
 
@@ -2183,7 +2184,7 @@ define([
      */
     CzmlDataSource.processMaterialPacketData = processMaterialPacketData;
 
-    CzmlDataSource._processCzml = function(czml, entityCollection, sourceUri, updaterFunctions, dataSource) {
+    CzmlDataSource._processCzml = function (czml, entityCollection, sourceUri, updaterFunctions, dataSource) {
         updaterFunctions = defined(updaterFunctions) ? updaterFunctions : CzmlDataSource.updaters;
 
         if (isArray(czml)) {
