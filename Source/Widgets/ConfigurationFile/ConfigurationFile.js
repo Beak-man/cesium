@@ -5,13 +5,13 @@ define([
         defineProperties
         ) {
     "use strict";
-
     var ConfigurationFile = function () {
 
 
         var configuration = {
             "homePlanet": "mars",
             "servers": {
+
                 "USGSserver": {
                     "name": "Planetary maps (USGS)",
                     "url": "http://planetarymaps.usgs.gov/cgi-bin/mapserv",
@@ -26,6 +26,7 @@ define([
                     "format": "png"
                 },
                 "VOServers": {
+
                     "venus": [
                         {
                             "name": "voparis-cdpp",
@@ -46,6 +47,7 @@ define([
                             "url": "http://dc.zah.uni-heidelberg.de/__system__/tap/run/tap/sync",
                             "dir": "./",
                             "extension": ["titan.epn_core"]
+
                         }
                     ],
                     "mars": [
@@ -229,20 +231,19 @@ define([
                     }
                 }
             }
-        }
+        };
 
         this._configuration = configuration;
 
 
     };
-
     defineProperties(ConfigurationFile.prototype, {
+
         config: {
             get: function () {
                 return this._configuration;
-            },
+            }
         }
     });
-
     return ConfigurationFile;
 });

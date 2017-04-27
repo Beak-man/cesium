@@ -57,11 +57,11 @@ if (buildingRelease) {
 }
 
 var sourceFiles = ['Source/**/*.js',
-
-    '!Source/*.js',
-    '!Source/Workers/**',
-    '!Source/ThirdParty/Workers/**',
-    'Source/Workers/createTaskProcessorWorker.js'];
+                   'Source/**/*.json',
+                   '!Source/*.js',
+                   '!Source/Workers/**',
+                   '!Source/ThirdParty/Workers/**',
+                   'Source/Workers/createTaskProcessorWorker.js'];
 
 var buildFiles = ['Specs/**/*.js',
                   '!Specs/SpecList.js',
@@ -126,24 +126,21 @@ gulp.task('buildApps', function() {
     return buildCesiumViewer();
 });
 
-
-gulp.task('buildPlApps', ['minifyRelease'], function() {
-
+gulp.task('buildPlApps', function() {
     return buildPlanetaryCesiumViewer();
 });
 
-gulp.task('uglifyPlApps', function () {
-  return uglifyPlanetaryCesiumViewer();
-});
-
-gulp.task('clean', function (done) {
-    filesToClean.forEach(function (file) {
+gulp.task('clean', function(done) {
+    filesToClean.forEach(function(file) {
         rimraf.sync(file);
     });
     done();
 });
 
 gulp.task('requirejs', function(done) {
+    console.log(process.argv[3]);
+     console.log(process.argv[3].substring(2));
+    
     var config = JSON.parse(new Buffer(process.argv[3].substring(2), 'base64').toString('utf8'));
     requirejs.optimize(config, function() {
         done();
@@ -928,11 +925,8 @@ function combineJavaScript(options) {
     var combineOutput = path.join('Build', 'combineOutput', optimizer);
     var copyrightHeader = fs.readFileSync(path.join('Source', 'copyrightHeader.js'));
 
-    // Le fichier Cesium.js pose probleme lors de la "minification"
-
     var promise = Promise.join(
-
-       // combineCesium(!removePragmas, optimizer, combineOutput),
+        combineCesium(!removePragmas, optimizer, combineOutput),
         combineWorkers(!removePragmas, optimizer, combineOutput)
     );
 
@@ -1103,8 +1097,8 @@ function createCesiumJs() {
     });
 
     var contents = '\
- /*global define*/\n\
- define([' + moduleIds.join(', ') + '], function(' + parameters.join(', ') + ') {\n\
+/*global define*/\n\
+define([' + moduleIds.join(', ') + '], function(' + parameters.join(', ') + ') {\n\
   \'use strict\';\n\
   /*jshint sub:true*/\n\
   var Cesium = {\n\
@@ -1114,8 +1108,6 @@ function createCesiumJs() {
   ' + assignments.join('\n  ') + '\n\
   return Cesium;\n\
 });';
-    
-
 
     fs.writeFileSync('Source/Cesium.js', contents);
 }
@@ -1274,22 +1266,14 @@ function buildCesiumViewer() {
 
         return streamToPromise(stream.pipe(gulp.dest(cesiumViewerOutputDirectory)));
     });
-    
-    gulp.src("Source/Cesium.js")
-        .pipe(gulp.dest("Build/Apps/PlanetaryCesiumViewer")); 
 
     return promise;
 }
 
-
 function buildPlanetaryCesiumViewer() {
-    
-           
-    
-    
     var cesiumViewerOutputDirectory = 'Build/Apps/PlanetaryCesiumViewer';
     var cesiumViewerStartup = path.join(cesiumViewerOutputDirectory, 'PlanetaryCesiumViewerStartup.js');
-    var cesiumViewerCss = path.join(cesiumViewerOutputDirectory, 'PlanetaryCesiumViewer.css'); 
+    var cesiumViewerCss = path.join(cesiumViewerOutputDirectory, 'PlanetaryCesiumViewer.css');
     mkdirp.sync(cesiumViewerOutputDirectory);
 
     var promise = Promise.join(
@@ -1347,25 +1331,18 @@ function buildPlanetaryCesiumViewer() {
                       '!Build/Cesium/Widgets/**/*.css'],
                 {
                     base : 'Build/Cesium',
-                    nodir : true
+                    nodir : false
                 }),
 
             gulp.src(['Build/Cesium/Widgets/InfoBox/InfoBoxDescription.css'], {
                 base : 'Build/Cesium'
             }),
-            
+
             gulp.src(['web.config'])
         );
 
-        // Ajout des fichiers manquants dans le repertoire : Apps/PlanetaryCesiumViewer/widgets/Images
-
         return streamToPromise(stream.pipe(gulp.dest(cesiumViewerOutputDirectory)));
     });
-        
-    gulp.src("Source/Cesium.js")
-        .pipe(gulp.dest("Build/Apps/PlanetaryCesiumViewer")); 
-
-
 
     return promise;
 }
@@ -1380,7 +1357,7 @@ function removeExtension(p) {
 
 function requirejsOptimize(name, config) {
     console.log('Building ' + name);
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
         var cmd = 'npm run requirejs -- --' + new Buffer(JSON.stringify(config)).toString('base64') + ' --silent';
         child_process.exec(cmd, function(e) {
             if (e) {

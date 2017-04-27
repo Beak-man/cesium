@@ -202,7 +202,8 @@ define([
                             // If there is more than 1 line in the collection, 
                             // wer remove the before last one
 
-                            console.log(polyLines._polylines);
+                            
+                          //  console.log(polyLines._polylines);
 
                             if (dim > 1) {
                                 var polyline = polyLines._polylines[dim - 2];

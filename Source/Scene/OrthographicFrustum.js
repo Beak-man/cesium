@@ -1,11 +1,11 @@
 /*global define*/
 define([
-        '../Core/defined',
-        '../Core/defineProperties',
-        '../Core/deprecationWarning',
-        '../Core/DeveloperError',
-        './OrthographicOffCenterFrustum'
-    ], function(
+    '../Core/defined',
+    '../Core/defineProperties',
+    '../Core/deprecationWarning',
+    '../Core/DeveloperError',
+    './OrthographicOffCenterFrustum'
+], function (
         defined,
         defineProperties,
         deprecationWarning,
@@ -71,10 +71,19 @@ define([
         var f = frustum._offCenterFrustum;
 
         if (frustum.width !== frustum._width || frustum.aspectRatio !== frustum._aspectRatio ||
-            frustum.near !== frustum._near || frustum.far !== frustum._far) {
+                frustum.near !== frustum._near || frustum.far !== frustum._far) {
             //>>includeStart('debug', pragmas.debug);
-            if (frustum.aspectRatio < 0) {
-                throw new DeveloperError('aspectRatio must be positive.');
+
+           // console.log(frustum.left, frustum.right);
+
+            if (frustum.left > frustum.right) {
+
+                frustum.left = frustum.right - 1.0;
+
+                //  throw new DeveloperError('right must be greater than left.');
+            }
+            if (frustum.bottom > frustum.top) {
+                throw new DeveloperError('top must be greater than bottom.');
             }
             if (frustum.near < 0 || frustum.near > frustum.far) {
                 throw new DeveloperError('near must be greater than zero and less than far.');
@@ -105,8 +114,8 @@ define([
          * @type {Matrix4}
          * @readonly
          */
-        projectionMatrix : {
-            get : function() {
+        projectionMatrix: {
+            get: function () {
                 update(this);
                 return this._offCenterFrustum.projectionMatrix;
             }
@@ -117,12 +126,12 @@ define([
          * @type {Number}
          * @default undefined
          */
-        left : {
-            get : function() {
+        left: {
+            get: function () {
                 deprecationWarning('OrthographicFrustum', 'OrthographicFrustum left, right, bottom and top properties were deprecated in 1.32 and will be removed in 1.33.');
                 return this._offCenterFrustum.left;
             },
-            set : function(value) {
+            set: function (value) {
                 deprecationWarning('OrthographicFrustum', 'OrthographicFrustum left, right, bottom and top properties were deprecated in 1.32 and will be removed in 1.33.');
                 this._useDeprecated = true;
                 this._offCenterFrustum.left = value;
@@ -134,12 +143,12 @@ define([
          * @type {Number}
          * @default undefined
          */
-        right : {
-            get : function() {
+        right: {
+            get: function () {
                 deprecationWarning('OrthographicFrustum', 'OrthographicFrustum left, right, bottom and top properties were deprecated in 1.32 and will be removed in 1.33.');
                 return this._offCenterFrustum.right;
             },
-            set : function(value) {
+            set: function (value) {
                 deprecationWarning('OrthographicFrustum', 'OrthographicFrustum left, right, bottom and top properties were deprecated in 1.32 and will be removed in 1.33.');
                 this._useDeprecated = true;
                 this._offCenterFrustum.right = value;
@@ -151,12 +160,12 @@ define([
          * @type {Number}
          * @default undefined
          */
-        top : {
-            get : function() {
+        top: {
+            get: function () {
                 deprecationWarning('OrthographicFrustum', 'OrthographicFrustum left, right, bottom and top properties were deprecated in 1.32 and will be removed in 1.33.');
                 return this._offCenterFrustum.top;
             },
-            set : function(value) {
+            set: function (value) {
                 deprecationWarning('OrthographicFrustum', 'OrthographicFrustum left, right, bottom and top properties were deprecated in 1.32 and will be removed in 1.33.');
                 this._useDeprecated = true;
                 this._offCenterFrustum.top = value;
@@ -168,12 +177,12 @@ define([
          * @type {Number}
          * @default undefined
          */
-        bottom : {
-            get : function() {
+        bottom: {
+            get: function () {
                 deprecationWarning('OrthographicFrustum', 'OrthographicFrustum left, right, bottom and top properties were deprecated in 1.32 and will be removed in 1.33.');
                 return this._offCenterFrustum.bottom;
             },
-            set : function(value) {
+            set: function (value) {
                 deprecationWarning('OrthographicFrustum', 'OrthographicFrustum left, right, bottom and top properties were deprecated in 1.32 and will be removed in 1.33.');
                 this._useDeprecated = true;
                 this._offCenterFrustum.bottom = value;
@@ -194,7 +203,7 @@ define([
      * var cullingVolume = frustum.computeCullingVolume(cameraPosition, cameraDirection, cameraUp);
      * var intersect = cullingVolume.computeVisibility(boundingVolume);
      */
-    OrthographicFrustum.prototype.computeCullingVolume = function(position, direction, up) {
+    OrthographicFrustum.prototype.computeCullingVolume = function (position, direction, up) {
         update(this);
         return this._offCenterFrustum.computeCullingVolume(position, direction, up);
     };
@@ -216,7 +225,7 @@ define([
      * // Get the width and height of a pixel.
      * var pixelSize = camera.frustum.getPixelDimensions(scene.drawingBufferWidth, scene.drawingBufferHeight, 0.0, new Cesium.Cartesian2());
      */
-    OrthographicFrustum.prototype.getPixelDimensions = function(drawingBufferWidth, drawingBufferHeight, distance, result) {
+    OrthographicFrustum.prototype.getPixelDimensions = function (drawingBufferWidth, drawingBufferHeight, distance, result) {
         update(this);
         return this._offCenterFrustum.getPixelDimensions(drawingBufferWidth, drawingBufferHeight, distance, result);
     };
@@ -227,7 +236,7 @@ define([
      * @param {OrthographicFrustum} [result] The object onto which to store the result.
      * @returns {OrthographicFrustum} The modified result parameter or a new OrthographicFrustum instance if one was not provided.
      */
-    OrthographicFrustum.prototype.clone = function(result) {
+    OrthographicFrustum.prototype.clone = function (result) {
         if (!defined(result)) {
             result = new OrthographicFrustum();
         }
@@ -255,7 +264,7 @@ define([
      * @param {OrthographicFrustum} [other] The right hand side OrthographicFrustum.
      * @returns {Boolean} <code>true</code> if they are equal, <code>false</code> otherwise.
      */
-    OrthographicFrustum.prototype.equals = function(other) {
+    OrthographicFrustum.prototype.equals = function (other) {
         if (!defined(other)) {
             return false;
         }

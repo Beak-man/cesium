@@ -37,7 +37,7 @@ define([
         'Cesium/ThirdParty/knockout',
         'Cesium/ThirdParty/when',
         'Cesium/Widgets/createCommand',
-        'Cesium/Widgets/ConfigurationFiles/ConfigurationFile',
+        'Cesium/Widgets/ConfigurationFile/ConfigurationFile',
         'Cesium/Widgets/Viewer/Viewer',
         'Cesium/Widgets/Viewer/viewerCesiumInspectorMixin',
         'Cesium/Widgets/Viewer/viewerDragDropMixin'
@@ -234,7 +234,6 @@ define([
             return;
         }
 
-
         viewer.extend(viewerDragDropMixin);
         if (endUserOptions.inspector) {
             viewer.extend(viewerCesiumInspectorMixin);
@@ -337,28 +336,13 @@ define([
      ======================== READ CONFIGURATION FILES =========================
      =========================================================================== */
 
-    function getXMLHttpRequest() {
-        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-            var xhr = new XMLHttpRequest();
-        } else if (typeof ActiveXObject !== " undefined") {
-            var xhr = new ActiveXObject("Microsoft.XMLHTTP"); // activeX pour IE
-        } else {
-            console.log("AJAX don't available on this browser");
-            var xhr = null;
-        }
-        return xhr;
-    }
 
     // Solar system configuration : 
-     
-     var cf = new ConfigurationFile();
-     
-    console.log(cf.config);
-    
-    if (viewerOptions.showSystems == true) {   
+
+    if (viewerOptions.showSystems == true) {
         
-        var cf = new ConfigurationFile();
-         viewerCreation(cf.config);
+        var conf = new ConfigurationFile();        
+        viewerCreation(conf.config);
         
     } else if (viewerOptions.showSystems == false || viewerOptions.showSystems == 'undefined') {
 
