@@ -1,4 +1,3 @@
-/*global define*/
 define([
         '../Core/BoundingSphere',
         '../Core/Cartesian2',
@@ -36,8 +35,6 @@ define([
         './BatchTable',
         './CullFace',
         './DepthFunction',
-        './Material',
-        './PolylineMaterialAppearance',
         './PrimitivePipeline',
         './PrimitiveState',
         './SceneMode',
@@ -79,8 +76,6 @@ define([
         BatchTable,
         CullFace,
         DepthFunction,
-        Material,
-        PolylineMaterialAppearance,
         PrimitivePipeline,
         PrimitiveState,
         SceneMode,
@@ -194,6 +189,8 @@ define([
      *
      * @see GeometryInstance
      * @see Appearance
+     * @see ClassificationPrimitive
+     * @see GroundPrimitive
      */
     function Primitive(options) {
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
@@ -206,6 +203,7 @@ define([
          * Changing this property after the primitive is rendered has no effect.
          * </p>
          *
+         * @readonly
          * @type GeometryInstance[]|GeometryInstance
          *
          * @default undefined
@@ -1000,16 +998,15 @@ define([
 
     function depthClampVS(vertexShaderSource) {
         var modifiedVS = ShaderSource.replaceMain(vertexShaderSource, 'czm_non_depth_clamp_main');
+        // The varying should be surround by #ifdef GL_EXT_frag_depth as an optimization.
+        // It is not to workaround an issue with Edge:
+        //     https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12120362/
         modifiedVS +=
-            '#ifdef GL_EXT_frag_depth\n' +
             'varying float v_WindowZ;\n' +
-            '#endif\n' +
             'void main() {\n' +
             '    czm_non_depth_clamp_main();\n' +
             '    vec4 position = gl_Position;\n' +
-            '#ifdef GL_EXT_frag_depth\n' +
             '    v_WindowZ = (0.5 * (position.z / position.w) + 0.5) * position.w;\n' +
-            '#endif\n' +
             '    position.z = min(position.z, position.w);\n' +
             '    gl_Position = position;' +
             '}\n';
@@ -1019,9 +1016,7 @@ define([
     function depthClampFS(fragmentShaderSource) {
         var modifiedFS = ShaderSource.replaceMain(fragmentShaderSource, 'czm_non_depth_clamp_main');
         modifiedFS +=
-            '#ifdef GL_EXT_frag_depth\n' +
             'varying float v_WindowZ;\n' +
-            '#endif\n' +
             'void main() {\n' +
             '    czm_non_depth_clamp_main();\n' +
             '#ifdef GL_EXT_frag_depth\n' +
@@ -1376,18 +1371,21 @@ define([
             primitive._backFaceRS = primitive._frontFaceRS;
         }
 
+        rs = clone(renderState, false);
+        if (defined(primitive._depthFailAppearance)) {
+            rs.depthTest.enabled = false;
+        }
+
         if (primitive.allowPicking) {
             if (twoPasses) {
-                rs = clone(renderState, false);
                 rs.cull = {
                     enabled : false
                 };
                 primitive._pickRS = RenderState.fromCache(rs);
             } else {
-                primitive._pickRS = primitive._frontFaceRS;
+                primitive._pickRS = RenderState.fromCache(rs);
             }
         } else {
-            rs = clone(renderState, false);
             rs.colorMask = {
                 red : false,
                 green : false,
@@ -1491,6 +1489,9 @@ define([
         }
     }
 
+    var modifiedModelViewScratch = new Matrix4();
+    var rtcScratch = new Cartesian3();
+
     function getUniforms(primitive, appearance, material, frameState) {
         // Create uniform map by combining uniforms from the appearance and material if either have uniforms.
         var materialUniformMap = defined(material) ? material._uniforms : undefined;
@@ -1527,9 +1528,6 @@ define([
         return uniforms;
     }
 
-    var modifiedModelViewScratch = new Matrix4();
-    var rtcScratch = new Cartesian3();
-
     function createCommands(primitive, appearance, material, translucent, twoPasses, colorCommands, pickCommands, frameState) {
         var uniforms = getUniforms(primitive, appearance, material, frameState);
 
@@ -1551,40 +1549,6 @@ define([
         var vaIndex = 0;
         for (var i = 0; i < length; ++i) {
             var colorCommand;
-
-            if (defined(primitive._depthFailAppearance)) {
-                if (twoPasses) {
-                    colorCommand = colorCommands[i];
-                    if (!defined(colorCommand)) {
-                        colorCommand = colorCommands[i] = new DrawCommand({
-                            owner : primitive,
-                            primitiveType : primitive._primitiveType
-                        });
-                    }
-                    colorCommand.vertexArray = primitive._va[vaIndex];
-                    colorCommand.renderState = primitive._backFaceDepthFailRS;
-                    colorCommand.shaderProgram = primitive._spDepthFail;
-                    colorCommand.uniformMap = depthFailUniforms;
-                    colorCommand.pass = pass;
-
-                    ++i;
-                }
-
-                colorCommand = colorCommands[i];
-                if (!defined(colorCommand)) {
-                    colorCommand = colorCommands[i] = new DrawCommand({
-                        owner : primitive,
-                        primitiveType : primitive._primitiveType
-                    });
-                }
-                colorCommand.vertexArray = primitive._va[vaIndex];
-                colorCommand.renderState = primitive._frontFaceDepthFailRS;
-                colorCommand.shaderProgram = primitive._spDepthFail;
-                colorCommand.uniformMap = depthFailUniforms;
-                colorCommand.pass = pass;
-
-                ++i;
-            }
 
             if (twoPasses) {
                 colorCommand = colorCommands[i];
@@ -1616,6 +1580,40 @@ define([
             colorCommand.uniformMap = uniforms;
             colorCommand.pass = pass;
 
+            if (defined(primitive._depthFailAppearance)) {
+                if (twoPasses) {
+                    ++i;
+
+                    colorCommand = colorCommands[i];
+                    if (!defined(colorCommand)) {
+                        colorCommand = colorCommands[i] = new DrawCommand({
+                            owner : primitive,
+                            primitiveType : primitive._primitiveType
+                        });
+                    }
+                    colorCommand.vertexArray = primitive._va[vaIndex];
+                    colorCommand.renderState = primitive._backFaceDepthFailRS;
+                    colorCommand.shaderProgram = primitive._spDepthFail;
+                    colorCommand.uniformMap = depthFailUniforms;
+                    colorCommand.pass = pass;
+                }
+
+                ++i;
+
+                colorCommand = colorCommands[i];
+                if (!defined(colorCommand)) {
+                    colorCommand = colorCommands[i] = new DrawCommand({
+                        owner : primitive,
+                        primitiveType : primitive._primitiveType
+                    });
+                }
+                colorCommand.vertexArray = primitive._va[vaIndex];
+                colorCommand.renderState = primitive._frontFaceDepthFailRS;
+                colorCommand.shaderProgram = primitive._spDepthFail;
+                colorCommand.uniformMap = depthFailUniforms;
+                colorCommand.pass = pass;
+            }
+
             var pickCommand = pickCommands[m];
             if (!defined(pickCommand)) {
                 pickCommand = pickCommands[m] = new DrawCommand({
@@ -1634,36 +1632,30 @@ define([
         }
     }
 
-    function updateBoundingVolumes(primitive, frameState) {
+    Primitive._updateBoundingVolumes = function(primitive, frameState, modelMatrix) {
+        var i;
+        var length;
+        var boundingSphere;
+
         // Update bounding volumes for primitives that are sized in pixels.
         // The pixel size in meters varies based on the distance from the camera.
         var pixelSize = primitive.appearance.pixelSize;
         if (defined(pixelSize)) {
-            var length = primitive._boundingSpheres.length;
-            for (var i = 0; i < length; ++i) {
-                var boundingSphere = primitive._boundingSpheres[i];
+            length = primitive._boundingSpheres.length;
+            for (i = 0; i < length; ++i) {
+                boundingSphere = primitive._boundingSpheres[i];
                 var boundingSphereWC = primitive._boundingSphereWC[i];
                 var pixelSizeInMeters = frameState.camera.getPixelSize(boundingSphere, frameState.context.drawingBufferWidth, frameState.context.drawingBufferHeight);
                 var sizeInMeters = pixelSizeInMeters * pixelSize;
                 boundingSphereWC.radius = boundingSphere.radius + sizeInMeters;
             }
         }
-    }
-
-    function updateAndQueueCommands(primitive, frameState, colorCommands, pickCommands, modelMatrix, cull, debugShowBoundingVolume, twoPasses) {
-        //>>includeStart('debug', pragmas.debug);
-        if (frameState.mode !== SceneMode.SCENE3D && !Matrix4.equals(modelMatrix, Matrix4.IDENTITY)) {
-            throw new DeveloperError('Primitive.modelMatrix is only supported in 3D mode.');
-        }
-        //>>includeEnd('debug');
-
-        updateBoundingVolumes(primitive, frameState);
 
         if (!Matrix4.equals(modelMatrix, primitive._modelMatrix)) {
             Matrix4.clone(modelMatrix, primitive._modelMatrix);
-            var length = primitive._boundingSpheres.length;
-            for (var i = 0; i < length; ++i) {
-                var boundingSphere = primitive._boundingSpheres[i];
+            length = primitive._boundingSpheres.length;
+            for (i = 0; i < length; ++i) {
+                boundingSphere = primitive._boundingSpheres[i];
                 if (defined(boundingSphere)) {
                     primitive._boundingSphereWC[i] = BoundingSphere.transform(boundingSphere, modelMatrix, primitive._boundingSphereWC[i]);
                     if (!frameState.scene3DOnly) {
@@ -1674,6 +1666,16 @@ define([
                 }
             }
         }
+    };
+
+    function updateAndQueueCommands(primitive, frameState, colorCommands, pickCommands, modelMatrix, cull, debugShowBoundingVolume, twoPasses) {
+        //>>includeStart('debug', pragmas.debug);
+        if (frameState.mode !== SceneMode.SCENE3D && !Matrix4.equals(modelMatrix, Matrix4.IDENTITY)) {
+            throw new DeveloperError('Primitive.modelMatrix is only supported in 3D mode.');
+        }
+        //>>includeEnd('debug');
+
+        Primitive._updateBoundingVolumes(primitive, frameState, modelMatrix);
 
         var boundingSpheres;
         if (frameState.mode === SceneMode.SCENE3D) {

@@ -1,60 +1,61 @@
-/*global define*/
 define([
-    '../../Core/BoundingSphere',
-    '../../Core/Cartesian3',
-    '../../Core/defaultValue',
-    '../../Core/defined',
-    '../../Core/defineProperties',
-    '../../Core/destroyObject',
-    '../../Core/DeveloperError',
-    '../../Core/Event',
-    '../../Core/EventHelper',
-    '../../Core/isArray',
-    '../../Core/Matrix4',
-    '../../Core/Rectangle',
-    '../../Core/ScreenSpaceEventType',
-    '../../DataSources/BoundingSphereState',
-    '../../DataSources/ConstantPositionProperty',
-    '../../DataSources/DataSourceCollection',
-    '../../DataSources/DataSourceDisplay',
-    '../../DataSources/Entity',
-    '../../DataSources/EntityView',
-    '../../DataSources/Property',
-    '../../Scene/ImageryLayer',
-    '../../Scene/SceneMode',
-    '../../ThirdParty/knockout',
-    '../../ThirdParty/when',
-    '../Animation/Animation',
-    '../Animation/AnimationViewModel',
-    '../BaseLayerPicker/BaseLayerPicker',
-    '../BaseLayerPicker/createDefaultImageryProviderViewModels',
-    '../BaseLayerPicker/createDefaultTerrainProviderViewModels',
-    '../CesiumWidget/CesiumWidget',
-    '../ClockViewModel',
-    '../CustomObject/CustomObject',
-    '../DrawLines/DrawLines',
-    '../EditDrawing/EditDrawing',
-    '../FullscreenButton/FullscreenButton',
-    '../Geocoder/Geocoder',
-    '../getElement',
-    '../HomeButton/HomeButton',
-    '../InfoBox/InfoBox',
-    '../LngLat/LngLat',
-    '../MarkerMove/MarkerMove',
-    '../NavigationHelpButton/NavigationHelpButton',
-    '../PointCircleSwitch/PointCircleSwitch',
-    '../ProjectionPicker/ProjectionPicker',
-    '../SceneModePicker/SceneModePicker',
-    '../SelectionIndicator/SelectionIndicator',
-    '../ShowGrid/ShowGrid',
-    '../ShowSystems/ShowSystems',
-    '../subscribeAndEvaluate',
-    '../Timeline/Timeline',
-    '../Tools/Tools',
-    '../VRButton/VRButton'
-], function (
+        '../../Core/BoundingSphere',
+        '../../Core/Cartesian3',
+        '../../Core/Clock',
+        '../../Core/defaultValue',
+        '../../Core/defined',
+        '../../Core/defineProperties',
+        '../../Core/destroyObject',
+        '../../Core/DeveloperError',
+        '../../Core/Event',
+        '../../Core/EventHelper',
+        '../../Core/isArray',
+        '../../Core/Matrix4',
+        '../../Core/Rectangle',
+        '../../Core/ScreenSpaceEventType',
+        '../../DataSources/BoundingSphereState',
+        '../../DataSources/ConstantPositionProperty',
+        '../../DataSources/DataSourceCollection',
+        '../../DataSources/DataSourceDisplay',
+        '../../DataSources/Entity',
+        '../../DataSources/EntityView',
+        '../../DataSources/Property',
+        '../../Scene/ImageryLayer',
+        '../../Scene/SceneMode',
+        '../../ThirdParty/knockout',
+        '../../ThirdParty/when',
+        '../Animation/Animation',
+        '../Animation/AnimationViewModel',
+        '../BaseLayerPicker/BaseLayerPicker',
+        '../BaseLayerPicker/createDefaultImageryProviderViewModels',
+        '../BaseLayerPicker/createDefaultTerrainProviderViewModels',
+        '../CesiumWidget/CesiumWidget',
+        '../ClockViewModel',
+        '../CustomObject/CustomObject',
+        '../DrawLines/DrawLines',
+        '../EditDrawing/EditDrawing',
+        '../FullscreenButton/FullscreenButton',
+        '../Geocoder/Geocoder',
+        '../getElement',
+        '../HomeButton/HomeButton',
+        '../InfoBox/InfoBox',
+        '../LngLat/LngLat',
+        '../MarkerMove/MarkerMove',
+        '../NavigationHelpButton/NavigationHelpButton',
+        '../PointCircleSwitch/PointCircleSwitch',
+        '../ProjectionPicker/ProjectionPicker',
+        '../SceneModePicker/SceneModePicker',
+        '../SelectionIndicator/SelectionIndicator',
+        '../ShowGrid/ShowGrid',
+        '../ShowSystems/ShowSystems',
+        '../subscribeAndEvaluate',
+        '../Timeline/Timeline',
+        '../Tools/Tools',
+        '../VRButton/VRButton'
+    ], function(
         BoundingSphere,
         Cartesian3,
+        Clock,
         defaultValue,
         defined,
         defineProperties,
@@ -269,7 +270,7 @@ define([
      * @param {Boolean} [options.navigationHelpButton=true] If set to false, the navigation help button will not be created.
      * @param {Boolean} [options.navigationInstructionsInitiallyVisible=true] True if the navigation instructions should initially be visible, or false if the should not be shown until the user explicitly clicks the button.
      * @param {Boolean} [options.scene3DOnly=false] When <code>true</code>, each geometry instance will only be rendered in 3D to save GPU memory.
-     * @param {Clock} [options.clock=new Clock()] The clock to use to control current time.
+     * @param {ClockViewModel} [options.clockViewModel=new ClockViewModel(options.clock)] The clock view model to use to control current time.
      * @param {ProviderViewModel} [options.selectedImageryProviderViewModel] The view model for the current base imagery layer, if not supplied the first available base layer is used.  This value is only valid if options.baseLayerPicker is set to true.
      * @param {ProviderViewModel[]} [options.imageryProviderViewModels=createDefaultImageryProviderViewModels()] The array of ProviderViewModels to be selectable from the BaseLayerPicker.  This value is only valid if options.baseLayerPicker is set to true.
      * @param {ProviderViewModel} [options.selectedTerrainProviderViewModel] The view model for the current base terrain layer, if not supplied the first available base layer is used.  This value is only valid if options.baseLayerPicker is set to true.
@@ -321,7 +322,7 @@ define([
      *     sceneMode : Cesium.SceneMode.COLUMBUS_VIEW,
      *     //Use standard Cesium terrain
      *     terrainProvider : new Cesium.CesiumTerrainProvider({
-     *         url : 'https://assets.agi.com/stk-terrain/world'
+     *         url : 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles'
      *     }),
      *     //Hide the base layer picker
      *     baseLayerPicker : false,
@@ -412,26 +413,39 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         var scene3DOnly = defaultValue(options.scene3DOnly, false);
         // Cesium widget : widget qui contient la scene de Cesium
 
+        var clock;
+        var clockViewModel;
+        var destroyClockViewModel = false;
+        if (defined(options.clockViewModel)) {
+            clockViewModel = options.clockViewModel;
+            clock = clockViewModel.clock;
+        } else {
+            clock = new Clock();
+            clockViewModel = new ClockViewModel(clock);
+            destroyClockViewModel = true;
+        }
+
+        // Cesium widget
         var cesiumWidget = new CesiumWidget(cesiumWidgetContainer, {
-            terrainProvider: options.terrainProvider,
-            imageryProvider: createBaseLayerPicker ? false : options.imageryProvider,
-            clock: options.clock,
-            skyBox: options.skyBox,
-            skyAtmosphere: options.skyAtmosphere,
-            sceneMode: options.sceneMode,
-            mapProjection: options.mapProjection,
-            globe: options.globe,
-            orderIndependentTranslucency: options.orderIndependentTranslucency,
-            contextOptions: options.contextOptions,
-            useDefaultRenderLoop: options.useDefaultRenderLoop,
-            targetFrameRate: options.targetFrameRate,
-            showRenderLoopErrors: options.showRenderLoopErrors,
-            creditContainer: defined(options.creditContainer) ? options.creditContainer : bottomContainer,
-            scene3DOnly: scene3DOnly,
-            terrainExaggeration: options.terrainExaggeration,
-            shadows: options.shadows,
-            terrainShadows: options.terrainShadows,
-            mapMode2D: options.mapMode2D,
+            terrainProvider : options.terrainProvider,
+            imageryProvider : createBaseLayerPicker ? false : options.imageryProvider,
+            clock : clock,
+            skyBox : options.skyBox,
+            skyAtmosphere : options.skyAtmosphere,
+            sceneMode : options.sceneMode,
+            mapProjection : options.mapProjection,
+            globe : options.globe,
+            orderIndependentTranslucency : options.orderIndependentTranslucency,
+            contextOptions : options.contextOptions,
+            useDefaultRenderLoop : options.useDefaultRenderLoop,
+            targetFrameRate : options.targetFrameRate,
+            showRenderLoopErrors : options.showRenderLoopErrors,
+            creditContainer : defined(options.creditContainer) ? options.creditContainer : bottomContainer,
+            scene3DOnly : scene3DOnly,
+            terrainExaggeration : options.terrainExaggeration,
+            shadows : options.shadows,
+            terrainShadows : options.terrainShadows,
+            mapMode2D : options.mapMode2D,
             configuration: options.configuration
         });
         var dataSourceCollection = options.dataSources;
@@ -447,8 +461,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             scene: cesiumWidget.scene,
             dataSourceCollection: dataSourceCollection
         });
-        var clock = cesiumWidget.clock;
-        var clockViewModel = new ClockViewModel(clock);
+
         var eventHelper = new EventHelper();
         eventHelper.add(clock.onTick, Viewer.prototype._onTick, this);
         eventHelper.add(cesiumWidget.scene.morphStart, Viewer.prototype._clearTrackedObject, this);
@@ -675,8 +688,9 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 // Fullscreen
         var fullscreenButton;
         var fullscreenSubscription;
+        var fullscreenContainer;
         if (!defined(options.fullscreenButton) || options.fullscreenButton !== false) {
-            var fullscreenContainer = document.createElement('div');
+            fullscreenContainer = document.createElement('div');
             fullscreenContainer.className = 'cesium-viewer-fullscreenContainer';
             viewerContainer.appendChild(fullscreenContainer);
             fullscreenButton = new FullscreenButton(fullscreenContainer, options.fullscreenElement);
@@ -733,6 +747,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         this._destroyDataSourceCollection = destroyDataSourceCollection;
         this._dataSourceDisplay = dataSourceDisplay;
         this._clockViewModel = clockViewModel;
+        this._destroyClockViewModel = destroyClockViewModel;
         this._toolbar = toolbar;
         this._homeButton = defaultValue(homeButton, null);
         this._lngLat = defaultValue(lngLat, null); /* *** NEW *** */
@@ -1171,9 +1186,21 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
          * @type {Clock}
          * @readonly
          */
-        clock: {
-            get: function () {
-                return this._cesiumWidget.clock;
+        clock : {
+            get : function() {
+                return this._clockViewModel.clock;
+            }
+        },
+
+        /**
+         * Gets the clock view model.
+         * @memberof Viewer.prototype
+         * @type {ClockViewModel}
+         * @readonly
+         */
+        clockViewModel : {
+            get : function() {
+                return this._clockViewModel;
             }
         },
         /**
@@ -1321,11 +1348,9 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
                         if (defined(selectionIndicatorViewModel)) {
                             selectionIndicatorViewModel.animateAppear();
                         }
-                    } else {
+                    } else if (defined(selectionIndicatorViewModel)) {
                         // Leave the info text in place here, it is needed during the exit animation.
-                        if (defined(selectionIndicatorViewModel)) {
-                            selectionIndicatorViewModel.animateDepart();
-                        }
+                        selectionIndicatorViewModel.animateDepart();
                     }
                     this._selectedEntityChanged.raiseEvent(value);
                 }
@@ -1572,7 +1597,9 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             this._selectionIndicator = this._selectionIndicator.destroy();
         }
 
-        this._clockViewModel = this._clockViewModel.destroy();
+        if (this._destroyClockViewModel) {
+            this._clockViewModel = this._clockViewModel.destroy();
+        }
         this._dataSourceDisplay = this._dataSourceDisplay.destroy();
         this._cesiumWidget = this._cesiumWidget.destroy();
         if (this._destroyDataSourceCollection) {
@@ -1933,8 +1960,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         //Stop tracking the current entity.
         viewer.trackedEntity = undefined;
         var boundingSphere = BoundingSphere.fromBoundingSpheres(boundingSpheres);
-        var controller = scene.screenSpaceCameraController;
-        controller.minimumZoomDistance = Math.min(controller.minimumZoomDistance, boundingSphere.radius * 0.5);
+
         if (!viewer._zoomIsFlight) {
             camera.viewBoundingSphere(boundingSphere, viewer._zoomOptions);
             camera.lookAtTransform(Matrix4.IDENTITY);
