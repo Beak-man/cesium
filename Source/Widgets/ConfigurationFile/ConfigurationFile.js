@@ -14,13 +14,13 @@ define([
 
                 "USGSserver": {
                     "name": "Planetary maps (USGS)",
-                    "url": "http://planetarymaps.usgs.gov/cgi-bin/mapserv",
+                    "url": "https://planetarymaps.usgs.gov/cgi-bin/mapserv",
                     "dir": "/maps/",
                     "extension": ["_simp_cyl.map", "_npole.map", "_spole.map"]
                 },
                 "server2": {
                     "name": "Planetary maps (USGS)",
-                    "url": "http://planetarymaps.usgs.gov/cgi-bin/mapserv",
+                    "url": "https://planetarymaps.usgs.gov/cgi-bin/mapserv",
                     "dir": "/maps/",
                     "extension": "_simp_cyl_quads.map",
                     "format": "png"
@@ -55,7 +55,7 @@ define([
                             "name": "vo Jacobs University",
                             "url": "http://epn1.epn-vespa.jacobs-university.de/__system__/tap/run/tap/sync",
                             "dir": "./",
-                            "extension": ["mars_craters.epn_core", "crism.epn_core"]
+                            "extension": ["mars_craters_dev.epn_core", "crism.epn_core"]
                         }
                     ]
                 }

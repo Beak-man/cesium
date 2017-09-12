@@ -93,8 +93,6 @@ define([
         var tilingScheme = this._tileProvider.tilingScheme;
         var ellipsoid = tilingScheme.ellipsoid;
         
-       // console.log(tilingScheme);
-
         this._tilesToRender = [];
         this._tileLoadQueueHigh = []; // high priority tiles are preventing refinement
         this._tileLoadQueueMedium = []; // medium priority tiles are being rendered
@@ -227,7 +225,6 @@ define([
      */
     QuadtreePrimitive.prototype.forEachRenderedTile = function(tileFunction) {
         
-         console.log(tileFunction);
         
         var tilesRendered = this._tilesToRender;
         for (var i = 0, len = tilesRendered.length; i < len; ++i) {

@@ -58,11 +58,10 @@ if (buildingRelease) {
 }
 
 var sourceFiles = ['Source/**/*.js',
-
-    '!Source/*.js',
-    '!Source/Workers/**',
-    '!Source/ThirdParty/Workers/**',
-    'Source/Workers/createTaskProcessorWorker.js'];
+                   '!Source/*.js',
+                   '!Source/Workers/**',
+                   '!Source/ThirdParty/Workers/**',
+                   'Source/Workers/createTaskProcessorWorker.js'];
 
 var buildFiles = ['Specs/**/*.js',
                   '!Specs/SpecList.js',
@@ -72,6 +71,7 @@ var filesToClean = ['Source/Cesium.js',
                     'Build',
                     'Instrumented',
                     'Source/Shaders/**/*.js',
+                    'Source/ThirdParty/Shaders/*.js',
                     'Specs/SpecList.js',
                     'Apps/Sandcastle/jsHintOptions.js',
                     'Apps/Sandcastle/gallery/gallery-index.js',
@@ -116,18 +116,12 @@ gulp.task('buildApps', function() {
     return buildCesiumViewer();
 });
 
-
-gulp.task('buildPlApps', ['minifyRelease'], function() {
-
+gulp.task('buildPlApps', function() {
     return buildPlanetaryCesiumViewer();
 });
 
-gulp.task('uglifyPlApps', function () {
-  return uglifyPlanetaryCesiumViewer();
-});
-
-gulp.task('clean', function (done) {
-    filesToClean.forEach(function (file) {
+gulp.task('clean', function(done) {
+    filesToClean.forEach(function(file) {
         rimraf.sync(file);
     });
     done();
@@ -135,7 +129,6 @@ gulp.task('clean', function (done) {
 
 gulp.task('requirejs', function(done) {
     var config = JSON.parse(new Buffer(process.argv[3].substring(2), 'base64').toString('utf8'));
-
     // Disable module load timeout
     config.waitSeconds = 0;
 
@@ -311,7 +304,7 @@ gulp.task('deploy-s3', function(done) {
         return;
     }
 
-    var argv = yargs.usage('Usage: delpoy -b [Bucket Name] -d [Upload Directory]')
+    var argv = yargs.usage('Usage: deploy-s3 -b [Bucket Name] -d [Upload Directory]')
         .demand(['b', 'd']).argv;
 
     var uploadDirectory = argv.d;
@@ -555,7 +548,8 @@ function listAll(s3, bucketName, prefix, files, marker) {
 gulp.task('deploy-set-version', function() {
     var version = yargs.argv.version;
     if (version) {
-        packageJson.version += '-' + version;
+        // NPM versions can only contain alphanumeric and hyphen characters
+        packageJson.version += '-' + version.replace(/[^[0-9A-Za-z-]/g, '');
         fs.writeFileSync('package.json', JSON.stringify(packageJson, undefined, 2));
     }
 });
@@ -899,11 +893,8 @@ function combineJavaScript(options) {
     var combineOutput = path.join('Build', 'combineOutput', optimizer);
     var copyrightHeader = fs.readFileSync(path.join('Source', 'copyrightHeader.js'));
 
-    // Le fichier Cesium.js pose probleme lors de la "minification"
-
     var promise = Promise.join(
-
-       // combineCesium(!removePragmas, optimizer, combineOutput),
+        combineCesium(!removePragmas, optimizer, combineOutput),
         combineWorkers(!removePragmas, optimizer, combineOutput)
     );
 
@@ -941,7 +932,7 @@ function glslToJavaScript(minify, minifyStateFilePath) {
 // we still are using from the set, then delete any files remaining in the set.
     var leftOverJsFiles = {};
 
-    globby.sync(['Source/Shaders/**/*.js']).forEach(function(file) {
+    globby.sync(['Source/Shaders/**/*.js', 'Source/ThirdParty/Shaders/*.js']).forEach(function(file) {
         leftOverJsFiles[path.normalize(file)] = true;
     });
 
@@ -949,7 +940,7 @@ function glslToJavaScript(minify, minifyStateFilePath) {
     var builtinConstants = [];
     var builtinStructs = [];
 
-    var glslFiles = globby.sync(['Source/Shaders/**/*.glsl']);
+    var glslFiles = globby.sync(['Source/Shaders/**/*.glsl', 'Source/ThirdParty/Shaders/*.glsl']);
     glslFiles.forEach(function(glslFile) {
         glslFile = path.normalize(glslFile);
         var baseName = path.basename(glslFile, '.glsl');
@@ -1086,8 +1077,6 @@ define([' + moduleIds.join(', ') + '], function(' + parameters.join(', ') + ') {
   ' + assignments.join('\n  ') + '\n\
   return Cesium;\n\
 });';
-    
-
 
     fs.writeFileSync('Source/Cesium.js', contents);
 }
@@ -1245,23 +1234,15 @@ function buildCesiumViewer() {
 
         return streamToPromise(stream.pipe(gulp.dest(cesiumViewerOutputDirectory)));
     });
-    
-    gulp.src("Source/Cesium.js")
-        .pipe(gulp.dest("Build/Apps/PlanetaryCesiumViewer")); 
 
     return promise;
 }
 
-
 function buildPlanetaryCesiumViewer() {
-    
-           
-    
-    
-    var cesiumViewerOutputDirectory = 'Build/Apps/PlanetaryCesiumViewer';
-    var cesiumViewerStartup = path.join(cesiumViewerOutputDirectory, 'PlanetaryCesiumViewerStartup.js');
-    var cesiumViewerCss = path.join(cesiumViewerOutputDirectory, 'PlanetaryCesiumViewer.css'); 
-    mkdirp.sync(cesiumViewerOutputDirectory);
+    var pcesiumViewerOutputDirectory = 'Build/Apps/PlanetaryCesiumViewer';
+    var pcesiumViewerStartup = path.join(pcesiumViewerOutputDirectory, 'PlanetaryCesiumViewerStartup.js');
+    var pcesiumViewerCss = path.join(pcesiumViewerOutputDirectory, 'PlanetaryCesiumViewer.css');
+    mkdirp.sync(pcesiumViewerOutputDirectory);
 
     var promise = Promise.join(
         requirejsOptimize('PlanetaryCesiumViewer', {
@@ -1269,22 +1250,22 @@ function buildPlanetaryCesiumViewer() {
             useStrict : true,
             optimizeCss : 'standard',
             pragmas : {
-                debug : false
+                debug : true
             },
             optimize : 'uglify2',
             mainConfigFile : 'Apps/PlanetaryCesiumViewer/PlanetaryCesiumViewerStartup.js',
-            name : 'PlanetaryCesiumViewerStartup',
-            out : cesiumViewerStartup
+            name : 'PlanetaryCesiumViewer',
+            out : pcesiumViewerStartup
         }),
         requirejsOptimize('PlanetaryCesiumViewer CSS', {
             wrap : true,
             useStrict : true,
             optimizeCss : 'standard',
             pragmas : {
-                debug : false
+                debug : true
             },
             cssIn : 'Apps/PlanetaryCesiumViewer/PlanetaryCesiumViewer.css',
-            out : cesiumViewerCss
+            out : pcesiumViewerCss
         })
     );
 
@@ -1292,12 +1273,12 @@ function buildPlanetaryCesiumViewer() {
         var copyrightHeader = fs.readFileSync(path.join('Source', 'copyrightHeader.js'));
 
         var stream = eventStream.merge(
-            gulp.src(cesiumViewerStartup)
+            gulp.src(pcesiumViewerStartup)
                 .pipe(gulpInsert.prepend(copyrightHeader))
                 .pipe(gulpReplace('../../Source', '.'))
                 .pipe(gulpReplace('../../ThirdParty/requirejs-2.1.20', '.')),
 
-            gulp.src(cesiumViewerCss)
+            gulp.src(pcesiumViewerCss)
                 .pipe(gulpReplace('../../Source', '.')),
 
             gulp.src(['Apps/PlanetaryCesiumViewer/index.html'])
@@ -1324,19 +1305,12 @@ function buildPlanetaryCesiumViewer() {
             gulp.src(['Build/Cesium/Widgets/InfoBox/InfoBoxDescription.css'], {
                 base : 'Build/Cesium'
             }),
-            
+
             gulp.src(['web.config'])
         );
 
-        // Ajout des fichiers manquants dans le repertoire : Apps/PlanetaryCesiumViewer/widgets/Images
-
-        return streamToPromise(stream.pipe(gulp.dest(cesiumViewerOutputDirectory)));
+        return streamToPromise(stream.pipe(gulp.dest(pcesiumViewerOutputDirectory)));
     });
-        
-    gulp.src("Source/Cesium.js")
-        .pipe(gulp.dest("Build/Apps/PlanetaryCesiumViewer")); 
-
-
 
     return promise;
 }
@@ -1351,8 +1325,9 @@ function removeExtension(p) {
 
 function requirejsOptimize(name, config) {
     console.log('Building ' + name);
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
         var cmd = 'npm run requirejs -- --' + new Buffer(JSON.stringify(config)).toString('base64') + ' --silent';
+        console.log(config);
         child_process.exec(cmd, function(e) {
             if (e) {
                 console.log('Error ' + name);

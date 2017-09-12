@@ -74,7 +74,6 @@ define([
             ellipsoid : ellipsoid
         });
 		
-		// console.log(ellipsoid);
 		
         var imageryLayerCollection = new ImageryLayerCollection();
 

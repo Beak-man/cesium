@@ -700,7 +700,6 @@ define([
 
             // create TileImageries for this layer for all previously loaded tiles
             this._quadtree.forEachLoadedTile(function(tile) {
->>>>>>> master
                 if (layer._createTileImagerySkeletons(tile, terrainProvider)) {
                     tile.state = QuadtreeTileLoadState.LOADING;
                 }
