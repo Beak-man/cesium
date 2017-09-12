@@ -1250,7 +1250,7 @@ function buildPlanetaryCesiumViewer() {
             useStrict : true,
             optimizeCss : 'standard',
             pragmas : {
-                debug : true
+                debug : false
             },
             optimize : 'uglify2',
             mainConfigFile : 'Apps/PlanetaryCesiumViewer/PlanetaryCesiumViewerStartup.js',
@@ -1262,7 +1262,7 @@ function buildPlanetaryCesiumViewer() {
             useStrict : true,
             optimizeCss : 'standard',
             pragmas : {
-                debug : true
+                debug : false
             },
             cssIn : 'Apps/PlanetaryCesiumViewer/PlanetaryCesiumViewer.css',
             out : pcesiumViewerCss
@@ -1327,7 +1327,7 @@ function requirejsOptimize(name, config) {
     console.log('Building ' + name);
     return new Promise(function(resolve, reject) {
         var cmd = 'npm run requirejs -- --' + new Buffer(JSON.stringify(config)).toString('base64') + ' --silent';
-        console.log(config);
+        /* console.log(config); */
         child_process.exec(cmd, function(e) {
             if (e) {
                 console.log('Error ' + name);
