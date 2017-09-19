@@ -219,7 +219,7 @@ define([
     var fromRectangle2DUpperRight = new Cartesian3();
     var fromRectangle2DSouthwest = new Cartographic();
     var fromRectangle2DNortheast = new Cartographic();
-	
+
     /**
      * Computes a bounding sphere from a rectangle projected in 2D.
      *
@@ -289,7 +289,7 @@ define([
      * @returns {BoundingSphere} The modified result parameter or a new BoundingSphere instance if none was provided.
      */
     BoundingSphere.fromRectangle3D = function(rectangle, ellipsoid, surfaceHeight, result) {
-		
+
         ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84);
         surfaceHeight = defaultValue(surfaceHeight, 0.0);
 

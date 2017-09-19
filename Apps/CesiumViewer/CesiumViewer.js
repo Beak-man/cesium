@@ -59,7 +59,6 @@ define([
          mapStyle: BingMapsStyle.ROAD
          });*/
     }
-    ;
 
     var loadingIndicator = document.getElementById('loadingIndicator');
     var viewer;

@@ -54,10 +54,10 @@ define([
 
                     var ellipsoidName = endUserOptions.ellipsoidType.toString().toUpperCase();
 
-                    if (ellipsoidName !== "WGS84" && ellipsoidName !== "MOON" && ellipsoidName !== "MARSSPHE" && ellipsoidName !== "MARSIAU2000" && ellipsoidName !== "UNIT_SPHERE") {
+                    if (ellipsoidName !== 'WGS84' && ellipsoidName !== 'MOON' && ellipsoidName !== 'MARSSPHE' && ellipsoidName !== 'MARSIAU2000' && ellipsoidName !== 'UNIT_SPHERE') {
 
                         var ellipsoidSizeString = endUserOptions.ellipsoidSize.toString();
-                        var dimensionSizeTab = ellipsoidSizeString.split(",");
+                        var dimensionSizeTab = ellipsoidSizeString.split(',');
 
                         var dimensions = {
                             x: parseFloat(dimensionSizeTab[0]),
@@ -96,7 +96,7 @@ define([
                     Ellipsoid.MERCURYIAU2000 = freezeObject(new Ellipsoid(2497000.0, 2497000.0, 2497000.0));
 
                 } else if (endUserOptions.ellipsoidType.toString().toUpperCase() === 'SATURNIAU2000') {
-                    Ellipsoid.SATURNIAU2000 = freezeObject(new Ellipsoid(60268000.0, 60268000., 54359000.0));
+                    Ellipsoid.SATURNIAU2000 = freezeObject(new Ellipsoid(60268000.0, 60268000.0, 54359000.0));
 
                 } else if (endUserOptions.ellipsoidType.toString().toUpperCase() === 'URANUSIAU2000') {
                     Ellipsoid.URANUSIAU2000 = freezeObject(new Ellipsoid(25559000.0, 25559000.0, 23562000.0));
@@ -108,11 +108,7 @@ define([
                     Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()] = freezeObject(new Ellipsoid(1000000.0, 1000000.0, 1000000.0));
                 }
             }
-
-
-
         }
-        ;
     };
 
     return EllipsoidType;

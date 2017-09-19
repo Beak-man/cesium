@@ -102,7 +102,7 @@ define([
 
         this._url = options.url;
         this._proxy = options.proxy;
-        
+
         console.log(options.ellipsoid);
 
         this._tilingScheme = new GeographicTilingScheme({
@@ -317,9 +317,9 @@ define([
 
     function createHeightmapTerrainData(provider, buffer, level, x, y, tmsY) {
         var heightBuffer = new Uint16Array(buffer, 0, provider._heightmapWidth * provider._heightmapWidth);
-        
+
         // creation de la tile ici ???
-        
+
         return new HeightmapTerrainData({
             buffer : heightBuffer,
             childTileMask : new Uint8Array(buffer, heightBuffer.byteLength, 1)[0],

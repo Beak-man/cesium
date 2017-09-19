@@ -83,7 +83,7 @@ define([
         Viewer,
         viewerCesiumInspectorMixin,
         viewerDragDropMixin) {
-    "use strict";
+    'use strict';
     /*global console*/
 
     /*
@@ -158,7 +158,7 @@ define([
 
     } else if (!endUserOptions.ellipsoidType) {
 
-        Ellipsoid.used = "WGS84";
+        Ellipsoid.used = 'WGS84';
 
         globeParam = new Globe(Ellipsoid.WGS84);
         mapProjectionParam = new GeographicProjection(Ellipsoid.WGS84);
@@ -188,12 +188,6 @@ define([
      var propretiesObject = ['SERVICE', 'VERSION', 'SRS', 'STYLES', 'REQUEST', 'FORMAT', 'LAYERS', 'BBOX', 'WIDTH', 'HEIGHT'];
      var urlParam         = "";
      */
-    
-    
-    
-    
-    
-    
 
     var loadingIndicator = document.getElementById('loadingIndicator');
 

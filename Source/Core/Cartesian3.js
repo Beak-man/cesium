@@ -778,7 +778,7 @@ define([
         Check.typeOf.number('longitude', longitude);
         Check.typeOf.number('latitude', latitude);
         //>>includeEnd('debug');
-        
+
         longitude = CesiumMath.toRadians(longitude);
         latitude = CesiumMath.toRadians(latitude);
         return Cartesian3.fromRadians(longitude, latitude, height, ellipsoid, result);

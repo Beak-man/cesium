@@ -38,7 +38,7 @@ define([
      * the tile tree.
      */
     function GeographicTilingScheme(options) {
-        
+
         options = defaultValue(options, {}); // on recupere les options
         this._ellipsoid = defaultValue(options.ellipsoid, Ellipsoid.WGS84); // on recupere l'ellipsoid
         this._rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE); // region selectionn�e d�finie par ses coordonn�es (lng, lat)
@@ -89,7 +89,7 @@ define([
      * @returns {Number} The number of tiles in the X direction at the given level.
      */
     GeographicTilingScheme.prototype.getNumberOfXTilesAtLevel = function(level) {
-        
+
         return this._numberOfLevelZeroTilesX << level;
     };
 
@@ -210,16 +210,16 @@ define([
         }
 
         var xTiles = this.getNumberOfXTilesAtLevel(level);
-        var yTiles = this.getNumberOfYTilesAtLevel(level);    
+        var yTiles = this.getNumberOfYTilesAtLevel(level);
 
         var xTileWidth = rectangle.width / xTiles;
         var yTileHeight = rectangle.height / yTiles;
-        
+
         // zone couverte par une tuile en radian
-        
+
         // var deltaPhi = xTileWidth
         // var deltatheta = yTileHeight
-        
+
      //   console.log((xTileWidth*180.0)/Math.PI + " "+ (yTileHeight*180.0)/Math.PI);
 
         var longitude = position.longitude;
@@ -241,11 +241,9 @@ define([
             return new Cartesian2(xTileCoordinate, yTileCoordinate);
         }
 
-        
-
         result.x = xTileCoordinate;
         result.y = yTileCoordinate;
-        
+
         return result;
     };
 
