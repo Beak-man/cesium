@@ -805,6 +805,7 @@ gulp.task('sortRequires', function() {
 });
 
 function combineCesium(debug, optimizer, combineOutput) {
+
     return requirejsOptimize('Cesium.js', {
         wrap : true,
         useStrict : true,
@@ -905,6 +906,7 @@ function combineJavaScript(options) {
         var stream = gulp.src([combineOutput + '/**'])
             .pipe(gulpInsert.prepend(copyrightHeader))
             .pipe(gulp.dest(outputDirectory));
+
 
         promises.push(streamToPromise(stream));
 
@@ -1327,7 +1329,6 @@ function requirejsOptimize(name, config) {
     console.log('Building ' + name);
     return new Promise(function(resolve, reject) {
         var cmd = 'npm run requirejs -- --' + new Buffer(JSON.stringify(config)).toString('base64') + ' --silent';
-        /* console.log(config); */
         child_process.exec(cmd, function(e) {
             if (e) {
                 console.log('Error ' + name);
