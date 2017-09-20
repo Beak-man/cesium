@@ -436,8 +436,6 @@ define([
 
         var bufferIndex = 0;
         for (var j = 0; j < size; ++j) {
-
-            
             bufferIndex = encoding.encode(vertices, bufferIndex, positions[j], uvs[j], heights[j], undefined, webMercatorTs[j]);
         }
 

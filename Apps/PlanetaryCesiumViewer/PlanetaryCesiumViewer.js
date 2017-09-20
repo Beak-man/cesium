@@ -97,7 +97,7 @@ define([
 
     // URL of the configuration file
 
-    var urlConfig = '../../Source/Widgets/ConfigurationFiles/ConfigurationFile.json';
+    //var urlConfig = '../../Source/Widgets/ConfigurationFiles/ConfigurationFile.json';
 
 
     // Here, we use the request to create the "endUserOptions" object.
@@ -150,21 +150,18 @@ define([
         Ellipsoid.modify(Ellipsoid, endUserOptions);
 
         Ellipsoid.used = endUserOptions.ellipsoidType.toString().toUpperCase();
-
-        globeParam = new Globe(Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()]);
-        mapProjectionParam = new GeographicProjection(Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()]);
-        terrainProviderParam = new EllipsoidTerrainProvider({ellipsoid: Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()]});
         ellipsoidImageryParam = Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()];
 
     } else if (!endUserOptions.ellipsoidType) {
 
         Ellipsoid.used = 'WGS84';
-
-        globeParam = new Globe(Ellipsoid.WGS84);
-        mapProjectionParam = new GeographicProjection(Ellipsoid.WGS84);
-        terrainProviderParam = new EllipsoidTerrainProvider({ellipsoid: Ellipsoid.WGS84});
         ellipsoidImageryParam = Ellipsoid.WGS84;
+
     }
+
+    globeParam = new Globe(ellipsoidImageryParam);
+    mapProjectionParam = new GeographicProjection(ellipsoidImageryParam);
+    terrainProviderParam = new EllipsoidTerrainProvider({ellipsoid: ellipsoidImageryParam});
 
     var imageryProvider;
 
@@ -265,8 +262,10 @@ define([
             context.throwOnWebGLError = true;
         }
 
+        var source;
+
         if (endUserOptions.source) {
-            var source = endUserOptions.source;
+            source = endUserOptions.source;
         }
         if (defined(source)) {
             var dataSource;
@@ -333,14 +332,14 @@ define([
 
     // Solar system configuration : 
 
-    if (viewerOptions.showSystems == true) {
-        
-        var conf = new ConfigurationFile();        
-        viewerCreation(conf.config);
-        
-    } else if (viewerOptions.showSystems == false || viewerOptions.showSystems == 'undefined') {
+    if (viewerOptions.showSystems === true) {
 
-        var imageryProvider = new createOpenStreetMapImageryProvider({
+        var conf = new ConfigurationFile();
+        viewerCreation(conf.config);
+
+    } else if (viewerOptions.showSystems === false || viewerOptions.showSystems === 'undefined') {
+
+        imageryProvider = new createOpenStreetMapImageryProvider({
             url: 'https://a.tile.openstreetmap.org/'
         });
 

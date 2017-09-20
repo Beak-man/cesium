@@ -23,6 +23,9 @@ define([
         CesiumMath,
         scaleToGeodeticSurface) {
     'use strict';
+
+    var ellipsoidType = new EllipsoidType(Ellipsoid); // build some predefined ellispoids for the inital run of Cesium
+
     function initialize(ellipsoid, x, y, z) {
         x = defaultValue(x, 0.0);
         y = defaultValue(y, 0.0);
@@ -237,7 +240,6 @@ define([
     // ***************************************************************************** NEW **************************************************************************
     // ************************************************************************************************************************************************************
 
-        var ellipsoidType = new EllipsoidType(Ellipsoid); // build some predefined ellispoids for the inital run of Cesium
     /**
      * Duplicates an Ellipsoid instance.
      *
@@ -246,9 +248,10 @@ define([
      * @param {endUserOptions} The object onto which is stored the request parameters.
      * @returns {Ellipsoid} The customized Ellipsoid.
      */
-        Ellipsoid.modify = function(Ellipsoid, endUserOptions){ // In the case where the user would like to build a customized ellipsoid
-            var ellipsoidType = new EllipsoidType(Ellipsoid, endUserOptions);
-        };
+     Ellipsoid.modify = function(Ellipsoid, endUserOptions){ // In the case where the user would like to build a customized ellipsoid
+         ellipsoidType = new EllipsoidType(Ellipsoid, endUserOptions);
+         return ellipsoidType;
+     };
 
     // ************************************************************************************************************************************************************
     // ************************************************************************************************************************************************************

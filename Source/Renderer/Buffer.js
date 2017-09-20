@@ -129,8 +129,6 @@ define([
         }
         //>>includeEnd('debug');
 
-        console.log;
-
         return new Buffer({
             context: options.context,
             bufferTarget: WebGLConstants.ARRAY_BUFFER,

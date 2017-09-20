@@ -92,7 +92,7 @@ define([
 
         var tilingScheme = this._tileProvider.tilingScheme;
         var ellipsoid = tilingScheme.ellipsoid;
-        
+
         this._tilesToRender = [];
         this._tileLoadQueueHigh = []; // high priority tiles are preventing refinement
         this._tileLoadQueueMedium = []; // medium priority tiles are being rendered
@@ -204,9 +204,9 @@ define([
      *        function is passed a reference to the tile as its only parameter.
      */
     QuadtreePrimitive.prototype.forEachLoadedTile = function(tileFunction) {
-        
+
        // console.log(SceneMode);
-        
+
         var tile = this._tileReplacementQueue.head;
         while (defined(tile)) {
             if (tile.state !== QuadtreeTileLoadState.START) {
@@ -224,8 +224,7 @@ define([
      *        function is passed a reference to the tile as its only parameter.
      */
     QuadtreePrimitive.prototype.forEachRenderedTile = function(tileFunction) {
-        
-        
+
         var tilesRendered = this._tilesToRender;
         for (var i = 0, len = tilesRendered.length; i < len; ++i) {
             tileFunction(tilesRendered[i]);

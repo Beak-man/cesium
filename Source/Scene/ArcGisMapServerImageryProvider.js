@@ -151,8 +151,7 @@ define([
         var metadataError;
 
         function metadataSuccess(data) {
-            
-            
+
             var tileInfo = data.tileInfo;
             if (!defined(tileInfo)) {
                 that._useTiles = false;

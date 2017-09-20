@@ -51,7 +51,7 @@ define([
         VOData,
         FooterViewModel,
         ListViewModel) {
-    "use strict";
+    'use strict';
 
     // Call function order : 
 
@@ -62,7 +62,7 @@ define([
     function showPlanetView(that, viewer, planetName, configContainer, listContainer, btnContainer, xhr, xhrNomen) {
 
         for (var i = 0; i < that.dim; i++) {
-            that["buttonVisible_" + i] = false;
+            that['buttonVisible_' + i] = false;
         }
 
         var sendBtn = document.getElementById('sendBtn');
@@ -72,8 +72,8 @@ define([
         }
 
         if (configContainer.style.left !== that._windowsMove && configContainer.style.left !== '') {
-            configContainer.className = "";
-            configContainer.className = "cesium-showSystems-configContainer-transition";
+            configContainer.className = '';
+            configContainer.className = 'cesium-showSystems-configContainer-transition';
             configContainer.style.opacity = 0;
             configContainer.style.left = that._windowsMove;
 
@@ -89,18 +89,18 @@ define([
     function showSatelliteView(that, viewer, planetName, satelliteName, configContainer, listContainer, btnContainer, xhr, xhrNomen) {
 
         for (var i = 0; i < that.dim; i++) {
-            that["buttonVisible_" + i] = false;
+            that['buttonVisible_' + i] = false;
         }
-        ;
 
         var sendBtn = document.getElementById('sendBtn');
-        if (sendBtn)
+        if (sendBtn) {
             btnContainer.removeChild(sendBtn);
+        }
 
         if (configContainer.style.left !== that._windowsMove && configContainer.style.left !== '') {
 
-            configContainer.className = "";
-            configContainer.className = "cesium-showSystems-configContainer-transition";
+            configContainer.className = '';
+            configContainer.className = 'cesium-showSystems-configContainer-transition';
             configContainer.style.opacity = 0;
             configContainer.style.left = that._windowsMove;
 
@@ -115,9 +115,9 @@ define([
 
     function moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen) {
 
-        configContainer.className = "";
-        configContainer.className = "cesium-showSystems-configContainer";
-        configContainer.style.visibility = "visible";
+        configContainer.className = '';
+        configContainer.className = 'cesium-showSystems-configContainer';
+        configContainer.style.visibility = 'visible';
         configContainer.style.opacity = 1;
         configContainer.style.left = '5px';
 
@@ -133,9 +133,9 @@ define([
     }
 
     function moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen) {
-        configContainer.className = "";
-        configContainer.className = "cesium-showSystems-configContainer";
-        configContainer.style.visibility = "visible";
+        configContainer.className = '';
+        configContainer.className = 'cesium-showSystems-configContainer';
+        configContainer.style.visibility = 'visible';
         configContainer.style.opacity = 1;
         configContainer.style.left = '5px';
 
@@ -161,7 +161,7 @@ define([
 
         xhr.open(method, url, async);
         xhr.withCredentials = false;
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.send();
 
         listContainer.innerHTML = '';
@@ -171,10 +171,10 @@ define([
                 var data = xhr.responseXML;
                 try {
 
-                    var service = data.getElementsByTagName("Service");
-                    var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
-                    var capability = data.getElementsByTagName("Capability");
-                    var layersIni = capability[0].getElementsByTagName("Layer");
+                    var service = data.getElementsByTagName('Service');
+                    var onlineResource = service[0].getElementsByTagName('OnlineResource')[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+                    var capability = data.getElementsByTagName('Capability');
+                    var layersIni = capability[0].getElementsByTagName('Layer');
 
                     var names = [];
                     var title = [];
@@ -183,7 +183,7 @@ define([
                     var layer = [];
                     var imageryProvidersTab = [];
 
-                    var crs = layersIni[0].getElementsByTagName("CRS")[0].textContent;
+                    var crs = layersIni[0].getElementsByTagName('CRS')[0].textContent;
 
                     var PlanetName = pn.replace(pn.charAt(0), pn.charAt(0).toUpperCase());
 
@@ -213,23 +213,23 @@ define([
 
                     for (var i = 0; i < layers.length; i++) {
 
-                        names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
-                        layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
-                        title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
-                        abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
+                        names[i] = layers[i].getElementsByTagName('Name')[0].textContent;
+                        layer[i] = layers[i].getElementsByTagName('Name')[0].textContent;
+                        title[i] = layers[i].getElementsByTagName('Title')[0].textContent;
+                        abstract[i] = layers[i].getElementsByTagName('Abstract')[0].textContent;
 
                         var abstr = abstract[i].toString();
 
-                        // ======================= test for "\n" ==========================
+                        // ======================= test for '\n' ==========================
 
-                        var testReg = new RegExp("\n");
+                        var testReg = new RegExp('\n');
 
                         if (testReg.test(abstr)) {
-                            var abstr = abstract[i].replace(/\n/g, " ");
+                            var abstr = abstract[i].replace(/\n/g, ' ');
                         }
 
                         var nameLowCase = names[i].toLowerCase();
-                        var nameLowCaseTab = nameLowCase.split("_");
+                        var nameLowCaseTab = nameLowCase.split('_');
                         var finalLayerName = '';
 
                         for (var j = 0; j < nameLowCaseTab.length; j++) {
@@ -251,7 +251,7 @@ define([
                         var btnShowLayer = document.createElement('INPUT');
                         btnShowLayer.type = 'checkbox';
                         btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstr + '"},checked : show_' + i);
+                        btnShowLayer.setAttribute('data-bind', 'attr: { title:\"' + abstr + '\"},checked : show_' + i);
                         colomn1.appendChild(btnShowLayer);
 
                         var colomn2 = document.createElement('TD');
@@ -260,7 +260,7 @@ define([
                         colomn2.appendChild(document.createTextNode(finalLayerName));
 
                         var colomn3 = document.createElement('TD');
-                        colomn3.className = "cesium-showSystems-configContainer-colomn3";
+                        colomn3.className = 'cesium-showSystems-configContainer-colomn3';
                         tableLine.appendChild(colomn3);
 
                         var inputRange = document.createElement('INPUT');
@@ -268,12 +268,12 @@ define([
                         inputRange.min = '0';
                         inputRange.max = '1';
                         inputRange.step = '0.05';
-                        inputRange.setAttribute('data-bind', 'value: alpha_' + i + ', valueUpdate: "input"');
+                        inputRange.setAttribute('data-bind', 'value: alpha_' + i + ', valueUpdate: \"input\"');
                         colomn3.appendChild(inputRange);
 
                         layerName[i] = finalLayerName;
 
-                        var strTest = "Quad";
+                        var strTest = 'Quad';
 
                         if (names[i].indexOf(strTest) > -1) { // for quads
 
@@ -291,16 +291,16 @@ define([
 
                         } else if (names[i].indexOf(strTest) === -1) { // for npoles et spoles maps
 
-                            if (crs === "EPSG:32761" || crs === "EPSG:32661") {
+                            if (crs === 'EPSG:32761' || crs === 'EPSG:32661') {
 
-                                var bboxAttributesTab = layersIni[0].getElementsByTagName("BoundingBox")[0].attributes;
+                                var bboxAttributesTab = layersIni[0].getElementsByTagName('BoundingBox')[0].attributes;
 
                                 var minx = convertToDecimal(bboxAttributesTab[1].nodeValue); // following the xml file
                                 var miny = convertToDecimal(bboxAttributesTab[2].nodeValue); // following the xml file
                                 var maxx = convertToDecimal(bboxAttributesTab[3].nodeValue); // following the xml file
                                 var maxy = convertToDecimal(bboxAttributesTab[4].nodeValue); // following the xml file
 
-                                var bboxString = minx + "," + miny + "," + maxx + "," + maxy;
+                                var bboxString = minx + ',' + miny + ',' + maxx + ',' + maxy;
 
                                 //                         W = -220.96  S =38.2  E = 135  N = 86.78
                                 var rect = Rectangle.fromDegrees(-180., 38.2, 180., 89.999999);
@@ -314,7 +314,7 @@ define([
                                 };
 
                                 //   console.log(tilngSchemeOptions);
-                                //  console.log("before imageryProvidersTab");
+                                //  console.log('before imageryProvidersTab');
 
                                 /*   imageryProvidersTab[i] = new WebMapServiceImageryProvider({
                                  url: onlineResource,
@@ -335,10 +335,10 @@ define([
                                  //  tileHeight : 2048
                                  });*/
 
-                                //  console.log("before SingleTileImageryProvider");
+                                //  console.log('before SingleTileImageryProvider');
 
                                 /*      imageryProvidersTab[i] = new SingleTileImageryProvider({
-                                 url: "http://planetarymaps.usgs.gov/cgi-bin/mapserv?format=image/jpeg&service=WMS&bbox=-2357030,-2357030,2357030,2357030&srs=EPSG:32661&version=1.1.1&request=GetMap&styles=&map=/maps/mars/mars_npole.map&=&layers=MOLA_color_north&width=2048&height=2048",
+                                 url: 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?format=image/jpeg&service=WMS&bbox=-2357030,-2357030,2357030,2357030&srs=EPSG:32661&version=1.1.1&request=GetMap&styles=&map=/maps/mars/mars_npole.map&=&layers=MOLA_color_north&width=2048&height=2048',
                                  rectangle: rect,
                                  ellipsoid: that._ellipsoid,
                                  });*/
@@ -367,7 +367,7 @@ define([
 
                     xhrNomen.open(method, urlNomen, async);
                     xhrNomen.withCredentials = false;
-                    xhrNomen.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhrNomen.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     xhrNomen.send();
 
                     xhrNomen.onreadystatechange = function () {
@@ -388,10 +388,10 @@ define([
 
                                 var layerNomenCount = 0;
 
-                                var service = data.getElementsByTagName("Service");
-                                var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
-                                var capability = data.getElementsByTagName("Capability");
-                                var layersIni = capability[0].getElementsByTagName("Layer");
+                                var service = data.getElementsByTagName('Service');
+                                var onlineResource = service[0].getElementsByTagName('OnlineResource')[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+                                var capability = data.getElementsByTagName('Capability');
+                                var layersIni = capability[0].getElementsByTagName('Layer');
 
                                 var nomenclatureLayers = [];
 
@@ -404,22 +404,22 @@ define([
 
                                 for (var i = 0; i < nomenclatureLayers.length; i++) {
 
-                                    nomenNames[i] = nomenclatureLayers[i].getElementsByTagName("Name")[0].textContent;
-                                    nomenLayer[i] = nomenclatureLayers[i].getElementsByTagName("Name")[0].textContent;
-                                    nomenTitle[i] = nomenclatureLayers[i].getElementsByTagName("Title")[0].textContent;
-                                    nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName("Abstract")[0].textContent;
+                                    nomenNames[i] = nomenclatureLayers[i].getElementsByTagName('Name')[0].textContent;
+                                    nomenLayer[i] = nomenclatureLayers[i].getElementsByTagName('Name')[0].textContent;
+                                    nomenTitle[i] = nomenclatureLayers[i].getElementsByTagName('Title')[0].textContent;
+                                    nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName('Abstract')[0].textContent;
 
                                     var abstrNomm = nomenAbstract[i].toString();
-                                    var testReg = new RegExp("\n");
+                                    var testReg = new RegExp('\n');
 
                                     if (testReg.test(abstrNomm)) {
-                                        abstrNomm = nomenAbstract[i].replace(/\n/g, " ");
+                                        abstrNomm = nomenAbstract[i].replace(/\n/g, ' ');
                                     }
 
-                                    if (nomenNames[i] === "NOMENCLATURE_180") {
+                                    if (nomenNames[i] === 'NOMENCLATURE_180') {
 
                                         var nameLowCase = nomenNames[i].toLowerCase();
-                                        var nameLowCaseTab = nameLowCase.split("_");
+                                        var nameLowCaseTab = nameLowCase.split('_');
                                         var finalNomenLayerName = '';
 
                                         for (var j = 0; j < nameLowCaseTab.length; j++) {
@@ -448,7 +448,7 @@ define([
                                         var btnShowLayer = document.createElement('INPUT');
                                         btnShowLayer.type = 'checkbox';
                                         btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstrNomm + '"},checked : show_' + showIndex);
+                                        btnShowLayer.setAttribute('data-bind', 'attr: { title:\"' + abstrNomm + '\"},checked : show_' + showIndex);
                                         colomn1.appendChild(btnShowLayer);
 
                                         // Layer name
@@ -461,7 +461,7 @@ define([
                                         // range to manage the opacity
 
                                         var colomn3 = document.createElement('TD');
-                                        colomn3.className = "cesium-showSystems-configContainer-colomn3";
+                                        colomn3.className = 'cesium-showSystems-configContainer-colomn3';
                                         tableLine.appendChild(colomn3);
 
                                         var inputRange = document.createElement('INPUT');
@@ -469,7 +469,7 @@ define([
                                         inputRange.min = '0';
                                         inputRange.max = '1';
                                         inputRange.step = '0.05';
-                                        inputRange.setAttribute('data-bind', 'value: alpha_' + showIndex + ', valueUpdate: "input"');
+                                        inputRange.setAttribute('data-bind', 'value: alpha_' + showIndex + ', valueUpdate: \"input\"');
                                         colomn3.appendChild(inputRange);
 
                                         var nomenImageryProvider = new WebMapServiceImageryProvider({
@@ -528,7 +528,7 @@ define([
             return decimaleValue.toString();
         } else {
 
-            console.log("bounding box values incorrect");
+            console.log('bounding box values incorrect');
             return null;
 
         }
@@ -539,7 +539,7 @@ define([
 
         xhr.open(method, url, async);
         xhr.withCredentials = false;
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.send();
 
         listContainer.innerHTML = '';
@@ -568,10 +568,10 @@ define([
 
                     /* ==== get informations from the XML file ==== */
 
-                    var service = data.getElementsByTagName("Service");
-                    var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
-                    var capability = data.getElementsByTagName("Capability");
-                    var layersIni = capability[0].getElementsByTagName("Layer");
+                    var service = data.getElementsByTagName('Service');
+                    var onlineResource = service[0].getElementsByTagName('OnlineResource')[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+                    var capability = data.getElementsByTagName('Capability');
+                    var layersIni = capability[0].getElementsByTagName('Layer');
 
 
                     /* ==== declaration of variables ==== */
@@ -600,26 +600,26 @@ define([
 
                         if (layers[i].getAttribute('queryable')) {
 
-                            names[i] = layers[i].getElementsByTagName("Name")[0].textContent;
-                            title[i] = layers[i].getElementsByTagName("Title")[0].textContent;
-                            abstract[i] = layers[i].getElementsByTagName("Abstract")[0].textContent;
-                            layer[i] = layers[i].getElementsByTagName("Name")[0].textContent;
+                            names[i] = layers[i].getElementsByTagName('Name')[0].textContent;
+                            title[i] = layers[i].getElementsByTagName('Title')[0].textContent;
+                            abstract[i] = layers[i].getElementsByTagName('Abstract')[0].textContent;
+                            layer[i] = layers[i].getElementsByTagName('Name')[0].textContent;
 
                             var abstr = abstract[i].toString();
 
-                            // ======================= test for "\n" ==========================
+                            // ======================= test for '\n' ==========================
 
-                            var testReg = new RegExp("\n");
+                            var testReg = new RegExp('\n');
 
                             if (testReg.test(abstr)) {
-                                var abstr = abstract[i].replace(/\n/g, " ");
+                                var abstr = abstract[i].replace(/\n/g, ' ');
                             }
 
 
                             /* === transform the first case to UpperCase (for the vizualiation only : not Important) === */
 
                             var nameLowerCase = names[i].toLowerCase();
-                            var nameLowerCaseTab = nameLowerCase.split("_");
+                            var nameLowerCaseTab = nameLowerCase.split('_');
                             var finalLayerName = '';
 
                             for (var j = 0; j < nameLowerCaseTab.length; j++) {
@@ -643,7 +643,7 @@ define([
                             var btnShowLayer = document.createElement('INPUT');
                             btnShowLayer.type = 'checkbox';
                             btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                            btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstr + '"}, checked : show_' + i);
+                            btnShowLayer.setAttribute('data-bind', 'attr: { title:\"' + abstr + '\"}, checked : show_' + i);
                             colomn1.appendChild(btnShowLayer);
 
                             var colomn2 = document.createElement('TD');
@@ -661,7 +661,7 @@ define([
                             inputRange.min = '0';
                             inputRange.max = '1';
                             inputRange.step = '0.05';
-                            inputRange.setAttribute('data-bind', 'value: alpha_' + i + ', valueUpdate: "input"');
+                            inputRange.setAttribute('data-bind', 'value: alpha_' + i + ', valueUpdate: \"input\"');
                             colomn3.appendChild(inputRange);
 
                             /* ==== set the imageryProvider ==== */
@@ -687,7 +687,7 @@ define([
 
                     xhrNomen.open(method, urlNomen, async);
                     xhrNomen.withCredentials = false;
-                    xhrNomen.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhrNomen.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     xhrNomen.send();
 
                     xhrNomen.onreadystatechange = function () {
@@ -710,10 +710,10 @@ define([
 
                                 // read some part of the XML file
 
-                                var service = data.getElementsByTagName("Service");
-                                var onlineResource = service[0].getElementsByTagName("OnlineResource")[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
-                                var capability = data.getElementsByTagName("Capability");
-                                var layersIni = capability[0].getElementsByTagName("Layer");
+                                var service = data.getElementsByTagName('Service');
+                                var onlineResource = service[0].getElementsByTagName('OnlineResource')[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+                                var capability = data.getElementsByTagName('Capability');
+                                var layersIni = capability[0].getElementsByTagName('Layer');
 
                                 // we get the layers that contains the attribute 'queryable'
 
@@ -734,27 +734,27 @@ define([
 
                                     // we get the name, title; abstract and bbox of each layer
 
-                                    nomenNames[i] = nomenclatureLayers[i].getElementsByTagName("Name")[0].textContent;
-                                    nomenLayer[i] = nomenclatureLayers[i].getElementsByTagName("Name")[0].textContent;
-                                    nomenTitle[i] = nomenclatureLayers[i].getElementsByTagName("Title")[0].textContent;
-                                    nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName("Abstract")[0].textContent;
+                                    nomenNames[i] = nomenclatureLayers[i].getElementsByTagName('Name')[0].textContent;
+                                    nomenLayer[i] = nomenclatureLayers[i].getElementsByTagName('Name')[0].textContent;
+                                    nomenTitle[i] = nomenclatureLayers[i].getElementsByTagName('Title')[0].textContent;
+                                    nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName('Abstract')[0].textContent;
 
-                                    // ======================= test for "\n" in the abstract ==========================
+                                    // ======================= test for '\n' in the abstract ==========================
 
                                     var abstrNomm = nomenAbstract[i].toString();
-                                    var testReg = new RegExp("\n");
+                                    var testReg = new RegExp('\n');
 
 
                                     if (testReg.test(abstrNomm)) {
-                                        abstrNomm = nomenAbstract[i].replace(/\n/g, " ");
+                                        abstrNomm = nomenAbstract[i].replace(/\n/g, ' ');
                                     }
 
                                     // first letter in MAJ
 
-                                    if (nomenNames[i] === "NOMENCLATURE_180") {
+                                    if (nomenNames[i] === 'NOMENCLATURE_180') {
 
                                         var nameLowCase = nomenNames[i].toLowerCase();
-                                        var nameLowCaseTab = nameLowCase.split("_");
+                                        var nameLowCaseTab = nameLowCase.split('_');
                                         var finalNomenLayerName = '';
 
                                         for (var j = 0; j < nameLowCaseTab.length; j++) {
@@ -783,7 +783,7 @@ define([
                                         var btnShowLayer = document.createElement('INPUT');
                                         btnShowLayer.type = 'checkbox';
                                         btnShowLayer.className = 'cesium-showSystems-configContainer-button-send';
-                                        btnShowLayer.setAttribute('data-bind', 'attr: { title:"' + abstrNomm + '"},checked : show_' + showIndex);
+                                        btnShowLayer.setAttribute('data-bind', 'attr: { title:\"' + abstrNomm + '\"},checked : show_' + showIndex);
                                         colomn1.appendChild(btnShowLayer);
 
                                         // Layer name
@@ -796,7 +796,7 @@ define([
                                         // Range to manage the opacity
 
                                         var colomn3 = document.createElement('TD');
-                                        colomn3.className = "cesium-showSystems-configContainer-colomn3";
+                                        colomn3.className = 'cesium-showSystems-configContainer-colomn3';
                                         tableLine.appendChild(colomn3);
 
                                         var inputRange = document.createElement('INPUT');
@@ -804,7 +804,7 @@ define([
                                         inputRange.min = '0';
                                         inputRange.max = '1';
                                         inputRange.step = '0.05';
-                                        inputRange.setAttribute('data-bind', 'value: alpha_' + showIndex + ', valueUpdate: "input"');
+                                        inputRange.setAttribute('data-bind', 'value: alpha_' + showIndex + ', valueUpdate: \"input\"');
                                         colomn3.appendChild(inputRange);
 
                                         // Create the layer
@@ -862,7 +862,7 @@ define([
         if (that.isShowSystemActive && that.previousIndex === index) {
 
             for (var i = 0; i < that._solarSystemSize; i++) {
-                that["buttonVisible_" + i] = false;
+                that['buttonVisible_' + i] = false;
             }
             ;
             cancelFunction(that);
@@ -871,7 +871,7 @@ define([
         } else if (!that.isShowSystemActive && that.previousIndex !== index) {
 
             for (var i = 0; i < that._solarSystemSize; i++) {
-                that["buttonVisible_" + i] = false;
+                that['buttonVisible_' + i] = false;
             }
             ;
 
@@ -883,7 +883,7 @@ define([
         } else if (!that.isShowSystemActive && that.previousIndex === index) {
 
             for (var i = 0; i < that._solarSystemSize; i++) {
-                that["buttonVisible_" + i] = false;
+                that['buttonVisible_' + i] = false;
             }
             ;
 
@@ -895,7 +895,7 @@ define([
         } else if (that.isShowSystemActive && that.previousIndex !== index) {
 
             for (var i = 0; i < that._solarSystemSize; i++) {
-                that["buttonVisible_" + i] = false;
+                that['buttonVisible_' + i] = false;
             }
             ;
 
@@ -912,11 +912,11 @@ define([
     function getRequest() {
         if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
             var xhr = new XMLHttpRequest();
-        } else if (typeof ActiveXObject !== " undefined") {
-            var xhr = new ActiveXObject("Microsoft.XMLHTTP"); // activeX pour IE
-            console.log("IE");
+        } else if (typeof ActiveXObject !== ' undefined') {
+            var xhr = new ActiveXObject('Microsoft.XMLHTTP'); // activeX pour IE
+            console.log('IE');
         } else {
-            console.log("AJAX don't available on this browser");
+            console.log('AJAX don\'t available on this browser');
             var xhr = null;
         }
         return xhr;
@@ -928,10 +928,10 @@ define([
      * @param {Object} that
      */
     function cancelFunction(that) {
-        var configContainer = document.getElementById("configId");
-        configContainer.className = "";
+        var configContainer = document.getElementById('configId');
+        configContainer.className = '';
         configContainer.style.opacity = 0;
-        configContainer.className = "cesium-showSystems-configContainer-transition";
+        configContainer.className = 'cesium-showSystems-configContainer-transition';
         configContainer.style.left = that._windowsMove;
         that.isShowSystemActive = false;
     }
@@ -942,10 +942,10 @@ define([
      * @param {Object} that
      */
     function hideFunction(that) {
-        var configContainer = document.getElementById("configId");
-        configContainer.className = "";
+        var configContainer = document.getElementById('configId');
+        configContainer.className = '';
         configContainer.style.opacity = 0;
-        configContainer.className = "cesium-showSystems-configContainer-transition";
+        configContainer.className = 'cesium-showSystems-configContainer-transition';
         configContainer.style.left = that._windowsMove;
 
         that._btnShowPanel = document.createElement('BUTTON');
@@ -980,7 +980,7 @@ define([
         }
 
         var planetarySystem = configuration.planetarySystem.system[homePlanet];
-        var planetarySystemDimension = configuration.planetarySystem.dimension[homePlanet + "System"];
+        var planetarySystemDimension = configuration.planetarySystem.dimension[homePlanet + 'System'];
         var planetDimension = planetarySystemDimension[homePlanet];
 
         initializeScene(that, planetDimension);
@@ -1081,7 +1081,7 @@ define([
         this._solarSystemSize = getObjectSize(solarSystem);
 
         for (var i = 0; i < this._solarSystemSize; i++) {
-            this["buttonVisible_" + i] = false;
+            this['buttonVisible_' + i] = false;
         }
 
         var that = this;
@@ -1104,8 +1104,8 @@ define([
                 z: 3360000
             };
 
-            listContainer.innerHTML = "";
-            //  configContainer.innerHTML = "";
+            listContainer.innerHTML = '';
+            //  configContainer.innerHTML = '';
 
             initializeScene(that, objectDimensions);
             initializeMarkerMoveWidget(that);
@@ -1258,11 +1258,11 @@ define([
 
 
                 if (booleanShow) {
-                    btnHideVectorialData.innerHTML = "Hide vectorial data";
+                    btnHideVectorialData.innerHTML = 'Hide vectorial data';
                 }
 
                 if (!booleanShow) {
-                    btnHideVectorialData.innerHTML = "Show vectorial data";
+                    btnHideVectorialData.innerHTML = 'Show vectorial data';
                 }
             }
 
@@ -1323,10 +1323,10 @@ define([
         },
         hidePanel: {
             get: function () {
-                var configContainer = document.getElementById("configId");
-                configContainer.className = "";
+                var configContainer = document.getElementById('configId');
+                configContainer.className = '';
                 configContainer.style.opacity = 0;
-                configContainer.className = "cesium-showSystems-configContainer-transition";
+                configContainer.className = 'cesium-showSystems-configContainer-transition';
                 configContainer.style.left = this._windowsMove;
 
                 try {
@@ -1364,7 +1364,7 @@ define([
 
     function removeButtons(that) {
         for (var i = 0; i < that._solarSystemSize; i++) {
-            that["buttonVisible_" + i] = false;
+            that['buttonVisible_' + i] = false;
         }
         ;
         that.isShowSystemActive = false;

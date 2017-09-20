@@ -201,7 +201,7 @@ define([
 
             // don't clear if the legend color is loaded
 
-            if (/\.legendjson$/i.test(legendFname) == false) { 
+            if (/\.legendjson$/i.test(legendFname) === false) {
 
                 if (clearOnDrop) {
                     viewer.entities.removeAll();
@@ -279,7 +279,7 @@ define([
                     viewer.colorAssignation = legendConfig;
 
                     try {
-                        viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.buildLegend;
+                        viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.buildLegend();
                     } catch (e) {
                     }
 

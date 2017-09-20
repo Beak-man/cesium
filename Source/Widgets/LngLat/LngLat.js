@@ -11,7 +11,7 @@ define([
         defineProperties,
         knockout,
         LngLatPanelViewModel) {
-            "use strict";
+        'use strict';
 
             var icone = '<g><path style="fill:#fff;" d="M95.31,0.006\
 	c-3.985-0.207-7.544,4.983-3.775,8.666l8.584,8.584v7.889c-0.039,2.761,2.168,5.032,4.929,5.071s5.032-2.168,5.071-4.929\
@@ -51,7 +51,7 @@ define([
                 element.className = 'cesium-button cesium-toolbar-button cesium-modificationsToolbar-button';
                 element.innerHTML = '<svg width="38" height="38" viewBox="80 0  279.881  279.881">' + icone + ' </svg>';
                 element.setAttribute('data-bind', 'attr: { title: tooltip },   css   : { "cesium-drawEdit-button-hidden"  : !isPanelToolVisibleLngLat,\
-						                                         "cesium-drawEdit-button-visible" : isPanelToolVisibleLngLat,\
+                                                                                         "cesium-drawEdit-button-visible" : isPanelToolVisibleLngLat,\
                                                                                          "cesium-subMenu-focus": isLngLatActive },\
                                                                                click: command');
                 container.appendChild(element);

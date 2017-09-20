@@ -438,7 +438,7 @@ define([
         // the geometry tile.  The ImageryProvider and ImageryLayer both have the
         // opportunity to constrain the rectangle.  The imagery TilingScheme's rectangle
         // always fully contains the ImageryProvider's rectangle.
-        
+
         var imageryBounds = Rectangle.intersection(imageryProvider.rectangle, this._rectangle, imageryBoundsScratch);
         var rectangle = Rectangle.intersection(tile.rectangle, imageryBounds, tileImageryBoundsScratch);
 

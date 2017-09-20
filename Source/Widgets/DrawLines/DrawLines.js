@@ -21,7 +21,7 @@ define([
         knockout,
         getElement,
         DrawLinesViewModel) {
-    "use strict";
+    'use strict';
 
     /**
      * A widget to draw polylines.
@@ -51,15 +51,14 @@ define([
         this._viewModel = viewModel;
 
         // For the icon inside the main menu panel
-        
-        
+
         var DrawLineButton = document.createElement('div');
         DrawLineButton.className = 'cesium-button cesium-toolbar-button cesium-modificationsToolbar-button';
         DrawLineButton.innerHTML = '<svg width="35" height="35" viewBox="-15 -11 210 210">' + icone + ' </svg>';
         DrawLineButton.setAttribute('data-bind', 'attr  : { title: "Draw" },\
-		                                          css   : { "cesium-modificationsToolbar-button-hidden"  : !isPanelToolVisible,\
-						                    "cesium-modificationsToolbar-button-visible" : isPanelToolVisible },\
-							             event : {click : drawPolyLines}');
+                                                  css   : { "cesium-modificationsToolbar-button-hidden"  : !isPanelToolVisible,\
+                                                            "cesium-modificationsToolbar-button-visible" : isPanelToolVisible },\
+                                                  event : {click : drawPolyLines}');
         wrapperPanel.appendChild(DrawLineButton);
 
         knockout.applyBindings(viewModel, DrawLineButton);

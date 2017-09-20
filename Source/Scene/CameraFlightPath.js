@@ -348,7 +348,7 @@ define([
         var flyOverLongitudeWeight = options.flyOverLongitudeWeight;
         var pitchAdjustHeight = options.pitchAdjustHeight;
         var easingFunction = options.easingFunction;
-        
+
        //  console.log(scene.mode);
        //  console.log(convert);
 
@@ -420,7 +420,7 @@ define([
         if (!defined(easingFunction)) {
             var startHeight = camera.positionCartographic.height;
             var endHeight = mode === SceneMode.SCENE3D ? ellipsoid.cartesianToCartographic(destination).height : destination.z;
-            
+
        //     console.log(startHeight);
        //      console.log(endHeight);
 

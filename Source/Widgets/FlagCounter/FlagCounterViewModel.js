@@ -4,20 +4,19 @@ define([
         '../../Core/defineProperties',
         '../../ThirdParty/knockout',
         '../createCommand',
-        
     ], function(
         Cartesian3,
         defineProperties,
         knockout,
         createCommand) {
-    "use strict";
+    'use strict';
 
     function initialization(that) {
 
         var dataSources = that._viewer.dataSources._dataSources;
         var count = 0;
         var countFlagged = 0;
-        
+
         console.log(that._viewer);
 
         for (var i = 0; i < dataSources.length; i++) {
@@ -37,7 +36,7 @@ define([
         that._totalEntities = count;
         that._flaggedEntities = countFlagged;
 
-        that.str = countFlagged + " / " + count;
+        that.str = countFlagged + ' / ' + count;
         countUpdateOnLoad(that);
     }
 
@@ -67,14 +66,13 @@ define([
                     break;
                 }
 
-                if (that._totalEntities == that._flaggedEntities && that._totalEntities > 0) {
+                if (that._totalEntities === that._flaggedEntities && that._totalEntities > 0) {
                     alert('All entities haves been flagged !');
                     break;
                 }
             }
         }
     }
-    ;
 
 
     function  countUpdateOnLoad(that) {
@@ -94,7 +92,7 @@ define([
         that._totalEntities = entities.length;
         that._flaggedEntities = countFlagged;
 
-        that.str = countFlagged + " / " + entities.length;
+        that.str = countFlagged + ' / ' + entities.length;
         countUpdateOnLoad(that);
     }
 
@@ -111,7 +109,7 @@ define([
 
         this._totalEntities = 0;
         this._flaggedEntities = 0;
-        this.str = "";
+        this.str = '';
 
         initialization(this);
 
@@ -135,7 +133,7 @@ define([
 
         counterUpdateOnLoad: {
             set: function (object) {
-                this.str = object.flagged + " / " + object.total;
+                this.str = object.flagged + ' / ' + object.total;
                 this._totalEntities = object.total;
                 this._flaggedEntities = object.flagged;
                 countUpdateOnLoad(this);

@@ -207,14 +207,14 @@ define([
     };
 
     function transform(tileTerrain, frameState, terrainProvider, x, y, level) {
-        
+
         var tilingScheme = terrainProvider.tilingScheme;
 
         var terrainData = tileTerrain.data;
-        
+
      //   console.log(terrainData.createMesh());
-        
-        var test = "test";  
+
+        var test = 'test';
         var meshPromise = terrainData.createMesh(tilingScheme, x, y, level, frameState.terrainExaggeration, test);
 
         if (!defined(meshPromise)) {
@@ -236,17 +236,17 @@ define([
     }
 
     function createResources(tileTerrain, context, terrainProvider, x, y, level) {
-        
+
       //  console.log(tileTerrain);
-        
+
         var typedArray = tileTerrain.mesh.vertices;
-        
+
         var buffer = Buffer.createVertexBuffer({
             context: context,
             typedArray: typedArray,
             usage: BufferUsage.STATIC_DRAW
         });
-        
+
         var attributes = tileTerrain.mesh.encoding.getAttributes(buffer);
 
         var indexBuffers = tileTerrain.mesh.indices.indexBuffers || {};

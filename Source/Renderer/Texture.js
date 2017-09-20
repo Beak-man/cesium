@@ -45,8 +45,6 @@ define([
         var width = options.width;
         var height = options.height;
         var source = options.source;
-        
-        
 
         if (defined(source)) {
             if (!defined(width)) {
@@ -201,8 +199,6 @@ define([
             } else {
                 // Source: ImageData, HTMLImageElement, HTMLCanvasElement, or HTMLVideoElement
                 gl.texImage2D(textureTarget, 0, internalFormat, pixelFormat, pixelDatatype, source);
-                
-                
             }
         } else {
             gl.texImage2D(textureTarget, 0, internalFormat, width, height, 0, pixelFormat, pixelDatatype, null);

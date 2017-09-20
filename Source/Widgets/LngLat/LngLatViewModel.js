@@ -16,7 +16,7 @@ define([
         ScreenSpaceEventType,
         knockout,
         createCommand) {
-            "use strict";
+            'use strict';
 
             function lngLatView(that, mainContainer, scene) {
 
@@ -54,7 +54,7 @@ define([
                     }, ScreenSpaceEventType.MOUSE_MOVE);
 
                     that._coodDiv = document.createElement('div');
-                    that._coodDiv.setAttribute("id", "coordinates");
+                    that._coodDiv.setAttribute('id', 'coordinates');
                     that._coodDiv.className = 'coordinates';
                     that._coodDiv.style.cssText = 'background: rgba(42, 42, 42, 0.8);\
                                              padding: 4px; \
@@ -88,7 +88,6 @@ define([
 
                     that.isLngLatActive = false;
                 }
-                ;
             }
 
             var LngLatPanelViewModel = function (container, mainContainer, scene) {
@@ -135,8 +134,9 @@ define([
                 },
                 removeCommand: {
                     get: function () {
-                        if (this._handler)
+                        if (this._handler) {
                             this._handler.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                        }
                         if (this._coodDiv) {
                             knockout.cleanNode(this._coodDiv);
                             this._mainContainer.removeChild(this._coodDiv);

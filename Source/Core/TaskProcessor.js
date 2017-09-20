@@ -142,7 +142,7 @@ define([
         } else if (defined(require.toUrl)) {
 
             bootstrapMessage.loaderConfig.baseUrl = getAbsoluteUri('..', buildModuleUrl('Workers/cesiumWorkerBootstrapper.js'));
-            
+
         } else {
 
             bootstrapMessage.loaderConfig.paths = {

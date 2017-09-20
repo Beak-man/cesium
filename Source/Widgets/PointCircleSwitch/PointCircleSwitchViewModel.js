@@ -3,12 +3,11 @@ define([
         '../../Core/defineProperties',
         '../../ThirdParty/knockout',
         '../createCommand',
-        
     ], function(
         defineProperties,
         knockout,
         createCommand) {
-    "use strict";
+    'use strict';
 
     function  initialize(that) {
 
@@ -44,7 +43,7 @@ define([
         this._isPanelToolVisibleSwitch = false;
         this.isSwitchActive = false;
         this._viewerContainer = viewerContainer;
-        
+
         this._switchBoolean = false;
 
         var that = this;

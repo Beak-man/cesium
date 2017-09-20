@@ -282,7 +282,7 @@ define([
         if (camera._changed.numberOfListeners === 0) {
             return;
         }
-        
+
         var percentageChanged = camera.percentageChanged;
 
         if (camera._mode === SceneMode.SCENE2D) {

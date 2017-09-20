@@ -23,15 +23,15 @@ define([
         SceneMode,
         knockout,
         createCommand) {
-    "use strict";
+    'use strict';
 
-    var pitchScratch = new Cartesian3();
+    //var pitchScratch = new Cartesian3();
 
     var HomePlanetButtonViewModel = function(scene, duration) {
 
         this.tooltip = 'View Home planet';
         knockout.track(this, ['tooltip']);
     };
-	
+
     return HomePlanetButtonViewModel;
 });

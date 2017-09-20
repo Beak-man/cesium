@@ -9,12 +9,12 @@ define([
         knockout,
         createCommand,
         SubMenu) {
-    "use strict";
+    'use strict';
 
     function  InitializeDrawEdit(that) {
 
         that._isDrawEditActive = true;
-        
+
         // Here, we set severval parameters to false in order to hide butons in the tool panel
 
         that._wrapperPanel.className = '';
@@ -31,8 +31,8 @@ define([
         // Activate the sub-menu of the drawLines widget
 
         try {
-            that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
-            that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+            that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu();
+            that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands();
         } catch (e) {
         }
 

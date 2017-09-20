@@ -1,8 +1,10 @@
 /*global define*/
 define([
+        './Ellipsoid',
         './freezeObject',
         './Math'
     ], function(
+        Ellipsoid,
         freezeObject,
         CesiumMath) {
 'use strict';
@@ -46,9 +48,7 @@ define([
              */
             Ellipsoid.UNIT_SPHERE = freezeObject(new Ellipsoid(1.0, 1.0, 1.0));
 
-        } else {
-
-            if (typeof endUserOptions.ellipsoidType !== 'undefined') {
+        } else if (typeof endUserOptions.ellipsoidType !== 'undefined') {
 
                 if (typeof endUserOptions.ellipsoidSize !== 'undefined') {
 
@@ -107,7 +107,6 @@ define([
                 } else {
                     Ellipsoid[endUserOptions.ellipsoidType.toString().toUpperCase()] = freezeObject(new Ellipsoid(1000000.0, 1000000.0, 1000000.0));
                 }
-            }
         }
     };
 

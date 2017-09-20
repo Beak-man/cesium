@@ -7,7 +7,7 @@ define([
         defineProperties,
         knockout,
         SubMenuViewModel) {
-    "use strict";
+    'use strict';
 
 
     var flagIcon = '<g><path d="M84.772,23.937c-0.21,0-0.41,0.043-0.593,0.118v-0.009c-3.37,1.756-7.191,2.764-11.253,2.764\
@@ -22,7 +22,7 @@ define([
 
     var saveIcon = '<g><path d="M340.969,0H12.105C5.423,0,0,5.423,0,12.105v328.863c0,6.68,5.423,12.105,12.105,12.105h328.864\
 		c6.679,0,12.104-5.426,12.104-12.105V12.105C353.073,5.423,347.647,0,340.969,0z M67.589,18.164h217.895v101.884H67.589V18.164z\
-		 M296.082,327.35H57.003V176.537h239.079V327.35z M223.953,33.295h30.269v72.638h-30.269V33.295z M274.135,213.863H78.938v-12.105\
+                M296.082,327.35H57.003V176.537h239.079V327.35z M223.953,33.295h30.269v72.638h-30.269V33.295z M274.135,213.863H78.938v-12.105\
 		h195.197V213.863z M274.135,256.231H78.938v-12.105h195.197V256.231z M274.135,297.087H78.938v-12.105h195.197V297.087z"/></g>';
 
     var closeIcon = '<path d="M84.707,68.752L65.951,49.998l18.75-18.752c0.777-0.777,0.777-2.036,0-2.813L71.566,15.295\
@@ -57,7 +57,7 @@ define([
         wrapperMenu.appendChild(flagButton);
 
         var wrapperSaveButtonMenu = document.createElement('span');
-        wrapperSaveButtonMenu.className = "cesium-subMenu-saveButtonWrapper";
+        wrapperSaveButtonMenu.className = 'cesium-subMenu-saveButtonWrapper';
         wrapperMenu.appendChild(wrapperSaveButtonMenu);
 
         var saveButton = document.createElement('div');
@@ -121,7 +121,7 @@ define([
 
                 try {
                     console.log(this._viewer.editDrawing.viewModel.subMenu.viewModel);
-                    this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
+                    this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer();
                 } catch (e) {
                     console.log(e);
                 }

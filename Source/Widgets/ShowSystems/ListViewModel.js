@@ -6,13 +6,12 @@ define([
         '../../Core/defineProperties',
         '../../ThirdParty/knockout',
         '../createCommand',
-        
     ], function(
         defaultValue,
         defineProperties,
         knockout,
         createCommand) {
-    "use strict";
+    'use strict';
 
     var viewModel = {
         layers: [],
@@ -64,7 +63,7 @@ define([
         var that = this;
 
         for (var i = 0; i < dimLayers; i++) {
-            if (i == 0) {
+            if (i === 0) {
                 that['show_' + i] = knockout.observable(true);
                 that['alpha_' + i] = knockout.observable(1.0);
             } else {
@@ -99,7 +98,7 @@ define([
             get: function () {
                 return this._changeRangeValue;
            }
-        },    
+        },
     });
 
     return ListViewModel;

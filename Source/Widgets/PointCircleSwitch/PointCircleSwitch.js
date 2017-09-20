@@ -7,7 +7,7 @@ define([
         defineProperties,
         knockout,
         PointCircleSwitchViewModel) {
-    "use strict";
+    'use strict';
 
     /**
      * A widget to switch between points and circles.
@@ -38,10 +38,10 @@ define([
         switchButton.className = 'cesium-button cesium-toolbar-button cesium-modificationsToolbar-button';
         switchButton.innerHTML = '<svg width="28" height="28" viewBox="0 0  279.881  279.881">' + icone + ' </svg>';
         switchButton.setAttribute('data-bind', 'attr  : { title: "Switch between points and circles" },\
-		                                          css   : { "cesium-drawEdit-button-hidden"  : !isPanelToolVisibleSwitch,\
-						                    "cesium-drawEdit-button-visible" : isPanelToolVisibleSwitch,\
+                                                          css   : { "cesium-drawEdit-button-hidden"  : !isPanelToolVisibleSwitch,\
+                                                                    "cesium-drawEdit-button-visible" : isPanelToolVisibleSwitch,\
                                                                     "cesium-subMenu-focus": isSwitchActive },\
-							             event : {click : switchCommand}');
+                                                          event : {click : switchCommand}');
         wrapperPanel.appendChild(switchButton);
 
         knockout.applyBindings(viewModel, switchButton);

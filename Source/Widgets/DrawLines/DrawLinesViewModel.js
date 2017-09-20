@@ -9,12 +9,12 @@ define([
         knockout,
         createCommand,
         SubMenu) {
-    "use strict";
+    'use strict';
 
     function  InitializeDrawLines(that) {
 
         that._isDrawLinesActive = true;
-        
+
         // Here, we set severval parameters to false in order to hide butons in the tool panel
 
         that._wrapperPanel.className = '';
@@ -46,10 +46,10 @@ define([
 
         var that = this;
         this._drawPolyLines = createCommand(function () {
-            InitializeDrawLines(that);
+        InitializeDrawLines(that);
         });
 
-        knockout.track(this, ["isPanelToolVisible", "isDrawLinesActive"]);
+        knockout.track(this, ['isPanelToolVisible', 'isDrawLinesActive']);
 
     };
     defineProperties(DrawLinesViewModel.prototype, {

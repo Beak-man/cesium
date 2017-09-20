@@ -223,13 +223,13 @@ define([
         this.appearance = options.appearance;
         this._appearance = undefined;
         this._material = undefined;
-		
+
 		if (options.primitiveType) {
 			this.primitiveType = options.primitiveType;
 		}
 		else {
 			this.primitiveType = 'undefined';
-		};
+		}
 
         /**
          * The {@link Appearance} used to shade this primitive when it fails the depth test. Each geometry

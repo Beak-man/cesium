@@ -299,7 +299,7 @@ define([
         if (defined(proxy)) {
             url = proxy.getURL(url);
         }
-        
+
         console.log(url);
 
         return ImageryProvider.loadImage(imageryProvider, url, request);

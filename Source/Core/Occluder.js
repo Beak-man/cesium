@@ -211,7 +211,7 @@ define([
     Occluder.prototype.isBoundingSphereVisible = function(occludee) {
         var occludeePosition = Cartesian3.clone(occludee.center, occludeePositionScratch);
         var occludeeRadius = occludee.radius;
-		
+
         if (this._horizonDistance !== Number.MAX_VALUE) {
             var tempVec = Cartesian3.subtract(occludeePosition, this._occluderPosition, tempVecScratch);
             var temp = this._occluderRadius - occludeeRadius;
@@ -232,7 +232,7 @@ define([
                 var tempVecMagnitudeSquared = Cartesian3.magnitudeSquared(tempVec);
                 var occluderRadiusSquared = this._occluderRadius * this._occluderRadius;
                 var occludeeRadiusSquared = occludeeRadius * occludeeRadius;
-				
+
                 if ((((this._horizonDistance * this._horizonDistance) + occluderRadiusSquared) * occludeeRadiusSquared) >
                     (tempVecMagnitudeSquared * occluderRadiusSquared)) {
                     // The occludee is close enough that the occluder cannot possible occlude the occludee
@@ -378,7 +378,7 @@ define([
 
         //For each position, determine the horizon intersection. Choose the position and intersection
         //that results in the greatest angle with the occcluder plane.
-		
+
         var aRotationVector = Occluder._anyRotationVector(occluderPosition, occluderPlaneNormal, occluderPlaneD);
         var dot = Occluder._horizonToPlaneNormalDotProduct(occluderBoundingSphere, occluderPlaneNormal, occluderPlaneD, aRotationVector, positions[0]);
         if (!dot) {
@@ -422,9 +422,9 @@ define([
         //>>includeEnd('debug');
 
         ellipsoid = defaultValue(ellipsoid, Ellipsoid.WGS84);
-		
+
 		console.log(ellipsoid);
-		
+
         var positions = Rectangle.subsample(rectangle, ellipsoid, 0.0, computeOccludeePointFromRectangleScratch);
         var bs = BoundingSphere.fromPoints(positions);
 
@@ -521,7 +521,7 @@ define([
         horizonCrossDirection = Cartesian3.normalize(horizonCrossDirection, horizonCrossDirection);
 
         //Horizon positions
-		
+
         var offset = Cartesian3.multiplyByScalar(horizonCrossDirection, horizonCrossDistance, posScratch1);
         tempVec = Cartesian3.normalize(Cartesian3.subtract(Cartesian3.add(horizonPlanePosition, offset, posScratch2), occluderPosition, posScratch2), posScratch2);
         var dot0 = Cartesian3.dot(occluderPlaneNormal, tempVec);

@@ -5,19 +5,18 @@ define([
         '../../Core/defineProperties',
         '../../ThirdParty/knockout',
         '../createCommand',
-        
     ], function(
         defineProperties,
         knockout,
         createCommand) {
-    "use strict";
+    'use strict';
 
     function showPanel(footerToolbar, configContainer, btnShowPanel) {
 
-        configContainer.className = "";
-        configContainer.className = "cesium-showSystems-configContainer-transition";
+        configContainer.className = '';
+        configContainer.className = 'cesium-showSystems-configContainer-transition';
         configContainer.style.opacity = 1;
-        configContainer.style.left = "5px";
+        configContainer.style.left = '5px';
 
         footerToolbar.removeChild(btnShowPanel);
     }

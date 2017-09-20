@@ -138,18 +138,18 @@ define([
             Cartesian3.cross(Cartesian3.UNIT_X, direction, up);
 
         } else {
-            
+
             var camera = scene.camera;
-            
+
             if (this._previousMode === SceneMode.SCENE2D) {
-                
+
                 Cartesian3.clone(camera.position, position);
                 position.z = camera.frustum.right - camera.frustum.left;
                 Cartesian3.negate(Cartesian3.UNIT_Z, direction);
                 Cartesian3.clone(Cartesian3.UNIT_Y, up);
-                
+
             } else {
-                
+
                 Cartesian3.clone(camera.positionWC, position);
                 Cartesian3.clone(camera.directionWC, direction);
                 Cartesian3.clone(camera.upWC, up);
@@ -157,16 +157,15 @@ define([
                 var surfacePoint = ellipsoid.scaleToGeodeticSurface(position, scratchToCVSurfacePosition);
                 var toENU = Transforms.eastNorthUpToFixedFrame(surfacePoint, ellipsoid, scratchToCVToENU);
                 Matrix4.inverseTransformation(toENU, toENU);
-                
+
                 // Appel a GeographicProjection.prototype.project(); --> retourne : "position"
 
                 scene.mapProjection.project(ellipsoid.cartesianToCartographic(position, scratchToCVCartographic), position);
                 Matrix4.multiplyByPointAsVector(toENU, direction, direction);
                 Matrix4.multiplyByPointAsVector(toENU, up, up);
-                
-                
+
                 console.log(scene);
-                
+
             }
         }
 
@@ -811,13 +810,13 @@ define([
 
     function morphFrom3DToColumbusView(transitioner, duration, endCamera, complete) {
 
-        console.log("dans morphFrom3DToColumbusView");
+        console.log('dans morphFrom3DToColumbusView');
 
         var scene = transitioner._scene;
         var camera = scene.camera;
-        
+
   //      scene.globe._ellipsoid.test = "testPasseVariable";
-        
+
    //     console.log(scene.globe._ellipsoid);
 
         var startPos = Cartesian3.clone(camera.position, scratch3DToCVStartPos);
@@ -836,7 +835,7 @@ define([
             Cartesian3.normalize(camera.right, camera.right);
             camera._adjustOrthographicFrustum(true);
         }
-        
+
         var tween = scene.tweens.add({
             duration: duration,
             easingFunction: EasingFunction.QUARTIC_OUT,
