@@ -1,6 +1,6 @@
 /*global define*/
 define([
-        "./PanelViewModel",
+        './PanelViewModel',
         '../../Core/defineProperties',
         '../../ThirdParty/knockout',
         '../getElement',
@@ -11,7 +11,7 @@ define([
         knockout,
         getElement,
         CustomObjectViewModel) {
-            "use strict";
+            'use strict';
 
             function createPanel(jsonData, solarSystem, viewerContainer, customToolbar, viewer, that) {
 
@@ -25,9 +25,9 @@ define([
                 container.appendChild(selectElement);
 
                 // premier element de la liste
-               /* var option = document.createElement("option");
+               /* var option = document.createElement('option');
                 option.value = 0;
-                option.text = "------------------------";
+                option.text = '------------------------';
                 selectElement.appendChild(option);*/
 
                 // creation du bouton custom pour activer la fonctionnalit� 
@@ -50,7 +50,7 @@ define([
 
                 var configContainerTitle = document.createElement('div');
                 configContainerTitle.className = 'cesium-customObject-configContainer-title';
-                configContainerTitle.innerHTML = "Custom ellispoid factory";
+                configContainerTitle.innerHTML = 'Custom ellispoid factory';
                 parametersContainer.appendChild(configContainerTitle);
 
                 /* ============================================================= 
@@ -65,7 +65,7 @@ define([
                 ellipsoidParametersContainer.appendChild(FieldSetEllipsParameters);
 
                 var FieldSetLegend = document.createElement('legend');
-                FieldSetLegend.innerHTML = "Ellipsoid axis";
+                FieldSetLegend.innerHTML = 'Ellipsoid axis';
                 FieldSetEllipsParameters.appendChild(FieldSetLegend);
 
                 var tableParameters = document.createElement('table');
@@ -77,7 +77,7 @@ define([
                 tableParameters.appendChild(tableLine1);
 
                 var colomn1Line1 = document.createElement('TD');
-                colomn1Line1.innerHTML = "X axis (in m) : ";
+                colomn1Line1.innerHTML = 'X axis (in m) : ';
                 tableLine1.appendChild(colomn1Line1);
 
                 var inputXparameter = document.createElement('input');
@@ -95,7 +95,7 @@ define([
                 tableParameters.appendChild(tableLine2);
 
                 var colomn1Line2 = document.createElement('TD');
-                colomn1Line2.innerHTML = "Y axis (in m) : ";
+                colomn1Line2.innerHTML = 'Y axis (in m) : ';
                 tableLine2.appendChild(colomn1Line2);
 
                 var inputYparameter = document.createElement('input');
@@ -113,7 +113,7 @@ define([
                 tableParameters.appendChild(tableLine3);
 
                 var colomn1Line3 = document.createElement('TD');
-                colomn1Line3.innerHTML = "Z axis (in m) : ";
+                colomn1Line3.innerHTML = 'Z axis (in m) : ';
                 tableLine3.appendChild(colomn1Line3);
 
                 var inputZparameter = document.createElement('input');
@@ -131,11 +131,11 @@ define([
                 tableParameters.appendChild(tableLine4);
 
                 var colomn1Line4 = document.createElement('TD');
-                colomn1Line4.innerHTML = " ";
+                colomn1Line4.innerHTML = ' ';
                 tableLine4.appendChild(colomn1Line4);
 
                 var validationBtn = document.createElement('BUTTON');
-                validationBtn.innerHTML = "Validate";
+                validationBtn.innerHTML = 'Validate';
                 validationBtn.setAttribute('data-bind', 'attr: { title: "Create object" }, click: validateCommand');
 
                 var colomn2Line4 = document.createElement('TD');
@@ -154,7 +154,7 @@ define([
                 ellipsoidTextureContainer.appendChild(FieldSetTexture);
 
                 var FieldSetLegendTexture = document.createElement('legend');
-                FieldSetLegendTexture.innerHTML = "Texture selection";
+                FieldSetLegendTexture.innerHTML = 'Texture selection';
                 FieldSetTexture.appendChild(FieldSetLegendTexture);
 
                 var tableTexture = document.createElement('table');
@@ -166,7 +166,7 @@ define([
                 tableTexture.appendChild(tableTextureLine1);
 
                 var colomn1Line1Texture = document.createElement('TD');
-                colomn1Line1Texture.innerHTML = "WMS server : ";
+                colomn1Line1Texture.innerHTML = 'WMS server : ';
                 tableTextureLine1.appendChild(colomn1Line1Texture);
 
                 var selectElementServerTexture = document.createElement('SELECT');
@@ -174,25 +174,25 @@ define([
                 selectElementServerTexture.style.cssText = 'text-align : center; font-family : Arial';
                 selectElementServerTexture.setAttribute('data-bind', 'options: availableServers, optionsText : "name", value: selectedServer, optionsCaption: "Select a server"');
 
-                var colomn2Line1Texture = document.createElement('TD'); 
+                var colomn2Line1Texture = document.createElement('TD');
                 colomn2Line1Texture.appendChild(selectElementServerTexture);
                 tableTextureLine1.appendChild(colomn2Line1Texture);
-                
-                
+
+
                 // ======================= SECOND Line ==========================
-                
+
                 var tableTextureLine2 = document.createElement('TR');
                 tableTexture.appendChild(tableTextureLine2);
 
                 var colomn1Line2Texture = document.createElement('TD');
-                colomn1Line2Texture.innerHTML = "Planet and satellite : ";
+                colomn1Line2Texture.innerHTML = 'Planet and satellite : ';
                 tableTextureLine2.appendChild(colomn1Line2Texture);
 
                 var selectElementPlanetTexture = document.createElement('SELECT');
                 selectElementPlanetTexture.className = 'cesium-customObject-select';
                 selectElementPlanetTexture.style.cssText = 'text-align : center; font-family : Arial';
                 selectElementPlanetTexture.setAttribute('data-bind', 'options: availablePlanets, value: selectedPlanet, optionsCaption: "Select a planet"');
-                
+
                 var selectElementSatelliteTexture = document.createElement('SELECT');
                 selectElementSatelliteTexture.className = 'cesium-customObject-select';
                 selectElementSatelliteTexture.style.cssText = 'text-align : center; font-family : Arial;  visibility: hidden;';
@@ -202,42 +202,42 @@ define([
                 colomn2Line2Texture.appendChild(selectElementPlanetTexture);
                 colomn2Line2Texture.appendChild(selectElementSatelliteTexture);
                 tableTextureLine2.appendChild(colomn2Line2Texture);
-                
+
                  // ======================= SECOND Line ==========================
-                
+
                 var tableTextureLine3 = document.createElement('TR');
                 tableTexture.appendChild(tableTextureLine3);
 
                 var colomn1Line3Texture = document.createElement('TD');
-                colomn1Line3Texture.innerHTML = "Available layers : ";
+                colomn1Line3Texture.innerHTML = 'Available layers : ';
                 tableTextureLine3.appendChild(colomn1Line3Texture);
 
                 var selectElementLayers = document.createElement('SELECT');
                 selectElementLayers.className = 'cesium-customObject-select';
                 selectElementLayers.style.cssText = 'text-align : center; font-family : Arial';
                 selectElementLayers.setAttribute('data-bind', 'options: availableLayers, optionsText : "layerName", value: selectedLayer, optionsCaption: "Select a layer"');
-                
+
                 var addLayerBtn = document.createElement('BUTTON');
-                addLayerBtn.innerHTML = "add layer";
-                addLayerBtn.style.visibility = "visible";
+                addLayerBtn.innerHTML = 'add layer';
+                addLayerBtn.style.visibility = 'visible';
                 addLayerBtn.setAttribute('data-bind', 'attr: { title: "Create object" }, click: addLayerCommand');
 
                 var colomn2Line3Texture = document.createElement('TD');
                 colomn2Line3Texture.appendChild(selectElementLayers);
                  colomn2Line3Texture.appendChild(addLayerBtn);
                 tableTextureLine3.appendChild(colomn2Line3Texture);
-                
+
                 // ======================== LAST Line ==========================
 
                 var tableLineLAST = document.createElement('TR');
                 tableTexture.appendChild(tableLineLAST);
 
                 var colomn1LineLAST = document.createElement('TD');
-                colomn1LineLAST.innerHTML = " ";
+                colomn1LineLAST.innerHTML = ' ';
                 tableLineLAST.appendChild(colomn1LineLAST);
 
                 var validationTextureBtn = document.createElement('BUTTON');
-                validationTextureBtn.innerHTML = "Validate configuration";
+                validationTextureBtn.innerHTML = 'Validate configuration';
                 validationTextureBtn.setAttribute('data-bind', 'attr: { title: "Create object" }, click: validateTextureCommand');
 
                 var colomn2LineLAST = document.createElement('TD');
@@ -256,42 +256,37 @@ define([
                 layerInformationContainer.appendChild(FieldSetLayerInfo);
 
                 var FieldSetLegendLayerInfo = document.createElement('legend');
-                FieldSetLegendLayerInfo.innerHTML = "Layer added";
+                FieldSetLegendLayerInfo.innerHTML = 'Layer added';
                 FieldSetLayerInfo.appendChild(FieldSetLegendLayerInfo);
 
                 var tableLayerInfo = document.createElement('table');
                 tableLayerInfo.className = 'cesium-customObject-infosLayer-table';
                 FieldSetLayerInfo.appendChild(tableLayerInfo);
-                
+
                 var tableLineLayerInfo = document.createElement('TR');
                 tableLayerInfo.appendChild(tableLineLayerInfo);
                 tableLayerInfo.setAttribute('data-bind', 'foreach: addedLayerObject');
-                
+
                 var colomn1Line1LayerInfo = document.createElement('TD');
                 colomn1Line1LayerInfo.setAttribute('data-bind','text:serverName');
                 tableLineLayerInfo.appendChild(colomn1Line1LayerInfo);
-                
-                 var colomn2Line1LayerInfo = document.createElement('TD');
+
+                var colomn2Line1LayerInfo = document.createElement('TD');
                 colomn2Line1LayerInfo.setAttribute('data-bind','text:object');
                 tableLineLayerInfo.appendChild(colomn2Line1LayerInfo);
-                
+
                 var colomn3Line1LayerInfo = document.createElement('TD');
                 colomn3Line1LayerInfo.setAttribute('data-bind','text:layerName');
                 tableLineLayerInfo.appendChild(colomn3Line1LayerInfo);
-                
+
                 var colomn4Line1LayerInfo = document.createElement('TD');
                 tableLineLayerInfo.appendChild(colomn4Line1LayerInfo);
-                
+
                 var removeLayerBtn = document.createElement('BUTTON');
-                removeLayerBtn.innerHTML = "Remove";
+                removeLayerBtn.innerHTML = 'Remove';
                 removeLayerBtn.setAttribute('data-bind', 'click: $parent.removeLayerCommand');
                 colomn4Line1LayerInfo.appendChild(removeLayerBtn);
 
-                
-                
-                
-                
-                
 
                 /* ============================================================= 
                  * ================== Load configuration file ==================
@@ -305,11 +300,11 @@ define([
                 loadConfigContainer.appendChild(FieldSetLoadFile);
 
                 var FieldSetLegendLoadFile = document.createElement('legend');
-                FieldSetLegendLoadFile.innerHTML = "Load configuration file";
+                FieldSetLegendLoadFile.innerHTML = 'Load configuration file';
                 FieldSetLoadFile.appendChild(FieldSetLegendLoadFile);
 
                 var loadBtn = document.createElement('BUTTON');
-                loadBtn.innerHTML = "Load";
+                loadBtn.innerHTML = 'Load';
                 loadBtn.setAttribute('data-bind', 'attr: { title: "Load a config file" }, click: loadCommand');
                 FieldSetLoadFile.appendChild(loadBtn);
 
@@ -348,7 +343,7 @@ define([
             function getServerData(xhr, xhrPlanetarSystem, method, urlServer, urlPlanetarySystem, async, viewerContainer, customToolbar, viewer, that) {
 
                 xhr.open(method, urlServer, async);
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.send();
                 xhr.onreadystatechange = function () {
 
@@ -359,7 +354,7 @@ define([
 
 
                         xhrPlanetarSystem.open(method, urlPlanetarySystem, async);
-                        xhrPlanetarSystem.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        xhrPlanetarSystem.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                         xhrPlanetarSystem.send();
                         xhrPlanetarSystem.onreadystatechange = function () {
 
@@ -377,13 +372,14 @@ define([
             }
 
             function getXMLHttpRequest() {
+                var xhr;
                 if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-                    var xhr = new XMLHttpRequest();
-                } else if (typeof ActiveXObject !== " undefined") {
-                    var xhr = new ActiveXObject("Microsoft.XMLHTTP"); // activeX pour IE
+                    xhr = new XMLHttpRequest();
+                } else if (typeof ActiveXObject !== 'undefined') {
+                    xhr = new ActiveXObject('Microsoft.XMLHTTP'); // activeX pour IE
                 } else {
-                    console.log("AJAX don't available on this browser");
-                    var xhr = null;
+                    console.log('AJAX is not available on this browser');
+                    xhr = null;
                 }
                 return xhr;
             }

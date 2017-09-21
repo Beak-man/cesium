@@ -54,7 +54,7 @@ define([
         VerticalOrigin,
         knockout,
         createCommand) {
-    "use strict";
+    'use strict';
 
     var targetMouse;
 
@@ -106,7 +106,7 @@ define([
 
                 // Check if the clicked position is on the canvas and on the globe
 
-                if (cartesian && targetMouse === "[object HTMLCanvasElement]") {
+                if (cartesian && targetMouse === '[object HTMLCanvasElement]') {
 
                     // From (x,y,z) coordinates (in m) to (lng, lat) coordinates (in radians)
 
@@ -126,14 +126,15 @@ define([
                         // When the cursor is shifted, we get the coordinate of the each position
 
                         var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
+                        var cartographicMovePosition;
 
                         // Check if the position is on the canvas and on the globe
 
-                        if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
+                        if (cartesianMovePosition && targetMouse === '[object HTMLCanvasElement]') {
 
                             // From (x,y,z) coordinates (in m) to (lng, lat) coordinates (in radians)
 
-                            var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
+                            cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
 
                             // we need only 2 points to draw a line ==> 4 components for the arrayRadians (lng_1, lat_1, lng_2, lat_2) (in radians).
                             // if lng_2, lat_2 already exist, then we change it with the new coordinates. 
@@ -202,7 +203,6 @@ define([
                             // If there is more than 1 line in the collection, 
                             // wer remove the before last one
 
-                            
                           //  console.log(polyLines._polylines);
 
                             if (dim > 1) {
@@ -367,26 +367,28 @@ define([
                 if (dimPoly > 1) {
 
 
-                    console.log("dans dimPloy > 1");
+                    console.log('dans dimPloy > 1');
 
                     var ua = navigator.userAgent;
                     var pattern = /Firefox/g;
 
                     var beforeLastPolyline = polyLines._polylines[dimPoly - 2];
+                    var polylineToRemove1;
+                    var polylineLabelToRemove;
 
                     if (pattern.test(ua)) {
 
-                        var polylineToRemove1 = polyLines._polylines[dimPoly - 1];
-                        var polylineLabelToRemove = polyLinesLabels._labels[dimLabel - 1];
+                        polylineToRemove1 = polyLines._polylines[dimPoly - 1];
+                        polylineLabelToRemove = polyLinesLabels._labels[dimLabel - 1];
 
                         polyLines.remove(polylineToRemove1);
                         polyLinesLabels.remove(polylineLabelToRemove);
 
                     } else {
 
-                        var polylineToRemove1 = polyLines._polylines[dimPoly - 1];
+                        polylineToRemove1 = polyLines._polylines[dimPoly - 1];
                         var polylineToRemove2 = polyLines._polylines[dimPoly - 2];
-                        var polylineLabelToRemove = polyLinesLabels._labels[dimLabel - 1];
+                        polylineLabelToRemove = polyLinesLabels._labels[dimLabel - 1];
 
                         polyLines.remove(polylineToRemove1);
                         polyLines.remove(polylineToRemove2);
@@ -454,7 +456,7 @@ define([
                 var cursorCircleCenter = click.position;
                 var cartesianCircleCenter = viewer.scene.camera.pickEllipsoid(cursorCircleCenter, ellipsoid);
 
-                if (cartesianCircleCenter && targetMouse === "[object HTMLCanvasElement]") {
+                if (cartesianCircleCenter && targetMouse === '[object HTMLCanvasElement]') {
                     var cartographicCircleCenter = ellipsoid.cartesianToCartographic(cartesianCircleCenter);
                     cartesianCartographicCircleCenter = Cartesian3.fromRadians(cartographicCircleCenter.longitude, cartographicCircleCenter.latitude, cartographicCircleCenter.height, ellipsoid);
 
@@ -487,7 +489,7 @@ define([
 
                                 newPrim = new Primitive({
                                     geometryInstances: [circleOutlineInstance],
-                                    primitiveType: "circle",
+                                    primitiveType: 'circle',
                                     appearance: new PerInstanceColorAppearance({
                                         flat: true,
                                         renderState: {lineWidth: Math.min(1.0, viewer.scene.maximumAliasedLineWidth)}
@@ -529,9 +531,9 @@ define([
                 }
 
                 that._handlerLeftDblClickCircle.setInputAction(function () {
-                    if (that._handlerMouseMoveCircle)
+                    if (that._handlerMouseMoveCircle) {
                         that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-
+                    }
                     var cartesianCircleCenter = newPrim._boundingSphereWC[0].center;
                     var radius = circleRadius = newPrim._boundingSphereWC[0].radius;
 
@@ -552,7 +554,7 @@ define([
 
                     var newPrimFill = new Primitive({
                         geometryInstances: [circleInstance],
-                        primitiveType: "circle",
+                        primitiveType: 'circle',
                         appearance: new PerInstanceColorAppearance({closed: true})
                     });
 
@@ -565,9 +567,9 @@ define([
 
             that._handlerRightClickCircle.setInputAction(function (click) {
 
-                if (that._handlerMouseMoveCircle)
+                if (that._handlerMouseMoveCircle) {
                     that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-
+                }
                 that._handlerMouseMoveCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
                 var dim = circleCollection._primitives.length;
@@ -583,7 +585,7 @@ define([
                             var primitiveObject1 = circleCollection._primitives[dim - 1];
                             var primitiveLabel1 = circlesLabels._labels[dimLabel - 1];
 
-                            if (primitiveObject1.primitiveType === "circle") {
+                            if (primitiveObject1.primitiveType === 'circle') {
                                 try {
 
                                     circleCollection.remove(primitiveObject1);
@@ -592,13 +594,10 @@ define([
                                 } catch (e) {
                                 }
                                 continueWhile = false;
+                            } else if (dim === 0) {
+                                continueWhile = false;
                             } else {
-                                if (dim === 0) {
-                                    continueWhile = false;
-                                }
-                                else {
-                                    dim--;
-                                }
+                                dim--;
                             }
                         } catch (e) {
                         }
@@ -628,7 +627,7 @@ define([
             // Variables initialization
 
             var arrayRadians = [];
-            var ellipsoid = viewer.scene.globe.ellipsoid;
+            ellipsoid = viewer.scene.globe.ellipsoid;
             var oldLabel;
 
             // Process when occur a mouse event
@@ -644,7 +643,7 @@ define([
 
                 // If the coordinates are not null and if we are on the canvas, then...
 
-                if (cartesian && targetMouse === "[object HTMLCanvasElement]") {
+                if (cartesian && targetMouse === '[object HTMLCanvasElement]') {
 
 
                     // we change the cartesians coordinates into cartographics coordinates (lng, lat. coordinates are in rad
@@ -686,7 +685,7 @@ define([
 
                             var newPrimFill = new Primitive({
                                 geometryInstances: [circleInstance],
-                                primitiveType: "circle",
+                                primitiveType: 'circle',
                                 appearance: new PerInstanceColorAppearance({closed: true})
                             });
 
@@ -731,14 +730,15 @@ define([
                         // we get thet coordinate of each point under the cursor
 
                         var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
+                        var cartographicMovePosition;
 
                         // If the coordinates are not null and if we are on the canvas, then...
 
-                        if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
+                        if (cartesianMovePosition && targetMouse === '[object HTMLCanvasElement]') {
 
                             // we change the coordinate...
 
-                            var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
+                            cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
 
                             // new coordiates pushed in the array. The "if" condition is implemented in order to replace the final point and hence 
                             // draw a single line
@@ -821,9 +821,9 @@ define([
 
             that._handlerRightClickCircle.setInputAction(function (click) {
 
-                if (that._handlerMouseMoveCircle)
+                if (that._handlerMouseMoveCircle) {
                     that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-
+                }
                 that._handlerMouseMoveCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
 
@@ -859,7 +859,7 @@ define([
                                 var primitiveObject1 = circleCollection._primitives[dim - 1];
                                 var primitiveLabel1 = circlesLabels._labels[dimLabel - 1];
 
-                                if (primitiveObject1.primitiveType === "circle") {
+                                if (primitiveObject1.primitiveType === 'circle') {
                                     try {
 
                                         circleCollection.remove(primitiveObject1);
@@ -868,13 +868,10 @@ define([
                                     } catch (e) {
                                     }
                                     continueWhile = false;
+                                } else if (dim === 0) {
+                                    continueWhile = false;
                                 } else {
-                                    if (dim === 0) {
-                                        continueWhile = false;
-                                    }
-                                    else {
                                         dim--;
-                                    }
                                 }
                             } catch (e) {
                             }
@@ -1023,7 +1020,7 @@ define([
                 var ellipsoid = viewer.scene.globe.ellipsoid;
                 var cartesian = viewer.scene.camera.pickEllipsoid(click.position, ellipsoid);
 
-                if (cartesian && targetMouse === "[object HTMLCanvasElement]") {
+                if (cartesian && targetMouse === '[object HTMLCanvasElement]') {
                     var cartographic = ellipsoid.cartesianToCartographic(cartesian);
 
                     if (!that._undoIsactivated) {
@@ -1112,7 +1109,7 @@ define([
 
                             var newPrimFill = new Primitive({
                                 geometryInstances: [circleInstance],
-                                primitiveType: "circle",
+                                primitiveType: 'circle',
                                 appearance: new PerInstanceColorAppearance({closed: true})
                             });
 
@@ -1145,10 +1142,11 @@ define([
                         that._handlerMouseMoveCircle.setInputAction(function (mouvement) {
 
                             cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
+                            var cartographicMovePosition;
 
-                            if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
+                            if (cartesianMovePosition && targetMouse === '[object HTMLCanvasElement]') {
 
-                                var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
+                                cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
 
                                 if (arrayRadians.length >= 2) {
 
@@ -1234,9 +1232,9 @@ define([
 
             that._handlerRightClickCircle.setInputAction(function (click) {
 
-                if (that._handlerMouseMoveCircle)
+                if (that._handlerMouseMoveCircle) {
                     that._handlerMouseMoveCircle.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-
+                }
                 that._handlerMouseMoveCircle = new ScreenSpaceEventHandler(viewer.scene.canvas);
 
 
@@ -1273,7 +1271,7 @@ define([
                                 var primitiveObject1 = circleCollection._primitives[dim - 1];
                                 var primitiveLabel1 = circlesLabels._labels[dimLabel - 1];
 
-                                if (primitiveObject1.primitiveType === "circle") {
+                                if (primitiveObject1.primitiveType === 'circle') {
                                     try {
 
                                         circleCollection.remove(primitiveObject1);
@@ -1282,13 +1280,10 @@ define([
                                     } catch (e) {
                                     }
                                     continueWhile = false;
+                                } else if (dim === 0) {
+                                    continueWhile = false;
                                 } else {
-                                    if (dim === 0) {
-                                        continueWhile = false;
-                                    }
-                                    else {
-                                        dim--;
-                                    }
+                                    dim--;
                                 }
                             } catch (e) {
                             }
@@ -1331,7 +1326,7 @@ define([
 
             // we get the ellipsoid  
 
-            var ellipsoid = viewer.scene.globe.ellipsoid;
+            ellipsoid = viewer.scene.globe.ellipsoid;
 
 
             //  EVENT : left click 
@@ -1351,7 +1346,7 @@ define([
 
                 // if the coordinates are not null and we are on the canvas then...
 
-                if (cartesian && targetMouse === "[object HTMLCanvasElement]") {
+                if (cartesian && targetMouse === '[object HTMLCanvasElement]') {
 
                     //we transforme the coordinates (x, y, z) to cartographic (long, lat) in rad
 
@@ -1372,14 +1367,14 @@ define([
                         // we get the coordinates of each point under the cursor
 
                         var cartesianMovePosition = viewer.scene.camera.pickEllipsoid(mouvement.endPosition, ellipsoid);
-
+                        var cartographicMovePosition;
                         // if the coordinates are not null and we are on the canvas then...
 
-                        if (cartesianMovePosition && targetMouse === "[object HTMLCanvasElement]") {
+                        if (cartesianMovePosition && targetMouse === '[object HTMLCanvasElement]') {
 
                             //we transforme the coordinates (x, y, z) to cartographic (long, lat) in rad
 
-                            var cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
+                            cartographicMovePosition = ellipsoid.cartesianToCartographic(cartesianMovePosition);
 
                             // if we already have the final point in the coordLinesForPolygonsRadians array then we change it in order
                             // to create animate the motion of the line. 
@@ -1628,11 +1623,13 @@ define([
                 that._undoIsactivated = true;
                 var dim = polyLinesTmpPolygons._polylines.length;
                 var dimLabel = polyLinesLabelsTmPolygons._labels.length;
+                var polyline;
+                var polylineLabel;
 
                 if (dim > 1) {
 
-                    var polyline = polyLinesTmpPolygons._polylines[dim - 1];
-                    var polylineLabel = polyLinesLabelsTmPolygons._labels[dimLabel - 1];
+                    polyline = polyLinesTmpPolygons._polylines[dim - 1];
+                    polylineLabel = polyLinesLabelsTmPolygons._labels[dimLabel - 1];
 
                     try {
                         var beforeLastPolyline = polyLinesTmpPolygons._polylines[dim - 2];
@@ -1681,10 +1678,10 @@ define([
 
                 } else if (dim === 1) {
 
-                    console.log("dim == 1");
+                    console.log('dim == 1');
 
-                    var polyline = polyLinesTmpPolygons._polylines[dim - 1];
-                    var polylineLabel = polyLinesLabelsTmPolygons._labels[dimLabel - 1];
+                    polyline = polyLinesTmpPolygons._polylines[dim - 1];
+                    polylineLabel = polyLinesLabelsTmPolygons._labels[dimLabel - 1];
                     polyLinesTmpPolygons.remove(polyline);
                     polyLinesLabelsTmPolygons.remove(polylineLabel);
 
@@ -1695,7 +1692,7 @@ define([
 
                 } else if (dim === 0) {
 
-                    console.log("dim == 0");
+                    console.log('dim == 0');
 
                     coordLinesForPolygonsRadians = [];
 
@@ -1728,11 +1725,11 @@ define([
         var centerPosition = [centerPositionLng, centerPositionLat];
 
         var jsonCircleGeoJson = {};
-        jsonCircleGeoJson.type = "Point";
+        jsonCircleGeoJson.type = 'Point';
         jsonCircleGeoJson.coordinates = centerPosition;
 
         var featureCircleGeometry = {};
-        featureCircleGeometry.type = "Feature";
+        featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
         featureCircleGeometry.properties = geoJsonDataSource.properties;
 
@@ -1742,10 +1739,10 @@ define([
     function createPolygonGeoJsonObect(that, geoJsonDataSource) {
 
         var featurePolygons = {};
-        featurePolygons.type = "Feature";
+        featurePolygons.type = 'Feature';
 
         var geoJsonPolygons = {};
-        geoJsonPolygons.type = "Polygon";
+        geoJsonPolygons.type = 'Polygon';
         geoJsonPolygons.coordinates = [];
 
         var positions = geoJsonDataSource.polygon.hierarchy._value.positions;
@@ -1763,7 +1760,7 @@ define([
         geoJsonPolygons.coordinates.push(array);
         featurePolygons.geometry = geoJsonPolygons;
         featurePolygons.properties = {
-            Name: "Polygons"
+            Name: 'Polygons'
         };
 
         return featurePolygons;
@@ -1772,10 +1769,10 @@ define([
     function createPolylineGeoJsonObect(that, geoJsonDataSource) {
 
         var featurePolylines = {};
-        featurePolylines.type = "Feature";
+        featurePolylines.type = 'Feature';
 
         var jsonPolylineGeometry = {};
-        jsonPolylineGeometry.type = "MultiLineString";
+        jsonPolylineGeometry.type = 'MultiLineString';
         jsonPolylineGeometry.coordinates = [];
 
         var positions = geoJsonDataSource.polyline.positions._value;
@@ -1812,11 +1809,11 @@ define([
         var centerPosition = [centerPositionLng, centerPositionLat];
 
         var jsonCircleGeoJson = {};
-        jsonCircleGeoJson.type = "Point";
+        jsonCircleGeoJson.type = 'Point';
         jsonCircleGeoJson.coordinates = centerPosition;
 
         var featureCircleGeometry = {};
-        featureCircleGeometry.type = "Feature";
+        featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
         featureCircleGeometry.properties = geoJsonDataSource.properties;
 
@@ -1835,31 +1832,33 @@ define([
 
 
         var geoJsonObject = {};
-        geoJsonObject.type = "FeatureCollection";
+        geoJsonObject.type = 'FeatureCollection';
         geoJsonObject.features = [];
         geoJsonObject.crs = crs.crs;
 
         for (var i = 0; i < primitives.length; i++) {
+            var j;
 
             // if the primitive is a polyline then ...
+            var polylines;
 
-            if (primitives[i].associatedObject === "polylines" && primitives[i]._polylines.length > 0) {
+            if (primitives[i].associatedObject === 'polylines' && primitives[i]._polylines.length > 0) {
 
                 // Declaration of the featureObject object (see geojson specifications)
 
                 var featurePolylines = {};
-                featurePolylines.type = "Feature";
+                featurePolylines.type = 'Feature';
 
                 // declaration of the object witch will contains all start and final points of each lines
 
                 var jsonPolylineGeometry = {};
-                jsonPolylineGeometry.type = "MultiLineString";
+                jsonPolylineGeometry.type = 'MultiLineString';
                 jsonPolylineGeometry.coordinates = [];
 
 
                 // get all polylines contained in primitive[i]
 
-                var polylines = primitives[i]._polylines;
+                polylines = primitives[i]._polylines;
 
                 // we get label coresponding to the total distance of the trajectory
 
@@ -1869,7 +1868,7 @@ define([
 
                 if (polylines.length > 0) {
 
-                    for (var j = 0; j < polylines.length; j++) {
+                    for (j = 0; j < polylines.length; j++) {
 
                         var positions = polylines[j]._positions;
 
@@ -1895,12 +1894,12 @@ define([
 
                         var line = [[firstPositionLng, firstPositionLat], [lastPositionLng, lastPositionLat]];
 
-                        // we push the last vector in the property named "coordinates" of the geoJsonPolyline object
+                        // we push the last vector in the property named 'coordinates' of the geoJsonPolyline object
 
                         jsonPolylineGeometry.coordinates.push(line);
                         featurePolylines.geometry = jsonPolylineGeometry;
                         featurePolylines.properties = {
-                            Name: "Line",
+                            Name: 'Line',
                             Total_distance: totalLengthPath
                         };
                     }
@@ -1914,7 +1913,7 @@ define([
 
             // if the primive is a circle
 
-            if (primitives[i].associatedObject === "circleGeomtry") {
+            if (primitives[i].associatedObject === 'circleGeomtry') {
 
                 // get all circle contained in the primitive[i]
 
@@ -1924,7 +1923,7 @@ define([
 
                     // we go throught the circle array
 
-                    for (var j = 0; j < circles.length; j++) {
+                    for (j = 0; j < circles.length; j++) {
 
                         // get the coordinate of the center
 
@@ -1939,18 +1938,18 @@ define([
                         var centerPosition = [centerPositionLng, centerPositionLat];
 
                         var jsonCircleGeometry = {};
-                        jsonCircleGeometry.type = "Point";
+                        jsonCircleGeometry.type = 'Point';
                         jsonCircleGeometry.coordinates = centerPosition;
 
                         var featureCircle = {};
-                        featureCircle.type = "Feature";
+                        featureCircle.type = 'Feature';
                         featureCircle.geometry = jsonCircleGeometry;
                         featureCircle.properties = {
-                            Name: "Circle",
-                            Center_lng: centerPositionLng.toFixed(3) + " deg",
-                            Center_lat: centerPositionLat.toFixed(3) + " deg",
-                            Radius: circleRadius.toFixed(3) + " m",
-                            Surface: circleSurface + " m2"
+                            Name: 'Circle',
+                            Center_lng: centerPositionLng.toFixed(3) + ' deg',
+                            Center_lat: centerPositionLat.toFixed(3) + ' deg',
+                            Radius: circleRadius.toFixed(3) + ' m',
+                            Surface: circleSurface + ' m2'
                         };
                         geoJsonObject.features.push(featureCircle);
                     }
@@ -1959,27 +1958,27 @@ define([
 
             // if the primitive is a polygon then ...
 
-            if (primitives[i].associatedObject === "polylinesTmpPolygons") {
+            if (primitives[i].associatedObject === 'polylinesTmpPolygons') {
 
                 // declaration of the featureObject object which contains all lines 
 
                 var featurePolygons = {};
-                featurePolygons.type = "Feature";
+                featurePolygons.type = 'Feature';
 
                 // declaration of the object which contains all coordinates of the start and final points
 
                 var geoJsonPolygons = {};
-                geoJsonPolygons.type = "Polygon";
+                geoJsonPolygons.type = 'Polygon';
                 geoJsonPolygons.coordinates = [];
 
                 // get all polylines contained in  primitive[i]
 
-                var polylines = primitives[i]._polylines;
+                polylines = primitives[i]._polylines;
                 var polygonsPoints = [];
 
                 if (polylines.length > 0) {
 
-                    for (var j = 0; j < polylines.length - 1; j++) {
+                    for (j = 0; j < polylines.length - 1; j++) {
 
                         var positions = polylines[j]._positions;
 
@@ -2018,7 +2017,7 @@ define([
                     geoJsonPolygons.coordinates.push(polygonsPoints);
                     featurePolygons.geometry = geoJsonPolygons;
                     featurePolygons.properties = {
-                        Name: "Polygons"
+                        Name: 'Polygons'
                     };
 
                     geoJsonObject.features.push(featurePolygons);
@@ -2027,6 +2026,7 @@ define([
         }
 
         // we check if there is loaded data
+        var geoJsonData;
 
         if (that._viewer.geoJsonData) {
 
@@ -2044,10 +2044,10 @@ define([
 
                 for (var l = 0; l < dimGeoJsonDataSource; l++) {
 
-                    var geoJsonData = geoJsonDataSource[l];
+                    geoJsonData = geoJsonDataSource[l];
 
                     // kind of data
-                    var dataType = ["ellipse", "polyline", "point", "polygon"];
+                    var dataType = ['ellipse', 'polyline', 'point', 'polygon'];
 
                     var geomType;
 
@@ -2072,13 +2072,13 @@ define([
 
         if (geoJsonObject.features.length > 0) {
 
-            var geoJsonData = JSON.stringify(geoJsonObject);
+            geoJsonData = JSON.stringify(geoJsonObject);
             var blob = new Blob([geoJsonData], {
-                type: "application/octet-stream",
-                endings: "native"
+                type: 'application/octet-stream',
+                endings: 'native'
             });
             var url = URL.createObjectURL(blob);
-            var fileName = "geoJsonFile.geojson";
+            var fileName = 'geoJsonFile.geojson';
 
             if (!that._isSaveButtonActivate) {
 
@@ -2086,7 +2086,7 @@ define([
                 that._wrapperSaveSubMenu.className = 'cesium-subMenu-saveButton';
                 container.appendChild(that._wrapperSaveSubMenu);
 
-                that._linkDownload = document.createElement("a");
+                that._linkDownload = document.createElement('a');
                 that._linkDownload.className = 'cesium-subMenu-saveButtonLink';
                 that._wrapperSaveSubMenu.appendChild(that._linkDownload);
                 that._linkDownload.innerHTML = '<svg width="25px" height="25px" viewBox="-10 0 100 100"><g>\
@@ -2258,7 +2258,7 @@ define([
             try {
 
                 removeHandlers(that);
-                that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
+                that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu();
             } catch (e) {
             }
         });
@@ -2462,11 +2462,11 @@ define([
 
             for (var i = 0; i < primitives.length; i++) {
 
-                if (primitives[i].associatedObject === "polylines") {
+                if (primitives[i].associatedObject === 'polylines') {
 
                     polyLines = primitives[i];
                     statusFindpolyLines = true;
-                    console.log("polylines");
+                    console.log('polylines');
                     continue;
                 }
 
@@ -2475,21 +2475,21 @@ define([
 
                     polyLinesTmps = primitives[i];
                     statusFindpolyLinesTmps = true;
-                    console.log("polyLinesTmps");
+                    console.log('polyLinesTmps');
                     continue;
                 }
 
                 if (primitives[i].associatedObject === 'circleGeomtry') {
                     circles = primitives[i];
                     statusFindcircle = true;
-                    console.log("circleGeomtry");
+                    console.log('circleGeomtry');
                     continue;
                 }
 
                 if (primitives[i].associatedObject === 'polygonsGeomtry') {
                     polygons = primitives[i];
                     statusFindPolygons = true;
-                    console.log("polygonsGeomtry");
+                    console.log('polygonsGeomtry');
                     continue;
 
                 }
@@ -2497,50 +2497,51 @@ define([
                 if (primitives[i].associatedObject === 'polylinesTmpPolygons') {
                     polyLinesTmpPolygons = primitives[i];
                     statusFindpolyLinesTmpPolygons = true;
-                    console.log("polylinesTmpPolygons");
+                    console.log('polylinesTmpPolygons');
                     continue;
                 }
 
                 if (primitives[i]._labels) {
 
-                    if (primitives[i].associatedObject === "circlesLabels") {
+                    if (primitives[i].associatedObject === 'circlesLabels') {
                         circlesLabels = primitives[i];
                         statusFindCirclesLabels = true;
-                        console.log("circlesLabels");
+                        console.log('circlesLabels');
                         continue;
                     }
 
-                    if (primitives[i].associatedObject === "polyLinesLabels") {
+                    if (primitives[i].associatedObject === 'polyLinesLabels') {
                         polyLinesLabels = primitives[i];
                         statusFindpolyLinesLabels = true;
-                        console.log("polyLinesLabels");
+                        console.log('polyLinesLabels');
                         continue;
                     }
 
-                    if (primitives[i].associatedObject === "polyLinesLabelsTmps") {
+                    if (primitives[i].associatedObject === 'polyLinesLabelsTmps') {
                         polyLinesLabelsTmps = primitives[i];
                         statusFindpolyLinesLabelsTmps = true;
-                        console.log("polyLinesLabelsTmps");
+                        console.log('polyLinesLabelsTmps');
                         continue;
                     }
 
                     if (primitives[i].associatedObject === 'polygonsLabels') {
                         polygonsLabels = primitives[i];
                         statusFindPolygonsLabels = true;
-                        console.log("polygonsLabels");
+                        console.log('polygonsLabels');
                         continue;
                     }
 
                     if (primitives[i].associatedObject === 'polyLinesLabelsTmpPolygons') {
                         polyLinesLabelsTmpPolygons = primitives[i];
                         statusFindpolyLinesLabelsTmpPolygons = true;
-                        console.log("polyLinesLabelsTmpPolygons");
+                        console.log('polyLinesLabelsTmpPolygons');
                         continue;
                     }
                 }
 
-                if (statusFindpolyLines && statusFindCirclesLabels && statusFindpolyLinesLabels && statusFindcircle && statusFindPolygons && statusFindPolygonsLabels && statusFindpolyLinesTmps && statusFindpolyLinesLabelsTmps && statusFindpolyLinesTmpPolygons && statusFindpolyLinesLabelsTmpPolygons)
+                if (statusFindpolyLines && statusFindCirclesLabels && statusFindpolyLinesLabels && statusFindcircle && statusFindPolygons && statusFindPolygonsLabels && statusFindpolyLinesTmps && statusFindpolyLinesLabelsTmps && statusFindpolyLinesTmpPolygons && statusFindpolyLinesLabelsTmpPolygons) {
                     break;
+                }
 
                 if (i === primitives.length - 1) {
 
@@ -2548,70 +2549,70 @@ define([
                         polyLines = that._viewer.scene.primitives.add(new PolylineCollection());
                         polyLines.associatedObject = 'polylines';
                         statusFindpolyLines = true;
-                        console.log("line");
+                        console.log('line');
                     }
 
                     if (!statusFindpolyLinesLabels) {
                         polyLinesLabels = that._viewer.scene.primitives.add(new LabelCollection());
                         polyLinesLabels.associatedObject = 'polyLinesLabels';
                         statusFindpolyLinesLabels = true;
-                        console.log("lineLabel");
+                        console.log('lineLabel');
                     }
 
                     if (!statusFindpolyLinesTmps) {
                         polyLinesTmps = that._viewer.scene.primitives.add(new PolylineCollection());
                         polyLinesTmps.associatedObject = 'polylinesTmps';
                         statusFindpolyLinesTmps = true;
-                        console.log("lineTmps");
+                        console.log('lineTmps');
                     }
 
                     if (!statusFindpolyLinesLabelsTmps) {
                         polyLinesLabelsTmps = that._viewer.scene.primitives.add(new LabelCollection());
                         polyLinesLabelsTmps.associatedObject = 'polyLinesLabelsTmps';
                         statusFindpolyLinesLabelsTmps = true;
-                        console.log("lineLabelTmps");
+                        console.log('lineLabelTmps');
                     }
 
                     if (!statusFindcircle) {
                         circles = that._viewer.scene.primitives.add(new PrimitiveCollection());
                         circles.associatedObject = 'circleGeomtry';
                         statusFindcircle = true;
-                        console.log("circle");
+                        console.log('circle');
                     }
 
                     if (!statusFindCirclesLabels) {
                         circlesLabels = that._viewer.scene.primitives.add(new LabelCollection());
                         circlesLabels.associatedObject = 'circlesLabels';
                         statusFindCirclesLabels = true;
-                        console.log("circlesLabels");
+                        console.log('circlesLabels');
                     }
 
                     if (!statusFindPolygons) {
                         polygons = that._viewer.scene.primitives.add(new PrimitiveCollection());
                         polygons.associatedObject = 'polygonsGeomtry';
                         statusFindPolygons = true;
-                        console.log("polygonsGeomtry");
+                        console.log('polygonsGeomtry');
                     }
 
                     if (!statusFindPolygonsLabels) {
                         polygonsLabels = that._viewer.scene.primitives.add(new LabelCollection());
                         polygonsLabels.associatedObject = 'polygonsLabels';
                         statusFindPolygonsLabels = true;
-                        console.log("polygonsLabels");
+                        console.log('polygonsLabels');
                     }
 
                     if (!statusFindpolyLinesTmpPolygons) {
                         polyLinesTmpPolygons = that._viewer.scene.primitives.add(new PolylineCollection());
                         polyLinesTmpPolygons.associatedObject = 'polylinesTmpPolygons';
                         statusFindpolyLinesTmpPolygons = true;
-                        console.log("polylinesTmpPolygons");
+                        console.log('polylinesTmpPolygons');
                     }
 
                     if (!statusFindpolyLinesLabelsTmpPolygons) {
                         polyLinesLabelsTmpPolygons = that._viewer.scene.primitives.add(new LabelCollection());
                         polyLinesLabelsTmpPolygons.associatedObject = 'polyLinesLabelsTmpPolygons';
                         statusFindpolyLinesLabelsTmpPolygons = true;
-                        console.log("polyLinesLabelsTmpPolygons");
+                        console.log('polyLinesLabelsTmpPolygons');
                     }
                 }
             }
@@ -2679,7 +2680,7 @@ define([
 
 
         try {
-            that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands;
+            that._viewer.editDrawing.viewModel.subMenu.viewModel.removeAllCommands();
         } catch (e) {
         }
 

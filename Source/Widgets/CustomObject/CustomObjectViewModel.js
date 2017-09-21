@@ -26,7 +26,7 @@ define([
         Globe,
         knockout,
         createCommand) {
-            "use strict";
+            'use strict';
 
             function initialization(that) {
 
@@ -37,21 +37,21 @@ define([
 
                     try {
                         that._viewer.scene.primitives.removeAll(true);
-                        that._viewer.lngLat.viewModel.removeCommand;
+                        that._viewer.lngLat.viewModel.removeCommand();
 
                     } catch (e) {
                         console.log(e);
                     }
 
                     try {
-                        that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu;
-                        that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+                        that._viewer.drawLines.viewModel.subMenu.destroyWrapperMenu();
+                        that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands();
                     } catch (e) {
                         console.log(e);
                     }
 
                     try {
-                        that._viewer.showSystems.viewModel.hidePanel;
+                        that._viewer.showSystems.viewModel.hidePanel();
                     } catch (e) {
                         console.log(e);
                     }
@@ -82,56 +82,56 @@ define([
             function  showPanel(that) {
 
                 if (!that._isCustomPanelActive) {
-                    that._configContainer.style.zIndex = "2";
-                    that._configContainer.style.opacity = "1";
+                    that._configContainer.style.zIndex = '2';
+                    that._configContainer.style.opacity = '1';
                     that._configContainer.className = 'cesium-customObject-configContainer-show';
 
-                    that._ellipsParamContainer.style.zIndex = "2";
-                    that._ellipsParamContainer.style.left = "20px";
-                    that._ellipsParamContainer.className = "cesium-customObject-ellipsoidParameters cesium-customObject-ellipsoidParameters-show";
+                    that._ellipsParamContainer.style.zIndex = '2';
+                    that._ellipsParamContainer.style.left = '20px';
+                    that._ellipsParamContainer.className = 'cesium-customObject-ellipsoidParameters cesium-customObject-ellipsoidParameters-show';
 
                     setTimeout(function () {
-                        that._ellipsTextContainer.style.zIndex = "2";
-                        that._ellipsTextContainer.style.left = "320px";
-                        that._ellipsTextContainer.className = "cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-show";
+                        that._ellipsTextContainer.style.zIndex = '2';
+                        that._ellipsTextContainer.style.left = '320px';
+                        that._ellipsTextContainer.className = 'cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-show';
                     }, 400);
 
                     setTimeout(function () {
-                        that._layerInfoContainer.style.zIndex = "2";
-                        that._layerInfoContainer.style.left = "320px";
-                        that._layerInfoContainer.className = "cesium-customObject-infosLayer cesium-customObject-infosLayer-show";
+                        that._layerInfoContainer.style.zIndex = '2';
+                        that._layerInfoContainer.style.left = '320px';
+                        that._layerInfoContainer.className = 'cesium-customObject-infosLayer cesium-customObject-infosLayer-show';
                     }, 600);
 
                     setTimeout(function () {
-                        that._loadConfigContainer.style.zIndex = "2";
-                        that._loadConfigContainer.style.left = "20px";
-                        that._loadConfigContainer.className = "cesium-customObject-configFile cesium-customObject-configFile-show";
+                        that._loadConfigContainer.style.zIndex = '2';
+                        that._loadConfigContainer.style.left = '20px';
+                        that._loadConfigContainer.className = 'cesium-customObject-configFile cesium-customObject-configFile-show';
                     }, 700);
 
                     that._isCustomPanelActive = true;
 
                 } else if (that._isCustomPanelActive) {
 
-                    that._configContainer.style.zIndex = "-1";
-                    that._configContainer.style.opacity = "0";
+                    that._configContainer.style.zIndex = '-1';
+                    that._configContainer.style.opacity = '0';
                     that._configContainer.className = 'cesium-customObject-configContainer-show';
 
                     setTimeout(function () {
-                        that._ellipsParamContainer.style.zIndex = "-1";
-                        that._ellipsParamContainer.style.left = "-470px";
-                        that._ellipsParamContainer.className = "cesium-customObject-ellipsoidParameters cesium-customObject-ellipsoidParameters-hide";
+                        that._ellipsParamContainer.style.zIndex = '-1';
+                        that._ellipsParamContainer.style.left = '-470px';
+                        that._ellipsParamContainer.className = 'cesium-customObject-ellipsoidParameters cesium-customObject-ellipsoidParameters-hide';
 
-                        that._ellipsTextContainer.style.zIndex = "-1";
-                        that._ellipsTextContainer.style.left = "-570px";
-                        that._ellipsTextContainer.className = "cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-hide";
+                        that._ellipsTextContainer.style.zIndex = '-1';
+                        that._ellipsTextContainer.style.left = '-570px';
+                        that._ellipsTextContainer.className = 'cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-hide';
 
-                        that._layerInfoContainer.style.zIndex = "-1";
-                        that._layerInfoContainer.style.left = "-570px";
-                        that._layerInfoContainer.className = "cesium-customObject-infosLayer cesium-customObject-infosLayer-hide";
+                        that._layerInfoContainer.style.zIndex = '-1';
+                        that._layerInfoContainer.style.left = '-570px';
+                        that._layerInfoContainer.className = 'cesium-customObject-infosLayer cesium-customObject-infosLayer-hide';
 
-                        that._loadConfigContainer.style.zIndex = "-1";
-                        that._loadConfigContainer.style.left = "-470px";
-                        that._loadConfigContainer.className = "cesium-customObject-configFile cesium-customObject-configFile-hide";
+                        that._loadConfigContainer.style.zIndex = '-1';
+                        that._loadConfigContainer.style.left = '-470px';
+                        that._loadConfigContainer.className = 'cesium-customObject-configFile cesium-customObject-configFile-hide';
                     }, 300);
 
                     that._isCustomPanelActive = false;
@@ -142,26 +142,26 @@ define([
 
                 if (that._isCustomPanelActive) {
 
-                    that._configContainer.style.zIndex = "-1";
-                    that._configContainer.style.opacity = "0";
+                    that._configContainer.style.zIndex = '-1';
+                    that._configContainer.style.opacity = '0';
                     that._configContainer.className = 'cesium-customObject-configContainer-show';
 
                     setTimeout(function () {
-                        that._ellipsParamContainer.style.zIndex = "-1";
-                        that._ellipsParamContainer.style.left = "-570px";
-                        that._ellipsParamContainer.className = "cesium-customObject-ellipsoidParameters cesium-customObject-ellipsoidParameters-hide";
+                        that._ellipsParamContainer.style.zIndex = '-1';
+                        that._ellipsParamContainer.style.left = '-570px';
+                        that._ellipsParamContainer.className = 'cesium-customObject-ellipsoidParameters cesium-customObject-ellipsoidParameters-hide';
 
-                        that._ellipsTextContainer.style.zIndex = "-1";
-                        that._ellipsTextContainer.style.left = "-570px";
-                        that._ellipsTextContainer.className = "cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-hide";
+                        that._ellipsTextContainer.style.zIndex = '-1';
+                        that._ellipsTextContainer.style.left = '-570px';
+                        that._ellipsTextContainer.className = 'cesium-customObject-ellipsoidTexture cesium-customObject-ellipsoidTexture-hide';
 
-                        that._layerInfoContainer.style.zIndex = "-1";
-                        that._layerInfoContainer.style.left = "-570px";
-                        that._layerInfoContainer.className = "cesium-customObject-infosLayer cesium-customObject-infosLayer-hide";
+                        that._layerInfoContainer.style.zIndex = '-1';
+                        that._layerInfoContainer.style.left = '-570px';
+                        that._layerInfoContainer.className = 'cesium-customObject-infosLayer cesium-customObject-infosLayer-hide';
 
-                        that._loadConfigContainer.style.zIndex = "-1";
-                        that._loadConfigContainer.style.left = "-570px";
-                        that._loadConfigContainer.className = "cesium-customObject-configFile cesium-customObject-configFile-hide";
+                        that._loadConfigContainer.style.zIndex = '-1';
+                        that._loadConfigContainer.style.left = '-570px';
+                        that._loadConfigContainer.className = 'cesium-customObject-configFile cesium-customObject-configFile-hide';
                     }, 300);
 
                     that._isCustomPanelActive = false;
@@ -174,7 +174,7 @@ define([
                 that.availableObjects = knockout.observableArray([]);
                 that.selectedObject = knockout.observableArray();
                 that.selectedObject.subscribe(function (data) {
-                    console.log(data);
+                    //console.log(data);
 
                     if (that._isCustomPanelActive) {
                         hidePanel(that);

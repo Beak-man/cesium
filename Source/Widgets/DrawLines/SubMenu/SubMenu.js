@@ -7,7 +7,7 @@ define([
         defineProperties,
         knockout,
         SubMenuViewModel) {
-    "use strict";
+    'use strict';
 
 
     var cutIcon = '<g><g><path d="M232.491,195.859c7.978-32.608-1.617-68.425-29.02-91.425l-54.288-45.855C110.757,26.343,53.449,31.371,21.201,69.791\
@@ -19,7 +19,7 @@ define([
 			<path d="M610.321,100.308L610.321,100.308c-28.433-33.878-78.943-38.306-112.834-9.873L182.454,354.787\
 				c-30.726-13.525-67.794-9.589-95.203,13.411l-54.648,45.855c-38.426,32.242-43.454,89.732-11.219,128.159\
 				c32.248,38.42,89.739,43.448,128.159,11.206l54.648-45.861c27.409-22.994,37.719-58.811,29.74-91.413L610.321,100.308z\
-				 M304.845,280.645c15.375,0,27.814,12.457,27.814,27.814c0,15.369-12.438,27.814-27.814,27.814\
+                                M304.845,280.645c15.375,0,27.814,12.457,27.814,27.814c0,15.369-12.438,27.814-27.814,27.814\
 				c-15.357,0-27.807-12.451-27.807-27.814C277.038,293.102,289.489,280.645,304.845,280.645z M170.97,467.968l-54.654,45.861\
 				c-16.595,13.923-41.42,11.75-55.337-4.839c-13.923-16.595-11.75-41.414,4.845-55.33l54.648-45.861\
 				c16.601-13.923,41.42-11.75,55.343,4.845C189.731,429.226,187.558,454.045,170.97,467.968z"/></g>\
@@ -28,7 +28,7 @@ define([
 
     var saveIcon = '<g><path d="M340.969,0H12.105C5.423,0,0,5.423,0,12.105v328.863c0,6.68,5.423,12.105,12.105,12.105h328.864\
 		c6.679,0,12.104-5.426,12.104-12.105V12.105C353.073,5.423,347.647,0,340.969,0z M67.589,18.164h217.895v101.884H67.589V18.164z\
-		 M296.082,327.35H57.003V176.537h239.079V327.35z M223.953,33.295h30.269v72.638h-30.269V33.295z M274.135,213.863H78.938v-12.105\
+                M296.082,327.35H57.003V176.537h239.079V327.35z M223.953,33.295h30.269v72.638h-30.269V33.295z M274.135,213.863H78.938v-12.105\
 		h195.197V213.863z M274.135,256.231H78.938v-12.105h195.197V256.231z M274.135,297.087H78.938v-12.105h195.197V297.087z"/></g>';
 
     var closeIcon = '<path d="M84.707,68.752L65.951,49.998l18.75-18.752c0.777-0.777,0.777-2.036,0-2.813L71.566,15.295\
@@ -50,7 +50,7 @@ define([
 
     var trashIcon = '<g><g><path d="M75.834,33.388h-51.67c-1.311,0-2.375,1.058-2.375,2.373v49.887c0,1.314,1.064,2.377,2.375,2.377h51.67\
 			c1.314,0,2.375-1.063,2.375-2.377V35.76C78.209,34.446,77.148,33.388,75.834,33.388z"/></g><g>\
-		    <path d="M79.004,17.352H59.402v-2.999c0-1.314-1.061-2.377-2.373-2.377H42.971c-1.312,0-2.375,1.063-2.375,2.377v2.999H20.996\
+                        <path d="M79.004,17.352H59.402v-2.999c0-1.314-1.061-2.377-2.373-2.377H42.971c-1.312,0-2.375,1.063-2.375,2.377v2.999H20.996\
 			c-1.312,0-2.375,1.059-2.375,2.373v6.932c0,1.314,1.063,2.373,2.375,2.373h58.008c1.314,0,2.375-1.059,2.375-2.373v-6.932\
 			C81.379,18.41,80.318,17.352,79.004,17.352z"/></g></g>';
 
@@ -59,7 +59,7 @@ define([
 				<path d="M110.842,73.083h-7.308c-1.349,0-2.437,1.089-2.437,2.437s1.088,2.436,2.437,2.436h7.308c1.348,0,2.438-1.088,2.438-2.436C113.277,74.172,112.189,73.083,110.842,73.083z"/>\
 				<path d="M96.227,73.083h-7.309c-1.348,0-2.438,1.089-2.438,2.437s1.09,2.436,2.438,2.436h7.309c1.347,0,2.437-1.088,2.437-2.436\
 				C98.662,74.172,97.572,73.083,96.227,73.083z"/><path d="M125.459,73.083h-7.309c-1.349,0-2.437,1.089-2.437,2.437s1.088,2.436,2.437,2.436h7.309c1.348,0,2.436-1.088,2.436-2.436\
-			        S126.807,73.083,125.459,73.083z"/><path d="M81.609,73.083H74.3c-1.347,0-2.436,1.089-2.436,2.437s1.089,2.436,2.436,2.436h7.31c1.347,0,2.436-1.088,2.436-2.436\
+                                S126.807,73.083,125.459,73.083z"/><path d="M81.609,73.083H74.3c-1.347,0-2.436,1.089-2.436,2.437s1.089,2.436,2.436,2.436h7.31c1.347,0,2.436-1.088,2.436-2.436\
 				S82.956,73.083,81.609,73.083z"/></g>';
 
     var circle2Icon = '<g><circle style="fill:none; stroke:#fff; stroke-width:20;" cx="150" cy="150" r="145" id="circle"/>\
@@ -100,9 +100,9 @@ define([
         drawButton.innerHTML = '<svg width="35" height="35" viewBox="-15 -11 210 210">' + DrawIcon + ' </svg>';
         drawButton.setAttribute('data-bind', 'attr  : { title: "Draw polylines" }, event : {click : drawCommand}, css: {"cesium-subMenu-focus": isPolyLineActive}');
         wrapperMenu.appendChild(drawButton);
-        
+
         var wrapperCircleButton = document.createElement('span');
-        wrapperCircleButton.className =  "cesium-subMenu-saveButtonWrapper";
+        wrapperCircleButton.className =  'cesium-subMenu-saveButtonWrapper';
         wrapperMenu.appendChild(wrapperCircleButton);
 
         var circleButton = document.createElement('div');
@@ -110,20 +110,20 @@ define([
         circleButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 168.602  168.602">' + circleIcon + ' </svg>';
         circleButton.setAttribute('data-bind', 'attr  : { title: "Draw circles from a given radius" }, event : {click : circleCommand}, css: {"cesium-subMenu-focus": isCircleActive}');
         wrapperCircleButton.appendChild(circleButton);
-        
+
         var circleTwoPointsButton = document.createElement('div');
         circleTwoPointsButton.className = 'cesium-button cesium-toolbar-button cesium-subMenu-saveButton';
         circleTwoPointsButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 325  325">' + circle2Icon + ' </svg>';
         circleTwoPointsButton.setAttribute('data-bind', 'attr  : { title: "Draw circles with two points"}, event : {click : circleFromTwoPointsCommand}, css: {"cesium-subMenu-focus": isCircleFromTwoPointsActive}');
         wrapperCircleButton.appendChild(circleTwoPointsButton);
-        
+
         var circleThreePointsButton = document.createElement('div');
         circleThreePointsButton.className = 'cesium-button cesium-toolbar-button cesium-subMenu-saveButton';
         circleThreePointsButton.innerHTML = '<svg width="30" height="30" viewBox="-10 -7 325  325">' + circle3Icon + ' </svg>';
         circleThreePointsButton.style.left = '80px';
         circleThreePointsButton.setAttribute('data-bind', 'attr  : { title: "Draw circles with three points"}, event : {click : circleFromThreePointsCommand}, css: {"cesium-subMenu-focus": isCircleFromThreePointsActive}');
         wrapperCircleButton.appendChild(circleThreePointsButton);
-        
+
         var polygonButton = document.createElement('div');
         polygonButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         polygonButton.innerHTML = '<svg width="26" height="26" viewBox="-30 0 550 438.857">' + polygonIcon + ' </svg>';
@@ -135,9 +135,9 @@ define([
         trashButton.innerHTML = '<svg width="30" height="30" viewBox="0 0 100 100">' + trashIcon + ' </svg>';
         trashButton.setAttribute('data-bind', 'attr  : { title: "Remove all objects" }, event : {click : trashCommand}');
         wrapperMenu.appendChild(trashButton);
-        
+
         var wrapperSaveButtonMenu = document.createElement('span');
-        wrapperSaveButtonMenu.className =  "cesium-subMenu-saveButtonWrapper";
+        wrapperSaveButtonMenu.className =  'cesium-subMenu-saveButtonWrapper';
         wrapperMenu.appendChild(wrapperSaveButtonMenu);
 
         var saveButton = document.createElement('div');
@@ -145,7 +145,7 @@ define([
         saveButton.innerHTML = '<svg width="40" height="40" viewBox="-50 -50 640 640">' + saveIcon + ' </svg>';
         saveButton.setAttribute('data-bind', 'attr  : { title: "Create file" }, event : {click : saveCommand}');
         wrapperSaveButtonMenu.appendChild(saveButton);
-        
+
       /*  var infosButton = document.createElement('div');
         infosButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         infosButton.innerHTML = 'i';
@@ -179,7 +179,7 @@ define([
                 return this._container;
             }
         },
-        
+
         /**
          * Gets the view model.
          * @memberof SubMenu.prototype
