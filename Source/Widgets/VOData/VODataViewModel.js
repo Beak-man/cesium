@@ -75,7 +75,7 @@ define([
         PrimitiveCollection,
         knockout,
         createCommand) {
-    "use strict";
+    'use strict';
 
     function showPanel(that, configContainer) {
 
@@ -83,12 +83,12 @@ define([
 
             configContainer.className = 'cesium-voData-configContainer cesium-voData-configContainer-transition';
             var leftPositionStr = configContainer.style.left;
-            var leftPositionStrTab = leftPositionStr.split("p");
+            var leftPositionStrTab = leftPositionStr.split('p');
             var leftPosition = parseInt(leftPositionStrTab);
 
-            var panelMove = leftPosition - 400 + "px";
+            var panelMove = leftPosition - 400 + 'px';
             configContainer.style.left = panelMove;
-            configContainer.style.opacity = "1";
+            configContainer.style.opacity = '1';
 
             that._isVOPanelActive = true;
 
@@ -96,12 +96,12 @@ define([
 
             configContainer.className = 'cesium-voData-configContainer cesium-voData-configContainer-transition';
             var leftPositionStr = configContainer.style.left;
-            var leftPositionStrTab = leftPositionStr.split("p");
+            var leftPositionStrTab = leftPositionStr.split('p');
             var leftPosition = parseInt(leftPositionStrTab);
 
-            var panelMove = leftPosition + 400 + "px";
+            var panelMove = leftPosition + 400 + 'px';
             configContainer.style.left = panelMove;
-            configContainer.style.opacity = "0";
+            configContainer.style.opacity = '0';
 
             that._isVOPanelActive = false;
         }
@@ -113,8 +113,8 @@ define([
             return true;
         } else {
 
-            console.log("Input Errors : " + "Please, enter a NUMBER type value for " + inputField.name.toUpperCase() + " in the format : XX.XX");
-            alert("Please, enter a NUMBER type value for " + inputField.name.toUpperCase() + " in the format : XX.XX");
+            console.log('Input Errors : ' + 'Please, enter a NUMBER type value for ' + inputField.name.toUpperCase() + ' in the format : XX.XX');
+            alert('Please, enter a NUMBER type value for ' + inputField.name.toUpperCase() + ' in the format : XX.XX');
             return false;
         }
     }
@@ -150,14 +150,14 @@ define([
             var latMin = parseFloat(inputObjects.latMin.value);
             var latMax = parseFloat(inputObjects.latMax.value);
 
-            var queryPart1 = serverUrl + "?REQUEST=doQuery&LANG=ADQL&";
-            var queryPart2 = "QUERY=SELECT * from " + extension + " where c1min>" + lngMin + "and c2min>" + latMin + "and c1max<" + lngMax + "and c2max<" + latMax + "&FORMAT=" + format;
+            var queryPart1 = serverUrl + '?REQUEST=doQuery&LANG=ADQL&';
+            var queryPart2 = 'QUERY=SELECT * from ' + extension + ' where c1min>' + lngMin + 'and c2min>' + latMin + 'and c1max<' + lngMax + 'and c2max<' + latMax + '&FORMAT=' + format;
             var query = queryPart1 + queryPart2;
 
             console.log(query);
 
             xhrVO.open('GET', query, true);
-            xhrVO.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhrVO.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhrVO.send();
             xhrVO.onreadystatechange = function () {
 
@@ -168,9 +168,9 @@ define([
                     // console.log(data);
                     var jsonData = JSON.parse(data);
                     console.log(jsonData);
-                    console.log("==========================================");
-                    console.log("nombre de points : " + jsonData.data.length);
-                    console.log("==========================================");
+                    console.log('==========================================');
+                    console.log('nombre de points : ' + jsonData.data.length);
+                    console.log('==========================================');
 
                     var dataTab = [];
                     dataTab = jsonData.data;
@@ -217,10 +217,10 @@ define([
                         console.log(geomType, isValuesValid, arr[numberColumForCvalues.access_format]);
 
                         // if we have a point
-                        if (geomType === "points") {
+                        if (geomType === 'points') {
 
                             // if data are valid and if we have a text format or an unknown format 
-                            // if (isValuesValid === true && arr[numberColumForCvalues.access_format] === "text/plain" || !arr[numberColumForCvalues.access_format]) {
+                            // if (isValuesValid === true && arr[numberColumForCvalues.access_format] === 'text/plain' || !arr[numberColumForCvalues.access_format]) {
                             if (isValuesValid === true) {
                                 // we create the description object corresponding to the current point
                                 var desciprionObject = createDescriptionObject(columnNomTab, arr);
@@ -239,7 +239,7 @@ define([
                                     altMin.push(C3Min);
                                     altMax.push(C3Max);
 
-                                    //  console.log("avant generate point");
+                                    //  console.log('avant generate point');
                                     // generate point
                                     generatePoints(C1Min, C1Max, C2Min, C2Max, C3Min, C3Max, unitC3, desciprionObject, dataSourceDisplay, ellipsoid, color);
 
@@ -258,7 +258,7 @@ define([
 
                             }
 
-                        } else if (isValuesValid === true && arr[numberColumForCvalues.access_format] === "application/x-pds" || arr[numberColumForCvalues.access_format] === "application/x-geotiff") {
+                        } else if (isValuesValid === true && arr[numberColumForCvalues.access_format] === 'application/x-pds' || arr[numberColumForCvalues.access_format] === 'application/x-geotiff') {
 
 
                             var desciprionObject = createDescriptionObject(columnNomTab, arr);
@@ -277,7 +277,7 @@ define([
 
                         }
                     }
-                    console.log("================= dataSourceDisplay =======================");
+                    console.log('================= dataSourceDisplay =======================');
                     console.log(dataSourceDisplay);
                     pickingActivation(that, viewer, dataSourceDisplay, handlerLeftClick, ellipsoid, billboards, resultContainer);
 
@@ -290,7 +290,7 @@ define([
     /*
      function createQuery(that, viewer, planetName, inputObjects, serverUrl, format) {
      
-     var serverName = "serverVO" + planetName.toLowerCase();
+     var serverName = 'serverVO' + planetName.toLowerCase();
      var xhr = getRequest();
      var xhrVO = getRequest();
      
@@ -318,7 +318,7 @@ define([
      
      xhr.open('GET', serverUrl, true);
      
-     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
      xhr.send();
      xhr.onload = function () {
      
@@ -331,16 +331,16 @@ define([
      
      //    console.log(jsonData);
      
-     var queryPart1 = server.url + "?REQUEST=doQuery&LANG=ADQL&";
+     var queryPart1 = server.url + '?REQUEST=doQuery&LANG=ADQL&';
      
-     var queryPart2 = "QUERY=SELECT * from " + server.extension + " where c1min>" + lngMin + "and c2min>" + latMin + "and c1max<" + lngMax + "and c2max<" + latMax + "&FORMAT=" + format;
+     var queryPart2 = 'QUERY=SELECT * from ' + server.extension + ' where c1min>' + lngMin + 'and c2min>' + latMin + 'and c1max<' + lngMax + 'and c2max<' + latMax + '&FORMAT=' + format;
      
      var query = queryPart1 + queryPart2;
      
      console.log(query);
      
      xhrVO.open('GET', query, true);
-     xhrVO.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+     xhrVO.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
      xhrVO.send();
      xhrVO.onreadystatechange = function () {
      
@@ -434,7 +434,7 @@ define([
      
      }).catch(
      function () {
-     console.log("promesse rompue");
+     console.log('promesse rompue');
      });
      }
      }
@@ -485,9 +485,9 @@ define([
     function checkGeometryType(C1Min, C1Max, C2Min, C2Max) {
 
         if (C1Min === C1Max && C2Min === C2Max) {
-            return "points";
+            return 'points';
         } else {
-            return "polygons";
+            return 'polygons';
         }
     }
 
@@ -502,31 +502,31 @@ define([
 
             // C1min ou c1min mais pas les deux
 
-            if (ColumnId === "c1min" || ColumnId === "C1min") {
+            if (ColumnId === 'c1min' || ColumnId === 'C1min') {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId === "c1max" || ColumnId === "C1max") {
+            } else if (ColumnId === 'c1max' || ColumnId === 'C1max') {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId === "c2min" || ColumnId === "C2min") {
+            } else if (ColumnId === 'c2min' || ColumnId === 'C2min') {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId === "c2max" || ColumnId === "C2max") {
+            } else if (ColumnId === 'c2max' || ColumnId === 'C2max') {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId === "c3min" || ColumnId === "C3min") {
+            } else if (ColumnId === 'c3min' || ColumnId === 'C3min') {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId === "c3max" || ColumnId === "C3max") {
+            } else if (ColumnId === 'c3max' || ColumnId === 'C3max') {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId === "access_format") {
+            } else if (ColumnId === 'access_format') {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId === "measurement_type") {
+            } else if (ColumnId === 'measurement_type') {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
-            } else if (ColumnId === "access_url") {
+            } else if (ColumnId === 'access_url') {
                 var ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             }
@@ -570,7 +570,7 @@ define([
             //   console.log(isC1minInList, isC1maxInList, isC2minInList, isC2maxInList);
 
         }
-        //  console.log("booleens finaux");
+        //  console.log('booleens finaux');
         //  console.log(isC1minInList, isC1maxInList, isC2minInList, isC2maxInList);
 
         if (isC1minInList === true && isC1maxInList === true && isC2minInList === true && isC2maxInList === true && isC3minInList === true && isC3maxInList === true) {
@@ -639,15 +639,15 @@ define([
         var descrip = {};
 
         for (var i = 0; i < columnNameTab.length; i++) {
-            // console.log(columnNameTab[i].name + " : " + arr[i]);
+            // console.log(columnNameTab[i].name + ' : ' + arr[i]);
 
             // if the value of the description is not null
-            if (arr[i] !== null && arr[i] !== "") {
+            if (arr[i] !== null && arr[i] !== '') {
                 descrip[columnNameTab[i].name.toLowerCase()] = arr[i];
             }
         }
 
-        var html = defaultDescribe(descrip, "title");
+        var html = defaultDescribe(descrip, 'title');
 
         var returnObject = {
             html: html,
@@ -692,7 +692,7 @@ define([
             point: point,
             position: position,
             show: true,
-            name: "VO data",
+            name: 'VO data',
             description: new ConstantProperty(desciprionObject.html)
         };
 
@@ -730,7 +730,7 @@ define([
          polyline: polyline,
          position: posi,
          show: true,
-         name: "VO data",
+         name: 'VO data',
          description: new ConstantProperty(desciprionObject.html)
          };
          
@@ -798,7 +798,7 @@ define([
             id: id,
             polygon: polygon,
             show: true,
-            name: "VO data",
+            name: 'VO data',
             description: new ConstantProperty(desciprionObject.html)
         };
 
@@ -922,7 +922,7 @@ define([
 
             if (position.x.toFixed(4) === cartPos.x.toFixed(4)) {
 
-                //  console.log("coordinates duplicated : " + cartPos.x.toFixed(4) + " " + cartPos.y.toFixed(4));
+                //  console.log('coordinates duplicated : ' + cartPos.x.toFixed(4) + ' ' + cartPos.y.toFixed(4));
 
                 var desciprionObject = createDescriptionObject(columnNomTab, stockLines);
                 pointsTab[i].descriptionTab.push(desciprionObject.object);
@@ -985,7 +985,7 @@ define([
              /*     try {
              resultContainer.removeChild(that._divRes);
              
-             that._divRes = document.createElement("div");
+             that._divRes = document.createElement('div');
              that._divRes.className = 'cesium-voData-divRes';
              resultContainer.appendChild(that._divRes);
              
@@ -993,12 +993,12 @@ define([
              that._divRes.appendChild(fieldsetRequest);
              
              var legendRequest = document.createElement('LEGEND');
-             legendRequest.innerHTML = "Plot parameters";
+             legendRequest.innerHTML = 'Plot parameters';
              fieldsetRequest.appendChild(legendRequest);
              
              } catch (e) {
              
-             that._divRes = document.createElement("div");
+             that._divRes = document.createElement('div');
              that._divRes.className = 'cesium-voData-divRes';
              resultContainer.appendChild(that._divRes);
              
@@ -1006,7 +1006,7 @@ define([
              that._divRes.appendChild(fieldsetRequest);
              
              var legendRequest = document.createElement('LEGEND');
-             legendRequest.innerHTML = "Plot parameters";
+             legendRequest.innerHTML = 'Plot parameters';
              fieldsetRequest.appendChild(legendRequest);
              
              }*\
@@ -1020,7 +1020,7 @@ define([
              dataSourceDisplay.update(clock.currentTime);
              
              
-             /*    var canvas = document.createElement("CANVAS");
+             /*    var canvas = document.createElement('CANVAS');
              canvas.className = 'cesium-voData-canvas';  
              canvas.id = 'canvasVOId';
              
@@ -1137,11 +1137,11 @@ define([
     function getRequest() {
         if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
             var xhr = new XMLHttpRequest();
-        } else if (typeof ActiveXObject !== " undefined") {
-            var xhr = new ActiveXObject("Microsoft.XMLHTTP"); // activeX pour IE
-            console.log("IE");
+        } else if (typeof ActiveXObject !== ' undefined') {
+            var xhr = new ActiveXObject('Microsoft.XMLHTTP'); // activeX pour IE
+            console.log('IE');
         } else {
-            console.log("AJAX don't available on this browser");
+            console.log('AJAX don't available on this browser');
             var xhr = null;
         }
         return xhr;
@@ -1167,7 +1167,7 @@ define([
         this._inputObjects = inputObjects;
         this._resultContainer = resultContainer;
         this._query = null;
-        this._format = "json";
+        this._format = 'json';
         this._divRes = null;
         this._dataSourceDisplay = null;
 
@@ -1176,7 +1176,7 @@ define([
             var dim = dimData[i];
 
             for (var j = 0; j < dim; j++) {
-                this['showData_' + i + "_" + j] = knockout.observable(false); // METTRE A FALSE
+                this['showData_' + i + '_' + j] = knockout.observable(false); // METTRE A FALSE
             }
         }
 
@@ -1206,7 +1206,7 @@ define([
 
             removeHandlers(that);
             that._handlerLeftClick = new ScreenSpaceEventHandler(viewer.scene.canvas);
-            console.log("handler created");
+            console.log('handler created');
 
             var tabExtension = [];
             var tabServerUrl = [];
@@ -1303,7 +1303,7 @@ define([
 
         if (that._handlerLeftClick)
             that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-        console.log("handler removed");
+        console.log('handler removed');
     }
 
     return VODataViewModel;

@@ -26,7 +26,7 @@ define([
         knockout,
         createCommand,
         ColorPicker) {
-    "use strict";
+    'use strict';
 
     function flagFunctionV2(that, viewer) {
 
@@ -71,7 +71,7 @@ define([
                 }
 
                 objectId.entityCollection.remove(objectId);
-                console.log("suppression done");
+                console.log('suppression done');
 
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
@@ -105,7 +105,7 @@ define([
 
                             var objectType = objectId[that._propertiesNames[i]];
 
-                            if (that._propertiesNames[i] === "ellipse" || that._propertiesNames[i] === 'point') {
+                            if (that._propertiesNames[i] === 'ellipse' || that._propertiesNames[i] === 'point') {
 
                                 var objectTypeEllipse = objectId['ellipse'];
                                 var objectTypePoint = objectId['point'];
@@ -126,7 +126,7 @@ define([
                                         objectTypePoint.outlineWidth._value = 3;
 
 
-                                        var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
+                                        var rgba = parseInt(colorObject.red) + ', ' + parseInt(colorObject.green) + ', ' + parseInt(colorObject.blue) + ', ' + colorObject.alpha;
                                         objectId.properties.flagColor = rgba;
                                         objectId.properties[colorProperty.propertyName] = colorProperty.propertyValue;
 
@@ -156,7 +156,7 @@ define([
                                         }
 
 
-                                        var rgba = parseInt(colorObject.red) + ", " + parseInt(colorObject.green) + ", " + parseInt(colorObject.blue) + ", " + colorObject.alpha;
+                                        var rgba = parseInt(colorObject.red) + ', ' + parseInt(colorObject.green) + ', ' + parseInt(colorObject.blue) + ', ' + colorObject.alpha;
                                         objectId.properties.flagColor = rgba;
                                         objectId.properties[colorProperty.PropertyName] = colorProperty.PropertyValue;
 
@@ -196,7 +196,7 @@ define([
                     }
                 }
 
-                console.log("flag done");
+                console.log('flag done');
 
             }, ScreenSpaceEventType.LEFT_CLICK);
 
@@ -225,11 +225,11 @@ define([
         var centerPosition = [centerPositionLng, centerPositionLat];
 
         var jsonCircleGeoJson = {};
-        jsonCircleGeoJson.type = "Point";
+        jsonCircleGeoJson.type = 'Point';
         jsonCircleGeoJson.coordinates = centerPosition;
 
         var featureCircleGeometry = {};
-        featureCircleGeometry.type = "Feature";
+        featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
         featureCircleGeometry.properties = geoJsonDataSource.properties;
 
@@ -239,10 +239,10 @@ define([
     function createPolygonGeoJsonObect(that, geoJsonDataSource) {
 
         var featurePolygons = {};
-        featurePolygons.type = "Feature";
+        featurePolygons.type = 'Feature';
 
         var geoJsonPolygons = {};
-        geoJsonPolygons.type = "Polygon";
+        geoJsonPolygons.type = 'Polygon';
         geoJsonPolygons.coordinates = [];
 
         var positions = geoJsonDataSource.polygon.hierarchy._value.positions;
@@ -260,7 +260,7 @@ define([
         geoJsonPolygons.coordinates.push(array);
         featurePolygons.geometry = geoJsonPolygons;
         featurePolygons.properties = {
-            Name: "Polygons"
+            Name: 'Polygons'
         };
 
         return featurePolygons;
@@ -269,10 +269,10 @@ define([
     function createPolylineGeoJsonObect(that, geoJsonDataSource) {
 
         var featurePolylines = {};
-        featurePolylines.type = "Feature";
+        featurePolylines.type = 'Feature';
 
         var jsonPolylineGeometry = {};
-        jsonPolylineGeometry.type = "MultiLineString";
+        jsonPolylineGeometry.type = 'MultiLineString';
         jsonPolylineGeometry.coordinates = [];
 
         var positions = geoJsonDataSource.polyline.positions._value;
@@ -296,7 +296,7 @@ define([
         jsonPolylineGeometry.coordinates.push(array);
         featurePolylines.geometry = jsonPolylineGeometry;
         featurePolylines.properties = geoJsonDataSource.properties;
-        //  featurePolylines.properties.segment = "D = "+ distTrunc + " m";
+        //  featurePolylines.properties.segment = 'D = '+ distTrunc + ' m';
 
         return featurePolylines;
     }
@@ -312,11 +312,11 @@ define([
         var centerPosition = [centerPositionLng, centerPositionLat];
 
         var jsonCircleGeoJson = {};
-        jsonCircleGeoJson.type = "Point";
+        jsonCircleGeoJson.type = 'Point';
         jsonCircleGeoJson.coordinates = centerPosition;
 
         var featureCircleGeometry = {};
-        featureCircleGeometry.type = "Feature";
+        featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
         featureCircleGeometry.properties = geoJsonDataSource.properties;
 
@@ -329,19 +329,19 @@ define([
         var crs = GeoJsonDataSource.crsFunctionType;
 
         var geoJsonObject = {};
-        geoJsonObject.type = "FeatureCollection";
+        geoJsonObject.type = 'FeatureCollection';
         geoJsonObject.features = [];
         geoJsonObject.crs = crs.crs;
 
         for (var i = 0; i < primitives.length; i++) {
 
-            if (primitives[i].associatedObject === "polylines" && primitives[i]._polylines.length > 0) {
+            if (primitives[i].associatedObject === 'polylines' && primitives[i]._polylines.length > 0) {
 
                 var featurePolylines = {};
-                featurePolylines.type = "Feature";
+                featurePolylines.type = 'Feature';
 
                 var jsonPolylineGeometry = {};
-                jsonPolylineGeometry.type = "MultiLineString";
+                jsonPolylineGeometry.type = 'MultiLineString';
                 jsonPolylineGeometry.coordinates = [];
 
                 var polylines = primitives[i]._polylines;
@@ -372,7 +372,7 @@ define([
                         jsonPolylineGeometry.coordinates.push(line);
                         featurePolylines.geometry = jsonPolylineGeometry;
                         featurePolylines.properties = {
-                            Name: "Line",
+                            Name: 'Line',
                             Total_distance: totalLengthPath
                         };
                     }
@@ -380,7 +380,7 @@ define([
                 }
             }
 
-            if (primitives[i].associatedObject === "circleGeomtry") {
+            if (primitives[i].associatedObject === 'circleGeomtry') {
 
                 var circles = primitives[i]._primitives;
 
@@ -399,31 +399,31 @@ define([
                         var centerPosition = [centerPositionLng, centerPositionLat];
 
                         var jsonCircleGeometry = {};
-                        jsonCircleGeometry.type = "Point";
+                        jsonCircleGeometry.type = 'Point';
                         jsonCircleGeometry.coordinates = centerPosition;
 
                         var featureCircle = {};
-                        featureCircle.type = "Feature";
+                        featureCircle.type = 'Feature';
                         featureCircle.geometry = jsonCircleGeometry;
                         featureCircle.properties = {
-                            Name: "Circle",
-                            Center_lng: centerPositionLng.toFixed(3) + " deg",
-                            Center_lat: centerPositionLat.toFixed(3) + " deg",
-                            radius: circleRadius.toFixed(3) + " m",
-                            surface: circleSurface + " m2"
+                            Name: 'Circle',
+                            Center_lng: centerPositionLng.toFixed(3) + ' deg',
+                            Center_lat: centerPositionLat.toFixed(3) + ' deg',
+                            radius: circleRadius.toFixed(3) + ' m',
+                            surface: circleSurface + ' m2'
                         };
                         geoJsonObject.features.push(featureCircle);
                     }
                 }
             }
 
-            if (primitives[i].associatedObject === "polylinesTmpPolygons") {
+            if (primitives[i].associatedObject === 'polylinesTmpPolygons') {
 
                 var featurePolygons = {};
-                featurePolygons.type = "Feature";
+                featurePolygons.type = 'Feature';
 
                 var geoJsonPolygons = {};
-                geoJsonPolygons.type = "Polygon";
+                geoJsonPolygons.type = 'Polygon';
                 geoJsonPolygons.coordinates = [];
 
                 var polylines = primitives[i]._polylines;
@@ -464,7 +464,7 @@ define([
                     geoJsonPolygons.coordinates.push(polygonsPoints);
                     featurePolygons.geometry = geoJsonPolygons;
                     featurePolygons.properties = {
-                        Name: "Polygons"
+                        Name: 'Polygons'
                     };
 
                     geoJsonObject.features.push(featurePolygons);
@@ -486,7 +486,7 @@ define([
 
                     var geoJsonData = geoJsonDataSource[l];
 
-                    var dataType = ["ellipse", "polyline", "point", "polygon"];
+                    var dataType = ['ellipse', 'polyline', 'point', 'polygon'];
 
                     var geomType;
 
@@ -512,11 +512,11 @@ define([
 
             var geoJsonData = JSON.stringify(geoJsonObject);
             var blob = new Blob([geoJsonData], {
-                type: "application/octet-stream",
-                endings: "native"
+                type: 'application/octet-stream',
+                endings: 'native'
             });
             var url = URL.createObjectURL(blob);
-            var fileName = "geoJsonFile.geojson";
+            var fileName = 'geoJsonFile.geojson';
 
             if (!that._isSaveButtonActivate) {
 
@@ -524,7 +524,7 @@ define([
                 that._wrapperSaveSubMenu.className = 'cesium-subMenu-saveButton';
                 container.appendChild(that._wrapperSaveSubMenu);
 
-                that._linkDownload = document.createElement("a");
+                that._linkDownload = document.createElement('a');
                 that._linkDownload.className = 'cesium-subMenu-saveButtonLink';
                 that._wrapperSaveSubMenu.appendChild(that._linkDownload);
                 that._linkDownload.innerHTML = '<svg width="25px" height="25px" viewBox="-10 0 100 100"><g>\

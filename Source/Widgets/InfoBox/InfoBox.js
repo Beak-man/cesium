@@ -36,22 +36,21 @@ define([
         //>>includeStart('debug', pragmas.debug);
         Check.defined('container', container);
         //>>includeEnd('debug')
-		
+
         container = getElement(container);
 
         var infoElement = document.createElement('div');
         infoElement.className = 'cesium-infoBox';
         infoElement.setAttribute('data-bind', 'css: { "cesium-infoBox-visible" : showInfo, "cesium-infoBox-bodyless" : _bodyless }');
         container.appendChild(infoElement);
-		
-		 var titleTool = document.createElement('div');
-		 titleTool.className = 'cesium-infoBox-titleTool';
-         infoElement.appendChild(titleTool);
-		
-		var titleText = document.createElement('div');
-		 titleText.className = 'cesium-infoBox-titleText';
-         infoElement.appendChild(titleText);
-		
+
+        var titleTool = document.createElement('div');
+        titleTool.className = 'cesium-infoBox-titleTool';
+        infoElement.appendChild(titleTool);
+
+        var titleText = document.createElement('div');
+        titleText.className = 'cesium-infoBox-titleText';
+        infoElement.appendChild(titleText);
 
         var titleElement = document.createElement('div');
         titleElement.className = 'cesium-infoBox-title';
@@ -66,12 +65,12 @@ define([
                                                  enable: enableCamera,\
                                                  cesiumSvgPath: { path: cameraIconPath, width: 32, height: 32 }');
         titleTool.appendChild(cameraElement);
-		
-		
-		/* ************************************************************************************************************
-		 * ************************************************************************************************************
-		 * ************************************************************************************************************ */
-		
+
+
+	/* ************************************************************************************************************
+	 * ************************************************************************************************************
+	 * ************************************************************************************************************ */
+
 	/*	var modifyElement = document.createElement('button');
         modifyElement.type = 'button';
         modifyElement.className = 'cesium-button cesium-infoBox-camera';
@@ -80,15 +79,14 @@ define([
         modifyElement.setAttribute('data-bind', 'attr: { title: "Edit fields" }, click : activateEditMode');
         titleTool.appendChild(modifyElement);
 		*/
-		
-		// l'id�e consiste a recuperer l'element HTML dans viewer.infoBox.frame.contentDocument.all et de l'injecter dans 
-		// viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties ou bien directement dans 
-		// l'objet geoJson contenu dans l'objet viewer
-		
-		/* ************************************************************************************************************
-		 * ************************************************************************************************************
-		 * ************************************************************************************************************ */
-		
+
+	// l'id�e consiste a recuperer l'element HTML dans viewer.infoBox.frame.contentDocument.all et de l'injecter dans 
+	// viewer.dataSources._dataSources[0]._entityCollection._entities._array[i]._properties ou bien directement dans 
+        // l'objet geoJson contenu dans l'objet viewer
+
+	/* ************************************************************************************************************
+	 * ************************************************************************************************************
+	 * ************************************************************************************************************ */
 
         var closeElement = document.createElement('button');
         closeElement.type = 'button';
@@ -117,7 +115,7 @@ define([
         //We can't actually add anything into the frame until the load event is fired
         frame.addEventListener('load', function() {
             var frameDocument = frame.contentDocument;
-				
+
             //We inject default css into the content iframe,
             //end users can remove it or add their own via the exposed frame property.
             var cssLink = frameDocument.createElement('link');

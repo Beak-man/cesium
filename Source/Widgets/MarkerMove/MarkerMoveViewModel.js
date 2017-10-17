@@ -19,7 +19,7 @@ define([
         ScreenSpaceEventType,
         knockout,
         createCommand) {
-    "use strict";
+    'use strict';
 
     function markerMoveView(toolbar, scene, viewer, that) {
 
@@ -103,8 +103,8 @@ define([
             if (that._handlerRight)
                 that._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
 
-            var link = document.getElementById("saveFile");
-            var wrapper = document.getElementById("wrapper");
+            var link = document.getElementById('saveFile');
+            var wrapper = document.getElementById('wrapper');
 
             if (link) {
                 wrapper.removeChild(link);
@@ -138,18 +138,18 @@ define([
 
             var jsonData = JSON.stringify(geoJson);
             var blob = new Blob([jsonData], {
-                type: "application/octet-stream"
+                type: 'application/octet-stream'
             });
             var url = URL.createObjectURL(blob);
 
-            var fileName = "jsonFile.json";
+            var fileName = 'jsonFile.json';
 
             try {
                 that._saveLink.parentElement.removeChild(that._saveLink);
             } catch (e) {
             }
 
-            that._wrapper = document.getElementById("wrapper");
+            that._wrapper = document.getElementById('wrapper');
             that._saveLink = document.createElement('a');
             that._saveLink.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
             that._saveLink.innerHTML = '<svg width="25px" height="25px" viewBox="-10 0 100 100">\
@@ -173,7 +173,7 @@ define([
             that._wrapper.appendChild(that._saveLink);
 
         } else {
-            alert("Load a file in first");
+            alert('Load a file in first');
         }
     }
 
@@ -183,7 +183,7 @@ define([
         this._toolbar = toolbar;
         this._container = container;
         this._viewer = viewer;
-        
+
         this._isPanelToolVisibleMarkerMove = false;
 
         /**
@@ -271,7 +271,7 @@ define([
                 },
                 set: function (value) {
                     this._isActive = value;
-                    console.log("valeur de _isActive = " + this._isActive);
+                    console.log('valeur de _isActive = ' + this._isActive);
                 }
             },
             handlerRight: {
