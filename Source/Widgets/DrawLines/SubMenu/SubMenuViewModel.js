@@ -1836,6 +1836,17 @@ define([
         geoJsonObject.features = [];
         geoJsonObject.crs = crs.crs;
 
+        var positions;
+        var firstPosition;
+        var lastPosition;
+        var cartographicFirstPosition;
+        var cartographicLastPosition;
+        var firstPositionLng;
+        var firstPositionLat;
+        var lastPositionLng;
+        var lastPositionLat;
+        var coordLastPoint;
+
         for (var i = 0; i < primitives.length; i++) {
             var j;
 
@@ -1870,25 +1881,25 @@ define([
 
                     for (j = 0; j < polylines.length; j++) {
 
-                        var positions = polylines[j]._positions;
+                        positions = polylines[j]._positions;
 
                         // get star and final point
 
-                        var firstPosition = positions[0];
-                        var lastPosition = positions[positions.length - 1];
+                        firstPosition = positions[0];
+                        lastPosition = positions[positions.length - 1];
 
                         // On passe des coordonn�es cart�siennes aux coordonn�es cartographiques
                         // coordinate transformation : cartesian ==> cartographic
 
-                        var cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
-                        var cartographicLastPosition = that._ellipsoid.cartesianToCartographic(lastPosition);
+                        cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
+                        cartographicLastPosition = that._ellipsoid.cartesianToCartographic(lastPosition);
 
                         // Rad --> Degrees 
 
-                        var firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
-                        var firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
-                        var lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
-                        var lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
+                        firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
+                        firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
+                        lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
+                        lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
 
                         // coordinate vector of the line
 
@@ -1980,36 +1991,36 @@ define([
 
                     for (j = 0; j < polylines.length - 1; j++) {
 
-                        var positions = polylines[j]._positions;
+                        positions = polylines[j]._positions;
 
                         // get first and last points of a given line
 
-                        var firstPosition = positions[0];
-                        var lastPosition = positions[positions.length - 1];
+                        firstPosition = positions[0];
+                        lastPosition = positions[positions.length - 1];
 
                         // Cartesian to cartographic
 
-                        var cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
-                        var cartographicLastPosition = that._ellipsoid.cartesianToCartographic(lastPosition);
+                        cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
+                        cartographicLastPosition = that._ellipsoid.cartesianToCartographic(lastPosition);
 
                         // Rad to Degres
 
-                        var lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
-                        var lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
+                        lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
+                        lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
 
                         if (j === 0) {
 
-                            var firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
-                            var firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
+                            firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
+                            firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
 
                             var coordFirstPoint = [firstPositionLng, firstPositionLat];
-                            var coordLastPoint = [lastPositionLng, lastPositionLat];
+                            coordLastPoint = [lastPositionLng, lastPositionLat];
 
                             polygonsPoints.push(coordFirstPoint);
                             polygonsPoints.push(coordLastPoint);
 
                         } else {
-                            var coordLastPoint = [lastPositionLng, lastPositionLat];
+                            coordLastPoint = [lastPositionLng, lastPositionLat];
                             polygonsPoints.push(coordLastPoint);
                         }
                     }

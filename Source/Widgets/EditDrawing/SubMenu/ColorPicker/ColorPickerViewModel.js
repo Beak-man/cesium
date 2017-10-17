@@ -17,7 +17,7 @@ define([
         knockout,
         createCommand,
         TableViewModel) {
-    "use strict";
+    'use strict';
 
     var cursor;
 
@@ -55,16 +55,16 @@ define([
 
                 if (cursorPosition.x > sizePageX - container.offsetWidth) { // Bloque le container � droite
 
-                    container.style.left = sizePageX - container.offsetWidth + "px";
+                    container.style.left = sizePageX - container.offsetWidth + 'px';
 
                 } else if (cursorPosition.x < container.offsetWidth / 2 || cursorPosition.x < 0) { // Bloque le container � gauche
 
-                    container.style.left = "0px";
+                    container.style.left = '0px';
 
                 } else if (cursorPosition.x >= container.offsetWidth / 2 && cursorPosition.x <= sizePageX - container.offsetWidth / 2) { // d�placement du container
 
-                    //    container.style.left = cursorPosition.x - (container.offsetWidth / 11) + "px";
-                    container.style.left = cursorPosition.x - 6 + "px";
+                    //    container.style.left = cursorPosition.x - (container.offsetWidth / 11) + 'px';
+                    container.style.left = cursorPosition.x - 6 + 'px';
                 }
 
 
@@ -72,7 +72,7 @@ define([
 
 
                 if (cursorPosition.y >= 6 && cursorPosition.y <= sizePageY - container.offsetHeight) {
-                    container.style.top = cursorPosition.y - 6 + "px";
+                    container.style.top = cursorPosition.y - 6 + 'px';
                 }
 
             }, ScreenSpaceEventType.MOUSE_MOVE);
@@ -80,11 +80,12 @@ define([
 
         that._handlerUpClick.setInputAction(function () {
 
-            if (that._handlerDownClick)
+            if (that._handlerDownClick) {
                 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.LEFT_DOWN);
-            if (that._handlerMove)
+            }
+            if (that._handlerMove) {
                 that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-
+            }
         }, ScreenSpaceEventType.LEFT_UP);
     }
 
@@ -93,9 +94,9 @@ define([
         that._selectedColorContainer.style.background = color;
         that._selectedColorTextContainer.value = color;
 
-        var colorStringTab = color.split(",");
+        var colorStringTab = color.split(',');
         var RStringTab = colorStringTab[0];
-        var RSplit = RStringTab.split("(");
+        var RSplit = RStringTab.split('(');
 
         var R = parseInt(RSplit[1]);
         var G = parseInt(colorStringTab[1]);
@@ -109,20 +110,20 @@ define([
         var GInt = parseInt(colorStringTab[1]);
         var BInt = parseInt(colorStringTab[2]);
 
-        that._colorProperty = "R" + RInt + "G" + GInt + "B" + BInt;
+        that._colorProperty = 'R' + RInt + 'G' + GInt + 'B' + BInt;
 
-        console.log("picked color : " + that._colorProperty);
+        console.log('picked color : ' + that._colorProperty);
 
         if (!that._viewer.colorAssignation[that._colorProperty]) {
-            that._propertyValueContainer.value = "";
-            that._assignPropertyToColorContainer.style.visibility = "visible";
+            that._propertyValueContainer.value = '';
+            that._assignPropertyToColorContainer.style.visibility = 'visible';
             buildLegend(that);
         }
 
         if (that._viewer.colorAssignation[that._colorProperty]) {
             that._propertyValueContainer.value = that._viewer.colorAssignation[that._colorProperty].propertyValue;
             that._propertyNameContainer.value = that._viewer.colorAssignation[that._colorProperty].propertyName;
-            that._assignPropertyToColorContainer.style.visibility = "visible";
+            that._assignPropertyToColorContainer.style.visibility = 'visible';
             buildLegend(that);
         }
 
@@ -138,7 +139,7 @@ define([
 
     function  colorAssignationFunction(that) {
 
-        if (that._propertyNameContainer.value != "" && that._propertyValueContainer.value != "") {
+        if (that._propertyNameContainer.value !== '' && that._propertyValueContainer.value !== '') {
 
             that._viewer.colorAssignation[that._colorProperty] = {
                 propertyName: that._propertyNameContainer.value,
@@ -147,11 +148,11 @@ define([
             };
 
             console.log(that._viewer.colorAssignation);
-            that._assignPropertyToColorContainer.style.visibility = "hidden";
+            that._assignPropertyToColorContainer.style.visibility = 'hidden';
 
 
-        } else if (that._propertyNameContainer.value == "" || that._propertyValueContainer.value == "") {
-            alert("Please, fill all fields");
+        } else if (that._propertyNameContainer.value === '' || that._propertyValueContainer.value === '') {
+            alert('Please, fill all fields');
         }
 
         buildLegend(that);
@@ -228,7 +229,7 @@ define([
                 propertyColorBox.setAttribute('id', propertyColorBoxId);
 
                 var clr = that._viewer.colorAssignation[color].color;
-                var backgroundColor = "rgba(" + clr.red + "," + clr.green + "," + clr.blue + "," + clr.alpha + ")";
+                var backgroundColor = 'rgba(' + clr.red + ',' + clr.green + ',' + clr.blue + ',' + clr.alpha + ')';
 
                 propertyColorBox.style.background = backgroundColor;
                 propertyColorBox.setAttribute('data-bind', 'attr  : { title: "Pick this color" }, event : {click : pickSelectColorCommand.bind($data,"' + backgroundColor + '")}');
@@ -277,19 +278,19 @@ define([
 
             var geoJsonData = JSON.stringify(that._viewer.colorAssignation);
             var blob = new Blob([geoJsonData], {
-                type: "application/octet-stream",
-                endings: "native"
+                type: 'application/octet-stream',
+                endings: 'native'
             });
             var url = URL.createObjectURL(blob);
-            var fileName = "LegendFile.legendjson";
+            var fileName = 'LegendFile.legendjson';
 
-            var linkDownload = document.createElement("a");
-            linkDownload.innerHTML = "<BUTTON>Save</BUTTON>";
+            var linkDownload = document.createElement('a');
+            linkDownload.innerHTML = '<BUTTON>Save</BUTTON>';
             linkDownload.href = url;
             linkDownload.download = fileName || 'unknown';
             colomn2LegendButton.appendChild(linkDownload);
 
-        } else if (dimObject == 0) {
+        } else if (dimObject === 0) {
 
         }
     }
@@ -337,7 +338,7 @@ define([
         this._tableViewModel = new TableViewModel(this, this._viewer);
 
         if (!this._viewer.colorAssignation) {
-            
+
             this._viewer.colorAssignation = {};
         } else if (this._viewer.colorAssignation) {
             buildLegend(this);
@@ -356,8 +357,8 @@ define([
         });
 
         this._cancelAssignationCommand = createCommand(function () {
-            that._assignPropertyToColorContainer.style.visibility = "hidden";
-            that._propertyValueContainer.value = "";
+            that._assignPropertyToColorContainer.style.visibility = 'hidden';
+            that._propertyValueContainer.value = '';
         });
 
         this._moveContainerCommand = createCommand(function (data, event) {
@@ -378,16 +379,16 @@ define([
 
             if (!that._isPanelminimized) {
 
-                that._mainContainer.style.height = "20px";
-                that._mainContainer.className = "cesium-MainColorPickerContainer-transition";
-                that._ColorPickerContainer.style.visibility = "hidden";
+                that._mainContainer.style.height = '20px';
+                that._mainContainer.className = 'cesium-MainColorPickerContainer-transition';
+                that._ColorPickerContainer.style.visibility = 'hidden';
                 that._isPanelminimized = true;
             } else if (that._isPanelminimized) {
 
-                that._mainContainer.style.height = "320px";
-                that._mainContainer.className = "cesium-MainColorPickerContainer-transition";
+                that._mainContainer.style.height = '320px';
+                that._mainContainer.className = 'cesium-MainColorPickerContainer-transition';
                 setTimeout(function () {
-                    that._ColorPickerContainer.style.visibility = "visible";
+                    that._ColorPickerContainer.style.visibility = 'visible';
                 }, 200);
 
                 that._isPanelminimized = false;
@@ -398,19 +399,19 @@ define([
 
             if (!that._isLegendPanelminimized) {
 
-                that._legendObject.container.style.height = "20px";
-                that._legendObject.container.className = "cesium-legendContainer-transition";
-                that._legendObject.middle.style.visibility = "hidden";
-                that._legendObject.bottom.style.visibility = "hidden";
+                that._legendObject.container.style.height = '20px';
+                that._legendObject.container.className = 'cesium-legendContainer-transition';
+                that._legendObject.middle.style.visibility = 'hidden';
+                that._legendObject.bottom.style.visibility = 'hidden';
                 that._isLegendPanelminimized = true;
 
             } else if (that._isLegendPanelminimized) {
 
-                that._legendObject.container.style.height = "250px";
-                that._legendObject.container.className = "cesium-legendContainer-transition";
+                that._legendObject.container.style.height = '250px';
+                that._legendObject.container.className = 'cesium-legendContainer-transition';
                 setTimeout(function () {
-                    that._legendObject.middle.style.visibility = "visible";
-                    that._legendObject.bottom.style.visibility = "visible";
+                    that._legendObject.middle.style.visibility = 'visible';
+                    that._legendObject.bottom.style.visibility = 'visible';
                 }, 200);
 
                 that._isLegendPanelminimized = false;
@@ -479,12 +480,15 @@ define([
         },
         removeHandlers: {
             get: function () {
-                if (this._handlerDownClick)
+                if (this._handlerDownClick) {
                     this._handlerDownClick.removeInputAction(ScreenSpaceEventType.LEFT_DOWN);
-                if (this._handlerUpClick)
+                }
+                if (this._handlerUpClick) {
                     this._handlerUpClick.removeInputAction(ScreenSpaceEventType.LEFT_UP);
-                if (this._handlerMove)
+                }
+                if (this._handlerMove) {
                     this._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+                }
             }
         }
     });
@@ -505,12 +509,15 @@ define([
     }
 
     function removeHandlers(that) {
-        if (that._handlerDownClick)
+        if (that._handlerDownClick) {
             that._handlerDownClick.removeInputAction(ScreenSpaceEventType.LEFT_DOWN);
-        if (that._handlerUpClick)
+        }
+        if (that._handlerUpClick) {
             that._handlerUpClick.removeInputAction(ScreenSpaceEventType.LEFT_UP);
-        if (that._handlerMove)
+        }
+        if (that._handlerMove) {
             that._handlerMove.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+        }
     }
 
 

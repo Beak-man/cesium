@@ -9,7 +9,7 @@ define([
         knockout,
         FlagCounter,
         ColorPickerViewModel) {
-    "use strict";
+    'use strict';
 
     var closeIcon = '<g><g><path d="M4.712,69.854l-4.69,28.273c-0.086,0.512,0.082,1.034,0.449,1.401c0.002,0.003,0.002,0.003,0.002,0.003\
 			c0.37,0.368,0.893,0.535,1.406,0.447l28.197-4.765c0.594-0.1,1.081-0.525,1.264-1.1c0.185-0.572,0.031-1.202-0.396-1.628\
@@ -147,72 +147,76 @@ define([
         ColorPickerContainer.className = 'cesium-ColorPickerContainer';
         mainContainer.appendChild(ColorPickerContainer);
 
+        var R;
+        var G;
+        var B;
+
         for (var i = 0; i < 120; i++) {
 
             var color;
 
             if (i < 10) { // red
 
-                var R = parseInt((255 / 10) * (i + 1));
-                color = "rgba(" + R + ", 0, 0, 1)";
+                R = parseInt((255 / 10) * (i + 1));
+                color = 'rgba(' + R + ', 0, 0, 1)';
 
             } else if (i < 20) { // green
 
-                var G = parseInt((255 / 10) * (i + 1 - 10));
-                color = "rgba(0, " + G + ", 0, 1)";
+                G = parseInt((255 / 10) * (i + 1 - 10));
+                color = 'rgba(0, ' + G + ', 0, 1)';
 
             } else if (i < 30) { // blue
 
-                var B = parseInt((255 / 10) * (i + 1 - 20));
-                color = "rgba(0, 0, " + B + ", 1)";
+                B = parseInt((255 / 10) * (i + 1 - 20));
+                color = 'rgba(0, 0, ' + B + ', 1)';
 
             } else if (i < 40) { // white
 
-                var R = parseInt((255 / 10) * (i + 1 - 30));
-                var G = parseInt((255 / 10) * (i + 1 - 30));
-                var B = parseInt((255 / 10) * (i + 1 - 30));
-                color = "rgba(" + R + ", " + G + ", " + B + ", 1)";
+                R = parseInt((255 / 10) * (i + 1 - 30));
+                G = parseInt((255 / 10) * (i + 1 - 30));
+                B = parseInt((255 / 10) * (i + 1 - 30));
+                color = 'rgba(' + R + ', ' + G + ', ' + B + ', 1)';
 
             } else if (i < 50) { // pink
 
-                var B = parseInt((255 / 10) * (i + 1 - 40));
-                color = "rgba(" + B + ", 0, " + B + ", 1)";
+                B = parseInt((255 / 10) * (i + 1 - 40));
+                color = 'rgba(' + B + ', 0, ' + B + ', 1)';
 
             } else if (i < 60) { // Yellow 
 
                 var Y = parseInt((255 / 10) * (i + 1 - 50));
-                color = "rgba(" + Y + ", " + Y + ", 0, 1)";
+                color = 'rgba(' + Y + ', ' + Y + ', 0, 1)';
 
             } else if (i < 70) { // purple
 
-                var B = parseInt((255 / 10) * (i + 1 - 60));
-                color = "rgba(0, " + B + ", " + B + ", 1)";
+                B = parseInt((255 / 10) * (i + 1 - 60));
+                color = 'rgba(0, ' + B + ', ' + B + ', 1)';
 
             } else if (i < 80) { // purple
 
-                var B = parseInt((255 / 10) * (i + 1 - 70));
-                color = "rgba(150, " + B + ", " + B + ", 1)";
+                B = parseInt((255 / 10) * (i + 1 - 70));
+                color = 'rgba(150, ' + B + ', ' + B + ', 1)';
 
             } else if (i < 90) { // purple
 
-                var B = parseInt((255 / 10) * (i + 1 - 80));
-                color = "rgba(" + B + ",100 ," + B + ", 1)";
+                B = parseInt((255 / 10) * (i + 1 - 80));
+                color = 'rgba(' + B + ',100 ,' + B + ', 1)';
 
             } else if (i < 100) { // purple
 
-                var B = parseInt((255 / 10) * (i + 1 - 90));
+                B = parseInt((255 / 10) * (i + 1 - 90));
                 var C = parseInt((100 / 10) * (i + 1 - 90));
-                color = "rgba(" + B + ", " + B + "," + C + ", 1)";
+                color = 'rgba(' + B + ', ' + B + ',' + C + ', 1)';
 
             } else if (i < 110) { // purple
 
-                var B = parseInt((255 / 10) * (i + 1 - 100));
-                color = "rgba(170, " + B + ", " + B + ", 1)";
+                B = parseInt((255 / 10) * (i + 1 - 100));
+                color = 'rgba(170, ' + B + ', ' + B + ', 1)';
 
             } else if (i < 120) { // purple
 
-                var B = parseInt((255 / 10) * (i + 1 - 110));
-                color = "rgba(255," + B + ",0, 1)";
+                B = parseInt((255 / 10) * (i + 1 - 110));
+                color = 'rgba(255,' + B + ',0, 1)';
             }
 
             var colorButton = document.createElement('div');
@@ -274,7 +278,7 @@ define([
         propertyAssignButton.setAttribute('data-bind', 'attr  : { title: "Pick this color" }, event : {click : colorAssignationCommand}');
         assignPropertyToColorContainerRight.appendChild(propertyAssignButton);
 
-        var propertyAssignButton = document.createElement('BUTTON');
+        propertyAssignButton = document.createElement('BUTTON');
         propertyAssignButton.innerHTML = 'Cancel';
         propertyAssignButton.className = 'cesium-Color-propertyAssign-button-cancel';
         propertyAssignButton.setAttribute('data-bind', 'attr  : { title: "Pick this color" }, event : {click : cancelAssignationCommand}');
@@ -339,27 +343,27 @@ define([
                     this._viewerContainer.removeChild(this._legendContainer);
                 } catch (e) {
                 }
-                
+
                 try {
                     this._viewerContainer.removeChild(this._assignPropertyToColorContainer);
                 } catch (e) {
                 }
-                
+
                 try {
-                    this._flagCounter.destroyCounterContainer;
+                    this._flagCounter.destroyCounterContainer();
                 } catch (e) {
                 }
 
             }
         },
-        
+
         flagCounter: {
             get: function () {
                 return this._flagCounter;
             }
         }
-        
+
     });
-   
+
     return ColorPicker;
 });
