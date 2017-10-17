@@ -113,7 +113,10 @@ gulp.task('build-watch', function() {
 });
 
 gulp.task('buildApps', function() {
-    return buildCesiumViewer();
+    return Promise.join(
+        buildCesiumViewer(),
+        buildSandcastle()
+    );
 });
 
 gulp.task('buildPlApps', function() {
@@ -519,7 +522,7 @@ function getMimeType(filename) {
         return {type : 'application/font-woff', compress : false, isCompressed : false};
     }
 
-    var mimeType = mime.lookup(filename);
+    var mimeType = mime.getType(filename);
     var compress = compressible(mimeType);
     return {type : mimeType, compress : compress, isCompressed : false};
 }
@@ -1156,6 +1159,35 @@ function createJsHintOptions() {
 var sandcastleJsHintOptions = ' + JSON.stringify(primary, null, 4) + ';';
 
     fs.writeFileSync(path.join('Apps', 'Sandcastle', 'jsHintOptions.js'), contents);
+}
+
+function buildSandcastle() {
+    var appStream = gulp.src([
+            'Apps/Sandcastle/**',
+            '!Apps/Sandcastle/images/**',
+            '!Apps/Sandcastle/gallery/**.jpg'
+        ])
+        // Replace require Source with pre-built Cesium
+        .pipe(gulpReplace('../../../ThirdParty/requirejs-2.1.20/require.js', '../../../CesiumUnminified/Cesium.js'))
+        // Use unminified cesium instead of source
+        .pipe(gulpReplace('Source/Cesium', 'CesiumUnminified'))
+        // Fix relative paths for new location
+        .pipe(gulpReplace('../../Source', '../../../Source'))
+        .pipe(gulpReplace('../../ThirdParty', '../../../ThirdParty'))
+        .pipe(gulpReplace('../../SampleData', '../../../../Apps/SampleData'))
+        .pipe(gulpReplace('Build/Documentation', 'Documentation'))
+        .pipe(gulp.dest('Build/Apps/Sandcastle'));
+
+    var imageStream = gulp.src([
+            'Apps/Sandcastle/gallery/**.jpg',
+            'Apps/Sandcastle/images/**'
+        ], {
+            base: 'Apps/Sandcastle',
+            buffer: false
+        })
+        .pipe(gulp.dest('Build/Apps/Sandcastle'));
+
+    return eventStream.merge(appStream, imageStream);
 }
 
 function buildCesiumViewer() {
