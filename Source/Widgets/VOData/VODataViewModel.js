@@ -1141,7 +1141,7 @@ define([
             var xhr = new ActiveXObject('Microsoft.XMLHTTP'); // activeX pour IE
             console.log('IE');
         } else {
-            console.log('AJAX don't available on this browser');
+            console.log('AJAX is not available on this browser');
             var xhr = null;
         }
         return xhr;
