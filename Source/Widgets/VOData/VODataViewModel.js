@@ -79,14 +79,19 @@ define([
 
     function showPanel(that, configContainer) {
 
+        var leftPositionStr;
+        var leftPositionStrTab;
+        var leftPosition;
+        var panelMove;
+
         if (!that._isVOPanelActive) {
 
             configContainer.className = 'cesium-voData-configContainer cesium-voData-configContainer-transition';
-            var leftPositionStr = configContainer.style.left;
-            var leftPositionStrTab = leftPositionStr.split('p');
-            var leftPosition = parseInt(leftPositionStrTab);
+            leftPositionStr = configContainer.style.left;
+            leftPositionStrTab = leftPositionStr.split('p');
+            leftPosition = parseInt(leftPositionStrTab);
 
-            var panelMove = leftPosition - 400 + 'px';
+            panelMove = leftPosition - 400 + 'px';
             configContainer.style.left = panelMove;
             configContainer.style.opacity = '1';
 
@@ -95,11 +100,11 @@ define([
         } else if (that._isVOPanelActive) {
 
             configContainer.className = 'cesium-voData-configContainer cesium-voData-configContainer-transition';
-            var leftPositionStr = configContainer.style.left;
-            var leftPositionStrTab = leftPositionStr.split('p');
-            var leftPosition = parseInt(leftPositionStrTab);
+            leftPositionStr = configContainer.style.left;
+            leftPositionStrTab = leftPositionStr.split('p');
+            leftPosition = parseInt(leftPositionStrTab);
 
-            var panelMove = leftPosition + 400 + 'px';
+            panelMove = leftPosition + 400 + 'px';
             configContainer.style.left = panelMove;
             configContainer.style.opacity = '0';
 
@@ -111,12 +116,10 @@ define([
 
         if (/^[0-9.,-]+$/g.test(inputField.value)) {
             return true;
-        } else {
-
-            console.log('Input Errors : ' + 'Please, enter a NUMBER type value for ' + inputField.name.toUpperCase() + ' in the format : XX.XX');
-            alert('Please, enter a NUMBER type value for ' + inputField.name.toUpperCase() + ' in the format : XX.XX');
-            return false;
         }
+        console.log('Input Errors : ' + 'Please, enter a NUMBER type value for ' + inputField.name.toUpperCase() + ' in the format : XX.XX');
+        alert('Please, enter a NUMBER type value for ' + inputField.name.toUpperCase() + ' in the format : XX.XX');
+        return false;
     }
 
     function createQueryV2(that, viewer, resultContainer, handlerLeftClick, planetName, inputObjects, serverUrl, extension, format, color) {
@@ -216,6 +219,8 @@ define([
 
                         console.log(geomType, isValuesValid, arr[numberColumForCvalues.access_format]);
 
+                        var descriptionObject;
+                        var addToList;
                         // if we have a point
                         if (geomType === 'points') {
 
@@ -223,10 +228,10 @@ define([
                             // if (isValuesValid === true && arr[numberColumForCvalues.access_format] === 'text/plain' || !arr[numberColumForCvalues.access_format]) {
                             if (isValuesValid === true) {
                                 // we create the description object corresponding to the current point
-                                var desciprionObject = createDescriptionObject(columnNomTab, arr);
+                                descriptionObject = createDescriptionObject(columnNomTab, arr);
 
                                 //we check if the coordinate are duplicated
-                                var addToList = selectionData(lngMin, lngMax, latMin, latMax, altMin, altMax, C1Min, C1Max, C2Min, C2Max, C3Min, C3Max);
+                                addToList = selectionData(lngMin, lngMax, latMin, latMax, altMin, altMax, C1Min, C1Max, C2Min, C2Max, C3Min, C3Max);
 
                                 // if not (i.e we don't have the coordinate in the list)
                                 if (addToList === true) {
@@ -241,7 +246,7 @@ define([
 
                                     //  console.log('avant generate point');
                                     // generate point
-                                    generatePoints(C1Min, C1Max, C2Min, C2Max, C3Min, C3Max, unitC3, desciprionObject, dataSourceDisplay, ellipsoid, color);
+                                    generatePoints(C1Min, C1Max, C2Min, C2Max, C3Min, C3Max, unitC3, descriptionObject, dataSourceDisplay, ellipsoid, color);
 
                                     // we get data from requested file
                                     stockLines = arr;
@@ -260,9 +265,8 @@ define([
 
                         } else if (isValuesValid === true && arr[numberColumForCvalues.access_format] === 'application/x-pds' || arr[numberColumForCvalues.access_format] === 'application/x-geotiff') {
 
-
-                            var desciprionObject = createDescriptionObject(columnNomTab, arr);
-                            var addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
+                            descriptionObject = createDescriptionObject(columnNomTab, arr);
+                            addToList = selectionData(lngMin, lngMax, latMin, latMax, C1Min, C1Max, C2Min, C2Max);
 
                             // if not (i.e we don't have the coordinate il the list)
                             if (addToList === true) {
@@ -272,7 +276,7 @@ define([
                                 latMin.push(C2Min);
                                 latMax.push(C2Max);
 
-                                generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, desciprionObject, dataSourceDisplay, ellipsoid, color);
+                                generatePolygons(C1Min, C1Max, C2Min, C2Max, viewer, descriptionObject, dataSourceDisplay, ellipsoid, color);
                             }
 
                         }
@@ -486,14 +490,14 @@ define([
 
         if (C1Min === C1Max && C2Min === C2Max) {
             return 'points';
-        } else {
-            return 'polygons';
         }
+        return 'polygons';
     }
 
     function checkNumColumns(columnNomen) {
 
         var num = {};
+        var ColumnIdLowerCase;
 
         for (var i = 0; i < columnNomen.length - 1; i++) {
 
@@ -503,31 +507,31 @@ define([
             // C1min ou c1min mais pas les deux
 
             if (ColumnId === 'c1min' || ColumnId === 'C1min') {
-                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             } else if (ColumnId === 'c1max' || ColumnId === 'C1max') {
-                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             } else if (ColumnId === 'c2min' || ColumnId === 'C2min') {
-                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             } else if (ColumnId === 'c2max' || ColumnId === 'C2max') {
-                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             } else if (ColumnId === 'c3min' || ColumnId === 'C3min') {
-                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             } else if (ColumnId === 'c3max' || ColumnId === 'C3max') {
-                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             } else if (ColumnId === 'access_format') {
-                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             } else if (ColumnId === 'measurement_type') {
-                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             } else if (ColumnId === 'access_url') {
-                var ColumnIdLowerCase = ColumnId.toLowerCase();
+                ColumnIdLowerCase = ColumnId.toLowerCase();
                 num[ColumnIdLowerCase] = i;
             }
         }
@@ -598,29 +602,25 @@ define([
                     if (typeof value === 'object') {
 
                         html += '<tr><th>' + key + '</th><td>' + defaultDescribe(value) + '</td></tr>';
-                    } else {
+                    } else if (typeof value === 'string') {
 
-                        if (typeof value === 'string') {
+                        var beginString = value.slice(0, 7);
+                        var regex1 = /http:/;
+                        var regex2 = /https:/;
+                        var regex3 = /www./;
+                        var regex4 = /ftp:/;
 
-                            var beginString = value.slice(0, 7);
-                            var regex1 = /http:/;
-                            var regex2 = /https:/;
-                            var regex3 = /www./;
-                            var regex4 = /ftp:/;
+                        if (regex1.test(beginString) || regex2.test(beginString) || regex3.test(beginString) || regex4.test(beginString)) {
 
-                            if (regex1.test(beginString) || regex2.test(beginString) || regex3.test(beginString) || regex4.test(beginString)) {
+                            html += '<tr><th>' + key + '</th><td><a href=' + value + ' target="_blank">link</a></td></tr>';
 
-                                html += '<tr><th>' + key + '</th><td><a href=' + value + ' target="_blank">link</a></td></tr>';
-
-                            } else {
-
-                                html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
-
-                            }
                         } else {
-                            html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
-                        }
 
+                            html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
+
+                        }
+                    } else {
+                        html += '<tr><th>' + key + '</th><td>' + value + '</td></tr>';
                     }
                 }
             }
@@ -657,15 +657,15 @@ define([
         return returnObject;
     }
 
-    function  generatePoints(lngMin, lngMax, latMin, latMax, altMin, altMax, unitAlt, desciprionObject, dataSourceDisplay, ellipsoid, colorPoints) {
+    function  generatePoints(lngMin, lngMax, latMin, latMax, altMin, altMax, unitAlt, descriptionObject, dataSourceDisplay, ellipsoid, colorPoints) {
 
         var coordX = lngMin;
         var coordY = latMin;
         var coordZ = 0;
         if (altMin && altMax) {
-            if (unitAlt == 'm') {
+            if (unitAlt === 'm') {
                 coordZ = (altMax - altMin) / 2.0;
-            } else if (unitAlt == 'km') {
+            } else if (unitAlt === 'km') {
                 coordZ = (altMax - altMin) / 2.0;
                 coordZ = coordZ*1000.0;
             }
@@ -693,13 +693,13 @@ define([
             position: position,
             show: true,
             name: 'VO data',
-            description: new ConstantProperty(desciprionObject.html)
+            description: new ConstantProperty(descriptionObject.html)
         };
 
         var entity = new Entity(entityParams);
 
         entity.descriptionTab = [];
-        entity.descriptionTab.push(desciprionObject.object);
+        entity.descriptionTab.push(descriptionObject.object);
 
         var entities = dataSourceDisplay.defaultDataSource.entities;
 
@@ -731,7 +731,7 @@ define([
          position: posi,
          show: true,
          name: 'VO data',
-         description: new ConstantProperty(desciprionObject.html)
+         description: new ConstantProperty(descriptionObject.html)
          };
          
          var entity = new Entity(polylineEntityParams);
@@ -753,7 +753,7 @@ define([
         return positions;
     }
 
-    function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, desciprionObject, dataSourceDisplay, ellipsoid, colorPolygons) {
+    function generatePolygons(lngMin, lngMax, latMin, latMax, viewer, descriptionObject, dataSourceDisplay, ellipsoid, colorPolygons) {
 
         // array wich contains coordinates to draw polygons
         var polygonsCoord = [];
@@ -799,13 +799,13 @@ define([
             polygon: polygon,
             show: true,
             name: 'VO data',
-            description: new ConstantProperty(desciprionObject.html)
+            description: new ConstantProperty(descriptionObject.html)
         };
 
         var entity = new Entity(entityParams);
 
         entity.descriptionTab = [];
-        entity.descriptionTab.push(desciprionObject.object);
+        entity.descriptionTab.push(descriptionObject.object);
 
         var entities = dataSourceDisplay.defaultDataSource.entities;
 
@@ -831,17 +831,20 @@ define([
 
         var tabPoints = [point1, point2, point3, point4, point5];
 
-        for (var j = 0; j < tabPoints.length - 1; j++) {
+        var j;
+        var k;
+
+        for ( j = 0; j < tabPoints.length - 1; j++) {
 
             var pt = tabPoints[j];
 
-            for (var k = 0; k < pt.length; k++) {
+            for ( k = 0; k < pt.length; k++) {
                 //   console.log(pt[k]);
                 polygonsCoord.push(pt[k] * (Math.PI / 180.0));
             }
         }
 
-        for (var j = 0; j < tabPoints.length - 1; j++) {
+        for ( j = 0; j < tabPoints.length - 1; j++) {
 
             var ptJ = tabPoints[j];
 
@@ -851,7 +854,7 @@ define([
 
             var arrayRadians = [];
 
-            for (var k = 0; k < lineTab.length; k++) {
+            for ( k = 0; k < lineTab.length; k++) {
 
                 var ptk = lineTab[k];
 
@@ -924,8 +927,8 @@ define([
 
                 //  console.log('coordinates duplicated : ' + cartPos.x.toFixed(4) + ' ' + cartPos.y.toFixed(4));
 
-                var desciprionObject = createDescriptionObject(columnNomTab, stockLines);
-                pointsTab[i].descriptionTab.push(desciprionObject.object);
+                var descriptionObject = createDescriptionObject(columnNomTab, stockLines);
+                pointsTab[i].descriptionTab.push(descriptionObject.object);
             }
         }
 
@@ -1063,17 +1066,20 @@ define([
 
                 var tabPoints = [point1, point2, point3, point4, point5];
 
-                for (var j = 0; j < tabPoints.length - 1; j++) {
+                var j;
+                var k;
+
+                for ( j = 0; j < tabPoints.length - 1; j++) {
 
                     var pt = tabPoints[j];
 
-                    for (var k = 0; k < pt.length; k++) {
+                    for ( k = 0; k < pt.length; k++) {
                         //   console.log(pt[k]);
                         polygonsCoord.push(pt[k] * (Math.PI / 180.0));
                     }
                 }
 
-                for (var j = 0; j < tabPoints.length - 1; j++) {
+                for ( j = 0; j < tabPoints.length - 1; j++) {
 
                     var ptJ = tabPoints[j];
                     var ptJp1 = tabPoints[j + 1];
@@ -1082,7 +1088,7 @@ define([
 
                     var arrayRadians = [];
 
-                    for (var k = 0; k < lineTab.length; k++) {
+                    for ( k = 0; k < lineTab.length; k++) {
 
                         var ptk = lineTab[k];
 
@@ -1135,14 +1141,16 @@ define([
     }
 
     function getRequest() {
+        var xhr;
+
         if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-            var xhr = new XMLHttpRequest();
-        } else if (typeof ActiveXObject !== ' undefined') {
-            var xhr = new ActiveXObject('Microsoft.XMLHTTP'); // activeX pour IE
+            xhr = new XMLHttpRequest();
+        } else if (typeof ActiveXObject !== 'undefined') {
+            xhr = new ActiveXObject('Microsoft.XMLHTTP'); // activeX pour IE
             console.log('IE');
         } else {
             console.log('AJAX is not available on this browser');
-            var xhr = null;
+            xhr = null;
         }
         return xhr;
     }
@@ -1192,6 +1200,8 @@ define([
 
         this._getDataCommand = createCommand(function () {
 
+            var i;
+
             that._previousObject = null;
 
             console.log(that._dataSourceDisplay);
@@ -1211,7 +1221,7 @@ define([
             var tabExtension = [];
             var tabServerUrl = [];
 
-            for (var i = 0; i < inputTab.length; i++) {
+            for ( i = 0; i < inputTab.length; i++) {
 
                 if (inputTab[i].checked === true) {
                     tabExtension.push(inputTab[i].extension);
@@ -1239,7 +1249,7 @@ define([
 
             if (tabExtension.length > 0) {
 
-                for (var i = 0; i < tabExtension.length; i++) {
+                for ( i = 0; i < tabExtension.length; i++) {
                     createQueryV2(that, that._viewer, that._resultContainer, that._handlerLeftClick, that._planetName, that._inputObjects, tabServerUrl[i], tabExtension[i], that._format, color[i]);
 
 
@@ -1301,8 +1311,9 @@ define([
 
     function removeHandlers(that) {
 
-        if (that._handlerLeftClick)
+        if (that._handlerLeftClick) {
             that._handlerLeftClick.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        }
         console.log('handler removed');
     }
 

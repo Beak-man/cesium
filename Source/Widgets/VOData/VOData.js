@@ -7,18 +7,18 @@ define([
         defineProperties,
         knockout,
         VODataViewModel) {
-    "use strict";
+    'use strict';
 
     /**
      * A widget to show VO data. Called from ShowSystemViewModel.js (main function)
-     * Must be activated in the "viewerOptions" object located in the PlanetaryCesiumViewer.js file
+     * Must be activated in the 'viewerOptions' object located in the PlanetaryCesiumViewer.js file
      * @alias VOData
      * @constructor
      *
      * @param {Element} container The DOM element that will contain the widget.
      * @param {Object} Viewer.
      * @param {String} PlanetName.
-     * @exception {DeveloperError} Element with id "container" does not exist in the document.
+     * @exception {DeveloperError} Element with id 'container' does not exist in the document.
      */
     var VOData = function (mainContainer, viewer, configuration, planetName) {
 
@@ -36,13 +36,13 @@ define([
                         <path d="M25.612,85.861c0,1.014,0.829,1.842,1.843,1.842h56.158c1.013,0,1.843-0.828,1.843-1.842V71.844\
                                  c0-1.014-0.83-1.844-1.843-1.844H27.455c-1.014,0-1.843,0.83-1.843,1.844V85.861z"></path>\
                         <path d="M79.685,38.122c-0.061-0.083,4.743-5.854,4.743-5.854c0.545-0.643,0.348-1.69-0.441-2.328l-8.576-6.938l0,0\
-	                         c-0.789-0.637-1.893-0.596-2.455,0.092c-0.066,0.081-4.615,5.644-4.615,5.644c-3.883-1.842-8.224-2.874-12.807-2.874v2.867\
-	                         c14.941,0,27.055,12.113,27.055,27.055h2.867C85.455,49.179,83.312,43.072,79.685,38.122z"></path>\
+                                 c-0.789-0.637-1.893-0.596-2.455,0.092c-0.066,0.081-4.615,5.644-4.615,5.644c-3.883-1.842-8.224-2.874-12.807-2.874v2.867\
+                                 c14.941,0,27.055,12.113,27.055,27.055h2.867C85.455,49.179,83.312,43.072,79.685,38.122z"></path>\
                         <path d="M83.27,33.652"></path>\
                        <polygon points="19.054,21.226 27.41,16.833 25.814,26.138 32.574,32.727 23.231,34.084 19.054,42.55 14.875,34.084 5.533,32.727 \
-	                                 12.293,26.138 10.697,16.833 "></polygon>\
+                                        12.293,26.138 10.697,16.833 "></polygon>\
                        <polygon points="40.873,21.314 46.336,24.187 45.292,18.104 49.712,13.795 43.604,12.908 40.873,7.373 38.142,12.908 32.033,13.795 \
-	                                 36.453,18.104 35.41,24.187 "></polygon></g>';
+                                        36.453,18.104 35.41,24.187 "></polygon></g>';
 
         var voDataButton = document.createElement('div');
         voDataButton.className = 'cesium-button cesium-toolbar-button cesium-voData-button';
@@ -58,14 +58,14 @@ define([
 
         var configContainer = document.createElement('div');
         configContainer.className = 'cesium-voData-configContainer';
-        configContainer.style.left = document.documentElement.clientWidth + "px";
+        configContainer.style.left = document.documentElement.clientWidth + 'px';
         mainContainer.appendChild(configContainer);
 
         // ************************ Title panel ********************************
 
         var title = document.createElement('div');
         title.className = 'cesium-voData-configContainer-title';
-        title.innerHTML = "VO data panel";
+        title.innerHTML = 'VO data panel';
         configContainer.appendChild(title);
 
         // ************************ Servers Panel ******************************
@@ -90,6 +90,16 @@ define([
 
         var inputTab = [];
         var numberOfFilesToRequestPerServer = [];
+        var tableLine1;
+        var colomn11;
+        var colomn12;
+        var listContainer;
+        var lngMinInput;
+        var lngMaxInput;
+        var latMinInput;
+        var latMaxInput;
+        var btnContainer;
+        var resultContainer;
 
         if (server) {
 
@@ -116,22 +126,22 @@ define([
                     var tableServer = document.createElement('TABLE');
                     listDD.appendChild(tableServer);
 
-                    var tableLine1 = document.createElement('TR');
+                    tableLine1 = document.createElement('TR');
                     tableServer.appendChild(tableLine1);
 
-                    var colomn11 = document.createElement('TD');
+                    colomn11 = document.createElement('TD');
                     tableLine1.appendChild(colomn11);
 
-                    var colomn12 = document.createElement('TD');
+                    colomn12 = document.createElement('TD');
                     tableLine1.appendChild(colomn12);
 
-                    var tab = extension[j].split(".");
+                    var tab = extension[j].split('.');
 
                     var inputCheck = document.createElement('INPUT');
                     inputCheck.type = 'checkbox';
                     inputCheck.extension = extension[j];
                     inputCheck.serverUrl = serverI.url;
-                    inputCheck.setAttribute('data-bind', 'attr: { title:"' + extension[j] + '"},checked : showData_' + i + "_" + j);
+                    inputCheck.setAttribute('data-bind', 'attr: { title:"' + extension[j] + '"},checked : showData_' + i + '_' + j);
                     colomn11.appendChild(inputCheck);
 
                     inputTab.push(inputCheck);
@@ -141,10 +151,10 @@ define([
             }
 
             var legend = document.createElement('LEGEND');
-            legend.innerHTML = "Server list";
+            legend.innerHTML = 'Server list';
             fieldsetServers.appendChild(legend);
 
-            var listContainer = document.createElement('div');
+            listContainer = document.createElement('div');
             listContainer.className = 'cesium-voData-listContainer';
             configContainer.appendChild(listContainer);
 
@@ -154,17 +164,17 @@ define([
 
             var infosServers = document.createElement('div');
             infosServers.className = 'cesium-voData-infosServers'; // hide what is biehind it
-            infosServers.innerHTML = "no VO server available";
+            infosServers.innerHTML = 'no VO server available';
             listServersInField.appendChild(infosServers);
 
         }
 
         // ************************ Request panel ******************************
 
-       /* var listContainer = document.createElement('div');
+       /* listContainer = document.createElement('div');
         listContainer.className = 'cesium-voData-listContainer';
         configContainer.appendChild(listContainer);*/
-        
+
         if(listContainer){
 
 
@@ -173,50 +183,50 @@ define([
 
 
         var legendRequest = document.createElement('LEGEND');
-        legendRequest.innerHTML = "Request parameters";
+        legendRequest.innerHTML = 'Request parameters';
         fieldsetRequest.appendChild(legendRequest);
 
         /* ============================= TABLE ================================= */
 
         var tableCoord = document.createElement('TABLE');
-        tableCoord.className = "cesium-voData-tableCoord";
+        tableCoord.className = 'cesium-voData-tableCoord';
         fieldsetRequest.appendChild(tableCoord);
 
         /* --------------------------- 1st LINE -------------------------------- */
 
-        var tableLine1 = document.createElement('TR');
+        tableLine1 = document.createElement('TR');
         tableCoord.appendChild(tableLine1);
 
-        var colomn11 = document.createElement('TD');
+        colomn11 = document.createElement('TD');
         tableLine1.appendChild(colomn11);
 
         var labelCell11 = document.createElement('DIV');
-        labelCell11.innerHTML = "&Phi; min : ";
+        labelCell11.innerHTML = '&Phi; min : ';
         colomn11.appendChild(labelCell11);
 
-        var colomn12 = document.createElement('TD');
+        colomn12 = document.createElement('TD');
         tableLine1.appendChild(colomn12);
 
-        var lngMinInput = document.createElement('INPUT');
+        lngMinInput = document.createElement('INPUT');
         lngMinInput.className = 'cesium-voData-input';
-        lngMinInput.name = "Lng min";
-        lngMinInput.value = "0";  // A COMMENTER
+        lngMinInput.name = 'Lng min';
+        lngMinInput.value = '0';  // A COMMENTER
         colomn12.appendChild(lngMinInput);
 
         var colomn13 = document.createElement('TD');
         tableLine1.appendChild(colomn13);
 
         var labelCell13 = document.createElement('DIV');
-        labelCell13.innerHTML = "&Phi; max : ";
+        labelCell13.innerHTML = '&Phi; max : ';
         colomn13.appendChild(labelCell13);
 
         var colomn14 = document.createElement('TD');
         tableLine1.appendChild(colomn14);
 
-        var lngMaxInput = document.createElement('INPUT');
+        lngMaxInput = document.createElement('INPUT');
         lngMaxInput.className = 'cesium-voData-input';
-        lngMaxInput.name = "Lng max";
-        lngMaxInput.value = "0"; // A COMMENTER
+        lngMaxInput.name = 'Lng max';
+        lngMaxInput.value = '0'; // A COMMENTER
         colomn14.appendChild(lngMaxInput);
 
         /* --------------------------- 2nd LINE --------------------------------- */
@@ -228,37 +238,37 @@ define([
         tableLine2.appendChild(colomn21);
 
         var labelCell21 = document.createElement('DIV');
-        labelCell21.innerHTML = "&theta; min :";
+        labelCell21.innerHTML = '&theta; min :';
         colomn21.appendChild(labelCell21);
 
         var colomn22 = document.createElement('TD');
         tableLine2.appendChild(colomn22);
 
-        var latMinInput = document.createElement('INPUT');
+        latMinInput = document.createElement('INPUT');
         latMinInput.className = 'cesium-voData-input';
-        latMinInput.name = "Lat min";
-        latMinInput.value = "0"; // A COMMENTER
+        latMinInput.name = 'Lat min';
+        latMinInput.value = '0'; // A COMMENTER
         colomn22.appendChild(latMinInput);
 
         var colomn23 = document.createElement('TD');
         tableLine2.appendChild(colomn23);
 
         var labelCell23 = document.createElement('DIV');
-        labelCell23.innerHTML = "&theta; max :";
+        labelCell23.innerHTML = '&theta; max :';
         colomn23.appendChild(labelCell23);
 
         var colomn24 = document.createElement('TD');
         tableLine2.appendChild(colomn24);
 
-        var latMaxInput = document.createElement('INPUT');
+        latMaxInput = document.createElement('INPUT');
         latMaxInput.className = 'cesium-voData-input';
-        latMaxInput.name = "Lat max";
-        latMaxInput.value = "0"; // A COMMENTER
+        latMaxInput.name = 'Lat max';
+        latMaxInput.value = '0'; // A COMMENTER
         colomn24.appendChild(latMaxInput);
 
         /* ========================== BUTTONS ================================= */
 
-        var btnContainer = document.createElement('div');
+        btnContainer = document.createElement('div');
         btnContainer.className = 'cesium-voData-btnContainer';
         fieldsetRequest.appendChild(btnContainer);
 
@@ -270,7 +280,7 @@ define([
 
         /* ========================== BUTTONS ================================= */
 
-        var resultContainer = document.createElement('div');
+        resultContainer = document.createElement('div');
         resultContainer.className = 'cesium-voData-resultContainer';
         configContainer.appendChild(resultContainer);
     }
