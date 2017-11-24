@@ -363,7 +363,8 @@ define([
 
         container = getElement(container);
 
-        options = defaultValue(options, defaultValue.EMPTY_OBJECT);
+        //options = defaultValue(options, defaultValue.EMPTY_OBJECT);
+        options = defaultValue(options, {});
         options.showSystems = defaultValue(options.showSystems, false);
         options.tools = defaultValue(options.tools, false);
         var createBaseLayerPicker = (!defined(options.globe) || options.globe !== false) &&
