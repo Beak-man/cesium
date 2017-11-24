@@ -1237,17 +1237,10 @@ define([
         Cartesian3.multiplyByScalar(camera0.position, scalar, scratchPosition0);
         Cartesian3.multiplyByScalar(camera1.position, scalar, scratchPosition1);
         return Cartesian3.equalsEpsilon(scratchPosition0, scratchPosition1, epsilon) &&
-<<<<<<< HEAD
-                Cartesian3.equalsEpsilon(camera0.direction, camera1.direction, epsilon) &&
-                Cartesian3.equalsEpsilon(camera0.up, camera1.up, epsilon) &&
-                Cartesian3.equalsEpsilon(camera0.right, camera1.right, epsilon) &&
-                Matrix4.equalsEpsilon(camera0.transform, camera1.transform, epsilon);
-=======
                Cartesian3.equalsEpsilon(camera0.direction, camera1.direction, epsilon) &&
                Cartesian3.equalsEpsilon(camera0.up, camera1.up, epsilon) &&
                Cartesian3.equalsEpsilon(camera0.right, camera1.right, epsilon) &&
                Matrix4.equalsEpsilon(camera0.transform, camera1.transform, epsilon);
->>>>>>> master
     }
 
     function updateDerivedCommands(scene, command) {
