@@ -1,4 +1,5 @@
 define([
+        '../Core/Check',
         '../Core/ComponentDatatype',
         '../Core/defaultValue',
         '../Core/defined',
@@ -13,6 +14,7 @@ define([
         './BufferUsage',
         './ContextLimits'
     ], function(
+        Check,
         ComponentDatatype,
         defaultValue,
         defined,
@@ -269,13 +271,8 @@ define([
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
 
         //>>includeStart('debug', pragmas.debug);
-        if (!defined(options.context)) {
-            throw new DeveloperError('options.context is required.');
-        }
-
-        if (!defined(options.attributes)) {
-            throw new DeveloperError('options.attributes is required.');
-        }
+        Check.defined('options.context', options.context);
+        Check.defined('options.attributes', options.attributes);
         //>>includeEnd('debug');
 
         var context = options.context;
@@ -534,9 +531,7 @@ define([
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
 
         //>>includeStart('debug', pragmas.debug);
-        if (!defined(options.context)) {
-            throw new DeveloperError('options.context is required.');
-        }
+        Check.defined('options.context', options.context);
         //>>includeEnd('debug');
 
         var context = options.context;
@@ -675,9 +670,7 @@ define([
      */
     VertexArray.prototype.getAttribute = function(index) {
         //>>includeStart('debug', pragmas.debug);
-        if (!defined(index)) {
-            throw new DeveloperError('index is required.');
-        }
+        Check.defined('index', index);
         //>>includeEnd('debug');
 
         return this._attributes[index];
