@@ -8,6 +8,7 @@ define([
         'Cesium/DataSources/CzmlDataSource',
         'Cesium/DataSources/GeoJsonDataSource',
         'Cesium/DataSources/KmlDataSource',
+        'Cesium/Scene/createOpenStreetMapImageryProvider',
         'Cesium/Scene/createTileMapServiceImageryProvider',
         'Cesium/Widgets/Viewer/Viewer',
         'Cesium/Widgets/Viewer/viewerCesiumInspectorMixin',
@@ -15,7 +16,6 @@ define([
         'domReady!'
     ], function(
         Cartesian3,
-        createOpenStreetMapImageryProvider,
         defined,
         formatError,
         CesiumMath,
@@ -24,6 +24,7 @@ define([
         CzmlDataSource,
         GeoJsonDataSource,
         KmlDataSource,
+        createOpenStreetMapImageryProvider,
         createTileMapServiceImageryProvider,
         Viewer,
         viewerCesiumInspectorMixin,
