@@ -2,88 +2,52 @@
 define([
         'Cesium/Core/Cartesian3',
         'Cesium/Core/Color',
-        'Cesium/Core/Credit',
-        'Cesium/Core/DefaultProxy',
-        'Cesium/Core/defaultValue',
         'Cesium/Core/defined',
         'Cesium/Core/Ellipsoid',
         'Cesium/Core/EllipsoidTerrainProvider',
         'Cesium/Core/formatError',
-        'Cesium/Core/freezeObject',
         'Cesium/Core/GeographicProjection',
         'Cesium/Core/getFilenameFromUri',
-        'Cesium/Core/loadJson',
         'Cesium/Core/Math',
-        'Cesium/Core/NearFarScalar',
+        'Cesium/Core/objectToQuery',
         'Cesium/Core/queryToObject',
-        'Cesium/Core/Rectangle',
-        'Cesium/Core/ScreenSpaceEventHandler',
-        'Cesium/Core/ScreenSpaceEventType',
-        'Cesium/Core/StereographicProjection',
         'Cesium/DataSources/CzmlDataSource',
         'Cesium/DataSources/GeoJsonDataSource',
         'Cesium/DataSources/KmlDataSource',
-        'Cesium/DataSources/LabelGraphics',
         'Cesium/Scene/createOpenStreetMapImageryProvider',
         'Cesium/Scene/createTileMapServiceImageryProvider',
         'Cesium/Scene/Globe',
-        'Cesium/Scene/GridImageryProvider',
-        'Cesium/Scene/ImageryLayer',
-        'Cesium/Scene/SkyAtmosphere',
         'Cesium/Scene/SkyBox',
-        'Cesium/Scene/TileCoordinatesImageryProvider',
-        'Cesium/Scene/WebMapServiceImageryProvider',
-        'Cesium/Scene/WebMapTileServiceImageryProvider',
-        'Cesium/ThirdParty/knockout',
-        'Cesium/ThirdParty/when',
-        'Cesium/Widgets/createCommand',
         'Cesium/Widgets/ConfigurationFile/ConfigurationFile',
         'Cesium/Widgets/Viewer/Viewer',
         'Cesium/Widgets/Viewer/viewerCesiumInspectorMixin',
-        'Cesium/Widgets/Viewer/viewerDragDropMixin'
+        'Cesium/Widgets/Viewer/viewerDragDropMixin',
+        'domReady!'
     ], function(
         Cartesian3,
         Color,
-        Credit,
-        DefaultProxy,
-        defaultValue,
         defined,
         Ellipsoid,
         EllipsoidTerrainProvider,
         formatError,
-        freezeObject,
         GeographicProjection,
         getFilenameFromUri,
-        loadJson,
         CesiumMath,
-        NearFarScalar,
+        objectToQuery,
         queryToObject,
-        Rectangle,
-        ScreenSpaceEventHandler,
-        ScreenSpaceEventType,
-        StereographicProjection,
         CzmlDataSource,
         GeoJsonDataSource,
-        ImageryLayer,
         KmlDataSource,
         createOpenStreetMapImageryProvider,
         createTileMapServiceImageryProvider,
         Globe,
-        GridImageryProvider,
-        LabelGraphics,
-        SkyAtmosphere,
         SkyBox,
-        TileCoordinatesImageryProvider,
-        WebMapServiceImageryProvider,
-        WebMapTileServiceImageryProvider,
-        knockout,
-        when,
-        createCommand,
         ConfigurationFile,
         Viewer,
         viewerCesiumInspectorMixin,
         viewerDragDropMixin) {
     'use strict';
+
     /*global console*/
 
     /*
@@ -209,122 +173,6 @@ define([
         geocoder : false
     };
 
-    function viewerCreation(configuration) {
-
-        try {
-            viewerOptions.configuration = configuration ;// contains configuration (see ./sources/widget/ConfigurationFiles/ )
-            viewer = new Viewer('cesiumContainer', viewerOptions);
-
-        } catch (exception) {
-            loadingIndicator.style.display = 'none';
-            var message = formatError(exception);
-            console.error(message);
-            if (!document.querySelector('.cesium-widget-errorPanel')) {
-                window.alert(message);
-            }
-            return;
-        }
-
-        viewer.extend(viewerDragDropMixin);
-        if (endUserOptions.inspector) {
-            viewer.extend(viewerCesiumInspectorMixin);
-        }
-
-        var showLoadError = function (name, error) {
-            var title = 'An error occurred while loading the file: ' + name;
-            var message = 'An error occurred while loading the file, which may indicate that it is invalid.  A detailed error report is below:';
-            viewer.cesiumWidget.showErrorPanel(title, message, error);
-        };
-
-        viewer.dropError.addEventListener(function (viewerArg, name, error) {
-            showLoadError(name, error);
-        });
-
-        var scene = viewer.scene;
-        var context = scene.context;
-
-        // =================== default color of the globe ======================
-
-        scene.globe.baseColor = Color.BLACK;
-
-        // ==================== unable fog, moon and sun =======================
-
-        scene.fog.enabled = false;
-        scene.moon.show = false;
-        scene.sun.show = false;
-
-        // =====================================================================
-
-        if (endUserOptions.debug) {
-            context.validateShaderProgram = true;
-            context.validateFramebuffer = true;
-            context.logShaderCompilation = true;
-            context.throwOnWebGLError = true;
-        }
-
-        var source;
-
-        if (endUserOptions.source) {
-            source = endUserOptions.source;
-        }
-        if (defined(source)) {
-            var dataSource;
-            var loadPromise;
-
-            if (/\.czml$/i.test(source)) {
-                dataSource = new CzmlDataSource(getFilenameFromUri(source));
-                loadPromise = dataSource.loadUrl(source);
-            } else if (/\.geojson$/i.test(source) || /\.json$/i.test(source) || /\.topojson$/i.test(source)) {
-
-
-                //console.log(source);
-
-                dataSource = new GeoJsonDataSource(getFilenameFromUri(source), {
-                    markerColor: Color.RED
-                });
-                loadPromise = dataSource.load(source);
-            } else if (/\.kml$/i.test(source) || /\.kmz$/i.test(source)) {
-                dataSource = new KmlDataSource(getFilenameFromUri(source));
-                loadPromise = dataSource.load(source);
-            } else {
-                showLoadError(source, 'Unknown format.');
-            }
-
-            if (defined(loadPromise)) {
-                viewer.dataSources.add(loadPromise).then(function (dataSource) {
-                    var lookAt = endUserOptions.lookAt;
-                    if (defined(lookAt)) {
-                        var entity = dataSource.entities.getById(lookAt);
-                        if (defined(entity)) {
-                            viewer.trackedEntity = entity;
-                        } else {
-                            var error = 'No entity with id "' + lookAt + '" exists in the provided data source.';
-                            showLoadError(source, error);
-                        }
-                    }
-                }).otherwise(function (error) {
-                    showLoadError(source, error);
-                });
-            }
-        }
-
-        if (endUserOptions.stats) {
-            scene.debugShowFramesPerSecond = true;
-        }
-
-        var theme = endUserOptions.theme;
-        if (defined(theme)) {
-            if (endUserOptions.theme === 'lighter') {
-                document.body.classList.add('cesium-lighter');
-                viewer.animation.applyThemeChanges();
-            } else {
-                var error = 'Unknown theme: ' + theme;
-                viewer.cesiumWidget.showErrorPanel(error, '');
-            }
-        }
-        loadingIndicator.style.display = 'none';
-    }
-
     /* =========================================================================
      ======================== READ CONFIGURATION FILES =========================
      =========================================================================== */
@@ -335,7 +183,8 @@ define([
     if (viewerOptions.showSystems === true) {
 
         var conf = new ConfigurationFile();
-        viewerCreation(conf.config);
+        //viewerCreation(conf.config);
+        var configuration = conf.config;
 
     } else if (viewerOptions.showSystems === false || viewerOptions.showSystems === 'undefined') {
 
@@ -346,6 +195,163 @@ define([
         viewerOptions.imageryProvider = imageryProvider;
 
         var configuration = null;
-        viewerCreation(configuration);
+        //viewerCreation(configuration);
     }
+
+    try {
+        viewerOptions.configuration = configuration ;// contains configuration (see ./sources/widget/ConfigurationFiles/ )
+        viewer = new Viewer('cesiumContainer', viewerOptions);
+
+    } catch (exception) {
+        loadingIndicator.style.display = 'none';
+        var message = formatError(exception);
+        console.error(message);
+        if (!document.querySelector('.cesium-widget-errorPanel')) {
+            window.alert(message);
+        }
+        return;
+    }
+
+    viewer.extend(viewerDragDropMixin);
+    if (endUserOptions.inspector) {
+        viewer.extend(viewerCesiumInspectorMixin);
+    }
+
+    var showLoadError = function (name, error) {
+        var title = 'An error occurred while loading the file: ' + name;
+        var message = 'An error occurred while loading the file, which may indicate that it is invalid.  A detailed error report is below:';
+        viewer.cesiumWidget.showErrorPanel(title, message, error);
+    };
+
+    viewer.dropError.addEventListener(function (viewerArg, name, error) {
+        showLoadError(name, error);
+    });
+
+    var scene = viewer.scene;
+    var context = scene.context;
+
+    // =================== default color of the globe ======================
+
+    scene.globe.baseColor = Color.BLACK;
+
+    // ==================== unable fog, moon and sun =======================
+
+    scene.fog.enabled = false;
+    scene.moon.show = false;
+    scene.sun.show = false;
+
+    // =====================================================================
+
+    if (endUserOptions.debug) {
+        context.validateShaderProgram = true;
+        context.validateFramebuffer = true;
+        context.logShaderCompilation = true;
+        context.throwOnWebGLError = true;
+    }
+
+    var view = endUserOptions.view;
+
+    var source;
+
+    if (endUserOptions.source) {
+        source = endUserOptions.source;
+    }
+    if (defined(source)) {
+        var dataSource;
+        var loadPromise;
+
+        if (/\.czml$/i.test(source)) {
+            loadPromise = CzmlDataSource.load(source);
+        } else if (/\.geojson$/i.test(source) || /\.json$/i.test(source) || /\.topojson$/i.test(source)) {
+            dataSource = new GeoJsonDataSource(getFilenameFromUri(source), {
+                markerColor: Color.RED
+            });
+            loadPromise = dataSource.load(source);
+        } else if (/\.kml$/i.test(source) || /\.kmz$/i.test(source)) {
+            loadPromise = KmlDataSource.load(source, {
+                camera: scene.camera,
+                canvas: scene.canvas
+            });
+        } else {
+            showLoadError(source, 'Unknown format.');
+        }
+
+        if (defined(loadPromise)) {
+            viewer.dataSources.add(loadPromise).then(function (dataSource) {
+                var lookAt = endUserOptions.lookAt;
+                if (defined(lookAt)) {
+                    var entity = dataSource.entities.getById(lookAt);
+                    if (defined(entity)) {
+                        viewer.trackedEntity = entity;
+                    } else {
+                        var error = 'No entity with id "' + lookAt + '" exists in the provided data source.';
+                        showLoadError(source, error);
+                    }
+                } else if (!defined(view)) {
+                    viewer.flyTo(dataSource);
+                }
+            }).otherwise(function (error) {
+                showLoadError(source, error);
+            });
+        }
+    }
+
+    if (endUserOptions.stats) {
+        scene.debugShowFramesPerSecond = true;
+    }
+
+    var theme = endUserOptions.theme;
+    if (defined(theme)) {
+        if (endUserOptions.theme === 'lighter') {
+            document.body.classList.add('cesium-lighter');
+            viewer.animation.applyThemeChanges();
+        } else {
+            var error = 'Unknown theme: ' + theme;
+            viewer.cesiumWidget.showErrorPanel(error, '');
+        }
+    }
+
+    if (defined(view)) {
+        var splitQuery = view.split(/[ ,]+/);
+        if (splitQuery.length > 1) {
+            var longitude = !isNaN(+splitQuery[0]) ? +splitQuery[0] : 0.0;
+            var latitude = !isNaN(+splitQuery[1]) ? +splitQuery[1] : 0.0;
+            var height = ((splitQuery.length > 2) && (!isNaN(+splitQuery[2]))) ? +splitQuery[2] : 300.0;
+            var heading = ((splitQuery.length > 3) && (!isNaN(+splitQuery[3]))) ? CesiumMath.toRadians(+splitQuery[3]) : undefined;
+            var pitch = ((splitQuery.length > 4) && (!isNaN(+splitQuery[4]))) ? CesiumMath.toRadians(+splitQuery[4]) : undefined;
+            var roll = ((splitQuery.length > 5) && (!isNaN(+splitQuery[5]))) ? CesiumMath.toRadians(+splitQuery[5]) : undefined;
+
+            viewer.camera.setView({
+                destination: Cartesian3.fromDegrees(longitude, latitude, height),
+                orientation: {
+                    heading: heading,
+                    pitch: pitch,
+                    roll: roll
+                }
+            });
+        }
+    }
+
+    var camera = viewer.camera;
+    function saveCamera() {
+        var position = camera.positionCartographic;
+        var hpr = '';
+        if (defined(camera.heading)) {
+            hpr = ',' + CesiumMath.toDegrees(camera.heading) + ',' + CesiumMath.toDegrees(camera.pitch) + ',' + CesiumMath.toDegrees(camera.roll);
+        }
+        endUserOptions.view = CesiumMath.toDegrees(position.longitude) + ',' + CesiumMath.toDegrees(position.latitude) + ',' + position.height + hpr;
+        history.replaceState(undefined, '', '?' + objectToQuery(endUserOptions));
+    }
+
+    var timeout;
+    if (endUserOptions.saveCamera !== 'false') {
+        camera.changed.addEventListener(function() {
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(saveCamera, 1000);
+        });
+    }
+
+    loadingIndicator.style.display = 'none';
+
 });
+
