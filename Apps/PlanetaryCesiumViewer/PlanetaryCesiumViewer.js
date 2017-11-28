@@ -66,42 +66,42 @@ define([
 
     // Here, we use the request to create the "endUserOptions" object.
 
-    /* example : 
-     
-     http://localhost:8080/Apps/CesiumMarsViewer/index.html            ==> request without parameters. Hence : endUserOptions = {} 
+    /* example :
+
+     http://localhost:8080/Apps/CesiumMarsViewer/index.html            ==> request without parameters. Hence : endUserOptions = {}
      http://localhost:8080/Apps/CesiumMarsViewer/index.html?map=themis ==> request with one parameter. Hence : endUserOptions = { map : "themis"}.
      */
 
-    /** Query  parameters: 
-     * 
-     * ellipsoidType         = name.  Type of ellipsoid to use (predefined or customized. See here after)) 
+    /** Query  parameters:
+     *
+     * ellipsoidType         = name.  Type of ellipsoid to use (predefined or customized. See here after))
      * ellipsoidSize         = x,y,z. (Dimensions of the ellipsoid)
-     * NAIFCodes             = a,b. Naif codes for planet ("a" parameter) and satellite ("b" parameter). for a planet (Mars for example), use a=4, b=0;                        
-     * imageryProviderParams = params for the imagery provider. 
-     *                         Example : SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000'    
+     * NAIFCodes             = a,b. Naif codes for planet ("a" parameter) and satellite ("b" parameter). for a planet (Mars for example), use a=4, b=0;
+     * imageryProviderParams = params for the imagery provider.
+     *                         Example : SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000'
      * onlineResUrl          = url of the online ressource.
-     *                         Example : http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map                                                                                 
+     *                         Example : http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map
      */
     var endUserOptions = queryToObject(window.location.search.substring(1));
 
-    /* 
-     - Implementation of the selection of the predefined ellipsoid from the request. 1 parameter must be used : ellipsoidType. 
-     example of use : http://localhost:8080/Apps/PlanetaryCesiumViewer/index.html?ellipsoidType=MARSIAU2000. 
-     predefined ellipsoid names availables : WGS84, MARSIAU2000, MARSSPHE, MOON, UNIT_SPHERE. 
-     
+    /*
+     - Implementation of the selection of the predefined ellipsoid from the request. 1 parameter must be used : ellipsoidType.
+     example of use : http://localhost:8080/Apps/PlanetaryCesiumViewer/index.html?ellipsoidType=MARSIAU2000.
+     predefined ellipsoid names availables : WGS84, MARSIAU2000, MARSSPHE, MOON, UNIT_SPHERE.
+
      ==> htmlRequest?ellipsoidType=ellipsoidName
-     
+
      - Implementation of the customized ellipsoid from the request. 2 parameter must be used : ellipsoidType and ellipsoidSize.
      ellipsoidSize is the dimensions of the ellipsoid. ellipsoidSize=x,y,z
-     
+
      example of use : http://localhost:8080/Apps/PlanetaryCesiumViewer/index.html?ellipsoidType=ELLIPSOID_1&&ellipsoidSize=1.0,1.2 1.4
-     
-     If ellipsoidType is equal to one of the predefined ellipsoid then the second parameter is ignored.   
-     
-     example:         http://localhost:8080/Apps/PlanetaryCesiumViewer/index.html?ellipsoidType=WGS84&ellipsoidSize=1.0,1.2 1.4 will 
-     return  http://localhost:8080/Apps/PlanetaryCesiumViewer/index.html?ellipsoidType=WGS84 
-     
-     ==> htmlRequest?ellipsoidType=ellipsoidName&ellipsoidSize=x,y,z 
+
+     If ellipsoidType is equal to one of the predefined ellipsoid then the second parameter is ignored.
+
+     example:         http://localhost:8080/Apps/PlanetaryCesiumViewer/index.html?ellipsoidType=WGS84&ellipsoidSize=1.0,1.2 1.4 will
+     return  http://localhost:8080/Apps/PlanetaryCesiumViewer/index.html?ellipsoidType=WGS84
+
+     ==> htmlRequest?ellipsoidType=ellipsoidName&ellipsoidSize=x,y,z
      */
 
     var globeParam;              /* *** NEW *** */
@@ -129,20 +129,20 @@ define([
 
     var imageryProvider;
 
-    /* 
-     
-     // request parameters to get a Map : 
-     
+    /*
+
+     // request parameters to get a Map :
+
      // SERVICE : Name of the OGC services.
      // VERSION : Number of the WMS protocol versions.
      // STYLES  : Styles lit used for each LAYERS
      // REQUEST : Three possible operations : GetCapabilities, GetMap, GetFeatureInfo.
      // FORMAT  : type of the returned image ???
      // LAYERS  : Liste des desired layers.
-     // BBOX    : the map size (longitude min,latitude min, longitude max, latitude max 
+     // BBOX    : the map size (longitude min,latitude min, longitude max, latitude max
      // WIDTH   : Width of the image.
      // HEIGHT  : Height of the image.
-     
+
      var urlParams        = endUserOptions.imageryProviderParams;
      var onlineResUrl     = endUserOptions.onlineResUrl;
      var tabParams        = urlParams.split(';');
@@ -155,17 +155,17 @@ define([
     var viewer;
 
     var viewerOptions = {
-        mapProjection: mapProjectionParam, // The map projection to use in 2D and Columbus View modes (class : GeographicProjection).		
+        mapProjection: mapProjectionParam, // The map projection to use in 2D and Columbus View modes (class : GeographicProjection).
         globe: globeParam, //  The globe to use in the scene. (class : Globe)
         baseLayerPicker: false,
         imageryProvider: imageryProvider, // Fournit l'image a afficher sur le globe.
         terrainProvider: terrainProviderParam,
         scene3DOnly: endUserOptions.scene3DOnly, // show 3D scene directly.
         skyAtmosphere: false, // atm visualisation.
-        skyBox: new SkyBox({show: false}), // stars visualisation (calcul�s).
+        skyBox: new SkyBox({show: false}), // stars visualisation.
         selectionIndicator: false,
         timeline: false, // for files which contains the temporal dimension
-        animation: false, // for animation which displayed with the time 
+        animation: false, // for animation which displayed with the time
         navigationInstructionsInitiallyVisible: false,
         showSystems: true,
         tools: true,
@@ -178,13 +178,13 @@ define([
      =========================================================================== */
 
 
-    // Solar system configuration : 
+    // Solar system configuration :
+    var configuration;
 
     if (viewerOptions.showSystems === true) {
 
         var conf = new ConfigurationFile();
-        //viewerCreation(conf.config);
-        var configuration = conf.config;
+        configuration = conf.config;
 
     } else if (viewerOptions.showSystems === false || viewerOptions.showSystems === 'undefined') {
 
@@ -194,8 +194,7 @@ define([
 
         viewerOptions.imageryProvider = imageryProvider;
 
-        var configuration = null;
-        //viewerCreation(configuration);
+        configuration = null;
     }
 
     try {
@@ -207,7 +206,7 @@ define([
         var message = formatError(exception);
         console.error(message);
         if (!document.querySelector('.cesium-widget-errorPanel')) {
-            window.alert(message);
+            window.alert(message); //eslint-disable-line no-alert
         }
         return;
     }

@@ -36,7 +36,7 @@ define([
 
             /**
              * An Ellipsoid instance initialized to the standard Mars Sphere.
-             * @member of Ellipsoid 
+             * @member of Ellipsoid
              */
             Ellipsoid.MARSSPHE = freezeObject(new Ellipsoid(3396000.0, 3396000.0, 3396000.0));
 

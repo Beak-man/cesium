@@ -54,8 +54,7 @@ define([
             },
             set : function(ellipsoid) {
                  this._ellipsoid = ellipsoid;
-            },
-
+            }
         }
     });
 

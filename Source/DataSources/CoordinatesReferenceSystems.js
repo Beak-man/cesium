@@ -10,17 +10,17 @@ define([
     'use strict';
 
 
-    // we define two "crsFunction" functions : One for the default case  ==> defaultCrsFunction	
-    //                                         One for the specific case ==> CustomedCrsFunction	
+    // we define two "crsFunction" functions : One for the default case  ==> defaultCrsFunction
+    //                                         One for the specific case ==> CustomedCrsFunction
 
 
-    // dafault case : 	
+    // dafault case :
 
     function defaultCrsFunction(coordinates) {
         return Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2]);
     }
 
-    // specific case : 
+    // specific case :
 
     function CustomizedCrsFunction(coordinates, ellipsoid) {
         return Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2], ellipsoid);
@@ -72,7 +72,7 @@ define([
         /*
          console.log("******************** crs ***************************");
          console.log(crsFunctionType.used);
-         console.log("****************************************************"); 
+         console.log("****************************************************");
          */
 
 

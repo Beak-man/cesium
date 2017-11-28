@@ -328,9 +328,6 @@ define([
                 });
         }
 
-
-        // A developper 
-
         function metadataFailure(data) {
             // If the metadata is not found, assume this is a pre-metadata heightmap tileset.
             if (defined(data) && data.statusCode === 404) {
