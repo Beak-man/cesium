@@ -55,7 +55,7 @@ define([
                             'name': 'vo Jacobs University',
                             'url': 'http://epn1.epn-vespa.jacobs-university.de/__system__/tap/run/tap/sync',
                             'dir': './',
-                            'extension': ['mars_craters_dev.epn_core', 'crism.epn_core']
+                            'extension': ['mars_craters.epn_core', 'mars_craters_lagain.epn_core', 'crism.epn_core']
                         }
                     ]
                 }
