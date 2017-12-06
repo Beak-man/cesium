@@ -1738,7 +1738,7 @@ define([
                   var value = geoJsonDataSource.properties[myprop]._value;
                }
            }
-           featureCircleGeometry.property = value;
+           featureCircleGeometry.properties[propertynames[property]] = value;
         }
 
         return featureCircleGeometry;
@@ -1811,7 +1811,7 @@ define([
                   var value = geoJsonDataSource.properties[myprop]._value;
                }
            }
-           featurePolylines.property = value;
+           featurePolylines.properties[propertynames[property]] = value;
         }
 
         return featurePolylines;
@@ -1844,7 +1844,7 @@ define([
                   var value = geoJsonDataSource.properties[myprop]._value;
                }
            }
-           featureCircleGeometry.property = value;
+           featureCircleGeometry.properties[propertynames[property]] = value;
         }
 
         return featureCircleGeometry;

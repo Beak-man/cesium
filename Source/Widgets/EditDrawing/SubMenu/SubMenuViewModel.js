@@ -227,6 +227,7 @@ define([
         featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
         var propertynames = geoJsonDataSource.properties._propertyNames;
+        featureCircleGeometry.properties = {};
         var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
         for (var property in propertynames) {
            var pn = "_" + propertynames[property];
@@ -236,7 +237,7 @@ define([
                   var value = geoJsonDataSource.properties[myprop]._value;
                }
            }
-           featureCircleGeometry.property = value;
+           featureCircleGeometry.properties[propertynames[property]] = value;
         }
         return featureCircleGeometry;
     }
@@ -308,10 +309,9 @@ define([
                   var value = geoJsonDataSource.properties[myprop]._value;
                }
            }
-           featurePolylines.property = value;
+           featurePolylines.properties[propertynames[property]] = value;
         }
         //  featurePolylines.properties.segment = 'D = '+ distTrunc + ' m';
-
         return featurePolylines;
     }
 
@@ -342,7 +342,7 @@ define([
                   var value = geoJsonDataSource.properties[myprop]._value;
                }
            }
-           featureCircleGeometry.property = value;
+           featureCircleGeometry.properties[propertynames[property]] = value;
         }
 
         return featureCircleGeometry;
