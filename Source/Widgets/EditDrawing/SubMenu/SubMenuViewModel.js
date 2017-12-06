@@ -226,22 +226,17 @@ define([
         var featureCircleGeometry = {};
         featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
-        featureCircleGeometry.properties = geoJsonDataSource.properties;
         var propertynames = geoJsonDataSource.properties._propertyNames;
         var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
         for (var property in propertynames) {
-           console.log(propertynames[property]);
            var pn = "_" + propertynames[property];
-           console.log(pn);
            for (var pname in properties) {
                if (properties[pname]===pn) {
                   var myprop = properties[pname];
-                  console.log(myprop);
-                  var value = geoJsonDataSource.properties.myprop._value;
+                  var value = geoJsonDataSource.properties[myprop]._value;
                }
            }
-           console.log(value);
-           //console.log(Object.getOwnPropertyDescriptor(featureCircleGeometry.properties,propertynames[property]));
+           featureCircleGeometry.property = value;
         }
         return featureCircleGeometry;
     }
@@ -289,8 +284,6 @@ define([
         //var distance = Cartesian3.distance(positions[0], positions[1]);
         //var distTrunc = distance.toFixed(2);
 
-        // console.log(distance);
-
         var array = [];
 
         for (var j = 0; j < positions.length; j++) {
@@ -305,7 +298,18 @@ define([
 
         jsonPolylineGeometry.coordinates.push(array);
         featurePolylines.geometry = jsonPolylineGeometry;
-        featurePolylines.properties = geoJsonDataSource.properties;
+        var propertynames = geoJsonDataSource.properties._propertyNames;
+        var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
+        for (var property in propertynames) {
+           var pn = "_" + propertynames[property];
+           for (var pname in properties) {
+               if (properties[pname]===pn) {
+                  var myprop = properties[pname];
+                  var value = geoJsonDataSource.properties[myprop]._value;
+               }
+           }
+           featurePolylines.property = value;
+        }
         //  featurePolylines.properties.segment = 'D = '+ distTrunc + ' m';
 
         return featurePolylines;
@@ -314,9 +318,6 @@ define([
     function createPointGeoJsonObject(that, geoJsonDataSource) {
 
         var centerCoordinates = geoJsonDataSource.position._value;
-        alert("on y passe!");
-        console.log(geoJsonDataSource);
-
         var cartographicCenterPosition = that._ellipsoid.cartesianToCartographic(centerCoordinates);
         var centerPositionLng = CesiumMath.toDegrees(cartographicCenterPosition.longitude);
         var centerPositionLat = CesiumMath.toDegrees(cartographicCenterPosition.latitude);
@@ -331,7 +332,18 @@ define([
         featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
 
-        featureCircleGeometry.properties = geoJsonDataSource.properties;
+        var propertynames = geoJsonDataSource.properties._propertyNames;
+        var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
+        for (var property in propertynames) {
+           var pn = "_" + propertynames[property];
+           for (var pname in properties) {
+               if (properties[pname]===pn) {
+                  var myprop = properties[pname];
+                  var value = geoJsonDataSource.properties[myprop]._value;
+               }
+           }
+           featureCircleGeometry.property = value;
+        }
 
         return featureCircleGeometry;
     }

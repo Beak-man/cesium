@@ -1728,7 +1728,18 @@ define([
         var featureCircleGeometry = {};
         featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
-        featureCircleGeometry.properties = geoJsonDataSource.properties;
+        var propertynames = geoJsonDataSource.properties._propertyNames;
+        var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
+        for (var property in propertynames) {
+           var pn = "_" + propertynames[property];
+           for (var pname in properties) {
+               if (properties[pname]===pn) {
+                  var myprop = properties[pname];
+                  var value = geoJsonDataSource.properties[myprop]._value;
+               }
+           }
+           featureCircleGeometry.property = value;
+        }
 
         return featureCircleGeometry;
     }
@@ -1790,7 +1801,18 @@ define([
 
         jsonPolylineGeometry.coordinates.push(array);
         featurePolylines.geometry = jsonPolylineGeometry;
-        featurePolylines.properties = geoJsonDataSource.properties;
+        var propertynames = geoJsonDataSource.properties._propertyNames;
+        var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
+        for (var property in propertynames) {
+           var pn = "_" + propertynames[property];
+           for (var pname in properties) {
+               if (properties[pname]===pn) {
+                  var myprop = properties[pname];
+                  var value = geoJsonDataSource.properties[myprop]._value;
+               }
+           }
+           featurePolylines.property = value;
+        }
 
         return featurePolylines;
     }
@@ -1812,7 +1834,18 @@ define([
         var featureCircleGeometry = {};
         featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
-        featureCircleGeometry.properties = geoJsonDataSource.properties;
+        var propertynames = geoJsonDataSource.properties._propertyNames;
+        var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
+        for (var property in propertynames) {
+           var pn = "_" + propertynames[property];
+           for (var pname in properties) {
+               if (properties[pname]===pn) {
+                  var myprop = properties[pname];
+                  var value = geoJsonDataSource.properties[myprop]._value;
+               }
+           }
+           featureCircleGeometry.property = value;
+        }
 
         return featureCircleGeometry;
     }
