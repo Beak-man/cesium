@@ -1020,7 +1020,7 @@ define([
             GeoJsonDataSource.flaggedCounter = flaggedCounter;
             GeoJsonDataSource.counter = counter;
 
-            console.log(entity);
+            //console.log(entity);
 
             var countObject = {
                 flagged: flaggedCounter,

@@ -31,18 +31,17 @@ define([
     function flagFunctionV2(that, viewer) {
 
         try {
-            that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands;
+            that._viewer.drawLines.viewModel.subMenu.viewModel.removeAllCommands();
         } catch (e) {
         }
 
         try {
-            that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
+            that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer();
         } catch (e) {
         }
 
         try {
-
-            that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.removeHandlers;
+            that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.removeHandlers();
         } catch (e) {
         }
 
@@ -63,15 +62,12 @@ define([
                 pickedObject = viewer.scene.pick(click.position);
 
                 var objectId;
-                var id;
 
                 if (pickedObject.id) {
                     objectId = pickedObject.id;
-                    id = pickedObject.id.id;
                 }
 
                 objectId.entityCollection.remove(objectId);
-                console.log('suppression done');
 
             }, ScreenSpaceEventType.RIGHT_CLICK);
 
@@ -88,14 +84,15 @@ define([
                 pickedObject = viewer.scene.pick(click.position);
 
                 var objectId;
-                var id;
 
                 if (pickedObject.id) {
                     objectId = pickedObject.id;
-                    id = pickedObject.id.id;
                 }
 
-                console.log(pickedObject.id);
+                var getColorObject;
+                var colorObject;
+                var colorObjectN;
+                var colorProperty;
 
                 if (pickedObject.id) {
 
@@ -109,15 +106,16 @@ define([
 
                                 var objectTypeEllipse = objectId['ellipse'];
                                 var objectTypePoint = objectId['point'];
+                                var rgba;
 
                                 try {
-                                    var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
+                                    getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
 
                                     if (getColorObject !== null) {
 
-                                        var colorObjectN = getColorObject.normalizedColor;
-                                        var colorObject = getColorObject.color;
-                                        var colorProperty = getColorObject.property;
+                                        colorObjectN = getColorObject.normalizedColor;
+                                        colorObject = getColorObject.color;
+                                        colorProperty = getColorObject.property;
 
                                         objectTypeEllipse.material.color = colorObjectN;
 
@@ -126,7 +124,7 @@ define([
                                         objectTypePoint.outlineWidth._value = 3;
 
 
-                                        var rgba = parseInt(colorObject.red) + ', ' + parseInt(colorObject.green) + ', ' + parseInt(colorObject.blue) + ', ' + colorObject.alpha;
+                                        rgba = parseInt(colorObject.red) + ', ' + parseInt(colorObject.green) + ', ' + parseInt(colorObject.blue) + ', ' + colorObject.alpha;
                                         objectId.properties.flagColor = rgba;
                                         objectId.properties[colorProperty.propertyName] = colorProperty.propertyValue;
 
@@ -139,13 +137,13 @@ define([
                                     }
                                 } catch (e) {
 
-                                    var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
+                                    getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
 
                                     if (getColorObject !== null) {
 
-                                        var colorObjectN = getColorObject.normalizedColor;
-                                        var colorObject = getColorObject.color;
-                                        var colorProperty = getColorObject.property;
+                                        colorObjectN = getColorObject.normalizedColor;
+                                        colorObject = getColorObject.color;
+                                        colorProperty = getColorObject.property;
 
                                         objectType.color = colorObjectN;
                                         objectType.outlineColor._value = colorObjectN;
@@ -156,7 +154,7 @@ define([
                                         }
 
 
-                                        var rgba = parseInt(colorObject.red) + ', ' + parseInt(colorObject.green) + ', ' + parseInt(colorObject.blue) + ', ' + colorObject.alpha;
+                                        rgba = parseInt(colorObject.red) + ', ' + parseInt(colorObject.green) + ', ' + parseInt(colorObject.blue) + ', ' + colorObject.alpha;
                                         objectId.properties.flagColor = rgba;
                                         objectId.properties[colorProperty.PropertyName] = colorProperty.PropertyValue;
 
@@ -170,13 +168,13 @@ define([
 
                     var objectPrimitive = pickedObject.primitive;
 
-                    var getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
+                    getColorObject = that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.tableViewModel.selectedColor;
 
                     if (getColorObject !== null) {
 
-                        var colorObjectN = getColorObject.normalizedColor;
-                        var colorObject = getColorObject.color;
-                        var colorProperty = getColorObject.property;
+                        colorObjectN = getColorObject.normalizedColor;
+                        colorObject = getColorObject.color;
+                        colorProperty = getColorObject.property;
 
                         var appearance = new MaterialAppearance({
                             material: Material.fromType('Color', {color: colorObjectN}),
@@ -185,7 +183,6 @@ define([
 
                         if (objectPrimitive.material) { // for polylines
 
-                            console.log(objectPrimitive.material);
                             objectPrimitive.material.uniforms.color = colorObjectN;
 
                         } else {
@@ -196,8 +193,6 @@ define([
                     }
                 }
 
-                console.log('flag done');
-
             }, ScreenSpaceEventType.LEFT_CLICK);
 
             that._isflagCommandActive = true;
@@ -205,18 +200,18 @@ define([
     }
 
     var saveGeoJsondataSourcesObject = {
-        ellipse: createEllipseGeoJsonObect,
-        polygon: createPolygonGeoJsonObect,
-        point: createPointGeoJsonObect,
-        polyline: createPolylineGeoJsonObect
+        ellipse: createEllipseGeoJsonObject,
+        polygon: createPolygonGeoJsonObject,
+        point: createPointGeoJsonObject,
+        polyline: createPolylineGeoJsonObject
     };
 
-    function createEllipseGeoJsonObect(that, geoJsonDataSource) {
+    function createEllipseGeoJsonObject(that, geoJsonDataSource) {
 
         var centerCoordinates = geoJsonDataSource._position._value;
 
-        var circleRadius = geoJsonDataSource.ellipse.semiMajorAxis;
-        var circleSurface = CesiumMath.PI * circleRadius * circleRadius;
+        //var circleRadius = geoJsonDataSource.ellipse.semiMajorAxis;
+        //var circleSurface = CesiumMath.PI * circleRadius * circleRadius;
 
         var cartographicCenterPosition = that._ellipsoid.cartesianToCartographic(centerCoordinates);
         var centerPositionLng = CesiumMath.toDegrees(cartographicCenterPosition.longitude);
@@ -232,11 +227,26 @@ define([
         featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
         featureCircleGeometry.properties = geoJsonDataSource.properties;
-
+        var propertynames = geoJsonDataSource.properties._propertyNames;
+        var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
+        for (var property in propertynames) {
+           console.log(propertynames[property]);
+           var pn = "_" + propertynames[property];
+           console.log(pn);
+           for (var pname in properties) {
+               if (properties[pname]===pn) {
+                  var myprop = properties[pname];
+                  console.log(myprop);
+                  var value = geoJsonDataSource.properties.myprop._value;
+               }
+           }
+           console.log(value);
+           //console.log(Object.getOwnPropertyDescriptor(featureCircleGeometry.properties,propertynames[property]));
+        }
         return featureCircleGeometry;
     }
 
-    function createPolygonGeoJsonObect(that, geoJsonDataSource) {
+    function createPolygonGeoJsonObject(that, geoJsonDataSource) {
 
         var featurePolygons = {};
         featurePolygons.type = 'Feature';
@@ -266,7 +276,7 @@ define([
         return featurePolygons;
     }
 
-    function createPolylineGeoJsonObect(that, geoJsonDataSource) {
+    function createPolylineGeoJsonObject(that, geoJsonDataSource) {
 
         var featurePolylines = {};
         featurePolylines.type = 'Feature';
@@ -276,8 +286,8 @@ define([
         jsonPolylineGeometry.coordinates = [];
 
         var positions = geoJsonDataSource.polyline.positions._value;
-        var distance = Cartesian3.distance(positions[0], positions[1]);
-        var distTrunc = distance.toFixed(2);
+        //var distance = Cartesian3.distance(positions[0], positions[1]);
+        //var distTrunc = distance.toFixed(2);
 
         // console.log(distance);
 
@@ -301,9 +311,11 @@ define([
         return featurePolylines;
     }
 
-    function createPointGeoJsonObect(that, geoJsonDataSource) {
+    function createPointGeoJsonObject(that, geoJsonDataSource) {
 
         var centerCoordinates = geoJsonDataSource.position._value;
+        alert("on y passe!");
+        console.log(geoJsonDataSource);
 
         var cartographicCenterPosition = that._ellipsoid.cartesianToCartographic(centerCoordinates);
         var centerPositionLng = CesiumMath.toDegrees(cartographicCenterPosition.longitude);
@@ -318,6 +330,7 @@ define([
         var featureCircleGeometry = {};
         featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
+
         featureCircleGeometry.properties = geoJsonDataSource.properties;
 
         return featureCircleGeometry;
@@ -333,6 +346,18 @@ define([
         geoJsonObject.features = [];
         geoJsonObject.crs = crs.crs;
 
+        var polylines;
+        var positions;
+        var firstPosition;
+        var lastPosition;
+        var cartographicFirstPosition;
+        var cartographicLastPosition;
+        var firstPositionLng;
+        var firstPositionLat;
+        var lastPositionLng;
+        var lastPositionLat;
+        var j;
+
         for (var i = 0; i < primitives.length; i++) {
 
             if (primitives[i].associatedObject === 'polylines' && primitives[i]._polylines.length > 0) {
@@ -344,7 +369,7 @@ define([
                 jsonPolylineGeometry.type = 'MultiLineString';
                 jsonPolylineGeometry.coordinates = [];
 
-                var polylines = primitives[i]._polylines;
+                polylines = primitives[i]._polylines;
 
                 var labels = primitives[i + 1]._labels;
 
@@ -352,20 +377,20 @@ define([
 
                 if (polylines.length > 0) {
 
-                    for (var j = 0; j < polylines.length; j++) {
+                    for (j = 0; j < polylines.length; j++) {
 
-                        var positions = polylines[j]._positions;
+                        positions = polylines[j]._positions;
 
-                        var firstPosition = positions[0];
-                        var lastPosition = positions[positions.length - 1];
+                        firstPosition = positions[0];
+                        lastPosition = positions[positions.length - 1];
 
-                        var cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
-                        var cartographicLastPosition = that._ellipsoid.cartesianToCartographic(lastPosition);
+                        cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
+                        cartographicLastPosition = that._ellipsoid.cartesianToCartographic(lastPosition);
 
-                        var firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
-                        var firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
-                        var lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
-                        var lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
+                        firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
+                        firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
+                        lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
+                        lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
 
                         var line = [[firstPositionLng, firstPositionLat], [lastPositionLng, lastPositionLat]];
 
@@ -386,7 +411,7 @@ define([
 
                 if (circles.length > 0) {
 
-                    for (var j = 0; j < circles.length; j++) {
+                    for (j = 0; j < circles.length; j++) {
 
                         var centerCoordinates = circles[j]._boundingSpheres[0].center;
                         var circleRadius = circles[j]._boundingSpheres[0].radius;
@@ -426,37 +451,38 @@ define([
                 geoJsonPolygons.type = 'Polygon';
                 geoJsonPolygons.coordinates = [];
 
-                var polylines = primitives[i]._polylines;
+                polylines = primitives[i]._polylines;
                 var polygonsPoints = [];
 
                 if (polylines.length > 0) {
 
-                    for (var j = 0; j < polylines.length - 1; j++) {
+                    for (j = 0; j < polylines.length - 1; j++) {
 
-                        var positions = polylines[j]._positions;
+                        positions = polylines[j]._positions;
 
-                        var firstPosition = positions[0];
-                        var lastPosition = positions[positions.length - 1];
+                        firstPosition = positions[0];
+                        lastPosition = positions[positions.length - 1];
 
-                        var cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
-                        var cartographicLastPosition = that._ellipsoid.cartesianToCartographic(lastPosition);
+                        cartographicFirstPosition = that._ellipsoid.cartesianToCartographic(firstPosition);
+                        cartographicLastPosition = that._ellipsoid.cartesianToCartographic(lastPosition);
 
-                        var lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
-                        var lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
+                        lastPositionLng = CesiumMath.toDegrees(cartographicLastPosition.longitude);
+                        lastPositionLat = CesiumMath.toDegrees(cartographicLastPosition.latitude);
 
+                        var coordLastPoint;
                         if (j === 0) {
 
-                            var firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
-                            var firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
+                            firstPositionLng = CesiumMath.toDegrees(cartographicFirstPosition.longitude);
+                            firstPositionLat = CesiumMath.toDegrees(cartographicFirstPosition.latitude);
 
                             var coordFirstPoint = [firstPositionLng, firstPositionLat];
-                            var coordLastPoint = [lastPositionLng, lastPositionLat];
+                            coordLastPoint = [lastPositionLng, lastPositionLat];
 
                             polygonsPoints.push(coordFirstPoint);
                             polygonsPoints.push(coordLastPoint);
 
                         } else {
-                            var coordLastPoint = [lastPositionLng, lastPositionLat];
+                            coordLastPoint = [lastPositionLng, lastPositionLat];
                             polygonsPoints.push(coordLastPoint);
                         }
                     }
@@ -472,6 +498,8 @@ define([
             }
         }
 
+        var geoJsonData;
+
         if (that._viewer.geoJsonData) {
 
             var dataSources = that._viewer.dataSources._dataSources;
@@ -484,7 +512,7 @@ define([
 
                 for (var l = 0; l < dimGeoJsonDataSource; l++) {
 
-                    var geoJsonData = geoJsonDataSource[l];
+                    geoJsonData = geoJsonDataSource[l];
 
                     var dataType = ['ellipse', 'polyline', 'point', 'polygon'];
 
@@ -501,7 +529,6 @@ define([
                     if (geomType) {
                         var savefunction = saveGeoJsondataSourcesObject[geomType];
                         var resObject = savefunction(that, geoJsonData);
-
                         geoJsonObject.features.push(resObject);
                     }
                 }
@@ -510,7 +537,7 @@ define([
 
         if (geoJsonObject.features.length > 0) {
 
-            var geoJsonData = JSON.stringify(geoJsonObject);
+            geoJsonData = JSON.stringify(geoJsonObject);
             var blob = new Blob([geoJsonData], {
                 type: 'application/octet-stream',
                 endings: 'native'
@@ -539,7 +566,6 @@ define([
                 that._linkDownload.href = url;
                 that._linkDownload.download = fileName || 'unknown';
                 that._linkDownload.onclick = function () {
-                    console.log(this);
                     this.parentElement.removeChild(this);
                     that._wrapperSaveSubMenu.parentElement.removeChild(that._wrapperSaveSubMenu);
                     that._isSaveButtonActivate = false;
@@ -549,7 +575,6 @@ define([
             } else if (that._isSaveButtonActivate) {
 
                 try {
-                    console.log(that._linkDownload.parentElement);
                     that._linkDownload.parentElement.removeChild(that._linkDownload);
                     that._wrapperSaveSubMenu.parentElement.removeChild(that._wrapperSaveSubMenu);
                 } catch (e) {
@@ -601,12 +626,12 @@ define([
 
             try {
 
-                that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu;
+                that._viewer.editDrawing.viewModel.subMenu.destroyWrapperMenu();
             } catch (e) {
             }
 
             try {
-                that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
+                that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer();
             } catch (e) {
             }
         });
@@ -646,8 +671,8 @@ define([
                 return this._closeSubMenu;
             }
         },
-        /* colorPicker widget 
-         * 
+        /* colorPicker widget
+         *
          */
         colorPicker: {
             get: function () {
@@ -666,10 +691,12 @@ define([
         },
         removeAllHandlers: {
             get: function () {
-                if (this._handlerLeft)
+                if (this._handlerLeft) {
                     this._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-                if (this._handlerRight)
+                }
+                if (this._handlerRight) {
                     this._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                }
             }
         }
     });
@@ -680,10 +707,12 @@ define([
 
     function removeHandlers(that) {
 
-        if (that._handlerLeft)
+        if (that._handlerLeft) {
             that._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-        if (that._handlerRight)
+        }
+        if (that._handlerRight) {
             that._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+        }
     }
 
     return SubMenuViewModel;
