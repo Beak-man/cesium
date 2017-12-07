@@ -167,6 +167,7 @@ define([
         timeline: false, // for files which contains the temporal dimension
         animation: false, // for animation which displayed with the time
         navigationInstructionsInitiallyVisible: false,
+        trashButton: true,
         showSystems: true,
         tools: true,
         VOData: true,

@@ -51,6 +51,7 @@ define([
         '../subscribeAndEvaluate',
         '../Timeline/Timeline',
         '../Tools/Tools',
+        '../TrashButton/TrashButton',
         '../VRButton/VRButton'
     ], function(
         BoundingSphere,
@@ -105,6 +106,7 @@ define([
         subscribeAndEvaluate,
         Timeline,
         Tools,
+        TrashButton,
         VRButton) {
     'use strict';
     var boundingSphereScratch = new BoundingSphere();
@@ -199,6 +201,7 @@ define([
     function enableVRUI(viewer, enabled) {
         var geocoder = viewer._geocoder;
         var homeButton = viewer._homeButton;
+        var trashButton = viewer._trashButton;
         var sceneModePicker = viewer._sceneModePicker;
         var projectionPicker = viewer._projectionPicker;
         var baseLayerPicker = viewer._baseLayerPicker;
@@ -214,6 +217,9 @@ define([
         }
         if (defined(homeButton)) {
             homeButton.container.style.visibility = visibility;
+        }
+        if (defined(trashButton)) {
+            trashButton.container.style.visibility = visibility;
         }
         if (defined(sceneModePicker)) {
             sceneModePicker.container.style.visibility = visibility;
@@ -559,6 +565,11 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             eventHelper.add(homeButton.viewModel.command.beforeExecute, Viewer.prototype._clearTrackedObject, this);
         }
 
+        /* Trash widget */
+        var trashButton;
+        if (!defined(options.trashButton) || options.trashButton !== false) {
+            trashButton = new TrashButton(toolbar,this);
+        }
 
         /* *******************************************************************************************************************************
          * ******************************************************** NEW WIDGETS **********************************************************

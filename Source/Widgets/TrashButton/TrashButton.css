@@ -1,0 +1,46 @@
+.cesium-viewer-trashbuttonContainer {
+    border: solid 1px #444;
+    background-color: rgba(40, 40, 40, 0.7);
+    color: white;
+    display: inline-block;
+    vertical-align: middle;
+    width: 0;
+    height: 32px;
+    margin: 0;
+    padding: 0 32px 0 0;
+    border-radius: 0;
+    box-sizing: border-box;
+    transition: width ease-in-out 0.25s, background-color 0.2s ease-in-out;
+    -webkit-appearance: none;
+}
+
+.cesium-viewer-trashbuttonContainer:hover {
+    border-color: #aef;
+    box-shadow: 0 0 8px #fff;
+}
+
+
+.cesium-Trash-button-hidden {
+    visibility : hidden;
+    opacity : 0;
+    z-index : 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    transition-property: opacity;
+    transition:  0.1s;
+}
+
+.cesium-Trash-button-visible {
+    visibility : visible;
+    z-index : 1;
+    opacity : 1;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    transition-property: opacity;
+    transition:  1.0s;
+    transition-delay: 0.0s;
+    
+    transition-property: visibility;
+    transition:  0.2s;
+    transition-delay: 0.4s;
+}

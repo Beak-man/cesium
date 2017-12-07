@@ -47,13 +47,13 @@ define([
 			c0-6.952-5.635-12.587-12.587-12.587c-6.95,0-12.585,5.635-12.585,12.587c0,3.762,1.686,7.102,4.302,9.408l-8.423,19.455\
 			c-0.117-0.002-0.224-0.034-0.344-0.034C5.635,42.633,0,48.267,0,55.22C0,62.169,5.635,67.807,12.587,67.807z"/></g>';
 
-
+/*
     var trashIcon = '<g><g><path d="M75.834,33.388h-51.67c-1.311,0-2.375,1.058-2.375,2.373v49.887c0,1.314,1.064,2.377,2.375,2.377h51.67\
 			c1.314,0,2.375-1.063,2.375-2.377V35.76C78.209,34.446,77.148,33.388,75.834,33.388z"/></g><g>\
                         <path d="M79.004,17.352H59.402v-2.999c0-1.314-1.061-2.377-2.373-2.377H42.971c-1.312,0-2.375,1.063-2.375,2.377v2.999H20.996\
 			c-1.312,0-2.375,1.059-2.375,2.373v6.932c0,1.314,1.063,2.373,2.375,2.373h58.008c1.314,0,2.375-1.059,2.375-2.373v-6.932\
 			C81.379,18.41,80.318,17.352,79.004,17.352z"/></g></g>';
-
+*/
     var circleIcon = '<g><path d="M74.301,0C33.333,0,0,33.333,0,74.301c0,40.969,33.333,74.301,74.301,74.301c40.969,0,74.301-33.332,74.301-74.301C148.602,33.333,115.27,0,74.301,0z M132.768,77.954h3.537c-1.897,32.56-28.978,58.468-62.004,58.468\
 				c-34.254,0-62.121-27.867-62.121-62.121c0-34.253,27.867-62.12,62.121-62.12c33.846,0,61.436,27.211,62.09,60.902h-3.623c-1.348,0-2.437,1.089-2.437,2.437S131.42,77.954,132.768,77.954z"/>\
 				<path d="M110.842,73.083h-7.308c-1.349,0-2.437,1.089-2.437,2.437s1.088,2.436,2.437,2.436h7.308c1.348,0,2.438-1.088,2.438-2.436C113.277,74.172,112.189,73.083,110.842,73.083z"/>\
@@ -130,11 +130,11 @@ define([
         polygonButton.setAttribute('data-bind', 'attr  : { title: "Draw polygons" }, event : {click : polygonCommand}, css: {"cesium-subMenu-focus": isPolygonsActive}');
         wrapperMenu.appendChild(polygonButton);
 
-        var trashButton = document.createElement('div');
+        /*var trashButton = document.createElement('div');
         trashButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         trashButton.innerHTML = '<svg width="30" height="30" viewBox="0 0 100 100">' + trashIcon + ' </svg>';
         trashButton.setAttribute('data-bind', 'attr  : { title: "Remove all objects" }, event : {click : trashCommand}');
-        wrapperMenu.appendChild(trashButton);
+        wrapperMenu.appendChild(trashButton);*/
 
         var wrapperSaveButtonMenu = document.createElement('span');
         wrapperSaveButtonMenu.className =  'cesium-subMenu-saveButtonWrapper';
