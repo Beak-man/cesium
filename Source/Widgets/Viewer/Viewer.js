@@ -44,6 +44,7 @@ define([
         '../NavigationHelpButton/NavigationHelpButton',
         '../PointCircleSwitch/PointCircleSwitch',
         '../ProjectionPicker/ProjectionPicker',
+        '../SaveButton/SaveButton',
         '../SceneModePicker/SceneModePicker',
         '../SelectionIndicator/SelectionIndicator',
         '../ShowGrid/ShowGrid',
@@ -99,6 +100,7 @@ define([
         NavigationHelpButton,
         PointCircleSwitch,
         ProjectionPicker,
+        SaveButton,
         SceneModePicker,
         SelectionIndicator,
         ShowGrid,
@@ -202,6 +204,7 @@ define([
         var geocoder = viewer._geocoder;
         var homeButton = viewer._homeButton;
         var trashButton = viewer._trashButton;
+        var saveButton = viewer._saveButton;
         var sceneModePicker = viewer._sceneModePicker;
         var projectionPicker = viewer._projectionPicker;
         var baseLayerPicker = viewer._baseLayerPicker;
@@ -215,11 +218,14 @@ define([
 
             geocoder.container.style.visibility = visibility;
         }
-        if (defined(homeButton)) {
-            homeButton.container.style.visibility = visibility;
+        if (defined(saveButton)) {
+            saveButton.container.style.visibility = visibility;
         }
         if (defined(trashButton)) {
             trashButton.container.style.visibility = visibility;
+        }
+        if (defined(homeButton)) {
+            homeButton.container.style.visibility = visibility;
         }
         if (defined(sceneModePicker)) {
             sceneModePicker.container.style.visibility = visibility;
@@ -548,6 +554,18 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
 //  console.log(cesiumWidget.scene);
 
+        /* Save widget */
+        var saveButton;
+        if (!defined(options.saveButton) || options.saveButton !== false) {
+            saveButton = new SaveButton(toolbar,this);
+        }
+
+        /* Trash widget */
+        var trashButton;
+        if (!defined(options.trashButton) || options.trashButton !== false) {
+            trashButton = new TrashButton(toolbar,this);
+        }
+
 // HomeButton
         var homeButton;
         if (!defined(options.homeButton) || options.homeButton !== false) {
@@ -563,12 +581,6 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             }
 // Subscribe to the home button beforeExecute event so that we can clear the trackedEntity.
             eventHelper.add(homeButton.viewModel.command.beforeExecute, Viewer.prototype._clearTrackedObject, this);
-        }
-
-        /* Trash widget */
-        var trashButton;
-        if (!defined(options.trashButton) || options.trashButton !== false) {
-            trashButton = new TrashButton(toolbar,this);
         }
 
         /* *******************************************************************************************************************************

@@ -4,32 +4,31 @@ define([
         '../../Core/defineProperties',
         '../../ThirdParty/knockout',
         '../getElement',
-        './TrashButtonViewModel'
+        './SaveButtonViewModel'
     ], function(
         defined,
         defineProperties,
         knockout,
         getElement,
-        TrashButtonViewModel) {
+        SaveButtonViewModel) {
     'use strict';
 
     /**
-     * A widget for cleaning all vector entities in the scene.
+     * A widget for saving all vector entities in the scene in a geojson file.
      *
-     * @alias TrashButton
+     * @alias SaveButton
      * @constructor
      *
      * @param {Element|String} container The DOM element or ID that will contain the widget.
      * @param {Object} Viewer.
      */
 
-    var TrashButton = function (container,that) {
+    var SaveButton = function (container,that) {
 
-        var icon = '<g><g><path d="M75.834,33.388h-51.67c-1.311,0-2.375,1.058-2.375,2.373v49.887c0,1.314,1.064,2.377,2.375,2.377h51.67\
-			c1.314,0,2.375-1.063,2.375-2.377V35.76C78.209,34.446,77.148,33.388,75.834,33.388z"/></g><g>\
-                        <path d="M79.004,17.352H59.402v-2.999c0-1.314-1.061-2.377-2.373-2.377H42.971c-1.312,0-2.375,1.063-2.375,2.377v2.999H20.996\
-			c-1.312,0-2.375,1.059-2.375,2.373v6.932c0,1.314,1.063,2.373,2.375,2.373h58.008c1.314,0,2.375-1.059,2.375-2.373v-6.932\
-			C81.379,18.41,80.318,17.352,79.004,17.352z"/></g></g>';
+        var icon = '<g><path d="M340.969,0H12.105C5.423,0,0,5.423,0,12.105v328.863c0,6.68,5.423,12.105,12.105,12.105h328.864\
+		c6.679,0,12.104-5.426,12.104-12.105V12.105C353.073,5.423,347.647,0,340.969,0z M67.589,18.164h217.895v101.884H67.589V18.164z\
+                M296.082,327.35H57.003V176.537h239.079V327.35z M223.953,33.295h30.269v72.638h-30.269V33.295z M274.135,213.863H78.938v-12.105\
+		h195.197V213.863z M274.135,256.231H78.938v-12.105h195.197V256.231z M274.135,297.087H78.938v-12.105h195.197V297.087z"/></g>';
 
         //>>includeStart('debug', pragmas.debug);
         if (!defined(container)) {
@@ -39,15 +38,15 @@ define([
 
         container = getElement(container);
 
-        var viewModel = new TrashButtonViewModel(that);
+        var viewModel = new SaveButtonViewModel(that);
 
         this._viewModel = viewModel;
 
         var element = document.createElement('button');
         element.type = 'button';
-        element.className = 'cesium-button cesium-toolbar-button cesium-trash-button';
-        element.innerHTML = '<svg width="30" height="30" viewBox="0 0 100 100">' + icon + ' </svg>';
-        element.setAttribute('data-bind', 'attr  : { title: "Remove all objects" }, event : {click : command}');
+        element.className = 'cesium-button cesium-toolbar-button cesium-save-button';
+        element.innerHTML = '<svg width="40" height="40" viewBox="-50 -50 640 640">' + icon + ' </svg>';
+        element.setAttribute('data-bind', 'attr  : { title: "Create file" }, event : {click : command}');
 
         container.appendChild(element);
 
@@ -59,10 +58,10 @@ define([
 
     };
 
-    defineProperties(TrashButton.prototype, {
+    defineProperties(SaveButton.prototype, {
         /**
          * Gets the parent container.
-         * @memberof TrashButton.prototype
+         * @memberof SaveButton.prototype
          *
          * @type {Element}
          */
@@ -73,9 +72,9 @@ define([
         },
         /**
          * Gets the view model.
-         * @memberof TrashButton.prototype
+         * @memberof SaveButton.prototype
          *
-         * @type {TrashButtonViewModel}
+         * @type {SaveButtonViewModel}
          */
         viewModel: {
             get: function () {
@@ -84,6 +83,6 @@ define([
         }
     });
 
-    return TrashButton;
+    return SaveButton;
 });
 

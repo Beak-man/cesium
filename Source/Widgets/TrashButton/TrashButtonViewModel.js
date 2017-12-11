@@ -20,8 +20,6 @@ define([
          * @default false
         */
 
-        //var that = this;
-
         this._command = createCommand(function () {
 
             if (that.scene.primitives.length > 0) {
@@ -44,12 +42,14 @@ define([
                 }
             }
 
+            /*
             try {
                 that._linkDownload.parentElement.removeChild(that._linkDownload);
                 that._wrapperSaveSubMenu.parentElement.removeChild(that._wrapperSaveSubMenu);
             } catch (e) {
                 // console.log(e)
             }
+            */
         });
     }
 
