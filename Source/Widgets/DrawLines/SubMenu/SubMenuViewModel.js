@@ -2283,6 +2283,7 @@ define([
         });
 
         this._saveCommand = createCommand(function () {
+            console.log(that._container);
             saveData(that, that._container);
         });
 

@@ -375,12 +375,13 @@ define([
 
             if (!that._isSaveButtonActivate) {
 
-                that._wrapperSaveSubMenu = document.createElement('span');
-                that._wrapperSaveSubMenu.className = 'cesium-subMenu-saveButton';
+                that._wrapperSaveSubMenu = document.createElement('button');
+                that._wrapperSaveSubMenu.className = 'cesium-button cesium-toolbar-button';
+                console.log(container);
                 container.appendChild(that._wrapperSaveSubMenu);
 
                 that._linkDownload = document.createElement('a');
-                that._linkDownload.className = 'cesium-subMenu-saveButtonLink';
+                that._linkDownload.className = 'cesium-saveButtonLink';
                 that._wrapperSaveSubMenu.appendChild(that._linkDownload);
                 that._linkDownload.innerHTML = '<svg width="25px" height="25px" viewBox="-10 0 100 100"><g>\
                                           <path d="M84.514,49.615H67.009c-2.133,0-4.025,1.374-4.679,3.406c-1.734,5.375-6.691,8.983-12.329,8.983\
@@ -419,7 +420,7 @@ define([
      * @alias SaveButtonViewModel
      * @constructor
      */
-    function SaveButtonViewModel(that) {
+    function SaveButtonViewModel(container,that) {
         /**
          * Gets or sets whether the save function is currently shown.  This property is observable.
          * @type {Boolean}
@@ -427,7 +428,8 @@ define([
         */
 
         this._command = createCommand(function () {
-            saveData(that, that._container);
+            console.log(container);
+            saveData(that, container);
         });
     }
 

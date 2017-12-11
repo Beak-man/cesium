@@ -44,3 +44,21 @@
     transition:  0.2s;
     transition-delay: 0.4s;
 }
+.cesium-saveButtonWrapper{
+    position : relative;
+    height: 37px;
+    display: inline-block;
+    margin : 0px;
+    padding: 0px;
+}
+
+.cesium-saveButton {
+    position: absolute;
+    left :40px;
+    display: inline-block;
+}
+
+.cesium-saveButtonLink{
+
+}
+

@@ -38,7 +38,7 @@ define([
 
         container = getElement(container);
 
-        var viewModel = new SaveButtonViewModel(that);
+        var viewModel = new SaveButtonViewModel(container,that);
 
         this._viewModel = viewModel;
 
