@@ -114,6 +114,7 @@ define([
         jsonPolylineGeometry.coordinates.push(array);
         featurePolylines.geometry = jsonPolylineGeometry;
         var propertynames = geoJsonDataSource.properties._propertyNames;
+        featurePolylines.properties = {};
         var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
         for (var property in propertynames) {
            var pn = "_" + propertynames[property];
@@ -147,6 +148,7 @@ define([
         featureCircleGeometry.geometry = jsonCircleGeoJson;
 
         var propertynames = geoJsonDataSource.properties._propertyNames;
+        featureCircleGeometry.properties = {};
         var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
         for (var property in propertynames) {
            var pn = "_" + propertynames[property];
@@ -375,13 +377,14 @@ define([
 
             if (!that._isSaveButtonActivate) {
 
-                that._wrapperSaveSubMenu = document.createElement('button');
+                that._wrapperSaveSubMenu = document.createElement('span');
                 that._wrapperSaveSubMenu.className = 'cesium-button cesium-toolbar-button';
+                that._wrapperSaveSubMenu.setAttribute("style", "display: flex;");
                 console.log(container);
                 container.appendChild(that._wrapperSaveSubMenu);
 
                 that._linkDownload = document.createElement('a');
-                that._linkDownload.className = 'cesium-saveButtonLink';
+                //that._linkDownload.className = 'cesium-saveButtonLink';
                 that._wrapperSaveSubMenu.appendChild(that._linkDownload);
                 that._linkDownload.innerHTML = '<svg width="25px" height="25px" viewBox="-10 0 100 100"><g>\
                                           <path d="M84.514,49.615H67.009c-2.133,0-4.025,1.374-4.679,3.406c-1.734,5.375-6.691,8.983-12.329,8.983\
@@ -391,7 +394,6 @@ define([
                                             c0.286-0.404,0.321-0.932,0.096-1.374c-0.225-0.442-0.682-0.716-1.177-0.716h-6.399V13.821c0-0.735-0.593-1.326-1.323-1.326H44.078\
                                             c-0.732,0-1.323,0.591-1.323,1.326v17.188h-6.404c-0.495,0-0.949,0.279-1.174,0.716c-0.229,0.442-0.19,0.97,0.098,1.374\
                                             L48.968,52.237z"/></g></svg>';
-                that._linkDownload.className = 'cesium-button cesium-toolbar-button';
                 that._linkDownload.href = url;
                 that._linkDownload.download = fileName || 'unknown';
                 that._linkDownload.onclick = function () {

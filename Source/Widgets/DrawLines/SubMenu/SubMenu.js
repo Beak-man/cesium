@@ -26,11 +26,6 @@ define([
 		<rect x="409.858" y="299.653" width="50.536" height="25.268"/><rect x="485.662" y="299.653" width="50.536" height="25.268"/>\
 		<rect x="561.466" y="299.653" width="50.536" height="25.268"/></g>';
 
-    var saveIcon = '<g><path d="M340.969,0H12.105C5.423,0,0,5.423,0,12.105v328.863c0,6.68,5.423,12.105,12.105,12.105h328.864\
-		c6.679,0,12.104-5.426,12.104-12.105V12.105C353.073,5.423,347.647,0,340.969,0z M67.589,18.164h217.895v101.884H67.589V18.164z\
-                M296.082,327.35H57.003V176.537h239.079V327.35z M223.953,33.295h30.269v72.638h-30.269V33.295z M274.135,213.863H78.938v-12.105\
-		h195.197V213.863z M274.135,256.231H78.938v-12.105h195.197V256.231z M274.135,297.087H78.938v-12.105h195.197V297.087z"/></g>';
-
     var closeIcon = '<path d="M84.707,68.752L65.951,49.998l18.75-18.752c0.777-0.777,0.777-2.036,0-2.813L71.566,15.295\
 				c-0.777-0.777-2.037-0.777-2.814,0L49.999,34.047l-18.75-18.752c-0.746-0.747-2.067-0.747-2.814,0L15.297,28.431\
 				c-0.373,0.373-0.583,0.88-0.583,1.407c0,0.527,0.21,1.034,0.583,1.407L34.05,49.998L15.294,68.753\
@@ -47,13 +42,6 @@ define([
 			c0-6.952-5.635-12.587-12.587-12.587c-6.95,0-12.585,5.635-12.585,12.587c0,3.762,1.686,7.102,4.302,9.408l-8.423,19.455\
 			c-0.117-0.002-0.224-0.034-0.344-0.034C5.635,42.633,0,48.267,0,55.22C0,62.169,5.635,67.807,12.587,67.807z"/></g>';
 
-/*
-    var trashIcon = '<g><g><path d="M75.834,33.388h-51.67c-1.311,0-2.375,1.058-2.375,2.373v49.887c0,1.314,1.064,2.377,2.375,2.377h51.67\
-			c1.314,0,2.375-1.063,2.375-2.377V35.76C78.209,34.446,77.148,33.388,75.834,33.388z"/></g><g>\
-                        <path d="M79.004,17.352H59.402v-2.999c0-1.314-1.061-2.377-2.373-2.377H42.971c-1.312,0-2.375,1.063-2.375,2.377v2.999H20.996\
-			c-1.312,0-2.375,1.059-2.375,2.373v6.932c0,1.314,1.063,2.373,2.375,2.373h58.008c1.314,0,2.375-1.059,2.375-2.373v-6.932\
-			C81.379,18.41,80.318,17.352,79.004,17.352z"/></g></g>';
-*/
     var circleIcon = '<g><path d="M74.301,0C33.333,0,0,33.333,0,74.301c0,40.969,33.333,74.301,74.301,74.301c40.969,0,74.301-33.332,74.301-74.301C148.602,33.333,115.27,0,74.301,0z M132.768,77.954h3.537c-1.897,32.56-28.978,58.468-62.004,58.468\
 				c-34.254,0-62.121-27.867-62.121-62.121c0-34.253,27.867-62.12,62.121-62.12c33.846,0,61.436,27.211,62.09,60.902h-3.623c-1.348,0-2.437,1.089-2.437,2.437S131.42,77.954,132.768,77.954z"/>\
 				<path d="M110.842,73.083h-7.308c-1.349,0-2.437,1.089-2.437,2.437s1.088,2.436,2.437,2.436h7.308c1.348,0,2.438-1.088,2.438-2.436C113.277,74.172,112.189,73.083,110.842,73.083z"/>\
@@ -130,35 +118,13 @@ define([
         polygonButton.setAttribute('data-bind', 'attr  : { title: "Draw polygons" }, event : {click : polygonCommand}, css: {"cesium-subMenu-focus": isPolygonsActive}');
         wrapperMenu.appendChild(polygonButton);
 
-        /*var trashButton = document.createElement('div');
-        trashButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
-        trashButton.innerHTML = '<svg width="30" height="30" viewBox="0 0 100 100">' + trashIcon + ' </svg>';
-        trashButton.setAttribute('data-bind', 'attr  : { title: "Remove all objects" }, event : {click : trashCommand}');
-        wrapperMenu.appendChild(trashButton);*/
-
-        var wrapperSaveButtonMenu = document.createElement('span');
-        wrapperSaveButtonMenu.className =  'cesium-subMenu-saveButtonWrapper';
-        wrapperMenu.appendChild(wrapperSaveButtonMenu);
-
-        var saveButton = document.createElement('div');
-        saveButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
-        saveButton.innerHTML = '<svg width="40" height="40" viewBox="-50 -50 640 640">' + saveIcon + ' </svg>';
-        saveButton.setAttribute('data-bind', 'attr  : { title: "Create file" }, event : {click : saveCommand}');
-        wrapperSaveButtonMenu.appendChild(saveButton);
-
-      /*  var infosButton = document.createElement('div');
-        infosButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
-        infosButton.innerHTML = 'i';
-        infosButton.setAttribute('data-bind', 'attr  : { title: "infos sur Primitives" }, event : {click : infosCommand}');
-        wrapperMenu.appendChild(infosButton);*/
-
         var closeButton = document.createElement('div');
         closeButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         closeButton.innerHTML = '<svg width="150" height="150" viewBox="-10 -10 640 640">' + closeIcon + ' </svg>';
         closeButton.setAttribute('data-bind', 'attr  : { title: "Close menu" }, event : {click : closeSubMenu}');
         wrapperMenu.appendChild(closeButton);
 
-        var viewModel = new SubMenuViewModel(viewer, wrapperSaveButtonMenu);
+        var viewModel = new SubMenuViewModel(viewer, wrapperMenu);
 
         this._IconsContainer = IconsContainer;
         this._wrapperMenu = wrapperMenu;
