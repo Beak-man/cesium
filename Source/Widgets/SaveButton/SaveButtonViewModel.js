@@ -40,15 +40,20 @@ define([
         var featureCircleGeometry = {};
         featureCircleGeometry.type = 'Feature';
         featureCircleGeometry.geometry = jsonCircleGeoJson;
-        var propertynames = geoJsonDataSource.properties._propertyNames;
         featureCircleGeometry.properties = {};
+        var propertynames = geoJsonDataSource.properties._propertyNames;
         var properties = Object.getOwnPropertyNames(geoJsonDataSource.properties);
         for (var property in propertynames) {
            var pn = "_" + propertynames[property];
            for (var pname in properties) {
-               if (properties[pname]===pn) {
-                  var myprop = properties[pname];
-                  var value = geoJsonDataSource.properties[myprop]._value;
+               var propcheck = geoJsonDataSource.properties[properties[pname]];
+               if (typeof(propcheck) === 'object' || typeof(propcheck) === 'function') {
+                   if (properties[pname]===pn) {
+                      var myprop = properties[pname];
+                      var value = geoJsonDataSource.properties[myprop]._value;
+                   }
+               } else {
+                   featureCircleGeometry.properties[properties[pname]] = propcheck;
                }
            }
            featureCircleGeometry.properties[propertynames[property]] = value;
@@ -119,9 +124,14 @@ define([
         for (var property in propertynames) {
            var pn = "_" + propertynames[property];
            for (var pname in properties) {
-               if (properties[pname]===pn) {
-                  var myprop = properties[pname];
-                  var value = geoJsonDataSource.properties[myprop]._value;
+               var propcheck = geoJsonDataSource.properties[properties[pname]];
+               if (typeof(propcheck) === 'object' || typeof(propcheck) === 'function') {
+                   if (properties[pname]===pn) {
+                      var myprop = properties[pname];
+                      var value = geoJsonDataSource.properties[myprop]._value;
+                   }
+               } else {
+                   featurePolylines.properties[properties[pname]] = propcheck;
                }
            }
            featurePolylines.properties[propertynames[property]] = value;
@@ -153,9 +163,14 @@ define([
         for (var property in propertynames) {
            var pn = "_" + propertynames[property];
            for (var pname in properties) {
-               if (properties[pname]===pn) {
-                  var myprop = properties[pname];
-                  var value = geoJsonDataSource.properties[myprop]._value;
+               var propcheck = geoJsonDataSource.properties[properties[pname]];
+               if (typeof(propcheck) === 'object' || typeof(propcheck) === 'function') {
+                   if (properties[pname]===pn) {
+                      var myprop = properties[pname];
+                      var value = geoJsonDataSource.properties[myprop]._value;
+                   }
+               } else {
+                   featureCircleGeometry.properties[properties[pname]] = propcheck;
                }
            }
            featureCircleGeometry.properties[propertynames[property]] = value;
