@@ -20,11 +20,6 @@ define([
 
     var moveIcon = '<g><path d="M0 499.968l171.864 -171.864l0 119.133l275.373 0l0 -275.373l-119.133 0l171.864 -171.864 171.864 171.864l-119.133 0l0 275.373l275.373 0l0 -119.133l171.864 171.864 -171.864 171.864l0 -119.133l-275.373 0l0 275.373l119.133 0l-171.864 171.864 -171.864 -171.864l119.133 0l0 -275.373l-275.373 0l0 119.133z"/></g>';
 
-    var saveIcon = '<g><path d="M340.969,0H12.105C5.423,0,0,5.423,0,12.105v328.863c0,6.68,5.423,12.105,12.105,12.105h328.864\
-		c6.679,0,12.104-5.426,12.104-12.105V12.105C353.073,5.423,347.647,0,340.969,0z M67.589,18.164h217.895v101.884H67.589V18.164z\
-                M296.082,327.35H57.003V176.537h239.079V327.35z M223.953,33.295h30.269v72.638h-30.269V33.295z M274.135,213.863H78.938v-12.105\
-		h195.197V213.863z M274.135,256.231H78.938v-12.105h195.197V256.231z M274.135,297.087H78.938v-12.105h195.197V297.087z"/></g>';
-
     var closeIcon = '<path d="M84.707,68.752L65.951,49.998l18.75-18.752c0.777-0.777,0.777-2.036,0-2.813L71.566,15.295\
 				c-0.777-0.777-2.037-0.777-2.814,0L49.999,34.047l-18.75-18.752c-0.746-0.747-2.067-0.747-2.814,0L15.297,28.431\
 				c-0.373,0.373-0.583,0.88-0.583,1.407c0,0.527,0.21,1.034,0.583,1.407L34.05,49.998L15.294,68.753\
@@ -56,29 +51,14 @@ define([
         flagButton.setAttribute('data-bind', 'attr  : { title: "Flag entity" }, event : {click : flagCommand}');
         wrapperMenu.appendChild(flagButton);
 
-        var wrapperSaveButtonMenu = document.createElement('span');
-        wrapperSaveButtonMenu.className = 'cesium-subMenu-saveButtonWrapper';
-        wrapperMenu.appendChild(wrapperSaveButtonMenu);
-
-        var saveButton = document.createElement('div');
-        saveButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
-        saveButton.innerHTML = '<svg width="40" height="40" viewBox="-50 -50 640 640">' + saveIcon + ' </svg>';
-        saveButton.setAttribute('data-bind', 'attr  : { title: "Create file" }, event : {click : saveCommand}');
-        wrapperSaveButtonMenu.appendChild(saveButton);
-
-        /*  var infosButton = document.createElement('div');
-         infosButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
-         infosButton.innerHTML = 'i';
-         infosButton.setAttribute('data-bind', 'attr  : { title: "infos sur Primitives" }, event : {click : infosCommand}');
-         wrapperMenu.appendChild(infosButton);*/
-
         var closeButton = document.createElement('div');
         closeButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         closeButton.innerHTML = '<svg width="150" height="150" viewBox="-10 -10 640 640">' + closeIcon + ' </svg>';
         closeButton.setAttribute('data-bind', 'attr  : { title: "Close menu" }, event : {click : closeSubMenu}');
         wrapperMenu.appendChild(closeButton);
 
-        var viewModel = new SubMenuViewModel(viewer, wrapperSaveButtonMenu, viewerContainer);
+        //var viewModel = new SubMenuViewModel(viewer, wrapperSaveButtonMenu, viewerContainer);
+        var viewModel = new SubMenuViewModel(viewer, viewerContainer);
 
         this._IconsContainer = IconsContainer;
         this._wrapperMenu = wrapperMenu;
