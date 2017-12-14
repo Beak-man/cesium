@@ -53,18 +53,6 @@ define([
         modifbutton.setAttribute('id', 'xxPrimeSave');
         wrapper.appendChild(modifbutton);
 
-        var createFile = document.createElement('div');
-        createFile.className = 'cesium-button cesium-toolbar-button cesium-sceneModePicker-dropDown-icon';
-        createFile.style.cssText = 'text-align : center; font-family : Arial; position:relative; top:-3px;';
-        createFile.setAttribute('data-bind', '\
-						css: { "cesium-sceneModePicker-visible" : dropDownVisible,\
-                                                       "cesium-sceneModePicker-hidden" : !dropDownVisible },\
-						attr: { title: tooltip2 },\
-						click: saveCommandLink,\
-						cesiumSvgPath: { path: _fileAndPen, width: 90, height: 105}');
-        createFile.setAttribute('id', 'createFile');
-        wrapper.appendChild(createFile);
-
         knockout.applyBindings(viewModel, wrapper);
     };
 

@@ -371,11 +371,12 @@ define([
                         }
                     }
 
-                    if (geomType) {
-                        var savefunction = saveGeoJsondataSourcesObject[geomType];
-                        var resObject = savefunction(that, geoJsonData);
-                        geoJsonObject.features.push(resObject);
+                    if (geomType == undefined) {
+                        geomType = 'point';
                     }
+                    var savefunction = saveGeoJsondataSourcesObject[geomType];
+                    var resObject = savefunction(that, geoJsonData);
+                    geoJsonObject.features.push(resObject);
                 }
             }
         }
@@ -395,7 +396,6 @@ define([
                 that._wrapperSaveSubMenu = document.createElement('span');
                 that._wrapperSaveSubMenu.className = 'cesium-button cesium-toolbar-button';
                 that._wrapperSaveSubMenu.setAttribute("style", "display: flex;");
-                console.log(container);
                 container.appendChild(that._wrapperSaveSubMenu);
 
                 that._linkDownload = document.createElement('a');
@@ -445,7 +445,6 @@ define([
         */
 
         this._command = createCommand(function () {
-            console.log(container);
             saveData(that, container);
         });
     }
