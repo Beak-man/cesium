@@ -25,7 +25,6 @@ define([
         that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = false;
         that._viewer.pointCircleSwitch.viewModel.isPanelToolVisibleSwitch = false;
         that._viewer.lngLat.viewModel.isPanelToolVisibleLngLat = false;
-        that._viewer.markerMove.viewModel.isPanelToolVisibleMarkerMove = false;
 
         that._subMenu = new SubMenu(that._IconsContainer, that._viewer);
     }

@@ -40,7 +40,6 @@ define([
         '../HomeButton/HomeButton',
         '../InfoBox/InfoBox',
         '../LngLat/LngLat',
-        '../MarkerMove/MarkerMove',
         '../NavigationHelpButton/NavigationHelpButton',
         '../PointCircleSwitch/PointCircleSwitch',
         '../ProjectionPicker/ProjectionPicker',
@@ -96,7 +95,6 @@ define([
         HomeButton,
         InfoBox,
         LngLat,
-        MarkerMove,
         NavigationHelpButton,
         PointCircleSwitch,
         ProjectionPicker,
@@ -376,7 +374,6 @@ define([
 
         container = getElement(container);
 
-        //options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         options = defaultValue(options, {});
         options.showSystems = defaultValue(options.showSystems, false);
         options.tools = defaultValue(options.tools, false);
@@ -470,8 +467,6 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             destroyDataSourceCollection = true;
         }
 
-//  console.log(cesiumWidget.scene.globe.ellipsoid);
-
         var dataSourceDisplay = new DataSourceDisplay({
             scene: cesiumWidget.scene,
             dataSourceCollection: dataSourceCollection
@@ -554,8 +549,6 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             eventHelper.add(geocoder.viewModel.search.beforeExecute, Viewer.prototype._clearObjects, this);
         }
 
-//  console.log(cesiumWidget.scene);
-
         /* Save widget */
         var saveButton;
         if (!defined(options.saveButton) || options.saveButton !== false) {
@@ -602,7 +595,6 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 // build custom objects
 
         var customObject;
-        /* customObject = new CustomObject(viewerContainer, customToolbar, this);*/
 
         // tools for modifications
         var tools;
@@ -619,9 +611,6 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             // longitude and latitude 
             var lngLat;
             lngLat = new LngLat(modificationsToolbarWrapperPanel, container, cesiumWidget.scene);
-            // Markers move
-            var markerMove;
-            markerMove = new MarkerMove(modificationsToolbarWrapperPanel, container, cesiumWidget.scene, this);
         }
 
         /* *******************************************************************************************************************************
@@ -777,7 +766,6 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         this._toolbar = toolbar;
         this._homeButton = defaultValue(homeButton, null);
         this._lngLat = defaultValue(lngLat, null); /* *** NEW *** */
-        this._markerMove = defaultValue(markerMove, null); /* *** NEW *** */
         this._showSystems = defaultValue(showSystems, null); /* *** NEW *** */
         this._tools = defaultValue(tools, null); /* *** NEW *** */
         this._drawLines = defaultValue(drawLines, null); /* *** NEW *** */
@@ -911,11 +899,6 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         lngLat: {
             get: function () {
                 return this._lngLat;
-            }
-        },
-        markerMove: {
-            get: function () {
-                return this._markerMove;
             }
         },
         showSystems: {

@@ -18,7 +18,9 @@ define([
 		C86.331,24.635,85.633,23.937,84.772,23.937z"/></g>';
 
 
-    var moveIcon = '<g><path d="M0 499.968l171.864 -171.864l0 119.133l275.373 0l0 -275.373l-119.133 0l171.864 -171.864 171.864 171.864l-119.133 0l0 275.373l275.373 0l0 -119.133l171.864 171.864 -171.864 171.864l0 -119.133l-275.373 0l0 275.373l119.133 0l-171.864 171.864 -171.864 -171.864l119.133 0l0 -275.373l-275.373 0l0 119.133z"/></g>';
+    var moveIcon = '<g><path d="M88.79,29.297L70.702,11.209c-1.052-1.052-2.756-1.052-3.808,0L17.389,60.713l0.109,0.109l-0.171-0.046l-6.772,25.272 \
+		l0.004,0.001c-0.309,0.935-0.103,2.004,0.642,2.748c0.822,0.822,2.038,0.993,3.033,0.531l0.002,0.009l25.027-6.706l-0.016-0.059 \
+		l0.038,0.038L88.79,33.105C89.842,32.053,89.842,30.349,88.79,29.297z M18.792,81.147l4.022-15.009l10.988,10.988L18.792,81.147z"/></g>';
 
     var closeIcon = '<path d="M84.707,68.752L65.951,49.998l18.75-18.752c0.777-0.777,0.777-2.036,0-2.813L71.566,15.295\
 				c-0.777-0.777-2.037-0.777-2.814,0L49.999,34.047l-18.75-18.752c-0.746-0.747-2.067-0.747-2.814,0L15.297,28.431\
@@ -51,13 +53,18 @@ define([
         flagButton.setAttribute('data-bind', 'attr  : { title: "Flag entity" }, event : {click : flagCommand}');
         wrapperMenu.appendChild(flagButton);
 
+        var markeditButton = document.createElement('div');
+        markeditButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
+        markeditButton.innerHTML = '<svg width="50" height="50" viewBox="-15 -11 210 210">' + moveIcon + ' </svg>';
+        markeditButton.setAttribute('data-bind', 'attr  : { title: "Marker edit" }, event : {click : markeditCommand},css: {"cesium-subMenu-focus": _ismarkeditCommandActive}');
+        wrapperMenu.appendChild(markeditButton);
+
         var closeButton = document.createElement('div');
         closeButton.className = 'cesium-button cesium-toolbar-button cesium-DrawLinesMenu-show';
         closeButton.innerHTML = '<svg width="150" height="150" viewBox="-10 -10 640 640">' + closeIcon + ' </svg>';
         closeButton.setAttribute('data-bind', 'attr  : { title: "Close menu" }, event : {click : closeSubMenu}');
         wrapperMenu.appendChild(closeButton);
 
-        //var viewModel = new SubMenuViewModel(viewer, wrapperSaveButtonMenu, viewerContainer);
         var viewModel = new SubMenuViewModel(viewer, viewerContainer);
 
         this._IconsContainer = IconsContainer;
@@ -100,10 +107,8 @@ define([
                 }
 
                 try {
-                    console.log(this._viewer.editDrawing.viewModel.subMenu.viewModel);
-                    this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer();
+                    this._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
                 } catch (e) {
-                    console.log(e);
                 }
 
             }

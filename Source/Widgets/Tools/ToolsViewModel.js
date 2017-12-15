@@ -82,8 +82,6 @@ define([
 
     function showPanel(that) {
 
-        // var handlerDownClick = new ScreenSpaceEventHandler();
-
         if (that._isPanelVisible === false) {
 
             that._wrapper.children[0].classeName = "";
@@ -96,7 +94,6 @@ define([
             that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = that._isPanelVisible;
             that._viewer.pointCircleSwitch.viewModel.isPanelToolVisibleSwitch = that._isPanelVisible;
             that._viewer.lngLat.viewModel.isPanelToolVisibleLngLat = that._isPanelVisible;
-            that._viewer.markerMove.viewModel.isPanelToolVisibleMarkerMove = that._isPanelVisible;
 
             if (that._handlerDownClick)
                 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
@@ -141,7 +138,6 @@ define([
             that._viewer.showGrid.viewModel.isPanelToolVisibleGrid = that._isPanelVisible;
             that._viewer.pointCircleSwitch.viewModel.isPanelToolVisibleSwitch = that._isPanelVisible;
             that._viewer.lngLat.viewModel.isPanelToolVisibleLngLat = that._isPanelVisible;
-            that._viewer.markerMove.viewModel.isPanelToolVisibleMarkerMove = that._isPanelVisible;
 
             if (that._handlerDownClick)
                 that._handlerDownClick.removeInputAction(ScreenSpaceEventType.MIDDLE_DOWN);
@@ -172,7 +168,6 @@ define([
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.destroyColorPickerContainer;
                 that._viewer.editDrawing.viewModel.subMenu.viewModel.colorPicker.viewModel.removeHandlers;
             } catch (e) {
-                console.log(e);
             }
         }
     }
@@ -197,7 +192,6 @@ define([
         });
 
         this._showToolPanel = createCommand(function () {
-            console.log(that._viewer.scene.primitives);
             removeHandlers(that);
             showPanel(that);
         });
