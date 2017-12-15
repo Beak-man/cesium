@@ -1,3 +1,17 @@
+.cesium-subMenu-saveButtonWrapper{
+    position : relative;
+    height: 37px;
+    display: inline-block;
+    margin : 0px;
+    padding: 0px;
+}
+
+.cesium-subMenu-saveButton {
+    position: absolute;
+    left :40px;
+    display: inline-block;
+}
+
 .cesium-subMenu-focus{
     border : #33ff00 1px solid; 
 }
