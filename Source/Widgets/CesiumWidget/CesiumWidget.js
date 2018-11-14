@@ -476,6 +476,21 @@ define([
         },
 
         /**
+         * The terrain exaggeration.
+         * @memberof CesiumWidget.prototype
+         *
+         * @type {Number}
+         */
+        terrainExaggeration: {
+            get: function () {
+                return this._scene.terrainExaggeration;
+            },
+            set: function (terrainExaggeration) {
+                this._scene.terrainExaggeration = terrainExaggeration;
+            }
+        },
+
+        /**
          * Gets the camera.
          * @memberof CesiumWidget.prototype
          *

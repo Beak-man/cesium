@@ -110,15 +110,11 @@ define([
         this._url = options.url;
         this._proxy = options.proxy;
 
-        console.log(options.ellipsoid);
-
         this._tilingScheme = new GeographicTilingScheme({
             numberOfLevelZeroTilesX : 2,
             numberOfLevelZeroTilesY : 1,
             ellipsoid : options.ellipsoid
         });
-
-        console.log(this._tilingScheme.ellipsoid);
 
         this._heightmapWidth = 65;
         this._levelZeroMaximumGeometricError = TerrainProvider.getEstimatedLevelZeroGeometricErrorForAHeightmap(this._tilingScheme.ellipsoid, this._heightmapWidth, this._tilingScheme.getNumberOfXTilesAtLevel(0));

@@ -11,20 +11,20 @@ define([
         var configuration = {
             'homePlanet': 'mars',
             'servers': {
-
                 'USGSserver': {
                     'name': 'Planetary maps (USGS)',
                     'url': 'https://planetarymaps.usgs.gov/cgi-bin/mapserv',
                     'dir': '/maps/',
                     'extension': ['_simp_cyl.map', '_npole.map', '_spole.map']
                 },
-                'server2': {
-                    'name': 'Planetary maps (USGS)',
-                    'url': 'https://planetarymaps.usgs.gov/cgi-bin/mapserv',
-                    'dir': '/maps/',
-                    'extension': '_simp_cyl_quads.map',
-                    'format': 'png'
-                },
+                //'server2': {
+                //    'name': 'Planetary maps (USGS)',
+                //    'url': 'https://planetarymaps.usgs.gov/cgi-bin/mapserv',
+                //    'dir': '/maps/',
+                //    'extension': ['_simp_cyl_quads.map'],
+                //    'format': 'png'
+                //},
+
                 'VOServers': {
 
                     'venus': [
@@ -61,6 +61,29 @@ define([
                 }
 
             },
+
+            'TerrainServers': {
+
+                'mercury': 
+                    {
+                        'name': 'Mercury_Messenger_USGS_DEM_Global_(res. 665m/px)',
+                        'url': 'http://134.158.75.177:8080/tilesets/Messenger_terrain',
+                        'terrainExaggeration' : 1000.0
+                    },
+                'venus':
+                    {
+                        'name': 'Magellan v02 (res. 4641m/px)',
+                        'url': 'http://134.158.75.177:8080/tilesets/Magellan_terrain',
+                        'terrainExaggeration' : 1000.0
+                    },
+                'mars':
+                    {
+                        'name': 'MGS MOLA (res. 463m/px)',
+                        'url': 'http://134.158.75.177:8080/tilesets/MOLA_terrain/',
+                        'terrainExaggeration' : 1000.0
+                    }
+            },
+
             'planetarySystem': {
                 'system': {
                     'mercury': ['mercury'],

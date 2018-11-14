@@ -590,6 +590,10 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         var showSystems;
         if (!defined(options.showSystems) || options.showSystems !== false) {
             showSystems = new ShowSystems(viewerContainer, planetsToolbar, footerToolbar, cesiumWidget.scene, this, configuration, options.VOData);
+            if (showSystems.viewModel.terrainExaggeration) {
+                cesiumWidget.scene.terrainExaggeration = showSystems.viewModel.terrainExaggeration;
+                cesiumWidget.scene.terrainProvider = showSystems.viewModel.terrainProvider;
+            }
         }
 
 // build custom objects
@@ -1175,6 +1179,20 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             },
             set: function (terrainProvider) {
                 this.scene.terrainProvider = terrainProvider;
+            }
+        },
+        /**
+         * The terrain exaggeration.
+         * @memberof Viewer.prototype
+         *
+         * @type {Number}
+         */
+        terrainExaggeration: {
+            get: function () {
+                return this.scene.terrainExaggeration;
+            },
+            set: function (terrainExaggeration) {
+                this.scene.terrainExaggeration = terrainExaggeration;
             }
         },
         /**

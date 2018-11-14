@@ -1129,6 +1129,9 @@ define([
         terrainExaggeration: {
             get: function () {
                 return this._terrainExaggeration;
+            },
+            set: function (terrainExaggeration) {
+                this._terrainExaggeration = terrainExaggeration;
             }
         },
         /**

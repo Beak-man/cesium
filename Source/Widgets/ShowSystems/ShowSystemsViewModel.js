@@ -1,6 +1,7 @@
 /*global define*/
 define([
         '../../Core/Cartesian3',
+        '../../Core/CesiumTerrainProvider',
         '../../Core/Color',
         '../../Core/defineProperties',
         '../../Core/Ellipsoid',
@@ -27,6 +28,7 @@ define([
         './ListViewModel'
     ], function(
         Cartesian3,
+        CesiumTerrainProvider,
         Color,
         defineProperties,
         Ellipsoid,
@@ -59,7 +61,29 @@ define([
     // moveAndfillPanel : This function is used to move the layer list panel far a given planet and create the Ajax request to get 'capabilities'. Then 'getXmlPlanetData'.
     // getXmlPlanetData : This function is used to get the response of the capabilities request and parse the xml response to create the url for each layer.
 
-    function showPlanetView(that, viewer, planetName, configContainer, listContainer, btnContainer, xhr, xhrNomen) {
+    function showPlanetView(that, viewer, planetName, configContainer, listContainer, btnContainer, xhr, xhrNomen, objectDimensions) {
+
+        initializeScene(that, objectDimensions);
+        var pn = (planetName.toLowerCase()).trim();
+
+        /* Set terrain provider*/
+        var terrainExaggeration;
+        var terrainProvider;
+        var TerrainServers = that.configuration.TerrainServers;
+        var terrainKey = Object.keys(TerrainServers);
+        for (var i=0; i < terrainKey.length; i++) {
+            var key = terrainKey[i];
+            if (key == pn) {
+                var terrainProvider = new CesiumTerrainProvider({
+                    url : TerrainServers[key].url,
+                    requestVertexNormals : true,
+                    ellipsoid : that._ellipsoid
+                });
+                that.terrainExaggeration = TerrainServers[key].terrainExaggeration;
+                that.terrainProvider = terrainProvider;
+            }
+        }
+console.log(that.terrainProvider);
 
         for (var i = 0; i < that.dim; i++) {
             that['buttonVisible_' + i] = false;
@@ -86,7 +110,29 @@ define([
         }
     }
 
-    function showSatelliteView(that, viewer, planetName, satelliteName, configContainer, listContainer, btnContainer, xhr, xhrNomen) {
+    function showSatelliteView(that, viewer, planetName, satelliteName, configContainer, listContainer, btnContainer, xhr, xhrNomen, objectDimension) {
+
+        initializeScene(that, objectDimensions);
+        var pn = (planetName.toLowerCase()).trim();
+        var ps = (satelliteName.toLowerCase()).trim();
+
+        /* Set terrain provider*/
+        var terrainProvider;
+        var terrainExaggeration;
+        var TerrainServers = that.configuration.TerrainServers;
+        var terrainKey = Object.keys(TerrainServers);
+        for (var i=0; i < terrainKey.length; i++) {
+            var key = terrainKey[i];
+            if (key == ps) {
+                var terrainProvider = new CesiumTerrainProvider({
+                    url : TerrainServers[key].url,
+                    requestVertexNormals : true,
+                    ellipsoid : that._ellipsoid
+                });
+                that.terrainExaggeration= TerrainServers[key].terrainExaggeration;
+                that.terrainProvider = terrainProvider;
+            }
+        }
 
         for (var i = 0; i < that.dim; i++) {
             that['buttonVisible_' + i] = false;
@@ -121,15 +167,20 @@ define([
         configContainer.style.opacity = 1;
         configContainer.style.left = '5px';
 
-        var pn = planetName.toLowerCase();
+        var pn = (planetName.toLowerCase()).trim();
 
-        var mapType = that.configuration.servers.USGSserver.extension;
-
-        var ajaxDataRequest = 'https://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + pn + mapType[0] + '&service=WMS&request=GetCapabilities';
-
-        var ajaxDataRequestNomen = 'https://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + pn + '_nomen_wms.map&service=WMS&request=GetCapabilities';
-
-        getXmlPlanetData(that, viewer, xhr, xhrNomen, 'post', ajaxDataRequest, ajaxDataRequestNomen, true, listContainer, pn);
+        /* Loop on WMS servers */
+        var servers = that.configuration.servers;
+        var serversKey = Object.keys(servers);
+        for (var i=0; i < serversKey.length; i++) {
+            var key = serversKey[i];
+            if (key != 'VOServers') {
+                var mapType = servers[key].extension;
+                var ajaxDataRequest = servers[key].url + '?map=' + servers[key].dir + pn + '/' + pn + mapType[0] + '&service=WMS&request=GetCapabilities';
+                var ajaxDataRequestNomen = 'https://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + pn + '_nomen_wms.map&service=WMS&request=GetCapabilities';
+                getXmlPlanetData(that, viewer, xhr, xhrNomen, 'post', ajaxDataRequest, ajaxDataRequestNomen, true, listContainer, pn);
+            }
+        }
     }
 
     function moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen) {
@@ -139,15 +190,21 @@ define([
         configContainer.style.opacity = 1;
         configContainer.style.left = '5px';
 
-        var pn = planetName.toLowerCase();
-        var ps = satelliteName.toLowerCase();
+        var pn = (planetName.toLowerCase()).trim();
+        var ps = (satelliteName.toLowerCase()).trim();
 
-        var mapType = that.configuration.servers.USGSserver.extension;
-
-        var ajaxRequest = 'https://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/' + pn + '/' + ps + mapType[0] + '&service=WMS&request=GetCapabilities';
-        var ajaxDataRequestNomen = 'https://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + ps + '_nomen_wms.map&service=WMS&request=GetCapabilities';
-
-        getXmlDataSatellite(that, viewer, xhr, xhrNomen, 'post', ajaxRequest, ajaxDataRequestNomen, true, listContainer, pn, ps);
+        /* Loop on WMS servers */
+        var servers = that.configuration.servers
+        var serversKey = Object.keys(servers);
+        for (var i=0; i < serversKey.length; i++) {
+            var key = serversKey[i];
+            if (key != 'VOServers') {
+                var mapType = servers[key].extension;
+                var ajaxRequest = servers[key].url + '?map=' + servers[key].dir + pn + '/' + ps + mapType[0] + '&service=WMS&request=GetCapabilities';
+                var ajaxDataRequestNomen = 'https://wms.wr.usgs.gov/cgi-bin/mapserv?map=/var/www/html/mapfiles/' + pn + '/' + ps + '_nomen_wms.map&service=WMS&request=GetCapabilities';
+                getXmlDataSatellite(that, viewer, xhr, xhrNomen, 'post', ajaxRequest, ajaxDataRequestNomen, true, listContainer, pn, ps);
+            }
+        }
     }
 
     function getXmlPlanetData(that, viewer, xhr, xhrNomen, method, url, urlNomen, async, listContainer, pn) {
@@ -155,7 +212,6 @@ define([
         if (viewer.tools) {
             viewer.tools.viewModel.removeAllCommands;
         }
-
         var listViewModel;
         var listContainer2;
 
@@ -313,39 +369,6 @@ define([
                                     numberOfLevelZeroTilesY: 1
                                 };
 
-                                //   console.log(tilngSchemeOptions);
-                                //  console.log('before imageryProvidersTab');
-
-                                /*   imageryProvidersTab[i] = new WebMapServiceImageryProvider({
-                                 url: onlineResource,
-                                 parameters: {
-                                 format: 'image/jpeg',
-                                 service: 'WMS',
-                                 bbox: bboxString,
-                                 //    bbox: '0,0,1000000,1000000',
-                                 srs: crs},
-                                 layers: layer[i],
-                                 credit: 'USGS @ wms.wr.usgs.gov',
-                                 ellipsoid: that._ellipsoid,
-                                 enablePickFeatures: false,
-                                 rectangle: rect,
-                                 tilingScheme: new StereographicTilingScheme(tilngSchemeOptions),
-                                 // tilingScheme: new GeographicTilingScheme(tilngSchemeOptions),
-                                 //  tileWidth : 2048,
-                                 //  tileHeight : 2048
-                                 });*/
-
-                                //  console.log('before SingleTileImageryProvider');
-
-                                /*      imageryProvidersTab[i] = new SingleTileImageryProvider({
-                                 url: 'http://planetarymaps.usgs.gov/cgi-bin/mapserv?format=image/jpeg&service=WMS&bbox=-2357030,-2357030,2357030,2357030&srs=EPSG:32661&version=1.1.1&request=GetMap&styles=&map=/maps/mars/mars_npole.map&=&layers=MOLA_color_north&width=2048&height=2048',
-                                 rectangle: rect,
-                                 ellipsoid: that._ellipsoid,
-                                 });*/
-
-
-                                //    console.log(imageryProvidersTab[i]);
-
                             } else { // pour les autres maps
 
                                 imageryProvidersTab[i] = new WebMapServiceImageryProvider({
@@ -356,7 +379,6 @@ define([
                                     ellipsoid: that._ellipsoid,
                                     enablePickFeatures: false
                                 });
-                                //    console.log(imageryProvidersTab[i]);
                             }
                         }
                     }
@@ -374,8 +396,6 @@ define([
                         if (xhrNomen.readyState === 4 && xhrNomen.status === 200 || xhrNomen.status === 0) {
 
                             var data = xhrNomen.responseXML;
-                            
-                            console.log(data);
 
                             try {
 
@@ -983,10 +1003,6 @@ define([
         var planetarySystemDimension = configuration.planetarySystem.dimension[homePlanet + 'System'];
         var planetDimension = planetarySystemDimension[homePlanet];
 
-        initializeScene(that, planetDimension);
-        initializeMarkerMoveWidget(that);
-        homeView(that._scene);
-
 
         try {
             that._viewer.showSystems.viewModel.voData.destroyWrapperMenu;
@@ -1018,8 +1034,9 @@ define([
         };
 
         GeoJsonDataSource.crsModification = obj;
-        showPlanetView(that, that._viewer, homePlanet, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen);
-
+        showPlanetView(that, that._viewer, homePlanet, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, planetDimension);
+        initializeMarkerMoveWidget(that);
+        homeView(that._scene);
 
     }
 
@@ -1091,11 +1108,11 @@ define([
         homePlanetShow(configuration, xhr, xhrNomen, that);
 
         // ************************** WMTS TESTS *******************************
-
+/*
         this._wmtsCommand = createCommand(function () {
-
+*/
             // INITIALISATION DU PANNEAU GAUCHE DU GLOBE
-
+/*
             hideFunction(that);
 
             var objectDimensions = {
@@ -1131,7 +1148,7 @@ define([
 
 
         });
-
+*/
         // *********************************************************************
 
         this._command = createCommand(function (planetName, planetIndex, satelliteIndex, vectorDimensionsString) {
@@ -1142,11 +1159,6 @@ define([
                 y: parseFloat(stringVectorTab[1]),
                 z: parseFloat(stringVectorTab[2])
             };
-
-            initializeScene(that, objectDimensions);
-            initializeMarkerMoveWidget(that);
-            homeView(that._scene);
-
 
             try {
                 that._viewer.showSystems.viewModel.voData.destroyWrapperMenu;
@@ -1178,7 +1190,9 @@ define([
             };
 
             GeoJsonDataSource.crsModification = obj;
-            showPlanetView(that, that._viewer, planetName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen);
+            showPlanetView(that, that._viewer, planetName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, objectDimensions);
+            initializeMarkerMoveWidget(that);
+            homeView(that._scene);
 
             /* to remove all butons of the planetToolBar from the view*/
 
@@ -1194,10 +1208,6 @@ define([
                 y: parseFloat(stringVectorTab[1]),
                 z: parseFloat(stringVectorTab[2])
             };
-
-            initializeScene(that, objectDimensions);
-            initializeMarkerMoveWidget(that);
-            homeView(that._scene);
 
             var naifCode = [planetIndex, satelliteIndex];
 
@@ -1218,7 +1228,6 @@ define([
              =================================================================== */
 
             if (that._isVOWidgetVisible === true) {
-                console.log(that.configuration);
                 that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration, satelliteName);
             }
 
@@ -1226,9 +1235,9 @@ define([
              ===================================================================
              =================================================================== */
 
-            console.log(GeoJsonDataSource.crsFunctionType);
-
-            showSatelliteView(that, that._viewer, planetName, satelliteName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, naifCode);
+            showSatelliteView(that, that._viewer, planetName, satelliteName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, naifCode, objectDimensions);
+            initializeMarkerMoveWidget(that);
+            homeView(that._scene);
             removeButtons(that);
         });
 
@@ -1336,11 +1345,12 @@ define([
 
             }
         },
-        WMTSCommand: {
+/*        WMTSCommand: {
             get: function () {
                 return this._wmtsCommand;
             }
         }
+*/
     });
 
     /* ================================================================================================================== */
@@ -1409,10 +1419,9 @@ define([
         } catch (e) {
         }
 
+        //var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
 
-        var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
-
-        /*  var newTerrainProvider = new CesiumTerrainProvider({
+        /*var newTerrainProvider = new CesiumTerrainProvider({
          url : 'https://assets.agi.com/stk-terrain/world',
          //url : '//localhost:8080/tilesets/MOLA-terrain-tiles/',
          ellipsoid : that._ellipsoid,
@@ -1428,7 +1437,7 @@ define([
             that._viewer.scene.globe = newGlobe;
             that._viewer.scene.mapProjection = newGeographicProjection;
             that._viewer.scene.camera.projection = newGeographicProjection;
-            that._viewer.terrainProvider = newTerrainProvider;
+            //that._viewer.terrainProvider = newTerrainProvider;
             that._viewer.scene.globe.baseColor = Color.BLACK;
             that._viewer.scene.camera.ellipsoid = that._ellipsoid;
 
@@ -1480,7 +1489,6 @@ define([
         }
         return planetarySustem;
     }
-
 
     return ShowSystemsViewModel;
 

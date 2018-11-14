@@ -59,17 +59,14 @@ define([
      * 'scene3DOnly' : false    // Enable 3D only mode.
      */
 
-    // URL of the configuration file
-
-    //var urlConfig = '../../Source/Widgets/ConfigurationFiles/ConfigurationFile.json';
-
-
     // Here, we use the request to create the "endUserOptions" object.
 
     /* example :
 
-     http://localhost:8080/Apps/CesiumMarsViewer/index.html            ==> request without parameters. Hence : endUserOptions = {}
-     http://localhost:8080/Apps/CesiumMarsViewer/index.html?map=themis ==> request with one parameter. Hence : endUserOptions = { map : "themis"}.
+     http://localhost:8080/Apps/PlanetaryCesiumViewer/index.html
+                            ==> request without parameters. Hence : endUserOptions = {}
+     http://localhost:8080/Apps/PlanetaryCesiumViewer/index.html?map=themis
+                            ==> request with one parameter. Hence : endUserOptions = { map : "themis"}.
      */
 
     /** Query  parameters:
@@ -78,10 +75,11 @@ define([
      * ellipsoidSize         = x,y,z. (Dimensions of the ellipsoid)
      * NAIFCodes             = a,b. Naif codes for planet ("a" parameter) and satellite ("b" parameter). for a planet (Mars for example), use a=4, b=0;
      * imageryProviderParams = params for the imagery provider.
-     *                         Example : SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000'
+     *  Example : SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000'
      * onlineResUrl          = url of the online ressource.
-     *                         Example : http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map
+     *  Example : http://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map
      */
+
     var endUserOptions = queryToObject(window.location.search.substring(1));
 
     /*
@@ -201,6 +199,8 @@ define([
     try {
         viewerOptions.configuration = configuration ;// contains configuration (see ./sources/widget/ConfigurationFiles/ )
         viewer = new Viewer('cesiumContainer', viewerOptions);
+console.log(viewer);
+
 
     } catch (exception) {
         loadingIndicator.style.display = 'none';
