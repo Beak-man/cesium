@@ -63,8 +63,8 @@ define([
 
     function showPlanetView(that, viewer, planetName, configContainer, listContainer, btnContainer, xhr, xhrNomen, objectDimensions) {
 
-        initializeScene(that, objectDimensions);
         var pn = (planetName.toLowerCase()).trim();
+        that._ellipsoid = freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
 
         /* Set terrain provider*/
         var terrainExaggeration;
@@ -83,7 +83,7 @@ define([
                 that.terrainProvider = terrainProvider;
             }
         }
-console.log(that.terrainProvider);
+        initializeScene(that, terrainProvider);
 
         for (var i = 0; i < that.dim; i++) {
             that['buttonVisible_' + i] = false;
@@ -110,9 +110,9 @@ console.log(that.terrainProvider);
         }
     }
 
-    function showSatelliteView(that, viewer, planetName, satelliteName, configContainer, listContainer, btnContainer, xhr, xhrNomen, objectDimension) {
+    function showSatelliteView(that, viewer, planetName, satelliteName, configContainer, listContainer, btnContainer, xhr, xhrNomen, naifCode, objectDimensions) {
 
-        initializeScene(that, objectDimensions);
+        that._ellipsoid = freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
         var pn = (planetName.toLowerCase()).trim();
         var ps = (satelliteName.toLowerCase()).trim();
 
@@ -133,6 +133,7 @@ console.log(that.terrainProvider);
                 that.terrainProvider = terrainProvider;
             }
         }
+        initializeScene(that, terrainProvider);
 
         for (var i = 0; i < that.dim; i++) {
             that['buttonVisible_' + i] = false;
@@ -1387,8 +1388,8 @@ console.log(that.terrainProvider);
         }
     }
 
-    function initializeScene(that, objectDimensions) {
-        that._ellipsoid = freezeObject(new Ellipsoid(objectDimensions.x, objectDimensions.y, objectDimensions.z));
+    function initializeScene(that, terrainProvider) {
+
         Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // A MODIFIER 
 
         if (that._viewer.geoJsonData) {
@@ -1419,15 +1420,7 @@ console.log(that.terrainProvider);
         } catch (e) {
         }
 
-        //var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
-
-        /*var newTerrainProvider = new CesiumTerrainProvider({
-         url : 'https://assets.agi.com/stk-terrain/world',
-         //url : '//localhost:8080/tilesets/MOLA-terrain-tiles/',
-         ellipsoid : that._ellipsoid,
-         requestWaterMask : false,
-         requestVertexNormals : false
-         });*/
+        var newTerrainProvider = new EllipsoidTerrainProvider({ellipsoid: that._ellipsoid});
 
         var newGeographicProjection = new GeographicProjection(that._ellipsoid);
         var newGlobe = new Globe(that._ellipsoid);
@@ -1437,7 +1430,12 @@ console.log(that.terrainProvider);
             that._viewer.scene.globe = newGlobe;
             that._viewer.scene.mapProjection = newGeographicProjection;
             that._viewer.scene.camera.projection = newGeographicProjection;
-            //that._viewer.terrainProvider = newTerrainProvider;
+            if (terrainProvider) {
+              that._viewer.terrainProvider = terrainProvider;
+              that._viewer.terrainExaggeration = that.terrainExaggeration;
+            } else {
+              that._viewer.terrainProvider = newTerrainProvider;
+            }
             that._viewer.scene.globe.baseColor = Color.BLACK;
             that._viewer.scene.camera.ellipsoid = that._ellipsoid;
 

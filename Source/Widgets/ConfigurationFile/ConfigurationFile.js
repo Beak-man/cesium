@@ -68,19 +68,19 @@ define([
                     {
                         'name': 'Mercury_Messenger_USGS_DEM_Global_(res. 665m/px)',
                         'url': 'http://134.158.75.177:8080/tilesets/Messenger_terrain',
-                        'terrainExaggeration' : 1000.0
+                        'terrainExaggeration' : 10.0
                     },
                 'venus':
                     {
                         'name': 'Magellan v02 (res. 4641m/px)',
                         'url': 'http://134.158.75.177:8080/tilesets/Magellan_terrain',
-                        'terrainExaggeration' : 1000.0
+                        'terrainExaggeration' : 10.0
                     },
                 'mars':
                     {
                         'name': 'MGS MOLA (res. 463m/px)',
                         'url': 'http://134.158.75.177:8080/tilesets/MOLA_terrain/',
-                        'terrainExaggeration' : 1000.0
+                        'terrainExaggeration' : 10.0
                     }
             },
 

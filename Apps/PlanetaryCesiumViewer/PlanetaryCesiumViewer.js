@@ -199,8 +199,6 @@ define([
     try {
         viewerOptions.configuration = configuration ;// contains configuration (see ./sources/widget/ConfigurationFiles/ )
         viewer = new Viewer('cesiumContainer', viewerOptions);
-console.log(viewer);
-
 
     } catch (exception) {
         loadingIndicator.style.display = 'none';
