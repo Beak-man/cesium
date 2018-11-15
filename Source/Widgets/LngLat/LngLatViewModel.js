@@ -5,16 +5,20 @@
 define([
         '../../Core/defineProperties',
         '../../Core/Math',
+        '../../Core/sampleTerrainMostDetailed',
         '../../Core/ScreenSpaceEventHandler',
         '../../Core/ScreenSpaceEventType',
         '../../ThirdParty/knockout',
+        '../../ThirdParty/when',
         '../createCommand'
     ], function(
         defineProperties,
         CesiumMath,
+        sampleTerrainMostDetailed,
         ScreenSpaceEventHandler,
         ScreenSpaceEventType,
         knockout,
+        when,
         createCommand) {
             'use strict';
 
@@ -24,10 +28,26 @@ define([
 
                     var coordViewModel = {
                         longitude: null,
-                        latitude: null
+                        latitude: null,
+                        height: null
                     };
 
                     knockout.track(coordViewModel);
+
+/*
+// Query the terrain height of two Cartographic positions
+var terrainProvider = Cesium.createWorldTerrain();
+var positions = [
+    Cesium.Cartographic.fromDegrees(86.925145, 27.988257),
+    Cesium.Cartographic.fromDegrees(87.0, 28.0)
+];
+var promise = Cesium.sampleTerrain(terrainProvider, 11, positions);
+Cesium.when(promise, function(updatedPositions) {
+    // positions[0].height and positions[1].height have been updated.
+    // updatedPositions is just a reference to positions.
+});
+*/
+
                     var ellipsoid = scene.globe.ellipsoid;
 
                     that._handler = new ScreenSpaceEventHandler(scene.canvas);
@@ -38,6 +58,12 @@ define([
                             var cartographic = ellipsoid.cartesianToCartographic(cartesian);
                             var longitudeNumber = cartographic.longitude;
                             var longitudeNumber180 = cartographic.longitude;
+console.log(scene.terrainProvider);
+                            var promise = sampleTerrainMostDetailed(scene.terrainProvider, cartographic);
+                            when(promise, function(updatedPosition) { console.log(updatedPosition); });
+                            var heightString = cartographic.height.toFixed(4);
+                            coordViewModel.height = heightString;
+console.log(heightString);
 
                             if (longitudeNumber < 0) {
                                 longitudeNumber = longitudeNumber + 2.0 * Math.PI;
@@ -50,6 +76,7 @@ define([
                         } else {
                             coordViewModel.longitude = null;
                             coordViewModel.latitude = null;
+                            coordViewModel.height = null;
                         }
                     }, ScreenSpaceEventType.MOUSE_MOVE);
 
@@ -69,9 +96,16 @@ define([
                                              -webkit-transition: opacity 1.0s linear; \
                                              -moz-transition: opacity 1.0s linear;';
 
-                    that._coodDiv.innerHTML = '<table><tr><th>Longitude</th><th>Latitude</th></tr>' +
-                            '<tr><td id="longitude"><span data-bind="text: longitude"></span></td>' +
-                            '<td id="latitude"><span data-bind="text: latitude"></span></td>';
+                    //if (coordViewModel.height) {
+                        that._coodDiv.innerHTML = '<table><tr><th>Longitude</th><th>Latitude</th><th>Height</th></tr>' + 
+                            '<tr><td id="longitude"><span data-bind="text: longitude"></span></td><td id="latitude">' +
+                            '<span data-bind="text: latitude"></span></td><td id="height">' +
+                            '<span data-bind="text: height"></span></td></tr>';
+                    //} else {
+                    //    that._coodDiv.innerHTML = '<table><tr><th>Longitude</th><th>Latitude</th></tr>' +
+                    //        '<tr><td id="longitude"><span data-bind="text: longitude"></span></td><td id="latitude">' +
+                    //        '<span data-bind="text: latitude"></span></td></tr>';
+                    //}
 
                     mainContainer.appendChild(that._coodDiv);
 
