@@ -3,25 +3,35 @@
  */
 
 define([
+        '../../Core/defined',
         '../../Core/defineProperties',
         '../../Core/Math',
         '../../Core/sampleTerrainMostDetailed',
         '../../Core/ScreenSpaceEventHandler',
         '../../Core/ScreenSpaceEventType',
+        '../../Core/TileAvailability',
         '../../ThirdParty/knockout',
         '../../ThirdParty/when',
         '../createCommand'
     ], function(
+        defined,
         defineProperties,
         CesiumMath,
         sampleTerrainMostDetailed,
         ScreenSpaceEventHandler,
         ScreenSpaceEventType,
+        TileAvailability,
         knockout,
         when,
         createCommand) {
             'use strict';
 
+            function sampleTerrainSuccess(terrainSamplePositions) {
+                                var heightString = (terrainSamplePositions.height + 1000).toFixed(4);
+                                coordViewModel.height = heightString;
+//console.log('height ' + coordViewModel.height);
+            }
+ 
             function lngLatView(that, mainContainer, scene) {
 
                 if (!that._coodDiv) {
@@ -34,20 +44,6 @@ define([
 
                     knockout.track(coordViewModel);
 
-/*
-// Query the terrain height of two Cartographic positions
-var terrainProvider = Cesium.createWorldTerrain();
-var positions = [
-    Cesium.Cartographic.fromDegrees(86.925145, 27.988257),
-    Cesium.Cartographic.fromDegrees(87.0, 28.0)
-];
-var promise = Cesium.sampleTerrain(terrainProvider, 11, positions);
-Cesium.when(promise, function(updatedPositions) {
-    // positions[0].height and positions[1].height have been updated.
-    // updatedPositions is just a reference to positions.
-});
-*/
-
                     var ellipsoid = scene.globe.ellipsoid;
 
                     that._handler = new ScreenSpaceEventHandler(scene.canvas);
@@ -58,12 +54,13 @@ Cesium.when(promise, function(updatedPositions) {
                             var cartographic = ellipsoid.cartesianToCartographic(cartesian);
                             var longitudeNumber = cartographic.longitude;
                             var longitudeNumber180 = cartographic.longitude;
-console.log(scene.terrainProvider);
-                            var promise = sampleTerrainMostDetailed(scene.terrainProvider, cartographic);
-                            when(promise, function(updatedPosition) { console.log(updatedPosition); });
-                            var heightString = cartographic.height.toFixed(4);
-                            coordViewModel.height = heightString;
-console.log(heightString);
+                            var terrainProvider = scene.terrainProvider;
+                            var tilingScheme = scene.globe._surface._tileProvider.tilingScheme;
+                            terrainProvider._tilingScheme = tilingScheme;
+                            terrainProvider._availability = new TileAvailability(tilingScheme,20);
+                            //console.log(terrainProvider._availability);
+                            var promise = sampleTerrainMostDetailed(terrainProvider, [cartographic]);
+                            when(promise, sampleTerrainSuccess);
 
                             if (longitudeNumber < 0) {
                                 longitudeNumber = longitudeNumber + 2.0 * Math.PI;
@@ -96,16 +93,16 @@ console.log(heightString);
                                              -webkit-transition: opacity 1.0s linear; \
                                              -moz-transition: opacity 1.0s linear;';
 
-                    //if (coordViewModel.height) {
+                    if (coordViewModel.height) {
                         that._coodDiv.innerHTML = '<table><tr><th>Longitude</th><th>Latitude</th><th>Height</th></tr>' + 
                             '<tr><td id="longitude"><span data-bind="text: longitude"></span></td><td id="latitude">' +
                             '<span data-bind="text: latitude"></span></td><td id="height">' +
                             '<span data-bind="text: height"></span></td></tr>';
-                    //} else {
-                    //    that._coodDiv.innerHTML = '<table><tr><th>Longitude</th><th>Latitude</th></tr>' +
-                    //        '<tr><td id="longitude"><span data-bind="text: longitude"></span></td><td id="latitude">' +
-                    //        '<span data-bind="text: latitude"></span></td></tr>';
-                    //}
+                    } else {
+                        that._coodDiv.innerHTML = '<table><tr><th>Longitude</th><th>Latitude</th></tr>' +
+                            '<tr><td id="longitude"><span data-bind="text: longitude"></span></td><td id="latitude">' +
+                            '<span data-bind="text: latitude"></span></td></tr>';
+                    }
 
                     mainContainer.appendChild(that._coodDiv);
 

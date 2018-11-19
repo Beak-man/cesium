@@ -44,7 +44,6 @@ define([
             throw new DeveloperError('positions is required.');
         }
         //>>includeEnd('debug');
-
         return terrainProvider.readyPromise.then(function() {
             var byLevel = [];
 
@@ -59,6 +58,7 @@ define([
             for (var i = 0; i < positions.length; ++i) {
                 var position = positions[i];
                 var maxLevel = availability.computeMaximumLevelAtPosition(position);
+//console.log("maxLevel " + maxLevel);
 
                 var atLevel = byLevel[maxLevel];
                 if (!defined(atLevel)) {
@@ -72,6 +72,7 @@ define([
                     return sampleTerrain(terrainProvider, index, positionsAtLevel);
                 }
             })).then(function() {
+//console.log("and " + positions);
                 return positions;
             });
         });

@@ -70,12 +70,12 @@ define([
                         'url': 'http://134.158.75.177:8080/tilesets/Messenger_terrain',
                         'terrainExaggeration' : 10.0
                     },
-                'venus':
-                    {
-                        'name': 'Magellan v02 (res. 4641m/px)',
-                        'url': 'http://134.158.75.177:8080/tilesets/Magellan_terrain',
-                        'terrainExaggeration' : 10.0
-                    },
+                //'venus':
+                //    {
+                //        'name': 'Magellan v02 (res. 4641m/px)',
+                //        'url': 'http://134.158.75.177:8080/tilesets/Magellan_terrain',
+                //        'terrainExaggeration' : 10.0
+                //    },
                 'mars':
                     {
                         'name': 'MGS MOLA (res. 463m/px)',

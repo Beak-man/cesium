@@ -82,8 +82,10 @@ define([
         var node;
         for (var nodeIndex = 0; nodeIndex < this._rootNodes.length; ++nodeIndex) {
             var rootNode = this._rootNodes[nodeIndex];
+//console.log("this " + rootNode.extent);
             if (rectangleContainsPosition(rootNode.extent, position)) {
                 node = rootNode;
+//console.log("node " + node);
                 break;
             }
         }
@@ -201,7 +203,7 @@ define([
         this.x = x;
         this.y = y;
         this.extent = tilingScheme.tileXYToRectangle(x, y, level);
-
+//console.log(this.extent);
         this.rectangles = [];
         this._sw = undefined;
         this._se = undefined;
