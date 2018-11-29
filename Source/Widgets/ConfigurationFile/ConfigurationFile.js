@@ -81,6 +81,12 @@ define([
                         'name': 'MGS MOLA (res. 463m/px)',
                         'url': 'http://134.158.75.177:8080/tilesets/MOLA_terrain/',
                         'terrainExaggeration' : 10.0
+                    },
+                'moon':
+                    {
+                        'name': 'LROC Kaguya merge (res. 60m/px)',
+                        'url': 'http://134.158.75.177:8080/tilesets/LrocKaguya_terrain/',
+                        'terrainExaggeration' : 20.0
                     }
             },
 
