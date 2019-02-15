@@ -17,6 +17,7 @@ define([
         'Cesium/Scene/createOpenStreetMapImageryProvider',
         'Cesium/Scene/createTileMapServiceImageryProvider',
         'Cesium/Scene/Globe',
+        'Cesium/Scene/SkyAtmosphere',
         'Cesium/Scene/SkyBox',
         'Cesium/Widgets/ConfigurationFile/ConfigurationFile',
         'Cesium/Widgets/Viewer/Viewer',
@@ -41,6 +42,7 @@ define([
         createOpenStreetMapImageryProvider,
         createTileMapServiceImageryProvider,
         Globe,
+        SkyAtmosphere,
         SkyBox,
         ConfigurationFile,
         Viewer,
@@ -159,7 +161,7 @@ define([
         imageryProvider: imageryProvider, // Fournit l'image a afficher sur le globe.
         terrainProvider: terrainProviderParam,
         scene3DOnly: endUserOptions.scene3DOnly, // show 3D scene directly.
-        skyAtmosphere: false, // atm visualisation.
+        skyAtmosphere: new SkyAtmosphere(ellipsoidImageryParam, {show: false} ), // atm visualisation.
         skyBox: new SkyBox({show: false}), // stars visualisation.
         selectionIndicator: false,
         timeline: false, // for files which contains the temporal dimension

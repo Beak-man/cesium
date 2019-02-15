@@ -16,6 +16,14 @@ defineSuite([
         expect(CesiumMath.sign(0)).toEqual(0);
     });
 
+    it('sign of -0', function() {
+        expect(CesiumMath.sign(-0)).toEqual(-0);
+    });
+
+    it('sign of NaN', function() {
+        expect(CesiumMath.sign(NaN)).toBeNaN();
+    });
+
     it('signNotZero of -2', function() {
         expect(CesiumMath.signNotZero(-2)).toEqual(-1);
     });
@@ -246,6 +254,110 @@ defineSuite([
         }).toThrowDeveloperError();
     });
 
+    it('leftIsLessThanRight works', function() {
+        expect(CesiumMath.leftIsLessThanRight(1.0, 2.0, 0.2)).toBe(true);
+        expect(CesiumMath.leftIsLessThanRight(2.0, 1.0, 0.2)).toBe(false);
+        expect(CesiumMath.leftIsLessThanRight(1.0, 1.0, 0.2)).toBe(false);
+        expect(CesiumMath.leftIsLessThanRight(1.0, 1.2, 0.2)).toBe(false);
+        expect(CesiumMath.leftIsLessThanRight(1.2, 1.0, 0.2)).toBe(false);
+    });
+
+    it('leftIsLessThanRight throws for undefined left', function() {
+        expect(function() {
+            CesiumMath.leftIsLessThanRight(undefined, 5.0, CesiumMath.EPSILON16);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsLessThanRight throws for undefined right', function() {
+        expect(function() {
+            CesiumMath.leftIsLessThanRight(1.0, undefined, CesiumMath.EPSILON16);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsLessThanRight throws for undefined absoluteEpsilon', function() {
+        expect(function() {
+            CesiumMath.leftIsLessThanRight(1.0, 5.0, undefined);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsLessThanOrEqualToRight works', function() {
+        expect(CesiumMath.leftIsLessThanOrEqualToRight(1.0, 2.0, 0.2)).toBe(true);
+        expect(CesiumMath.leftIsLessThanOrEqualToRight(2.0, 1.0, 0.2)).toBe(false);
+        expect(CesiumMath.leftIsLessThanOrEqualToRight(1.0, 1.0, 0.2)).toBe(true);
+        expect(CesiumMath.leftIsLessThanOrEqualToRight(1.0, 1.2, 0.2)).toBe(true);
+        expect(CesiumMath.leftIsLessThanOrEqualToRight(1.2, 1.0, 0.2)).toBe(true);
+    });
+
+    it('leftIsLessThanOrEqualToRight throws for undefined left', function() {
+        expect(function() {
+            CesiumMath.leftIsLessThanOrEqualToRight(undefined, 5.0, CesiumMath.EPSILON16);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsLessThanOrEqualToRight throws for undefined right', function() {
+        expect(function() {
+            CesiumMath.leftIsLessThanOrEqualToRight(1.0, undefined, CesiumMath.EPSILON16);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsLessThanOrEqualToRight throws for undefined absoluteEpsilon', function() {
+        expect(function() {
+            CesiumMath.leftIsLessThanOrEqualToRight(1.0, 5.0, undefined);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsGreaterThanRight works', function() {
+        expect(CesiumMath.leftIsGreaterThanRight(1.0, 2.0, 0.2)).toBe(false);
+        expect(CesiumMath.leftIsGreaterThanRight(2.0, 1.0, 0.2)).toBe(true);
+        expect(CesiumMath.leftIsGreaterThanRight(1.0, 1.0, 0.2)).toBe(false);
+        expect(CesiumMath.leftIsGreaterThanRight(1.0, 1.2, 0.2)).toBe(false);
+        expect(CesiumMath.leftIsGreaterThanRight(1.2, 1.0, 0.2)).toBe(false);
+    });
+
+    it('leftIsGreaterThanRight throws for undefined left', function() {
+        expect(function() {
+            CesiumMath.leftIsGreaterThanRight(undefined, 5.0, CesiumMath.EPSILON16);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsGreaterThanRight throws for undefined right', function() {
+        expect(function() {
+            CesiumMath.leftIsGreaterThanRight(1.0, undefined, CesiumMath.EPSILON16);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsGreaterThanRight throws for undefined absoluteEpsilon', function() {
+        expect(function() {
+            CesiumMath.leftIsGreaterThanRight(1.0, 5.0, undefined);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsGreaterThanOrEqualToRight works', function() {
+        expect(CesiumMath.leftIsGreaterThanOrEqualToRight(1.0, 2.0, 0.2)).toBe(false);
+        expect(CesiumMath.leftIsGreaterThanOrEqualToRight(2.0, 1.0, 0.2)).toBe(true);
+        expect(CesiumMath.leftIsGreaterThanOrEqualToRight(1.0, 1.0, 0.2)).toBe(true);
+        expect(CesiumMath.leftIsGreaterThanOrEqualToRight(1.0, 1.2, 0.2)).toBe(true);
+        expect(CesiumMath.leftIsGreaterThanOrEqualToRight(1.2, 1.0, 0.2)).toBe(true);
+    });
+
+    it('leftIsGreaterThanOrEqualToRight throws for undefined left', function() {
+        expect(function() {
+            CesiumMath.leftIsGreaterThanOrEqualToRight(undefined, 5.0, CesiumMath.EPSILON16);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsGreaterThanOrEqualToRight throws for undefined right', function() {
+        expect(function() {
+            CesiumMath.leftIsGreaterThanOrEqualToRight(1.0, undefined, CesiumMath.EPSILON16);
+        }).toThrowDeveloperError();
+    });
+
+    it('leftIsGreaterThanOrEqualToRight throws for undefined absoluteEpsilon', function() {
+        expect(function() {
+            CesiumMath.leftIsGreaterThanOrEqualToRight(1.0, 5.0, undefined);
+        }).toThrowDeveloperError();
+    });
+
     it('factorial produces the correct results', function() {
         var factorials = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600, 6227020800, 87178291200, 1307674368000, 20922789888000, 355687428096000, 6402373705728000,
                           121645100408832000, 2432902008176640000, 51090942171709440000, 1124000727777607680000, 25852016738884976640000, 620448401733239439360000];
@@ -432,6 +544,32 @@ defineSuite([
     it('logBase throws without base', function() {
         expect(function() {
             CesiumMath.logBase(64, undefined);
+        }).toThrowDeveloperError();
+    });
+
+    it('cbrt', function() {
+        expect(CesiumMath.cbrt(27.0)).toEqual(3.0);
+        expect(CesiumMath.cbrt(-27.0)).toEqual(-3.0);
+        expect(CesiumMath.cbrt(0.0)).toEqual(0.0);
+        expect(CesiumMath.cbrt(1.0)).toEqual(1.0);
+        expect(CesiumMath.cbrt()).toEqual(NaN);
+    });
+
+    it('fastApproximateAtan', function() {
+        expect(CesiumMath.fastApproximateAtan(0.0)).toEqualEpsilon(0.0, CesiumMath.EPSILON3);
+        expect(CesiumMath.fastApproximateAtan(1.0)).toEqualEpsilon(CesiumMath.PI_OVER_FOUR, CesiumMath.EPSILON3);
+        expect(CesiumMath.fastApproximateAtan(-1.0)).toEqualEpsilon(-CesiumMath.PI_OVER_FOUR, CesiumMath.EPSILON3);
+    });
+
+    it('fastApproximateAtan2', function() {
+        expect(CesiumMath.fastApproximateAtan2(1.0, 0.0)).toEqualEpsilon(0.0, CesiumMath.EPSILON3);
+        expect(CesiumMath.fastApproximateAtan2(1.0, 1.0)).toEqualEpsilon(CesiumMath.PI_OVER_FOUR, CesiumMath.EPSILON3);
+        expect(CesiumMath.fastApproximateAtan2(-1.0, 1.0)).toEqualEpsilon(CesiumMath.PI_OVER_FOUR + CesiumMath.PI_OVER_TWO, CesiumMath.EPSILON3);
+    });
+
+    it('fastApproximateAtan2 throws if both arguments are zero', function() {
+        expect(function() {
+            CesiumMath.fastApproximateAtan2(0, 0);
         }).toThrowDeveloperError();
     });
 });
