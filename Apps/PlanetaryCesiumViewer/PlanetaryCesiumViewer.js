@@ -17,6 +17,7 @@ define([
         'Cesium/Scene/createOpenStreetMapImageryProvider',
         'Cesium/Scene/createTileMapServiceImageryProvider',
         'Cesium/Scene/Globe',
+        'Cesium/Scene/SkyAtmosphere',
         'Cesium/Scene/SkyBox',
         'Cesium/Widgets/ConfigurationFile/ConfigurationFile',
         'Cesium/Widgets/Viewer/Viewer',
@@ -41,6 +42,7 @@ define([
         createOpenStreetMapImageryProvider,
         createTileMapServiceImageryProvider,
         Globe,
+        SkyAtmosphere,
         SkyBox,
         ConfigurationFile,
         Viewer,
@@ -126,27 +128,21 @@ define([
     terrainProviderParam = new EllipsoidTerrainProvider({ellipsoid: ellipsoidImageryParam});
 
     var imageryProvider;
+    if (defined(endUserOptions.tmsImageryUrl)) {
+        imageryProvider = createTileMapServiceImageryProvider({
+            url: endUserOptions.tmsImageryUrl
+        });
+    } else {
+        imageryProvider = new createOpenStreetMapImageryProvider({
+            url: 'https://a.tile.openstreetmap.org/'
+        });
 
-    /*
-
-     // request parameters to get a Map :
-
-     // SERVICE : Name of the OGC services.
-     // VERSION : Number of the WMS protocol versions.
-     // STYLES  : Styles lit used for each LAYERS
-     // REQUEST : Three possible operations : GetCapabilities, GetMap, GetFeatureInfo.
-     // FORMAT  : type of the returned image ???
-     // LAYERS  : Liste des desired layers.
-     // BBOX    : the map size (longitude min,latitude min, longitude max, latitude max
-     // WIDTH   : Width of the image.
-     // HEIGHT  : Height of the image.
-
-     var urlParams        = endUserOptions.imageryProviderParams;
-     var onlineResUrl     = endUserOptions.onlineResUrl;
-     var tabParams        = urlParams.split(';');
-     var propretiesObject = ['SERVICE', 'VERSION', 'SRS', 'STYLES', 'REQUEST', 'FORMAT', 'LAYERS', 'BBOX', 'WIDTH', 'HEIGHT'];
-     var urlParam         = "";
-     */
+        /*  imageryProvider = new BingMapsImageryProvider({
+         url: 'https://dev.virtualearth.net',
+         key: 'get-yours-at-https://www.bingmapsportal.com/',
+         mapStyle: BingMapsStyle.ROAD
+         });*/
+    }
 
     var loadingIndicator = document.getElementById('loadingIndicator');
 
@@ -157,10 +153,6 @@ define([
         globe: globeParam, //  The globe to use in the scene. (class : Globe)
         baseLayerPicker: false,
         imageryProvider: imageryProvider, // Fournit l'image a afficher sur le globe.
-        terrainProvider: terrainProviderParam,
-        scene3DOnly: endUserOptions.scene3DOnly, // show 3D scene directly.
-        skyAtmosphere: false, // atm visualisation.
-        skyBox: new SkyBox({show: false}), // stars visualisation.
         selectionIndicator: false,
         timeline: false, // for files which contains the temporal dimension
         animation: false, // for animation which displayed with the time
@@ -175,7 +167,6 @@ define([
     /* =========================================================================
      ======================== READ CONFIGURATION FILES =========================
      =========================================================================== */
-
 
     // Solar system configuration :
     var configuration;
@@ -198,6 +189,10 @@ define([
 
     try {
         viewerOptions.configuration = configuration ;// contains configuration (see ./sources/widget/ConfigurationFiles/ )
+        viewerOptions.skyAtmosphere = new SkyAtmosphere(ellipsoidImageryParam, {show: false} ), // atm visualisation.
+        viewerOptions.skyBox = new SkyBox({show: false}), // stars visualisation.
+        viewerOptions.imageryProvider = imageryProvider, // Fournit l'image a afficher sur le globe.
+
         viewer = new Viewer('cesiumContainer', viewerOptions);
 
     } catch (exception) {

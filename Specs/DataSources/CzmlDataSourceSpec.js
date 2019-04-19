@@ -1,5 +1,6 @@
 defineSuite([
         'DataSources/CzmlDataSource',
+        'Core/ArcType',
         'Core/BoundingRectangle',
         'Core/Cartesian2',
         'Core/Cartesian3',
@@ -14,13 +15,12 @@ defineSuite([
         'Core/ExtrapolationType',
         'Core/Iso8601',
         'Core/JulianDate',
-        'Core/loadJson',
-        'Core/loadWithXhr',
         'Core/Math',
         'Core/NearFarScalar',
         'Core/Quaternion',
         'Core/Rectangle',
         'Core/ReferenceFrame',
+        'Core/Resource',
         'Core/RuntimeError',
         'Core/Spherical',
         'Core/TimeInterval',
@@ -39,6 +39,7 @@ defineSuite([
         'ThirdParty/when'
     ], function(
         CzmlDataSource,
+        ArcType,
         BoundingRectangle,
         Cartesian2,
         Cartesian3,
@@ -53,13 +54,12 @@ defineSuite([
         ExtrapolationType,
         Iso8601,
         JulianDate,
-        loadJson,
-        loadWithXhr,
         CesiumMath,
         NearFarScalar,
         Quaternion,
         Rectangle,
         ReferenceFrame,
+        Resource,
         RuntimeError,
         Spherical,
         TimeInterval,
@@ -162,10 +162,10 @@ defineSuite([
 
     beforeAll(function() {
         return when.join(
-            loadJson(simpleUrl).then(function(result) {
+            Resource.fetchJson(simpleUrl).then(function(result) {
                 simple = result;
             }),
-            loadJson(vehicleUrl).then(function(result) {
+            Resource.fetchJson(vehicleUrl).then(function(result) {
                 vehicle = result;
             }));
     });
@@ -271,6 +271,15 @@ defineSuite([
     it('process loads expected data', function() {
         var dataSource = new CzmlDataSource();
         return dataSource.process(simple).then(function(dataSource) {
+            expect(dataSource.entities.values.length).toEqual(10);
+        });
+    });
+
+    it('process loads expected data from Resource', function() {
+        var dataSource = new CzmlDataSource();
+        return dataSource.process(new Resource({
+            url: simpleUrl
+        })).then(function(dataSource) {
             expect(dataSource.entities.values.length).toEqual(10);
         });
     });
@@ -482,7 +491,7 @@ defineSuite([
             var entity = dataSource.entities.values[0];
 
             expect(entity.billboard).toBeDefined();
-            expect(entity.billboard.image.getValue(Iso8601.MINIMUM_VALUE)).toEqual(sourceUri + 'image.png');
+            expect(entity.billboard.image.getValue(Iso8601.MINIMUM_VALUE).url).toEqual(sourceUri + 'image.png');
             expect(entity.billboard.rotation.getValue(Iso8601.MINIMUM_VALUE)).toEqual(billboardPacket.billboard.rotation);
             expect(entity.billboard.scale.getValue(Iso8601.MINIMUM_VALUE)).toEqual(billboardPacket.billboard.scale);
             expect(entity.billboard.heightReference.getValue(Iso8601.MINIMUM_VALUE)).toEqual(HeightReference.CLAMP_TO_GROUND);
@@ -526,14 +535,14 @@ defineSuite([
 
     it('can handle aligned axis expressed as a velocity reference', function() {
         var packet = {
-            "position" : {
-                "epoch" : "2016-06-17T12:00:00Z",
-                "cartesian" : [0, 1, 2, 3,
+            'position' : {
+                'epoch' : '2016-06-17T12:00:00Z',
+                'cartesian' : [0, 1, 2, 3,
                                60, 61, 122, 183]
             },
-            "billboard" : {
-                "alignedAxis" : {
-                    "velocityReference" : "#position"
+            'billboard' : {
+                'alignedAxis' : {
+                    'velocityReference' : '#position'
                 }
             }
         };
@@ -553,24 +562,24 @@ defineSuite([
 
     it('can handle aligned axis expressed as a velocity reference within an interval', function() {
         var packet = {
-            "position": {
-                "epoch": "2016-06-17T12:00:00Z",
-                "cartesian": [0, 1, 2, 3,
+            'position': {
+                'epoch': '2016-06-17T12:00:00Z',
+                'cartesian': [0, 1, 2, 3,
                               60, 61, 122, 183]
             },
-            "billboard": {
-                "alignedAxis": [
+            'billboard': {
+                'alignedAxis': [
                     {
-                        "interval": "2016-06-17T12:00:00Z/2016-06-17T12:00:30Z",
-                        "unitCartesian": [
+                        'interval': '2016-06-17T12:00:00Z/2016-06-17T12:00:30Z',
+                        'unitCartesian': [
                             0,
                             1,
                             0
                         ]
                     },
                     {
-                        "interval": "2016-06-17T12:00:30Z/2016-06-17T12:01:00Z",
-                        "velocityReference": "#position"
+                        'interval': '2016-06-17T12:00:30Z/2016-06-17T12:01:00Z',
+                        'velocityReference': '#position'
                     }
                 ]
             }
@@ -613,57 +622,8 @@ defineSuite([
         }).then(function(dataSource) {
             var entity = dataSource.entities.values[0];
             var imageProperty = entity.billboard.image;
-            expect(imageProperty.getValue(JulianDate.fromIso8601('2013-01-01T00:00:00Z'))).toEqual(source + 'image.png');
-            expect(imageProperty.getValue(JulianDate.fromIso8601('2013-01-01T01:00:00Z'))).toEqual(source + 'image2.png');
-        });
-    });
-
-    it('appends query to all uri', function() {
-        var source = 'http://some.url.invalid/';
-        var packet = {
-            billboard : {
-                image : [{
-                    interval : '2013-01-01T00:00:00Z/2013-01-01T01:00:00Z',
-                    uri : 'image.png'
-                }, {
-                    interval : '2013-01-01T01:00:00Z/2013-01-01T02:00:00Z',
-                    uri : 'image2.png'
-                }]
-            }
-        };
-
-        var dataSource = new CzmlDataSource();
-        return dataSource.load(makePacket(packet), {
-            sourceUri: source,
-            query: {
-                token: 34570,
-                password: "Passw0rd"
-            }
-        }).then(function(dataSource) {
-            var entity = dataSource.entities.values[0];
-            var imageProperty = entity.billboard.image;
-            expect(imageProperty.getValue(JulianDate.fromIso8601('2013-01-01T00:00:00Z'))).toEqual(source + 'image.png' + '?token=34570&password=Passw0rd');
-            expect(imageProperty.getValue(JulianDate.fromIso8601('2013-01-01T01:00:00Z'))).toEqual(source + 'image2.png' + '?token=34570&password=Passw0rd');
-        });
-    });
-
-    it('appends query tokens to source URL', function() {
-        var dataSource = new CzmlDataSource();
-        var requestNetworkLink = when.defer();
-
-        spyOn(loadWithXhr, 'load').and.callFake(function(url, responseType, method, data, headers, deferred, overrideMimeType) {
-            requestNetworkLink.resolve(url);
-            deferred.reject();
-        });
-
-        dataSource.process(simpleUrl, {
-            query: {
-                "token": 30203,
-                "pass": "passw0rd"
-            }
-        });
-        return requestNetworkLink.promise.then(function(url) {
-            expect(url).toEqual(simpleUrl + '?token=30203&pass=passw0rd');
+            expect(imageProperty.getValue(JulianDate.fromIso8601('2013-01-01T00:00:00Z')).url).toEqual(source + 'image.png');
+            expect(imageProperty.getValue(JulianDate.fromIso8601('2013-01-01T01:00:00Z')).url).toEqual(source + 'image2.png');
         });
     });
 
@@ -698,7 +658,7 @@ defineSuite([
             var entity = dataSource.entities.values[0];
 
             expect(entity.billboard).toBeDefined();
-            expect(entity.billboard.image.getValue(validTime)).toEqual(billboardPacket.billboard.image);
+            expect(entity.billboard.image.getValue(validTime).url).toEqual(billboardPacket.billboard.image);
             expect(entity.billboard.scale.getValue(validTime)).toEqual(billboardPacket.billboard.scale);
             expect(entity.billboard.horizontalOrigin.getValue(validTime)).toEqual(HorizontalOrigin.CENTER);
             expect(entity.billboard.verticalOrigin.getValue(validTime)).toEqual(VerticalOrigin.CENTER);
@@ -1157,7 +1117,8 @@ defineSuite([
                     rgbaf : [0.2, 0.2, 0.2, 0.2]
                 },
                 outlineWidth : 6,
-                shadows : 'ENABLED'
+                shadows : 'ENABLED',
+                zIndex: 8
             }
         };
 
@@ -1173,6 +1134,7 @@ defineSuite([
             expect(entity.ellipse.outlineColor.getValue(Iso8601.MINIMUM_VALUE)).toEqual(new Color(0.2, 0.2, 0.2, 0.2));
             expect(entity.ellipse.outlineWidth.getValue(Iso8601.MINIMUM_VALUE)).toEqual(6);
             expect(entity.ellipse.shadows.getValue(Iso8601.MINIMUM_VALUE)).toEqual(ShadowMode.ENABLED);
+            expect(entity.ellipse.zIndex.getValue(Iso8601.MINIMUM_VALUE)).toEqual(8);
         });
     });
 
@@ -1510,13 +1472,13 @@ defineSuite([
 
     it('can handle orientation expressed as a velocity reference', function() {
         var packet = {
-            "position" : {
-                "epoch" : "2016-06-17T12:00:00Z",
-                "cartesian" : [0, 1, 2, 3,
+            'position' : {
+                'epoch' : '2016-06-17T12:00:00Z',
+                'cartesian' : [0, 1, 2, 3,
                                60, 61, 122, 183]
             },
-            "orientation": {
-                "velocityReference": "#position"
+            'orientation': {
+                'velocityReference': '#position'
             }
         };
 
@@ -2412,7 +2374,8 @@ defineSuite([
                 outlineWidth : 6,
                 closeTop : false,
                 closeBottom : false,
-                shadows : 'ENABLED'
+                shadows : 'ENABLED',
+                zIndex: 3
             }
         };
 
@@ -2433,6 +2396,7 @@ defineSuite([
             expect(entity.polygon.closeTop.getValue(Iso8601.MINIMUM_VALUE)).toEqual(false);
             expect(entity.polygon.closeBottom.getValue(Iso8601.MINIMUM_VALUE)).toEqual(false);
             expect(entity.polygon.shadows.getValue(Iso8601.MINIMUM_VALUE)).toEqual(ShadowMode.ENABLED);
+            expect(entity.polygon.zIndex.getValue(Iso8601.MINIMUM_VALUE)).toEqual(3);
         });
     });
 
@@ -2551,6 +2515,42 @@ defineSuite([
         });
     });
 
+    it('CZML adds data for polyline clamped to terrain.', function() {
+        var polylinePacket = {
+            polyline : {
+                material : {
+                    polylineOutline : {
+                        color : {
+                            rgbaf : [0.1, 0.1, 0.1, 0.1]
+                        },
+                        outlineColor : {
+                            rgbaf : [0.2, 0.2, 0.2, 0.2]
+                        },
+                        outlineWidth : 1.0
+                    }
+                },
+                width : 1.0,
+                show : true,
+                clampToGround : true,
+                zIndex : 1
+            }
+        };
+
+        var dataSource = new CzmlDataSource();
+        return dataSource.load(makePacket(polylinePacket)).then(function(dataSource) {
+            var entity = dataSource.entities.values[0];
+
+            expect(entity.polyline).toBeDefined();
+            expect(entity.polyline.material.color.getValue(Iso8601.MINIMUM_VALUE)).toEqual(new Color(0.1, 0.1, 0.1, 0.1));
+            expect(entity.polyline.width.getValue(Iso8601.MINIMUM_VALUE)).toEqual(polylinePacket.polyline.width);
+            expect(entity.polyline.material.outlineColor.getValue(Iso8601.MINIMUM_VALUE)).toEqual(new Color(0.2, 0.2, 0.2, 0.2));
+            expect(entity.polyline.material.outlineWidth.getValue(Iso8601.MINIMUM_VALUE)).toEqual(1.0);
+            expect(entity.polyline.show.getValue(Iso8601.MINIMUM_VALUE)).toEqual(true);
+            expect(entity.polyline.clampToGround.getValue(Iso8601.MINIMUM_VALUE)).toEqual(true);
+            expect(entity.polyline.zIndex.getValue(Iso8601.MINIMUM_VALUE)).toEqual(1);
+        });
+    });
+
     it('CZML adds data for infinite model.', function() {
         var modelPacket = {
             model : {
@@ -2596,7 +2596,7 @@ defineSuite([
             expect(entity.model.scale.getValue(Iso8601.MINIMUM_VALUE)).toEqual(3.0);
             expect(entity.model.minimumPixelSize.getValue(Iso8601.MINIMUM_VALUE)).toEqual(5.0);
             expect(entity.model.maximumScale.getValue(Iso8601.MINIMUM_VALUE)).toEqual(4.0);
-            expect(entity.model.uri.getValue(Iso8601.MINIMUM_VALUE)).toEqual('./Data/Models/Box/CesiumBoxTest.gltf');
+            expect(entity.model.uri.getValue(Iso8601.MINIMUM_VALUE).url).toEqual('./Data/Models/Box/CesiumBoxTest.gltf');
             expect(entity.model.incrementallyLoadTextures.getValue(Iso8601.MINIMUM_VALUE)).toEqual(true);
             expect(entity.model.shadows.getValue(Iso8601.MINIMUM_VALUE)).toEqual(ShadowMode.ENABLED);
             expect(entity.model.heightReference.getValue(Iso8601.MINIMUM_VALUE)).toEqual(HeightReference.CLAMP_TO_GROUND);
@@ -2670,7 +2670,7 @@ defineSuite([
             expect(entity.model.show.getValue(validTime)).toEqual(true);
             expect(entity.model.scale.getValue(validTime)).toEqual(3.0);
             expect(entity.model.minimumPixelSize.getValue(validTime)).toEqual(5.0);
-            expect(entity.model.uri.getValue(validTime)).toEqual('./Data/Models/Box/CesiumBoxTest.gltf');
+            expect(entity.model.uri.getValue(validTime).url).toEqual('./Data/Models/Box/CesiumBoxTest.gltf');
             expect(entity.model.incrementallyLoadTextures.getValue(validTime)).toEqual(true);
             expect(entity.model.shadows.getValue(validTime)).toEqual(ShadowMode.ENABLED);
             expect(entity.model.heightReference.getValue(validTime)).toEqual(HeightReference.CLAMP_TO_GROUND);
@@ -2924,15 +2924,14 @@ defineSuite([
                 granularity : 3,
                 rotation : 4,
                 stRotation : 5,
-                closeBottom : true,
-                closeTop : false,
                 show : true,
                 outline : true,
                 outlineColor : {
                     rgbaf : [0.2, 0.2, 0.2, 0.2]
                 },
                 outlineWidth : 6,
-                shadows : 'ENABLED'
+                shadows : 'ENABLED',
+                zIndex : 6
             }
         };
 
@@ -2951,12 +2950,11 @@ defineSuite([
             expect(entity.rectangle.granularity.getValue(Iso8601.MINIMUM_VALUE)).toEqual(czmlRectangle.granularity);
             expect(entity.rectangle.rotation.getValue(Iso8601.MINIMUM_VALUE)).toEqual(czmlRectangle.rotation);
             expect(entity.rectangle.stRotation.getValue(Iso8601.MINIMUM_VALUE)).toEqual(czmlRectangle.stRotation);
-            expect(entity.rectangle.closeBottom.getValue(Iso8601.MINIMUM_VALUE)).toEqual(czmlRectangle.closeBottom);
-            expect(entity.rectangle.closeTop.getValue(Iso8601.MINIMUM_VALUE)).toEqual(czmlRectangle.closeTop);
             expect(entity.rectangle.outline.getValue(Iso8601.MINIMUM_VALUE)).toEqual(true);
             expect(entity.rectangle.outlineColor.getValue(Iso8601.MINIMUM_VALUE)).toEqual(new Color(0.2, 0.2, 0.2, 0.2));
             expect(entity.rectangle.outlineWidth.getValue(Iso8601.MINIMUM_VALUE)).toEqual(6);
             expect(entity.rectangle.shadows.getValue(Iso8601.MINIMUM_VALUE)).toEqual(ShadowMode.ENABLED);
+            expect(entity.rectangle.zIndex.getValue(Iso8601.MINIMUM_VALUE)).toEqual(6);
         });
     });
 
@@ -3209,7 +3207,7 @@ defineSuite([
                 positions : {
                     cartesian : [expectedResult[0].x, expectedResult[0].y, expectedResult[0].z, expectedResult[1].x, expectedResult[1].y, expectedResult[1].z]
                 },
-                cornerType : "MITERED",
+                cornerType : 'MITERED',
                 extrudedHeight : 2,
                 granularity : 3,
                 height : 4,
@@ -3220,7 +3218,8 @@ defineSuite([
                     rgbaf : [0.2, 0.2, 0.2, 0.2]
                 },
                 outlineWidth : 6,
-                shadows : 'ENABLED'
+                shadows : 'ENABLED',
+                zIndex: 5
             }
         };
 
@@ -3243,6 +3242,7 @@ defineSuite([
             expect(entity.corridor.outlineColor.getValue(Iso8601.MINIMUM_VALUE)).toEqual(new Color(0.2, 0.2, 0.2, 0.2));
             expect(entity.corridor.outlineWidth.getValue(Iso8601.MINIMUM_VALUE)).toEqual(6);
             expect(entity.corridor.shadows.getValue(Iso8601.MINIMUM_VALUE)).toEqual(ShadowMode.ENABLED);
+            expect(entity.corridor.zIndex.getValue(Iso8601.MINIMUM_VALUE)).toEqual(5);
         });
     });
 
@@ -3522,17 +3522,17 @@ defineSuite([
         var packet = {
             id : 'point',
             position : {
-                forwardExtrapolationType : "HOLD",
+                forwardExtrapolationType : 'HOLD',
                 forwardExtrapolationDuration : 2.0,
-                backwardExtrapolationType : "NONE",
+                backwardExtrapolationType : 'NONE',
                 backwardExtrapolationDuration : 1.0,
                 cartesian : ['2012', 0, 0, 0]
             },
             point : {
                 color : {
-                    forwardExtrapolationType : "NONE",
+                    forwardExtrapolationType : 'NONE',
                     forwardExtrapolationDuration : 1.0,
-                    backwardExtrapolationType : "HOLD",
+                    backwardExtrapolationType : 'HOLD',
                     backwardExtrapolationDuration : 2.0,
                     rgbaf : ['2012', 0.1, 0.2, 0.3, 0.4]
                 }
@@ -3589,6 +3589,62 @@ defineSuite([
         });
     });
 
+    it('converts followSurface to arcType for backwards compatibility', function() {
+        var packet = [{
+            id : 'document',
+            version : '1.0'
+        }, {
+            id : 'followSurface-false',
+            polyline : {
+                followSurface : false
+            }
+        }, {
+            id : 'followSurface-true',
+            polyline : {
+                followSurface : true
+            }
+        }, {
+            id : 'followSurface-time-varying',
+            polyline : {
+                followSurface : [{
+                    interval : '2013-01-01T00:00:00Z/2013-01-01T01:00:00Z',
+                    boolean : true
+                }, {
+                    interval : '2013-01-01T01:00:00Z/2013-01-01T02:00:00Z',
+                    boolean : false
+                }]
+            }
+        }, {
+            id : 'arcType-overrides-followSurface',
+            polyline : {
+                followSurface : true,
+                arcType: 'RHUMB'
+            }
+        }];
+
+        var dataSource = new CzmlDataSource();
+        return dataSource.load(packet).then(function(dataSource) {
+            var date = JulianDate.now();
+
+            var entity = dataSource.entities.getById('followSurface-false');
+            expect(entity.polyline.arcType.isConstant).toBe(true);
+            expect(entity.polyline.arcType.getValue(date)).toBe(ArcType.NONE);
+
+            entity = dataSource.entities.getById('followSurface-true');
+            expect(entity.polyline.arcType.isConstant).toBe(true);
+            expect(entity.polyline.arcType.getValue(date)).toBe(ArcType.GEODESIC);
+
+            entity = dataSource.entities.getById('followSurface-time-varying');
+            expect(entity.polyline.arcType.isConstant).toBe(false);
+            expect(entity.polyline.arcType.getValue(JulianDate.fromIso8601('2013-01-01T00:00:00Z'))).toBe(ArcType.GEODESIC);
+            expect(entity.polyline.arcType.getValue(JulianDate.fromIso8601('2013-01-01T01:00:00Z'))).toBe(ArcType.NONE);
+
+            entity = dataSource.entities.getById('arcType-overrides-followSurface');
+            expect(entity.polyline.arcType.isConstant).toBe(true);
+            expect(entity.polyline.arcType.getValue(date)).toBe(ArcType.RHUMB);
+        });
+    });
+
     // The below test was generated, along with ValidationDocument.czml,
     // by the czml-writer ValidationDocumentationGenerator.
     // https://github.com/AnalyticalGraphicsInc/czml-writer/blob/master/DotNet/GenerateFromSchema/ValidationDocumentGenerator.cs
@@ -3617,7 +3673,7 @@ defineSuite([
             expect(e.orientation.getValue(date)).toEqualEpsilon(new Quaternion(0.431493311977589, 0.560811914509339, 0.423522822587574, 0.565625261998114), 1e-14);
             expect(e.viewFrom.getValue(date)).toEqual(new Cartesian3(17794, 13381, 18228));
             expect(e.billboard.show.getValue(date)).toEqual(true);
-            expect(e.billboard.image.getValue(date)).toEqual('http://example.com/3792');
+            expect(e.billboard.image.getValue(date).url).toEqual('http://example.com/3792');
             expect(e.billboard.scale.getValue(date)).toEqual(27514.0);
             expect(e.billboard.pixelOffset.getValue(date)).toEqual(new Cartesian2(16996, 51010));
             expect(e.billboard.eyeOffset.getValue(date)).toEqual(new Cartesian3(64633, 11516, 17196));
@@ -3659,6 +3715,7 @@ defineSuite([
             expect(e.corridor.outlineWidth.getValue(date)).toEqual(9132.0);
             expect(e.corridor.shadows.getValue(date)).toEqual(ShadowMode.CAST_ONLY);
             expect(e.corridor.distanceDisplayCondition.getValue(date)).toEqual(new DistanceDisplayCondition(15797, 46507));
+            expect(e.corridor.zIndex.getValue(date)).toEqual(59315);
             expect(e.cylinder.show.getValue(date)).toEqual(true);
             expect(e.cylinder.length.getValue(date)).toEqual(33298.0);
             expect(e.cylinder.topRadius.getValue(date)).toEqual(16245.0);
@@ -3668,8 +3725,8 @@ defineSuite([
             expect(e.cylinder.outline.getValue(date)).toEqual(true);
             expect(e.cylinder.outlineColor.getValue(date)).toEqual(Color.fromBytes(4, 90, 209, 96));
             expect(e.cylinder.outlineWidth.getValue(date)).toEqual(64018.0);
-            expect(e.cylinder.numberOfVerticalLines.getValue(date)).toEqual(38567.0);
-            expect(e.cylinder.slices.getValue(date)).toEqual(39979.0);
+            expect(e.cylinder.numberOfVerticalLines.getValue(date)).toEqual(38567);
+            expect(e.cylinder.slices.getValue(date)).toEqual(39979);
             expect(e.cylinder.shadows.getValue(date)).toEqual(ShadowMode.CAST_ONLY);
             expect(e.cylinder.distanceDisplayCondition.getValue(date)).toEqual(new DistanceDisplayCondition(43860, 52395));
             expect(e.ellipse.show.getValue(date)).toEqual(true);
@@ -3685,9 +3742,10 @@ defineSuite([
             expect(e.ellipse.outline.getValue(date)).toEqual(true);
             expect(e.ellipse.outlineColor.getValue(date)).toEqual(Color.fromBytes(160, 82, 145, 104));
             expect(e.ellipse.outlineWidth.getValue(date)).toEqual(8839.0);
-            expect(e.ellipse.numberOfVerticalLines.getValue(date)).toEqual(38878.0);
+            expect(e.ellipse.numberOfVerticalLines.getValue(date)).toEqual(38878);
             expect(e.ellipse.shadows.getValue(date)).toEqual(ShadowMode.CAST_ONLY);
             expect(e.ellipse.distanceDisplayCondition.getValue(date)).toEqual(new DistanceDisplayCondition(27813, 30828));
+            expect(e.ellipse.zIndex.getValue(date)).toEqual(3341);
             expect(e.ellipsoid.show.getValue(date)).toEqual(true);
             expect(e.ellipsoid.radii.getValue(date)).toEqual(new Cartesian3(15638, 24381, 37983));
             expect(e.ellipsoid.fill.getValue(date)).toEqual(true);
@@ -3697,7 +3755,7 @@ defineSuite([
             expect(e.ellipsoid.outlineWidth.getValue(date)).toEqual(47507.0);
             expect(e.ellipsoid.stackPartitions.getValue(date)).toEqual(54278);
             expect(e.ellipsoid.slicePartitions.getValue(date)).toEqual(28562);
-            expect(e.ellipsoid.subdivisions.getValue(date)).toEqual(14008.0);
+            expect(e.ellipsoid.subdivisions.getValue(date)).toEqual(14008);
             expect(e.ellipsoid.shadows.getValue(date)).toEqual(ShadowMode.CAST_ONLY);
             expect(e.ellipsoid.distanceDisplayCondition.getValue(date)).toEqual(new DistanceDisplayCondition(3293, 56793));
             expect(e.label.show.getValue(date)).toEqual(true);
@@ -3722,7 +3780,7 @@ defineSuite([
             expect(e.label.distanceDisplayCondition.getValue(date)).toEqual(new DistanceDisplayCondition(5204, 21012));
             expect(e.label.disableDepthTestDistance.getValue(date)).toEqual(17959.0);
             expect(e.model.show.getValue(date)).toEqual(true);
-            expect(e.model.uri.getValue(date)).toEqual('http://example.com/60043');
+            expect(e.model.uri.getValue(date).url).toEqual('http://example.com/60043');
             expect(e.model.scale.getValue(date)).toEqual(44278.0);
             expect(e.model.minimumPixelSize.getValue(date)).toEqual(35888.0);
             expect(e.model.maximumScale.getValue(date)).toEqual(64305.0);
@@ -3758,6 +3816,7 @@ defineSuite([
             expect(e.point.disableDepthTestDistance.getValue(date)).toEqual(9675.0);
             expect(e.polygon.show.getValue(date)).toEqual(true);
             expect(e.polygon.hierarchy.getValue(date)).toEqual([ new Cartesian3(39143, 2200, 6408), new Cartesian3(27161, 33386, 62338) ]);
+            expect(e.polygon.arcType.getValue(date)).toEqual(ArcType.RHUMB);
             expect(e.polygon.height.getValue(date)).toEqual(26391.0);
             expect(e.polygon.extrudedHeight.getValue(date)).toEqual(15922.0);
             expect(e.polygon.stRotation.getValue(date)).toEqual(2555.0);
@@ -3772,15 +3831,18 @@ defineSuite([
             expect(e.polygon.closeBottom.getValue(date)).toEqual(true);
             expect(e.polygon.shadows.getValue(date)).toEqual(ShadowMode.CAST_ONLY);
             expect(e.polygon.distanceDisplayCondition.getValue(date)).toEqual(new DistanceDisplayCondition(5989, 26104));
+            expect(e.polygon.zIndex.getValue(date)).toEqual(31269);
             expect(e.polyline.show.getValue(date)).toEqual(true);
             expect(e.polyline.positions.getValue(date)).toEqual([ new Cartesian3(23333, 31067, 17529), new Cartesian3(57924, 41186, 31648) ]);
+            expect(e.polyline.arcType.getValue(date)).toEqual(ArcType.RHUMB);
             expect(e.polyline.width.getValue(date)).toEqual(14667.0);
             expect(e.polyline.granularity.getValue(date)).toEqual(53395.0);
             expect(e.polyline.material.color.getValue(date)).toEqual(Color.fromBytes(88, 0, 232, 230));
-            expect(e.polyline.followSurface.getValue(date)).toEqual(true);
             expect(e.polyline.shadows.getValue(date)).toEqual(ShadowMode.CAST_ONLY);
             expect(e.polyline.depthFailMaterial.color.getValue(date)).toEqual(Color.fromBytes(197, 195, 115, 198));
             expect(e.polyline.distanceDisplayCondition.getValue(date)).toEqual(new DistanceDisplayCondition(5807, 30486));
+            expect(e.polyline.clampToGround.getValue(date)).toEqual(true);
+            expect(e.polyline.zIndex.getValue(date)).toEqual(17658);
             expect(e.rectangle.show.getValue(date)).toEqual(true);
             expect(e.rectangle.coordinates.getValue(date)).toEqual(new Rectangle(1.13325368272577, 0.703573207377445, 0.756676249095309, 0.339217858685931));
             expect(e.rectangle.height.getValue(date)).toEqual(20608.0);
@@ -3793,10 +3855,9 @@ defineSuite([
             expect(e.rectangle.outline.getValue(date)).toEqual(true);
             expect(e.rectangle.outlineColor.getValue(date)).toEqual(Color.fromBytes(196, 59, 142, 36));
             expect(e.rectangle.outlineWidth.getValue(date)).toEqual(59794.0);
-            expect(e.rectangle.closeTop.getValue(date)).toEqual(true);
-            expect(e.rectangle.closeBottom.getValue(date)).toEqual(true);
             expect(e.rectangle.shadows.getValue(date)).toEqual(ShadowMode.CAST_ONLY);
             expect(e.rectangle.distanceDisplayCondition.getValue(date)).toEqual(new DistanceDisplayCondition(21388, 23379));
+            expect(e.rectangle.zIndex.getValue(date)).toEqual(445);
             expect(e.wall.show.getValue(date)).toEqual(true);
             expect(e.wall.positions.getValue(date)).toEqual([ new Cartesian3(21681, 40276, 30621), new Cartesian3(3959, 61967, 19442) ]);
             expect(e.wall.minimumHeights.getValue(date)).toEqual([ 49466, 44737 ]);
@@ -3818,11 +3879,11 @@ defineSuite([
             expect(e = dataSource.entities.getById('constant_billboard_color_rgbaf')).toBeDefined();
             expect(e.billboard.color.getValue(date)).toEqualEpsilon(new Color(0.674509803921569, 0.866666666666667, 0.6, 0.650980392156863), 1e-14);
             expect(e = dataSource.entities.getById('constant_billboard_alignedAxis_unitSpherical')).toBeDefined();
-            expect(e.billboard.alignedAxis.getValue(date)).toEqual(Cartesian3.fromSpherical(new Spherical(20514, 39760)));
+            expect(e.billboard.alignedAxis.getValue(date)).toEqualEpsilon(Cartesian3.fromSpherical(new Spherical(20514, 39760)), 1e-14);
             expect(e = dataSource.entities.getById('constant_box_material_solidColor_color')).toBeDefined();
             expect(e.box.material.color.getValue(date)).toEqualEpsilon(new Color(0.996078431372549, 0.0823529411764706, 0.494117647058824, 0.101960784313725), 1e-14);
             expect(e = dataSource.entities.getById('material_box_material_image')).toBeDefined();
-            expect(e.box.material.image.getValue(date)).toEqual('http://example.com/50881');
+            expect(e.box.material.image.getValue(date).url).toEqual('http://example.com/50881');
             expect(e.box.material.repeat.getValue(date)).toEqual(new Cartesian2(58955, 45286));
             expect(e.box.material.color.getValue(date)).toEqual(Color.fromBytes(98, 97, 133, 129));
             expect(e.box.material.transparent.getValue(date)).toEqual(true);
@@ -3855,7 +3916,7 @@ defineSuite([
             expect(e = dataSource.entities.getById('constant_corridor_material_solidColor_color')).toBeDefined();
             expect(e.corridor.material.color.getValue(date)).toEqualEpsilon(new Color(0.333333333333333, 0.87843137254902, 0.356862745098039, 0.435294117647059), 1e-14);
             expect(e = dataSource.entities.getById('material_corridor_material_image')).toBeDefined();
-            expect(e.corridor.material.image.getValue(date)).toEqual('http://example.com/8903');
+            expect(e.corridor.material.image.getValue(date).url).toEqual('http://example.com/8903');
             expect(e.corridor.material.repeat.getValue(date)).toEqual(new Cartesian2(41660, 35234));
             expect(e.corridor.material.color.getValue(date)).toEqual(Color.fromBytes(213, 25, 147, 247));
             expect(e.corridor.material.transparent.getValue(date)).toEqual(true);
@@ -3884,7 +3945,7 @@ defineSuite([
             expect(e = dataSource.entities.getById('constant_cylinder_material_solidColor_color')).toBeDefined();
             expect(e.cylinder.material.color.getValue(date)).toEqualEpsilon(new Color(0.47843137254902, 0.0509803921568627, 0.450980392156863, 0.87843137254902), 1e-14);
             expect(e = dataSource.entities.getById('material_cylinder_material_image')).toBeDefined();
-            expect(e.cylinder.material.image.getValue(date)).toEqual('http://example.com/27447');
+            expect(e.cylinder.material.image.getValue(date).url).toEqual('http://example.com/27447');
             expect(e.cylinder.material.repeat.getValue(date)).toEqual(new Cartesian2(65243, 41470));
             expect(e.cylinder.material.color.getValue(date)).toEqual(Color.fromBytes(200, 175, 107, 217));
             expect(e.cylinder.material.transparent.getValue(date)).toEqual(true);
@@ -3913,7 +3974,7 @@ defineSuite([
             expect(e = dataSource.entities.getById('constant_ellipse_material_solidColor_color')).toBeDefined();
             expect(e.ellipse.material.color.getValue(date)).toEqualEpsilon(new Color(0.0980392156862745, 0.913725490196078, 0.811764705882353, 0.2), 1e-14);
             expect(e = dataSource.entities.getById('material_ellipse_material_image')).toBeDefined();
-            expect(e.ellipse.material.image.getValue(date)).toEqual('http://example.com/2481');
+            expect(e.ellipse.material.image.getValue(date).url).toEqual('http://example.com/2481');
             expect(e.ellipse.material.repeat.getValue(date)).toEqual(new Cartesian2(45447, 53937));
             expect(e.ellipse.material.color.getValue(date)).toEqual(Color.fromBytes(45, 86, 136, 120));
             expect(e.ellipse.material.transparent.getValue(date)).toEqual(true);
@@ -3942,7 +4003,7 @@ defineSuite([
             expect(e = dataSource.entities.getById('constant_ellipsoid_material_solidColor_color')).toBeDefined();
             expect(e.ellipsoid.material.color.getValue(date)).toEqualEpsilon(new Color(0.572549019607843, 0.533333333333333, 0.384313725490196, 0.2), 1e-14);
             expect(e = dataSource.entities.getById('material_ellipsoid_material_image')).toBeDefined();
-            expect(e.ellipsoid.material.image.getValue(date)).toEqual('http://example.com/47428');
+            expect(e.ellipsoid.material.image.getValue(date).url).toEqual('http://example.com/47428');
             expect(e.ellipsoid.material.repeat.getValue(date)).toEqual(new Cartesian2(53733, 35793));
             expect(e.ellipsoid.material.color.getValue(date)).toEqual(Color.fromBytes(125, 49, 160, 165));
             expect(e.ellipsoid.material.transparent.getValue(date)).toEqual(true);
@@ -3995,7 +4056,7 @@ defineSuite([
             expect(e.path.material.color.getValue(date)).toEqual(Color.fromBytes(72, 114, 200, 147));
             expect(e.path.material.glowPower.getValue(date)).toEqual(42344.0);
             expect(e = dataSource.entities.getById('material_path_material_image')).toBeDefined();
-            expect(e.path.material.image.getValue(date)).toEqual('http://example.com/31068');
+            expect(e.path.material.image.getValue(date).url).toEqual('http://example.com/31068');
             expect(e.path.material.repeat.getValue(date)).toEqual(new Cartesian2(48351, 63420));
             expect(e.path.material.color.getValue(date)).toEqual(Color.fromBytes(105, 166, 133, 7));
             expect(e.path.material.transparent.getValue(date)).toEqual(true);
@@ -4042,7 +4103,7 @@ defineSuite([
             expect(e = dataSource.entities.getById('constant_polygon_material_solidColor_color')).toBeDefined();
             expect(e.polygon.material.color.getValue(date)).toEqualEpsilon(new Color(0.980392156862745, 0.905882352941176, 0.274509803921569, 0.972549019607843), 1e-14);
             expect(e = dataSource.entities.getById('material_polygon_material_image')).toBeDefined();
-            expect(e.polygon.material.image.getValue(date)).toEqual('http://example.com/3481');
+            expect(e.polygon.material.image.getValue(date).url).toEqual('http://example.com/3481');
             expect(e.polygon.material.repeat.getValue(date)).toEqual(new Cartesian2(29381, 10354));
             expect(e.polygon.material.color.getValue(date)).toEqual(Color.fromBytes(36, 184, 236, 209));
             expect(e.polygon.material.transparent.getValue(date)).toEqual(true);
@@ -4089,7 +4150,7 @@ defineSuite([
             expect(e.polyline.material.color.getValue(date)).toEqual(Color.fromBytes(59, 125, 181, 171));
             expect(e.polyline.material.glowPower.getValue(date)).toEqual(41345.0);
             expect(e = dataSource.entities.getById('material_polyline_material_image')).toBeDefined();
-            expect(e.polyline.material.image.getValue(date)).toEqual('http://example.com/29020');
+            expect(e.polyline.material.image.getValue(date).url).toEqual('http://example.com/29020');
             expect(e.polyline.material.repeat.getValue(date)).toEqual(new Cartesian2(8980, 60451));
             expect(e.polyline.material.color.getValue(date)).toEqual(Color.fromBytes(46, 136, 39, 94));
             expect(e.polyline.material.transparent.getValue(date)).toEqual(true);
@@ -4142,7 +4203,7 @@ defineSuite([
             expect(e.polyline.depthFailMaterial.color.getValue(date)).toEqual(Color.fromBytes(82, 227, 164, 249));
             expect(e.polyline.depthFailMaterial.glowPower.getValue(date)).toEqual(52932.0);
             expect(e = dataSource.entities.getById('material_polyline_depthFailMaterial_image')).toBeDefined();
-            expect(e.polyline.depthFailMaterial.image.getValue(date)).toEqual('http://example.com/6349');
+            expect(e.polyline.depthFailMaterial.image.getValue(date).url).toEqual('http://example.com/6349');
             expect(e.polyline.depthFailMaterial.repeat.getValue(date)).toEqual(new Cartesian2(24549, 50015));
             expect(e.polyline.depthFailMaterial.color.getValue(date)).toEqual(Color.fromBytes(71, 233, 193, 55));
             expect(e.polyline.depthFailMaterial.transparent.getValue(date)).toEqual(true);
@@ -4183,7 +4244,7 @@ defineSuite([
             expect(e = dataSource.entities.getById('constant_rectangle_material_solidColor_color')).toBeDefined();
             expect(e.rectangle.material.color.getValue(date)).toEqualEpsilon(new Color(0.898039215686275, 0.8, 0.905882352941176, 0.952941176470588), 1e-14);
             expect(e = dataSource.entities.getById('material_rectangle_material_image')).toBeDefined();
-            expect(e.rectangle.material.image.getValue(date)).toEqual('http://example.com/18033');
+            expect(e.rectangle.material.image.getValue(date).url).toEqual('http://example.com/18033');
             expect(e.rectangle.material.repeat.getValue(date)).toEqual(new Cartesian2(41461, 31905));
             expect(e.rectangle.material.color.getValue(date)).toEqual(Color.fromBytes(93, 203, 88, 125));
             expect(e.rectangle.material.transparent.getValue(date)).toEqual(true);
@@ -4216,7 +4277,7 @@ defineSuite([
             expect(e = dataSource.entities.getById('constant_wall_material_solidColor_color')).toBeDefined();
             expect(e.wall.material.color.getValue(date)).toEqualEpsilon(new Color(0.694117647058824, 0.317647058823529, 0.909803921568627, 0.501960784313725), 1e-14);
             expect(e = dataSource.entities.getById('material_wall_material_image')).toBeDefined();
-            expect(e.wall.material.image.getValue(date)).toEqual('http://example.com/58529');
+            expect(e.wall.material.image.getValue(date).url).toEqual('http://example.com/58529');
             expect(e.wall.material.repeat.getValue(date)).toEqual(new Cartesian2(36340, 47245));
             expect(e.wall.material.color.getValue(date)).toEqual(Color.fromBytes(252, 63, 12, 38));
             expect(e.wall.material.transparent.getValue(date)).toEqual(true);
@@ -4396,7 +4457,7 @@ defineSuite([
             expect(e.properties.custom_cartesian2.getValue(date)).toEqual(new Cartesian2(44825, 16303));
             expect(e.properties.custom_unitCartesian.getValue(date)).toEqualEpsilon(new Cartesian3(0.77935070007851, 0.565493818550955, 0.269868907930861), 1e-14);
             expect(e.properties.custom_spherical.getValue(date)).toEqual(Cartesian3.fromSpherical(new Spherical(1705, 13830, 21558)));
-            expect(e.properties.custom_unitSpherical.getValue(date)).toEqual(Cartesian3.fromSpherical(new Spherical(59387, 15591)));
+            expect(e.properties.custom_unitSpherical.getValue(date)).toEqualEpsilon(Cartesian3.fromSpherical(new Spherical(59387, 15591)), 1e-14);
             expect(e.properties.custom_rgba.getValue(date)).toEqual(Color.fromBytes(50, 149, 175, 147));
             expect(e.properties.custom_rgbaf.getValue(date)).toEqualEpsilon(new Color(0.0666666666666667, 0.0666666666666667, 0.231372549019608, 0.427450980392157), 1e-14);
             expect(e.properties.custom_colorBlendMode.getValue(date)).toEqual(ColorBlendMode.REPLACE);
@@ -4412,7 +4473,7 @@ defineSuite([
             expect(e.properties.custom_stripeOrientation.getValue(date)).toEqual(StripeOrientation.VERTICAL);
             expect(e.properties.custom_wsen.getValue(date)).toEqual(new Rectangle(1.47520917005826, 1.17615981869183, 0.973692387723505, 1.00039738410474));
             expect(e.properties.custom_wsenDegrees.getValue(date)).toEqual(Rectangle.fromDegrees(5, 3, 6, 19));
-            expect(e.properties.custom_uri.getValue(date)).toEqual('http://example.com/41986');
+            expect(e.properties.custom_uri.getValue(date).url).toEqual('http://example.com/41986');
             expect(e.properties.custom_verticalOrigin.getValue(date)).toEqual(VerticalOrigin.BOTTOM);
             expect(e = dataSource.entities.getById('ConstantPosition1')).toBeDefined();
             expect(e.position.getValue(date)).toEqual(new Cartesian3(48370, 3260, 44044));
@@ -4470,6 +4531,7 @@ defineSuite([
             expect(e.corridor.outlineWidth.getValue(date)).toEqual(constant.corridor.outlineWidth.getValue(date));
             expect(e.corridor.shadows.getValue(date)).toEqual(constant.corridor.shadows.getValue(date));
             expect(e.corridor.distanceDisplayCondition.getValue(date)).toEqual(constant.corridor.distanceDisplayCondition.getValue(date));
+            expect(e.corridor.zIndex.getValue(date)).toEqual(constant.corridor.zIndex.getValue(date));
             expect(e.cylinder.show.getValue(date)).toEqual(constant.cylinder.show.getValue(date));
             expect(e.cylinder.length.getValue(date)).toEqual(constant.cylinder.length.getValue(date));
             expect(e.cylinder.topRadius.getValue(date)).toEqual(constant.cylinder.topRadius.getValue(date));
@@ -4499,6 +4561,7 @@ defineSuite([
             expect(e.ellipse.numberOfVerticalLines.getValue(date)).toEqual(constant.ellipse.numberOfVerticalLines.getValue(date));
             expect(e.ellipse.shadows.getValue(date)).toEqual(constant.ellipse.shadows.getValue(date));
             expect(e.ellipse.distanceDisplayCondition.getValue(date)).toEqual(constant.ellipse.distanceDisplayCondition.getValue(date));
+            expect(e.ellipse.zIndex.getValue(date)).toEqual(constant.ellipse.zIndex.getValue(date));
             expect(e.ellipsoid.show.getValue(date)).toEqual(constant.ellipsoid.show.getValue(date));
             expect(e.ellipsoid.radii.getValue(date)).toEqual(constant.ellipsoid.radii.getValue(date));
             expect(e.ellipsoid.fill.getValue(date)).toEqual(constant.ellipsoid.fill.getValue(date));
@@ -4569,6 +4632,7 @@ defineSuite([
             expect(e.point.disableDepthTestDistance.getValue(date)).toEqual(constant.point.disableDepthTestDistance.getValue(date));
             expect(e.polygon.show.getValue(date)).toEqual(constant.polygon.show.getValue(date));
             expect(e.polygon.hierarchy.getValue(date)).toEqual([dataSource.entities.getById('ConstantPosition1').position.getValue(date), dataSource.entities.getById('ConstantPosition2').position.getValue(date)]);
+            expect(e.polygon.arcType.getValue(date)).toEqual(constant.polygon.arcType.getValue(date));
             expect(e.polygon.height.getValue(date)).toEqual(constant.polygon.height.getValue(date));
             expect(e.polygon.extrudedHeight.getValue(date)).toEqual(constant.polygon.extrudedHeight.getValue(date));
             expect(e.polygon.stRotation.getValue(date)).toEqual(constant.polygon.stRotation.getValue(date));
@@ -4583,15 +4647,18 @@ defineSuite([
             expect(e.polygon.closeBottom.getValue(date)).toEqual(constant.polygon.closeBottom.getValue(date));
             expect(e.polygon.shadows.getValue(date)).toEqual(constant.polygon.shadows.getValue(date));
             expect(e.polygon.distanceDisplayCondition.getValue(date)).toEqual(constant.polygon.distanceDisplayCondition.getValue(date));
+            expect(e.polygon.zIndex.getValue(date)).toEqual(constant.polygon.zIndex.getValue(date));
             expect(e.polyline.show.getValue(date)).toEqual(constant.polyline.show.getValue(date));
             expect(e.polyline.positions.getValue(date)).toEqual([dataSource.entities.getById('ConstantPosition1').position.getValue(date), dataSource.entities.getById('ConstantPosition2').position.getValue(date)]);
+            expect(e.polyline.arcType.getValue(date)).toEqual(constant.polyline.arcType.getValue(date));
             expect(e.polyline.width.getValue(date)).toEqual(constant.polyline.width.getValue(date));
             expect(e.polyline.granularity.getValue(date)).toEqual(constant.polyline.granularity.getValue(date));
             expect(e.polyline.material.color.getValue(date)).toEqual(constant.polyline.material.color.getValue(date));
-            expect(e.polyline.followSurface.getValue(date)).toEqual(constant.polyline.followSurface.getValue(date));
             expect(e.polyline.shadows.getValue(date)).toEqual(constant.polyline.shadows.getValue(date));
             expect(e.polyline.depthFailMaterial.color.getValue(date)).toEqual(constant.polyline.depthFailMaterial.color.getValue(date));
             expect(e.polyline.distanceDisplayCondition.getValue(date)).toEqual(constant.polyline.distanceDisplayCondition.getValue(date));
+            expect(e.polyline.clampToGround.getValue(date)).toEqual(constant.polyline.clampToGround.getValue(date));
+            expect(e.polyline.zIndex.getValue(date)).toEqual(constant.polyline.zIndex.getValue(date));
             expect(e.rectangle.show.getValue(date)).toEqual(constant.rectangle.show.getValue(date));
             expect(e.rectangle.coordinates.getValue(date)).toEqual(constant.rectangle.coordinates.getValue(date));
             expect(e.rectangle.height.getValue(date)).toEqual(constant.rectangle.height.getValue(date));
@@ -4604,10 +4671,9 @@ defineSuite([
             expect(e.rectangle.outline.getValue(date)).toEqual(constant.rectangle.outline.getValue(date));
             expect(e.rectangle.outlineColor.getValue(date)).toEqual(constant.rectangle.outlineColor.getValue(date));
             expect(e.rectangle.outlineWidth.getValue(date)).toEqual(constant.rectangle.outlineWidth.getValue(date));
-            expect(e.rectangle.closeTop.getValue(date)).toEqual(constant.rectangle.closeTop.getValue(date));
-            expect(e.rectangle.closeBottom.getValue(date)).toEqual(constant.rectangle.closeBottom.getValue(date));
             expect(e.rectangle.shadows.getValue(date)).toEqual(constant.rectangle.shadows.getValue(date));
             expect(e.rectangle.distanceDisplayCondition.getValue(date)).toEqual(constant.rectangle.distanceDisplayCondition.getValue(date));
+            expect(e.rectangle.zIndex.getValue(date)).toEqual(constant.rectangle.zIndex.getValue(date));
             expect(e.wall.show.getValue(date)).toEqual(constant.wall.show.getValue(date));
             expect(e.wall.positions.getValue(date)).toEqual([dataSource.entities.getById('ConstantPosition1').position.getValue(date), dataSource.entities.getById('ConstantPosition2').position.getValue(date)]);
             expect(e.wall.minimumHeights.getValue(date)).toEqual([dataSource.entities.getById('ConstantDouble1').billboard.scale.getValue(date), dataSource.entities.getById('ConstantDouble2').billboard.scale.getValue(date)]);
@@ -4963,6 +5029,8 @@ defineSuite([
             expect(e.corridor.outlineWidth.getValue(documentStopDate)).toEqual(57820.0);
             expect(e.corridor.distanceDisplayCondition.getValue(documentStartDate)).toEqual(new DistanceDisplayCondition(10884, 63530));
             expect(e.corridor.distanceDisplayCondition.getValue(documentStopDate)).toEqual(new DistanceDisplayCondition(20076, 27683));
+            expect(e.corridor.zIndex.getValue(documentStartDate)).toEqual(36068);
+            expect(e.corridor.zIndex.getValue(documentStopDate)).toEqual(60697);
             expect(e.cylinder.length.getValue(documentStartDate)).toEqual(30241.0);
             expect(e.cylinder.length.getValue(documentStopDate)).toEqual(48364.0);
             expect(e.cylinder.topRadius.getValue(documentStartDate)).toEqual(62881.0);
@@ -4975,10 +5043,10 @@ defineSuite([
             expect(e.cylinder.outlineColor.getValue(documentStopDate)).toEqual(Color.fromBytes(237, 75, 59, 51));
             expect(e.cylinder.outlineWidth.getValue(documentStartDate)).toEqual(36483.0);
             expect(e.cylinder.outlineWidth.getValue(documentStopDate)).toEqual(32586.0);
-            expect(e.cylinder.numberOfVerticalLines.getValue(documentStartDate)).toEqual(45816.0);
-            expect(e.cylinder.numberOfVerticalLines.getValue(documentStopDate)).toEqual(42247.0);
-            expect(e.cylinder.slices.getValue(documentStartDate)).toEqual(46140.0);
-            expect(e.cylinder.slices.getValue(documentStopDate)).toEqual(53530.0);
+            expect(e.cylinder.numberOfVerticalLines.getValue(documentStartDate)).toEqual(45816);
+            expect(e.cylinder.numberOfVerticalLines.getValue(documentStopDate)).toEqual(42247);
+            expect(e.cylinder.slices.getValue(documentStartDate)).toEqual(46140);
+            expect(e.cylinder.slices.getValue(documentStopDate)).toEqual(53530);
             expect(e.cylinder.distanceDisplayCondition.getValue(documentStartDate)).toEqual(new DistanceDisplayCondition(2783, 57220));
             expect(e.cylinder.distanceDisplayCondition.getValue(documentStopDate)).toEqual(new DistanceDisplayCondition(13855, 50230));
             expect(e.ellipse.semiMajorAxis.getValue(documentStartDate)).toEqual(13136.0);
@@ -5001,10 +5069,12 @@ defineSuite([
             expect(e.ellipse.outlineColor.getValue(documentStopDate)).toEqual(Color.fromBytes(236, 100, 22, 203));
             expect(e.ellipse.outlineWidth.getValue(documentStartDate)).toEqual(60636.0);
             expect(e.ellipse.outlineWidth.getValue(documentStopDate)).toEqual(24194.0);
-            expect(e.ellipse.numberOfVerticalLines.getValue(documentStartDate)).toEqual(52822.0);
-            expect(e.ellipse.numberOfVerticalLines.getValue(documentStopDate)).toEqual(45768.0);
+            expect(e.ellipse.numberOfVerticalLines.getValue(documentStartDate)).toEqual(52822);
+            expect(e.ellipse.numberOfVerticalLines.getValue(documentStopDate)).toEqual(45768);
             expect(e.ellipse.distanceDisplayCondition.getValue(documentStartDate)).toEqual(new DistanceDisplayCondition(38393, 63947));
             expect(e.ellipse.distanceDisplayCondition.getValue(documentStopDate)).toEqual(new DistanceDisplayCondition(29119, 43121));
+            expect(e.ellipse.zIndex.getValue(documentStartDate)).toEqual(8989);
+            expect(e.ellipse.zIndex.getValue(documentStopDate)).toEqual(52730);
             expect(e.ellipsoid.radii.getValue(documentStartDate)).toEqual(new Cartesian3(5183, 10004, 13863));
             expect(e.ellipsoid.radii.getValue(documentStopDate)).toEqual(new Cartesian3(39497, 12186, 45103));
             expect(e.ellipsoid.material.color.getValue(documentStartDate)).toEqual(Color.fromBytes(137, 128, 194, 84));
@@ -5017,8 +5087,8 @@ defineSuite([
             expect(e.ellipsoid.stackPartitions.getValue(documentStopDate)).toEqual(39170);
             expect(e.ellipsoid.slicePartitions.getValue(documentStartDate)).toEqual(50327);
             expect(e.ellipsoid.slicePartitions.getValue(documentStopDate)).toEqual(4672);
-            expect(e.ellipsoid.subdivisions.getValue(documentStartDate)).toEqual(10225.0);
-            expect(e.ellipsoid.subdivisions.getValue(documentStopDate)).toEqual(53957.0);
+            expect(e.ellipsoid.subdivisions.getValue(documentStartDate)).toEqual(10225);
+            expect(e.ellipsoid.subdivisions.getValue(documentStopDate)).toEqual(53957);
             expect(e.ellipsoid.distanceDisplayCondition.getValue(documentStartDate)).toEqual(new DistanceDisplayCondition(11751, 59227));
             expect(e.ellipsoid.distanceDisplayCondition.getValue(documentStopDate)).toEqual(new DistanceDisplayCondition(4769, 41441));
             expect(e.label.scale.getValue(documentStartDate)).toEqual(40153.0);
@@ -5107,6 +5177,8 @@ defineSuite([
             expect(e.polygon.outlineWidth.getValue(documentStopDate)).toEqual(41508.0);
             expect(e.polygon.distanceDisplayCondition.getValue(documentStartDate)).toEqual(new DistanceDisplayCondition(22140, 31962));
             expect(e.polygon.distanceDisplayCondition.getValue(documentStopDate)).toEqual(new DistanceDisplayCondition(3927, 22422));
+            expect(e.polygon.zIndex.getValue(documentStartDate)).toEqual(37357);
+            expect(e.polygon.zIndex.getValue(documentStopDate)).toEqual(64769);
             expect(e.polyline.width.getValue(documentStartDate)).toEqual(60367.0);
             expect(e.polyline.width.getValue(documentStopDate)).toEqual(31077.0);
             expect(e.polyline.granularity.getValue(documentStartDate)).toEqual(62537.0);
@@ -5117,6 +5189,8 @@ defineSuite([
             expect(e.polyline.depthFailMaterial.color.getValue(documentStopDate)).toEqual(Color.fromBytes(76, 105, 5, 67));
             expect(e.polyline.distanceDisplayCondition.getValue(documentStartDate)).toEqual(new DistanceDisplayCondition(4857, 10258));
             expect(e.polyline.distanceDisplayCondition.getValue(documentStopDate)).toEqual(new DistanceDisplayCondition(36588, 47246));
+            expect(e.polyline.zIndex.getValue(documentStartDate)).toEqual(55130);
+            expect(e.polyline.zIndex.getValue(documentStopDate)).toEqual(15491);
             expect(e.rectangle.coordinates.getValue(documentStartDate)).toEqual(new Rectangle(0.392205830501108, 1.04907471338688, 0.00211010473645246, 0.064281089310235));
             expect(e.rectangle.coordinates.getValue(documentStopDate)).toEqual(new Rectangle(0.523469985903937, 0.229690388867811, 0.399550037703662, 0.48478405941078));
             expect(e.rectangle.height.getValue(documentStartDate)).toEqual(56388.0);
@@ -5137,6 +5211,8 @@ defineSuite([
             expect(e.rectangle.outlineWidth.getValue(documentStopDate)).toEqual(33933.0);
             expect(e.rectangle.distanceDisplayCondition.getValue(documentStartDate)).toEqual(new DistanceDisplayCondition(24813, 30560));
             expect(e.rectangle.distanceDisplayCondition.getValue(documentStopDate)).toEqual(new DistanceDisplayCondition(34617, 40071));
+            expect(e.rectangle.zIndex.getValue(documentStartDate)).toEqual(27256);
+            expect(e.rectangle.zIndex.getValue(documentStopDate)).toEqual(53581);
             expect(e.wall.granularity.getValue(documentStartDate)).toEqual(64428.0);
             expect(e.wall.granularity.getValue(documentStopDate)).toEqual(25333.0);
             expect(e.wall.material.color.getValue(documentStartDate)).toEqual(Color.fromBytes(31, 188, 250, 46));
@@ -5160,8 +5236,8 @@ defineSuite([
             expect(e.billboard.color.getValue(documentStartDate)).toEqualEpsilon(new Color(0.0235294117647059, 0.427450980392157, 0.658823529411765, 0.0980392156862745), 1e-14);
             expect(e.billboard.color.getValue(documentStopDate)).toEqualEpsilon(new Color(0.968627450980392, 0.752941176470588, 0.843137254901961, 0.164705882352941), 1e-14);
             expect(e = dataSource.entities.getById('sampled_billboard_alignedAxis_unitSpherical')).toBeDefined();
-            expect(e.billboard.alignedAxis.getValue(documentStartDate)).toEqual(Cartesian3.fromSpherical(new Spherical(57328, 53471)));
-            expect(e.billboard.alignedAxis.getValue(documentStopDate)).toEqual(Cartesian3.fromSpherical(new Spherical(51360, 27848)));
+            expect(e.billboard.alignedAxis.getValue(documentStartDate)).toEqualEpsilon(Cartesian3.fromSpherical(new Spherical(57328, 53471)), 1e-14);
+            expect(e.billboard.alignedAxis.getValue(documentStopDate)).toEqualEpsilon(Cartesian3.fromSpherical(new Spherical(51360, 27848)), 1e-14);
             expect(e = dataSource.entities.getById('sampled_box_material_solidColor_color')).toBeDefined();
             expect(e.box.material.color.getValue(documentStartDate)).toEqualEpsilon(new Color(0.556862745098039, 0.541176470588235, 0.956862745098039, 0.317647058823529), 1e-14);
             expect(e.box.material.color.getValue(documentStopDate)).toEqualEpsilon(new Color(0.792156862745098, 0.92156862745098, 0.125490196078431, 0.784313725490196), 1e-14);
@@ -5930,8 +6006,8 @@ defineSuite([
             expect(e.properties.custom_unitCartesian.getValue(documentStopDate)).toEqualEpsilon(new Cartesian3(0.797476048450763, 0.40584478979077, 0.446454878735849), 1e-14);
             expect(e.properties.custom_spherical.getValue(documentStartDate)).toEqual(Cartesian3.fromSpherical(new Spherical(47098, 2231, 14088)));
             expect(e.properties.custom_spherical.getValue(documentStopDate)).toEqual(Cartesian3.fromSpherical(new Spherical(34883, 48264, 41148)));
-            expect(e.properties.custom_unitSpherical.getValue(documentStartDate)).toEqual(Cartesian3.fromSpherical(new Spherical(48811, 24254)));
-            expect(e.properties.custom_unitSpherical.getValue(documentStopDate)).toEqual(Cartesian3.fromSpherical(new Spherical(44800, 8111)));
+            expect(e.properties.custom_unitSpherical.getValue(documentStartDate)).toEqualEpsilon(Cartesian3.fromSpherical(new Spherical(48811, 24254)), 1e-14);
+            expect(e.properties.custom_unitSpherical.getValue(documentStopDate)).toEqualEpsilon(Cartesian3.fromSpherical(new Spherical(44800, 8111)), 1e-14);
             expect(e.properties.custom_rgba.getValue(documentStartDate)).toEqual(Color.fromBytes(179, 175, 115, 46));
             expect(e.properties.custom_rgba.getValue(documentStopDate)).toEqual(Color.fromBytes(136, 187, 237, 156));
             expect(e.properties.custom_rgbaf.getValue(documentStartDate)).toEqualEpsilon(new Color(0.890196078431373, 0.450980392156863, 0.588235294117647, 0.72156862745098), 1e-14);

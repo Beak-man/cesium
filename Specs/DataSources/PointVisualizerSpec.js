@@ -50,7 +50,9 @@ defineSuite([
         scene = createScene();
         scene.globe = {
             ellipsoid : Ellipsoid.WGS84,
-            _surface : {}
+            _surface : {},
+            imageryLayersUpdatedEvent : new Event(),
+            terrainProviderChanged : new Event()
         };
 
         scene.globe.getHeight = function() {
@@ -63,7 +65,6 @@ defineSuite([
         scene.globe._surface.updateHeight = function() {
         };
 
-        scene.globe.terrainProviderChanged = new Event();
         defineProperties(scene.globe, {
             terrainProvider : {
                 set : function(value) {

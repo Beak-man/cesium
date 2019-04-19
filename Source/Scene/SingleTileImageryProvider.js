@@ -6,8 +6,8 @@ define([
         '../Core/DeveloperError',
         '../Core/Event',
         '../Core/GeographicTilingScheme',
-        '../Core/loadImage',
         '../Core/Rectangle',
+        '../Core/Resource',
         '../Core/RuntimeError',
         '../Core/StereographicTilingScheme',
         '../Core/TileProviderError',
@@ -20,8 +20,8 @@ define([
         DeveloperError,
         Event,
         GeographicTilingScheme,
-        loadImage,
         Rectangle,
+        Resource,
         RuntimeError,
         StereographicTilingScheme,
         TileProviderError,
@@ -36,11 +36,10 @@ define([
      * @constructor
      *
      * @param {Object} options Object with the following properties:
-     * @param {String} options.url The url for the tile.
+     * @param {Resource|String} options.url The url for the tile.
      * @param {Rectangle} [options.rectangle=Rectangle.MAX_VALUE] The rectangle, in radians, covered by the image.
      * @param {Credit|String} [options.credit] A credit for the data source, which is displayed on the canvas.
      * @param {Ellipsoid} [options.ellipsoid] The ellipsoid.  If not specified, the WGS84 ellipsoid is used.
-     * @param {Object} [options.proxy] A proxy to use for requests. This object is expected to have a getURL function which returns the proxied URL, if needed.
      *
      * @see ArcGisMapServerImageryProvider
      * @see BingMapsImageryProvider
@@ -53,18 +52,13 @@ define([
      */
     function SingleTileImageryProvider(options) {
         options = defaultValue(options, {});
-        var url = options.url;
-
         //>>includeStart('debug', pragmas.debug);
-        if (!defined(url)) {
-            throw new DeveloperError('url is required.');
+        if (!defined(options.url)) {
+            throw new DeveloperError('options.url is required.');
         }
         //>>includeEnd('debug');
 
-        this._url = url;
-
-        var proxy = options.proxy;
-        this._proxy = proxy;
+        var resource = Resource.createIfNeeded(options.url);
 
         var rectangle = defaultValue(options.rectangle, Rectangle.MAX_VALUE);
 
@@ -84,7 +78,7 @@ define([
 
 
         this._tilingScheme = tilingScheme;
-
+        this._resource = resource;
         this._image = undefined;
         this._texture = undefined;
         this._tileWidth = 0;
@@ -95,14 +89,9 @@ define([
         this._ready = false;
         this._readyPromise = when.defer();
 
-        var imageUrl = url;
-        if (defined(proxy)) {
-            imageUrl = proxy.getURL(imageUrl);
-        }
-
         var credit = options.credit;
         if (typeof credit === 'string') {
-            credit = new Credit({text: credit});
+            credit = new Credit(credit);
         }
         this._credit = credit;
 
@@ -119,7 +108,7 @@ define([
         }
 
         function failure(e) {
-            var message = 'Failed to load image ' + imageUrl + '.';
+            var message = 'Failed to load image ' + resource.url + '.';
             error = TileProviderError.handleError(
                     error,
                     that,
@@ -132,7 +121,7 @@ define([
         }
 
         function doRequest() {
-            when(loadImage(imageUrl), success, failure);
+            resource.fetchImage().then(success).otherwise(failure);
         }
         doRequest();
     }
@@ -144,9 +133,9 @@ define([
          * @type {String}
          * @readonly
          */
-        url: {
-            get: function () {
-                return this._url;
+        url : {
+            get : function() {
+                return this._resource.url;
             }
         },
         /**
@@ -155,9 +144,9 @@ define([
          * @type {Proxy}
          * @readonly
          */
-        proxy: {
-            get: function () {
-                return this._proxy;
+        proxy : {
+            get : function() {
+                return this._resource.proxy;
             }
         },
         /**

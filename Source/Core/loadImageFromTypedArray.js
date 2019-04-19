@@ -1,17 +1,27 @@
 define([
         '../ThirdParty/when',
         './Check',
-        './loadImage'
+        './defined',
+        './defaultValue',
+        './FeatureDetection',
+        './Resource'
     ], function(
         when,
         Check,
-        loadImage) {
+        defined,
+        defaultValue,
+        FeatureDetection,
+        Resource) {
     'use strict';
 
     /**
      * @private
      */
-    function loadImageFromTypedArray(uint8Array, format, request) {
+    function loadImageFromTypedArray(options) {
+        var uint8Array = options.uint8Array;
+        var format = options.format;
+        var request = options.request;
+        var flipY = defaultValue(options.flipY, false);
         //>>includeStart('debug', pragmas.debug);
         Check.typeOf.object('uint8Array', uint8Array);
         Check.typeOf.string('format', format);
@@ -22,13 +32,22 @@ define([
         });
 
         var blobUrl = window.URL.createObjectURL(blob);
-        return loadImage(blobUrl, false, request).then(function(image) {
-            window.URL.revokeObjectURL(blobUrl);
-            return image;
-        }, function(error) {
-            window.URL.revokeObjectURL(blobUrl);
-            return when.reject(error);
+        var resource = new Resource({
+            url: blobUrl,
+            request: request
         });
+        return resource.fetchImage({
+            flipY : flipY,
+            preferImageBitmap : true
+        })
+            .then(function(image) {
+                window.URL.revokeObjectURL(blobUrl);
+                return image;
+            })
+            .otherwise(function(error) {
+                window.URL.revokeObjectURL(blobUrl);
+                return when.reject(error);
+            });
     }
 
     return loadImageFromTypedArray;

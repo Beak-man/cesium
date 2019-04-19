@@ -1,4 +1,6 @@
 define([
+        '../Core/ArcType',
+        '../Core/Cartesian3',
         '../Core/Color',
         '../Core/createGuid',
         '../Core/defaultValue',
@@ -8,9 +10,9 @@ define([
         '../Core/Ellipsoid',
         '../Core/Event',
         '../Core/getFilenameFromUri',
-        '../Core/loadJson',
         '../Core/PinBuilder',
         '../Core/PolygonHierarchy',
+        '../Core/Resource',
         '../Core/RuntimeError',
         '../Scene/HeightReference',
         '../Scene/VerticalOrigin',
@@ -22,7 +24,6 @@ define([
         './ConstantPositionProperty',
         './ConstantProperty',
         './CoordinatesReferenceSystems',
-        './CorridorGraphics',
         './DataSource',
         './EllipseGraphics',
         './EntityCluster',
@@ -30,6 +31,8 @@ define([
         './PolygonGraphics',
         './PolylineGraphics'
     ], function(
+        ArcType,
+        Cartesian3,
         Color,
         createGuid,
         defaultValue,
@@ -39,9 +42,9 @@ define([
         Ellipsoid,
         Event,
         getFilenameFromUri,
-        loadJson,
         PinBuilder,
         PolygonHierarchy,
+        Resource,
         RuntimeError,
         HeightReference,
         VerticalOrigin,
@@ -53,7 +56,6 @@ define([
         ConstantPositionProperty,
         ConstantProperty,
         CoordinatesReferenceSystems,
-        CorridorGraphics,
         DataSource,
         EllipseGraphics,
         EntityCluster,
@@ -318,29 +320,14 @@ define([
         polyline.positions = new ConstantProperty(coordinatesArrayToCartesianArray(coordinates, crsFunction));
 
         var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
-        var graphics;
+        var polylineGraphics = new PolylineGraphics();
+        entity.polyline = polylineGraphics;
 
-        if (options.clampToGround) {
-         /*   graphics = new CorridorGraphics();
-            entity.corridor = graphics;
-            entity.corridor.show = true;
-            console.log("dans corridors");*/
-
-            graphics = new PolylineGraphics();
-            entity.polyline = graphics;
-            entity.polyline.show = true;
-           // console.log("dans polyline");
-
-        } else {
-            graphics = new PolylineGraphics();
-            entity.polyline = graphics;
-            entity.polyline.show = true;
-           // console.log("dans polyline");
-        }
-
-        graphics.material = material;
-        graphics.width = widthProperty;
-        graphics.positions = new ConstantProperty(coordinatesArrayToCartesianArray(coordinates, crsFunction));
+        polylineGraphics.clampToGround = options.clampToGround;
+        polylineGraphics.material = material;
+        polylineGraphics.width = widthProperty;
+        polylineGraphics.positions = new ConstantProperty(coordinatesArrayToCartesianArray(coordinates, crsFunction));
+        polylineGraphics.arcType = ArcType.RHUMB;
     }
 
     function processLineString(dataSource, geoJson, geometry, crsFunction, options) {
@@ -352,6 +339,92 @@ define([
 
         for (var i = 0; i < lineStrings.length; i++) {
             createLineString(dataSource, geoJson, crsFunction, lineStrings[i], options);
+        }
+    }
+
+    function createPolygon(dataSource, geoJson, crsFunction, coordinates, options) {
+        if (coordinates.length === 0 || coordinates[0].length === 0) {
+            return;
+        }
+
+        var outlineColorProperty = options.strokeMaterialProperty.color;
+        var material = options.fillMaterialProperty;
+        var widthProperty = options.strokeWidthProperty;
+
+        var properties = geoJson.properties;
+        if (defined(properties)) {
+            var width = properties['stroke-width'];
+            if (defined(width)) {
+                widthProperty = new ConstantProperty(width);
+            }
+
+            var color;
+            var stroke = properties.stroke;
+            if (defined(stroke)) {
+                color = Color.fromCssColorString(stroke);
+            }
+            var opacity = properties['stroke-opacity'];
+            if (defined(opacity) && opacity !== 1.0) {
+                if (!defined(color)) {
+                    color = options.strokeMaterialProperty.color.clone();
+                }
+                color.alpha = opacity;
+            }
+
+            if (defined(color)) {
+                outlineColorProperty = new ConstantProperty(color);
+            }
+
+            var fillColor;
+            var fill = properties.fill;
+            if (defined(fill)) {
+                fillColor = Color.fromCssColorString(fill);
+                fillColor.alpha = material.color.alpha;
+            }
+            opacity = properties['fill-opacity'];
+            if (defined(opacity) && opacity !== material.color.alpha) {
+                if (!defined(fillColor)) {
+                    fillColor = material.color.clone();
+                }
+                fillColor.alpha = opacity;
+            }
+            if (defined(fillColor)) {
+                material = new ColorMaterialProperty(fillColor);
+            }
+        }
+
+        var polygon = new PolygonGraphics();
+        polygon.outline = new ConstantProperty(true);
+        polygon.outlineColor = outlineColorProperty;
+        polygon.outlineWidth = widthProperty;
+        polygon.material = material;
+        polygon.arcType = ArcType.RHUMB;
+
+        var holes = [];
+        for (var i = 1, len = coordinates.length; i < len; i++) {
+            holes.push(new PolygonHierarchy(coordinatesArrayToCartesianArray(coordinates[i], crsFunction)));
+        }
+
+        var positions = coordinates[0];
+        polygon.hierarchy = new ConstantProperty(new PolygonHierarchy(coordinatesArrayToCartesianArray(positions, crsFunction), holes));
+        if (positions[0].length > 2) {
+            polygon.perPositionHeight = new ConstantProperty(true);
+        } else if (!options.clampToGround) {
+            polygon.height = 0;
+        }
+
+        var entity = createObject(geoJson, dataSource._entityCollection, options.describe);
+        entity.polygon = polygon;
+    }
+
+    function processPolygon(dataSource, geoJson, geometry, crsFunction, options) {
+        createPolygon(dataSource, geoJson, crsFunction, geometry.coordinates, options);
+    }
+
+    function processMultiPolygon(dataSource, geoJson, geometry, crsFunction, options) {
+        var polygons = geometry.coordinates;
+        for (var i = 0; i < polygons.length; i++) {
+            createPolygon(dataSource, geoJson, crsFunction, polygons[i], options);
         }
     }
 
@@ -377,8 +450,8 @@ define([
      * @param {String} [name] The name of this data source.  If undefined, a name will be taken from
      *                        the name of the GeoJSON file.
      *
-     * @demo {@link http://cesiumjs.org/Cesium/Apps/Sandcastle/index.html?src=GeoJSON%20and%20TopoJSON.html|Cesium Sandcastle GeoJSON and TopoJSON Demo}
-     * @demo {@link http://cesiumjs.org/Cesium/Apps/Sandcastle/index.html?src=GeoJSON%20simplestyle.html|Cesium Sandcastle GeoJSON simplestyle Demo}
+     * @demo {@link https://cesiumjs.org/Cesium/Apps/Sandcastle/index.html?src=GeoJSON%20and%20TopoJSON.html|Cesium Sandcastle GeoJSON and TopoJSON Demo}
+     * @demo {@link https://cesiumjs.org/Cesium/Apps/Sandcastle/index.html?src=GeoJSON%20simplestyle.html|Cesium Sandcastle GeoJSON simplestyle Demo}
      *
      * @example
      * var viewer = new Cesium.Viewer('cesiumContainer');
@@ -405,7 +478,7 @@ define([
     /**
      * Creates a Promise to a new instance loaded with the provided GeoJSON or TopoJSON data.
      *
-     * @param {String|Object} data A url, GeoJSON object, or TopoJSON object to be loaded.
+     * @param {Resource|String|Object} data A url, GeoJSON object, or TopoJSON object to be loaded.
      * @param {Object} [options] An object with the following properties:
      * @param {String} [options.sourceUri] Overrides the url to use for resolving relative links.
      * @param {Number} [options.markerSize=GeoJsonDataSource.markerSize] The default size of the map pin created for each point, in pixels.
@@ -414,7 +487,7 @@ define([
      * @param {Color} [options.stroke=GeoJsonDataSource.stroke] The default color of polylines and polygon outlines.
      * @param {Number} [options.strokeWidth=GeoJsonDataSource.strokeWidth] The default width of polylines and polygon outlines.
      * @param {Color} [options.fill=GeoJsonDataSource.fill] The default color for polygon interiors.
-     * @param {Boolean} [options.clampToGround=GeoJsonDataSource.clampToGround] true if we want the geometry features (polygons or linestrings) clamped to the ground. If true, lines will use corridors so use Entity.corridor instead of Entity.polyline.
+     * @param {Boolean} [options.clampToGround=GeoJsonDataSource.clampToGround] true if we want the geometry features (polygons or linestrings) clamped to the ground.
      *
      * @returns {Promise.<GeoJsonDataSource>} A promise that will resolve when the data is loaded.
      */
@@ -694,7 +767,7 @@ define([
     /**
      * Asynchronously loads the provided GeoJSON or TopoJSON data, replacing any existing data.
      *
-     * @param {String|Object} data A url, GeoJSON object, or TopoJSON object to be loaded.
+     * @param {Resource|String|Object} data A url, GeoJSON object, or TopoJSON object to be loaded.
      * @param {Object} [options] An object with the following properties:
      * @param {String} [options.sourceUri] Overrides the url to use for resolving relative links.
      * @param {GeoJsonDataSource~describe} [options.describe=GeoJsonDataSource.defaultDescribeProperty] A function which returns a Property object (or just a string),
@@ -733,11 +806,12 @@ define([
 
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
         var sourceUri = options.sourceUri;
-        if (typeof data === 'string') {
-            if (!defined(sourceUri)) {
-                sourceUri = data;
-            }
-            promise = loadJson(data);
+        if (typeof data === 'string' || (data instanceof Resource)) {
+            data = Resource.createIfNeeded(data);
+
+            promise = data.fetchJson();
+
+            sourceUri = defaultValue(sourceUri, data.getUrlComponent());
         }
 
         options = {
