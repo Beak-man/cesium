@@ -83,7 +83,7 @@ define([
         fieldsetServers.appendChild(listServersInField);
 
         var server = configuration.servers.VOServers[planetName.toLowerCase()];
-
+console.log(server)
         var listDescription = document.createElement('DL');
         listDescription.classeName = 'cesium-voData-listDescription';
         listServersInField.appendChild(listDescription);
@@ -107,7 +107,7 @@ define([
 
                 var serverI = server[i];
 
-                // console.log(serverI);
+                console.log(serverI);
 
                 var extension = serverI.extension;
                 numberOfFilesToRequestPerServer.push(extension.length);

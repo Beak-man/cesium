@@ -120,23 +120,6 @@ define([
             count++;
         }
 
-        /* var customButton = document.createElement('div');
-         customButton.className = 'cesium-button-planet cesium-planetsToolbar-button';
-         customButton.innerHTML = 'Custom.';
-         //customButton.setAttribute('data-bind', 'attr: { title: tooltip}, click: command.bind($data, "Custom")');
-         PlanetsToolbar.appendChild(customButton); */
-        
-        // ============================ test WMTS ==============================
-
-      /*  var wmtsButttn = document.createElement('div');
-        wmtsButttn.className = 'cesium-button-planet cesium-planetsToolbar-button';
-        wmtsButttn.innerHTML = "WMTS";
-        wmtsButttn.setAttribute('data-bind', 'click: WMTSCommand');           
-        PlanetsToolbar.appendChild(wmtsButttn);*/
-
-        // =====================================================================
-
-
         var configContainer = document.createElement('div');
         configContainer.className = 'cesium-showSystems-configContainer';
         configContainer.setAttribute('id', 'configId');
@@ -168,8 +151,6 @@ define([
 
         knockout.applyBindings(viewModel, PlanetsToolbar);
     }
-
-    // ================================== MAIN FUNCTION =========================================================
 
     var ShowSystems = function (viewerContainer, PlanetsToolbar, footerToolbar, scene, viewer, configuration, isWidgetVisible) {
 

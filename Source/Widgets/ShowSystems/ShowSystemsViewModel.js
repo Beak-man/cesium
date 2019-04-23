@@ -58,7 +58,7 @@ define([
     // Call function order : 
 
     // showPlanetView   : This function is used to show the layer list panel for a given planet and call 'moveAndfillPanel'
-    // moveAndfillPanel : This function is used to move the layer list panel far a given planet and create the Ajax request to get 'capabilities'. Then 'getXmlPlanetData'.
+    // moveAndfillPanel : This function is used to move the layer list panel far a given planet and create the Ajax request to get 'capabilities'.
     // getXmlPlanetData : This function is used to get the response of the capabilities request and parse the xml response to create the url for each layer.
 
     function showPlanetView(that, viewer, planetName, configContainer, listContainer, btnContainer, xhr, xhrNomen, objectDimensions) {
@@ -83,6 +83,7 @@ define([
                 that.terrainProvider = terrainProvider;
             }
         }
+
         initializeScene(that, terrainProvider);
 
         for (var i = 0; i < that.dim; i++) {
@@ -95,19 +96,8 @@ define([
             btnContainer.removeChild(sendBtn);
         }
 
-        if (configContainer.style.left !== that._windowsMove && configContainer.style.left !== '') {
-            configContainer.className = '';
-            configContainer.className = 'cesium-showSystems-configContainer-transition';
-            configContainer.style.opacity = 0;
-            configContainer.style.left = that._windowsMove;
+        moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen);
 
-            setTimeout(function () {
-                moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen);
-            }, 900);
-        }
-        else {
-            moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen);
-        }
     }
 
     function showSatelliteView(that, viewer, planetName, satelliteName, configContainer, listContainer, btnContainer, xhr, xhrNomen, naifCode, objectDimensions) {
@@ -144,20 +134,7 @@ define([
             btnContainer.removeChild(sendBtn);
         }
 
-        if (configContainer.style.left !== that._windowsMove && configContainer.style.left !== '') {
-
-            configContainer.className = '';
-            configContainer.className = 'cesium-showSystems-configContainer-transition';
-            configContainer.style.opacity = 0;
-            configContainer.style.left = that._windowsMove;
-
-            setTimeout(function () {
-                moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen);
-            }, 900);
-        }
-        else {
-            moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen);
-        }
+        moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen);
     }
 
     function moveAndfillPanel(that, viewer, planetName, configContainer, listContainer, xhr, xhrNomen) {
@@ -185,6 +162,7 @@ define([
     }
 
     function moveAndfillPanelSatellite(that, viewer, planetName, satelliteName, configContainer, listContainer, xhr, xhrNomen) {
+
         configContainer.className = '';
         configContainer.className = 'cesium-showSystems-configContainer';
         configContainer.style.visibility = 'visible';
@@ -277,8 +255,6 @@ define([
 
                         var abstr = abstract[i].toString();
 
-                        // ======================= test for '\n' ==========================
-
                         var testReg = new RegExp('\n');
 
                         if (testReg.test(abstr)) {
@@ -359,9 +335,7 @@ define([
 
                                 var bboxString = minx + ',' + miny + ',' + maxx + ',' + maxy;
 
-                                //                         W = -220.96  S =38.2  E = 135  N = 86.78
                                 var rect = Rectangle.fromDegrees(-180., 38.2, 180., 89.999999);
-                                //  var rect = Rectangle.fromDegrees(-220.96, 38.2, 135, 86.78);
 
                                 var tilngSchemeOptions = {
                                     ellipsoid: that._ellipsoid,
@@ -370,7 +344,7 @@ define([
                                     numberOfLevelZeroTilesY: 1
                                 };
 
-                            } else { // pour les autres maps
+                            } else {
 
                                 imageryProvidersTab[i] = new WebMapServiceImageryProvider({
                                     url: onlineResource,
@@ -408,7 +382,6 @@ define([
                                 var nomenImageryProvidersTab = [];
 
                                 var layerNomenCount = 0;
-
                                 var service = data.getElementsByTagName('Service');
                                 var onlineResource = service[0].getElementsByTagName('OnlineResource')[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
                                 var capability = data.getElementsByTagName('Capability');
@@ -453,12 +426,12 @@ define([
                                             }
                                         }
 
-                                        // create a ligne for the nomenclature
+                                        // create a line for the nomenclature
 
                                         var tableLine = document.createElement('TR');
                                         tableList.appendChild(tableLine);
 
-                                        // chekbox
+                                        // checkbox
 
                                         var colomn1 = document.createElement('TD');
                                         tableLine.appendChild(colomn1);
@@ -566,8 +539,6 @@ define([
         listContainer.innerHTML = '';
         var satelliteName = sn.replace(sn.charAt(0), sn.charAt(0).toUpperCase());
 
-        /* === set some HTML containers for the vizualisation === */
-
         var listContainer2 = document.createElement('div');
         listContainer2.setAttribute('id', 'listId');
         listContainer.appendChild(listContainer2);
@@ -627,8 +598,6 @@ define([
                             layer[i] = layers[i].getElementsByTagName('Name')[0].textContent;
 
                             var abstr = abstract[i].toString();
-
-                            // ======================= test for '\n' ==========================
 
                             var testReg = new RegExp('\n');
 
@@ -704,7 +673,7 @@ define([
                      =================== NOMENCLATURE LAYERS =================== 
                      =========================================================== */
 
-                    // Requete AJAX
+                    // AJAX Request
 
                     xhrNomen.open(method, urlNomen, async);
                     xhrNomen.withCredentials = false;
@@ -760,8 +729,6 @@ define([
                                     nomenTitle[i] = nomenclatureLayers[i].getElementsByTagName('Title')[0].textContent;
                                     nomenAbstract[i] = nomenclatureLayers[i].getElementsByTagName('Abstract')[0].textContent;
 
-                                    // ======================= test for '\n' in the abstract ==========================
-
                                     var abstrNomm = nomenAbstract[i].toString();
                                     var testReg = new RegExp('\n');
 
@@ -793,7 +760,7 @@ define([
                                         var tableLine = document.createElement('TR');
                                         tableList.appendChild(tableLine);
 
-                                        // chekbox
+                                        // checkbox
 
                                         var colomn1 = document.createElement('TD');
                                         tableLine.appendChild(colomn1);
@@ -1041,28 +1008,6 @@ define([
 
     }
 
-
-    /*
-     function getWMTSFunction(that) {
-     
-     console.log(that._ellipsoid);
-     
-     var planetMars = new WebMapTileServiceImageryProvider({
-     url:  'https://api.nasa.gov/mars-wmts/catalog/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly',
-     ellipsoid: that._ellipsoid,
-     style: 'default',
-     tileMatrixSetID: 'default028mm',
-     layer: ' Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly',
-     format: 'image/jpg',
-     });
-     
-     console.log(planetMars.url);
-     
-     that._viewer.imageryLayers.addImageryProvider(planetMars);
-     console.log(that._viewer.imageryLayers);
-     }
-     
-     */
     /* ================================================================================================================== */
     /* ================================================ Main functions ================================================== */
     /* ================================================================================================================== */
@@ -1076,7 +1021,7 @@ define([
      * @param {Object} configContainer : HTML element
      * @param {Object} listContainer   : HTML element
      * @param {Object} btnContainer    : HTML element
-     * @param {Object} solarSystem     : object which contains the stellar system to display
+     * @param {Object} solarSystem     : object which contains the planetary system to display
      */
 
     var ShowSystemsViewModel = function (viewer, scene, viewerContainer, footerToolbar, configContainer, listContainer, btnContainer, btnHideVectorialData, solarSystem, configuration, isVOWidgetVisible) {
@@ -1106,51 +1051,8 @@ define([
         var xhr = getRequest();
         var xhrNomen = getRequest();
 
+
         homePlanetShow(configuration, xhr, xhrNomen, that);
-
-        // ************************** WMTS TESTS *******************************
-/*
-        this._wmtsCommand = createCommand(function () {
-*/
-            // INITIALISATION DU PANNEAU GAUCHE DU GLOBE
-/*
-            hideFunction(that);
-
-            var objectDimensions = {
-                x: 3390000,
-                y: 3390000,
-                z: 3360000
-            };
-
-            listContainer.innerHTML = '';
-            //  configContainer.innerHTML = '';
-
-            initializeScene(that, objectDimensions);
-            initializeMarkerMoveWidget(that);
-            homeView(that._scene);
-
-            try {
-                that._viewer.showSystems.viewModel.voData.destroyWrapperMenu;
-            } catch (e) {
-            }
-
-            var naifCode = [4, 0];
-
-            var obj = {
-                naifCodes: naifCode,
-                ellipsoid: that._ellipsoid
-            };
-
-            GeoJsonDataSource.crsModification = obj;
-
-            // FONCTION DE RECUPERATION DES WMTS
-
-            //   getWMTSFunction(that);
-
-
-        });
-*/
-        // *********************************************************************
 
         this._command = createCommand(function (planetName, planetIndex, satelliteIndex, vectorDimensionsString) {
 
@@ -1171,17 +1073,11 @@ define([
             } catch (e) {
             }
 
-            /* ================================================================= 
-             ========================= VO WIDGET CALL ==========================
-             =================================================================== */
+            /*  VO WIDGET CALL  */
 
             if (that._isVOWidgetVisible === true) {
                 that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration, planetName);
             }
-
-            /* ================================================================= 
-             ===================================================================
-             =================================================================== */
 
             var naifCode = [planetIndex, satelliteIndex];
 
@@ -1194,8 +1090,6 @@ define([
             showPlanetView(that, that._viewer, planetName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, objectDimensions);
             initializeMarkerMoveWidget(that);
             homeView(that._scene);
-
-            /* to remove all butons of the planetToolBar from the view*/
 
             removeButtons(that);
         });
@@ -1224,19 +1118,13 @@ define([
 
             GeoJsonDataSource.crsModification = obj;
 
-            /* ================================================================= 
-             ========================= VO WIDGET CALL ==========================
-             =================================================================== */
+            /*  VO WIDGET CALL  */
 
             if (that._isVOWidgetVisible === true) {
                 that._voData = new VOData(that._viewerContainer, that._viewer, that.configuration, satelliteName);
             }
 
-            /* ================================================================= 
-             ===================================================================
-             =================================================================== */
-
-            showSatelliteView(that, that._viewer, planetName, satelliteName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, naifCode, objectDimensions);
+           showSatelliteView(that, that._viewer, planetName, satelliteName, that._configContainer, that._listContainer, that._btnContainer, xhr, xhrNomen, naifCode, objectDimensions);
             initializeMarkerMoveWidget(that);
             homeView(that._scene);
             removeButtons(that);
@@ -1345,13 +1233,7 @@ define([
                 }
 
             }
-        },
-/*        WMTSCommand: {
-            get: function () {
-                return this._wmtsCommand;
-            }
         }
-*/
     });
 
     /* ================================================================================================================== */
@@ -1390,12 +1272,11 @@ define([
 
     function initializeScene(that, terrainProvider) {
 
-        Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // A MODIFIER 
+        Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // Ad hoc WGS84 redefinition 
 
         if (that._viewer.geoJsonData) {
             that._viewer.geoJsonData = null;
         }
-
 
         try {
             that._viewer.scene.primitives.removeAll(true);

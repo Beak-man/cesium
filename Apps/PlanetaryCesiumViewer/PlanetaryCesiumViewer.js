@@ -75,7 +75,8 @@ define([
      *
      * ellipsoidType         = name.  Type of ellipsoid to use (predefined or customized. See here after))
      * ellipsoidSize         = x,y,z. (Dimensions of the ellipsoid)
-     * NAIFCodes             = a,b. Naif codes for planet ("a" parameter) and satellite ("b" parameter). for a planet (Mars for example), use a=4, b=0;
+     * NAIFCodes             = a,b. Naif codes for planet ("a" parameter) and satellite ("b" parameter).
+                               For a planet (Mars for example), use a=4, b=0;
      * imageryProviderParams = params for the imagery provider.
      *  Example : SERVICE=WMS&VERSION=1.1.1&SRS=EPSG:4326&STYLES=&REQUEST=GetMap&FORMAT=image%2Fjpeg&LAYERS=THEMIS&BBOX=221,15,231,25&WIDTH=1000&HEIGHT=1000'
      * onlineResUrl          = url of the online ressource.
@@ -128,21 +129,6 @@ define([
     terrainProviderParam = new EllipsoidTerrainProvider({ellipsoid: ellipsoidImageryParam});
 
     var imageryProvider;
-    if (defined(endUserOptions.tmsImageryUrl)) {
-        imageryProvider = createTileMapServiceImageryProvider({
-            url: endUserOptions.tmsImageryUrl
-        });
-    } else {
-        imageryProvider = new createOpenStreetMapImageryProvider({
-            url: 'https://a.tile.openstreetmap.org/'
-        });
-
-        /*  imageryProvider = new BingMapsImageryProvider({
-         url: 'https://dev.virtualearth.net',
-         key: 'get-yours-at-https://www.bingmapsportal.com/',
-         mapStyle: BingMapsStyle.ROAD
-         });*/
-    }
 
     var loadingIndicator = document.getElementById('loadingIndicator');
 
@@ -152,7 +138,6 @@ define([
         mapProjection: mapProjectionParam, // The map projection to use in 2D and Columbus View modes (class : GeographicProjection).
         globe: globeParam, //  The globe to use in the scene. (class : Globe)
         baseLayerPicker: false,
-        imageryProvider: imageryProvider, // Fournit l'image a afficher sur le globe.
         selectionIndicator: false,
         timeline: false, // for files which contains the temporal dimension
         animation: false, // for animation which displayed with the time
@@ -178,9 +163,16 @@ define([
 
     } else if (viewerOptions.showSystems === false || viewerOptions.showSystems === 'undefined') {
 
-        imageryProvider = new createOpenStreetMapImageryProvider({
-            url: 'https://a.tile.openstreetmap.org/'
-        });
+        if (defined(endUserOptions.tmsImageryUrl)) {
+            imageryProvider = createTileMapServiceImageryProvider({
+                url: endUserOptions.tmsImageryUrl
+            });
+        } else {
+
+            imageryProvider = new createOpenStreetMapImageryProvider({
+                url: 'https://a.tile.openstreetmap.org/'
+            });
+        }
 
         viewerOptions.imageryProvider = imageryProvider;
 
@@ -189,9 +181,9 @@ define([
 
     try {
         viewerOptions.configuration = configuration ;// contains configuration (see ./sources/widget/ConfigurationFiles/ )
-        viewerOptions.skyAtmosphere = new SkyAtmosphere(ellipsoidImageryParam, {show: false} ), // atm visualisation.
-        viewerOptions.skyBox = new SkyBox({show: false}), // stars visualisation.
-        viewerOptions.imageryProvider = imageryProvider, // Fournit l'image a afficher sur le globe.
+        viewerOptions.skyAtmosphere = new SkyAtmosphere(ellipsoidImageryParam, {show: false} ); // atm visualisation.
+        viewerOptions.skyBox = new SkyBox({show: false}); // star visualisation.
+        viewerOptions.imageryProvider = imageryProvider; 
 
         viewer = new Viewer('cesiumContainer', viewerOptions);
 
@@ -200,7 +192,7 @@ define([
         var message = formatError(exception);
         console.error(message);
         if (!document.querySelector('.cesium-widget-errorPanel')) {
-            window.alert(message); //eslint-disable-line no-alert
+            window.alert(message); // eslint-disable-line no-alert
         }
         return;
     }

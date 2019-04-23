@@ -81,13 +81,13 @@ define([
                         'name': 'MGS MOLA (res. 463m/px)',
                         'url': 'http://134.158.75.177:8080/tilesets/MOLA_terrain/',
                         'terrainExaggeration' : 10.0
-                    },
-                'moon':
-                    {
-                        'name': 'LROC Kaguya merge (res. 60m/px)',
-                        'url': 'http://134.158.75.177:8080/tilesets/LrocKaguya_terrain/',
-                        'terrainExaggeration' : 20.0
-                    }
+                    } //,
+                //'moon':
+                //    {
+                //        'name': 'LROC Kaguya merge (res. 60m/px)',
+                //        'url': 'http://134.158.75.177:8080/tilesets/LrocKaguya_terrain/',
+                //        'terrainExaggeration' : 20.0
+                //    }
             },
 
             'planetarySystem': {
@@ -95,10 +95,10 @@ define([
                     'mercury': ['mercury'],
                     'venus': ['venus'],
                     'earth': ['earth', 'moon'],
-                    'mars': ['mars', 'deimos', 'phobos'],
+                    'mars': ['mars'],
                     'jupiter': ['jupiter', 'ganymede', 'callisto', 'io', 'europa'],
-                    'saturn': ['saturn', 'titan', 'rhea', 'lapetus', 'dione', 'tethys', 'enceladus', 'mimas'],
-                    'uranus': ['uranus', 'titania', 'oberon', 'umbriel', 'ariel', 'miranda'],
+                    'saturn': ['saturn', 'titan', 'rhea', 'lapetus', 'dione', '', '', ''],
+                    'uranus': ['uranus', 'titania', 'oberon', 'umbriel', '', ''],
                     'neptune': ['neptune', 'triton']
                 },
                 'dimension': {
