@@ -83,21 +83,13 @@ define([
         fieldsetServers.appendChild(listServersInField);
 
         var server = configuration.servers.VOServers[planetName.toLowerCase()];
-console.log(server)
         var listDescription = document.createElement('DL');
         listDescription.classeName = 'cesium-voData-listDescription';
         listServersInField.appendChild(listDescription);
 
         var inputTab = [];
         var numberOfFilesToRequestPerServer = [];
-        var tableLine1;
-        var colomn11;
-        var colomn12;
         var listContainer;
-        var lngMinInput;
-        var lngMaxInput;
-        var latMinInput;
-        var latMaxInput;
         var btnContainer;
         var resultContainer;
 
@@ -126,14 +118,14 @@ console.log(server)
                     var tableServer = document.createElement('TABLE');
                     listDD.appendChild(tableServer);
 
-                    tableLine1 = document.createElement('TR');
-                    tableServer.appendChild(tableLine1);
+                    var tableLine = document.createElement('TR');
+                    tableServer.appendChild(tableLine);
 
-                    colomn11 = document.createElement('TD');
-                    tableLine1.appendChild(colomn11);
+                    var colomn11 = document.createElement('TD');
+                    tableLine.appendChild(colomn11);
 
-                    colomn12 = document.createElement('TD');
-                    tableLine1.appendChild(colomn12);
+                    var colomn12 = document.createElement('TD');
+                    tableLine.appendChild(colomn12);
 
                     var tab = extension[j].split('.');
 
@@ -171,129 +163,86 @@ console.log(server)
 
         // ************************ Request panel ******************************
 
-       /* listContainer = document.createElement('div');
-        listContainer.className = 'cesium-voData-listContainer';
-        configContainer.appendChild(listContainer);*/
-
+        var inputElements =  {
+            lngMin: undefined,
+            lngMax: undefined,
+            latMin: undefined,
+            latMax: undefined,
+        };
         if(listContainer){
 
+            var fieldsetRequest = document.createElement('FIELDSET');
+            listContainer.appendChild(fieldsetRequest);
 
-        var fieldsetRequest = document.createElement('FIELDSET');
-        listContainer.appendChild(fieldsetRequest);
+            var legendRequest = document.createElement('LEGEND');
+            legendRequest.innerHTML = 'Request parameters';
+            fieldsetRequest.appendChild(legendRequest);
 
+            /* ============================= TABLE ================================= */
 
-        var legendRequest = document.createElement('LEGEND');
-        legendRequest.innerHTML = 'Request parameters';
-        fieldsetRequest.appendChild(legendRequest);
+            var tableCoord = document.createElement('TABLE');
+            tableCoord.className = 'cesium-voData-tableCoord';
+            fieldsetRequest.appendChild(tableCoord);
 
-        /* ============================= TABLE ================================= */
+            var createNamedInputElement = function(name) {
+                var inputElement = document.createElement('INPUT');
+                inputElement.className = 'cesium-voData-input';
+                inputElement.name = name;
+                inputElement.value = '0';
+                return inputElement;
+            };
+            var createElementWithLabel = function(label, namedElement) {
+                var leftColumn = document.createElement('TD');
+                var labelCell = document.createElement('DIV');
+                labelCell.innerHTML = label;
+                leftColumn.appendChild(labelCell);
 
-        var tableCoord = document.createElement('TABLE');
-        tableCoord.className = 'cesium-voData-tableCoord';
-        fieldsetRequest.appendChild(tableCoord);
+                var rightColumn = document.createElement('TD');
+                rightColumn.appendChild(namedElement);
+                return [leftColumn, rightColumn];
+            };
 
-        /* --------------------------- 1st LINE -------------------------------- */
+            var tableLine1 = document.createElement('TR');
+            tableCoord.appendChild(tableLine1);
+            var tableLine2 = document.createElement('TR');
+            tableCoord.appendChild(tableLine2);
+            var tableLine3 = document.createElement('TR');
+            tableCoord.appendChild(tableLine3);
+            inputElements = {
+                lngMin: createNamedInputElement('Lng min'),
+                lngMax: createNamedInputElement('Lng max'),
+                latMin: createNamedInputElement('Lat min'),
+                latMax: createNamedInputElement('Lat max'),
+                radMin: createNamedInputElement('Rad min'),
+                radMax: createNamedInputElement('Rad max'),
+            };
+            createElementWithLabel('&Phi; min : ', inputElements.lngMin).forEach((element) => tableLine1.appendChild(element));
+            createElementWithLabel('&Phi; max : ', inputElements.lngMax).forEach((element) => tableLine1.appendChild(element));
+            createElementWithLabel('&theta; min : ', inputElements.latMin).forEach((element) => tableLine2.appendChild(element));
+            createElementWithLabel('&theta; max : ', inputElements.latMax).forEach((element) => tableLine2.appendChild(element));
+            createElementWithLabel('&rho; min : ', inputElements.radMin).forEach((element) => tableLine3.appendChild(element));
+            createElementWithLabel('&rho; max : ', inputElements.radMax).forEach((element) => tableLine3.appendChild(element));
 
-        tableLine1 = document.createElement('TR');
-        tableCoord.appendChild(tableLine1);
+            /* ========================== BUTTONS ================================= */
 
-        colomn11 = document.createElement('TD');
-        tableLine1.appendChild(colomn11);
+            btnContainer = document.createElement('div');
+            btnContainer.className = 'cesium-voData-btnContainer';
+            fieldsetRequest.appendChild(btnContainer);
 
-        var labelCell11 = document.createElement('DIV');
-        labelCell11.innerHTML = '&Phi; min : ';
-        colomn11.appendChild(labelCell11);
+            var sendQueryBtn = document.createElement('BUTTON');
+            sendQueryBtn.className = 'cesium-voData-configContainer-button cesium-button-planet';
+            sendQueryBtn.innerHTML = 'Send Query';
+            sendQueryBtn.setAttribute('data-bind', 'click: getDataCommand');
+            btnContainer.appendChild(sendQueryBtn);
 
-        colomn12 = document.createElement('TD');
-        tableLine1.appendChild(colomn12);
+            /* ========================== BUTTONS ================================= */
 
-        lngMinInput = document.createElement('INPUT');
-        lngMinInput.className = 'cesium-voData-input';
-        lngMinInput.name = 'Lng min';
-        lngMinInput.value = '0';  // A COMMENTER
-        colomn12.appendChild(lngMinInput);
+            resultContainer = document.createElement('div');
+            resultContainer.className = 'cesium-voData-resultContainer';
+            configContainer.appendChild(resultContainer);
+        }
 
-        var colomn13 = document.createElement('TD');
-        tableLine1.appendChild(colomn13);
-
-        var labelCell13 = document.createElement('DIV');
-        labelCell13.innerHTML = '&Phi; max : ';
-        colomn13.appendChild(labelCell13);
-
-        var colomn14 = document.createElement('TD');
-        tableLine1.appendChild(colomn14);
-
-        lngMaxInput = document.createElement('INPUT');
-        lngMaxInput.className = 'cesium-voData-input';
-        lngMaxInput.name = 'Lng max';
-        lngMaxInput.value = '0'; // A COMMENTER
-        colomn14.appendChild(lngMaxInput);
-
-        /* --------------------------- 2nd LINE --------------------------------- */
-
-        var tableLine2 = document.createElement('TR');
-        tableCoord.appendChild(tableLine2);
-
-        var colomn21 = document.createElement('TD');
-        tableLine2.appendChild(colomn21);
-
-        var labelCell21 = document.createElement('DIV');
-        labelCell21.innerHTML = '&theta; min :';
-        colomn21.appendChild(labelCell21);
-
-        var colomn22 = document.createElement('TD');
-        tableLine2.appendChild(colomn22);
-
-        latMinInput = document.createElement('INPUT');
-        latMinInput.className = 'cesium-voData-input';
-        latMinInput.name = 'Lat min';
-        latMinInput.value = '0'; // A COMMENTER
-        colomn22.appendChild(latMinInput);
-
-        var colomn23 = document.createElement('TD');
-        tableLine2.appendChild(colomn23);
-
-        var labelCell23 = document.createElement('DIV');
-        labelCell23.innerHTML = '&theta; max :';
-        colomn23.appendChild(labelCell23);
-
-        var colomn24 = document.createElement('TD');
-        tableLine2.appendChild(colomn24);
-
-        latMaxInput = document.createElement('INPUT');
-        latMaxInput.className = 'cesium-voData-input';
-        latMaxInput.name = 'Lat max';
-        latMaxInput.value = '0'; // A COMMENTER
-        colomn24.appendChild(latMaxInput);
-
-        /* ========================== BUTTONS ================================= */
-
-        btnContainer = document.createElement('div');
-        btnContainer.className = 'cesium-voData-btnContainer';
-        fieldsetRequest.appendChild(btnContainer);
-
-        var sendQueryBtn = document.createElement('BUTTON');
-        sendQueryBtn.className = 'cesium-voData-configContainer-button cesium-button-planet';
-        sendQueryBtn.innerHTML = 'Send Query';
-        sendQueryBtn.setAttribute('data-bind', 'click: getDataCommand');
-        btnContainer.appendChild(sendQueryBtn);
-
-        /* ========================== BUTTONS ================================= */
-
-        resultContainer = document.createElement('div');
-        resultContainer.className = 'cesium-voData-resultContainer';
-        configContainer.appendChild(resultContainer);
-    }
-
-
-        var inputObjects = {
-            lngMin: lngMinInput,
-            lngMax: lngMaxInput,
-            latMin: latMinInput,
-            latMax: latMaxInput
-        };
-
-        var viewModel = new VODataViewModel(viewer, planetName, configContainer, listContainer, btnContainer, resultContainer, inputObjects, server.length, numberOfFilesToRequestPerServer, inputTab);
+        var viewModel = new VODataViewModel(viewer, planetName, configContainer, listContainer, btnContainer, resultContainer, inputElements, server.length, numberOfFilesToRequestPerServer, inputTab);
 
         this._mainContainer = mainContainer;
         this._wrapperMenu = wrapperMenu;
