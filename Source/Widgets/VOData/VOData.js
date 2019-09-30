@@ -216,12 +216,12 @@ define([
                 radMin: createNamedInputElement('Rad min'),
                 radMax: createNamedInputElement('Rad max'),
             };
-            createElementWithLabel('&Phi; min : ', inputElements.lngMin).forEach((element) => tableLine1.appendChild(element));
-            createElementWithLabel('&Phi; max : ', inputElements.lngMax).forEach((element) => tableLine1.appendChild(element));
-            createElementWithLabel('&theta; min : ', inputElements.latMin).forEach((element) => tableLine2.appendChild(element));
-            createElementWithLabel('&theta; max : ', inputElements.latMax).forEach((element) => tableLine2.appendChild(element));
-            createElementWithLabel('&rho; min : ', inputElements.radMin).forEach((element) => tableLine3.appendChild(element));
-            createElementWithLabel('&rho; max : ', inputElements.radMax).forEach((element) => tableLine3.appendChild(element));
+            createElementWithLabel('Longitute (&Phi;) min:', inputElements.lngMin).forEach((element) => tableLine1.appendChild(element));
+            createElementWithLabel('Longitute (&Phi;) max:', inputElements.lngMax).forEach((element) => tableLine1.appendChild(element));
+            createElementWithLabel('Latitude (&theta;) min:', inputElements.latMin).forEach((element) => tableLine2.appendChild(element));
+            createElementWithLabel('Latitude (&theta;) max:', inputElements.latMax).forEach((element) => tableLine2.appendChild(element));
+            createElementWithLabel('Radius (&rho;) metres min:', inputElements.radMin).forEach((element) => tableLine3.appendChild(element));
+            createElementWithLabel('Radius (&rho;) metres max:', inputElements.radMax).forEach((element) => tableLine3.appendChild(element));
 
             /* ========================== BUTTONS ================================= */
 
