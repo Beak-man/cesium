@@ -55,7 +55,7 @@ define([
         ListViewModel) {
     'use strict';
 
-    // Call function order : 
+    // Call function order :
 
     // showPlanetView   : This function is used to show the layer list panel for a given planet and call 'moveAndfillPanel'
     // moveAndfillPanel : This function is used to move the layer list panel far a given planet and create the Ajax request to get 'capabilities'.
@@ -173,7 +173,7 @@ define([
         var ps = (satelliteName.toLowerCase()).trim();
 
         /* Loop on WMS servers */
-        var servers = that.configuration.servers
+        var servers = that.configuration.servers;
         var serversKey = Object.keys(servers);
         for (var i=0; i < serversKey.length; i++) {
             var key = serversKey[i];
@@ -319,9 +319,6 @@ define([
                                 enablePickFeatures: false
                             });
 
-
-
-
                         } else if (names[i].indexOf(strTest) === -1) { // for npoles et spoles maps
 
                             if (crs === 'EPSG:32761' || crs === 'EPSG:32661') {
@@ -335,7 +332,7 @@ define([
 
                                 var bboxString = minx + ',' + miny + ',' + maxx + ',' + maxy;
 
-                                var rect = Rectangle.fromDegrees(-180., 38.2, 180., 89.999999);
+                                var rect = Rectangle.fromDegrees(-180.0, 38.2, 180.0, 89.999999);
 
                                 var tilngSchemeOptions = {
                                     ellipsoid: that._ellipsoid,
@@ -358,8 +355,8 @@ define([
                         }
                     }
 
-                    /* ========================================================= 
-                     =================== NOMENCLATURE LAYERS =================== 
+                    /* =========================================================
+                     =================== NOMENCLATURE LAYERS ===================
                      =========================================================== */
 
                     xhrNomen.open(method, urlNomen, async);
@@ -508,7 +505,6 @@ define([
         };
     }
 
-
     function  convertToDecimal(str) {
 
         var expr = 'e+';
@@ -520,14 +516,13 @@ define([
             var decimaleValue = val * Math.pow(10, exp);
 
             return decimaleValue.toString();
-        } else {
+        }
 
             console.log('bounding box values incorrect');
             return null;
 
-        }
-    }
 
+    }
 
     function getXmlDataSatellite(that, viewer, xhr, xhrNomen, method, url, urlNomen, async, listContainer, pn, sn) {
 
@@ -564,7 +559,6 @@ define([
                     var onlineResource = service[0].getElementsByTagName('OnlineResource')[0].getAttributeNS('http://www.w3.org/1999/xlink', 'href');
                     var capability = data.getElementsByTagName('Capability');
                     var layersIni = capability[0].getElementsByTagName('Layer');
-
 
                     /* ==== declaration of variables ==== */
 
@@ -604,7 +598,6 @@ define([
                             if (testReg.test(abstr)) {
                                 var abstr = abstract[i].replace(/\n/g, ' ');
                             }
-
 
                             /* === transform the first case to UpperCase (for the vizualiation only : not Important) === */
 
@@ -669,8 +662,8 @@ define([
                         }
                     }
 
-                    /* ========================================================= 
-                     =================== NOMENCLATURE LAYERS =================== 
+                    /* =========================================================
+                     =================== NOMENCLATURE LAYERS ===================
                      =========================================================== */
 
                     // AJAX Request
@@ -687,7 +680,7 @@ define([
 
                             try {
 
-                                // Declaration of arrays 
+                                // Declaration of arrays
 
                                 var nomenNames = [];
                                 var nomenTitle = [];
@@ -731,7 +724,6 @@ define([
 
                                     var abstrNomm = nomenAbstract[i].toString();
                                     var testReg = new RegExp('\n');
-
 
                                     if (testReg.test(abstrNomm)) {
                                         abstrNomm = nomenAbstract[i].replace(/\n/g, ' ');
@@ -806,7 +798,6 @@ define([
                                             enablePickFeatures: false
                                         });
 
-
                                         nomenLayerName.push(finalNomenLayerName);
                                         nomenImageryProvidersTab.push(nomenImageryProvider);
                                     }
@@ -841,7 +832,7 @@ define([
 
     /**
      * function used to show or hide buttons of the planet and it's satellites for a given planetary system
-     * 
+     *
      * @param {Object} that
      * @param {num} index
      */
@@ -852,7 +843,7 @@ define([
             for (var i = 0; i < that._solarSystemSize; i++) {
                 that['buttonVisible_' + i] = false;
             }
-            ;
+
             cancelFunction(that);
             that.isShowSystemActive = false;
 
@@ -861,7 +852,7 @@ define([
             for (var i = 0; i < that._solarSystemSize; i++) {
                 that['buttonVisible_' + i] = false;
             }
-            ;
+
 
             that['buttonVisible_' + index] = !that['buttonVisible_' + index];
             cancelFunction(that);
@@ -873,7 +864,7 @@ define([
             for (var i = 0; i < that._solarSystemSize; i++) {
                 that['buttonVisible_' + i] = false;
             }
-            ;
+
 
             that['buttonVisible_' + index] = !that['buttonVisible_' + index];
             cancelFunction(that);
@@ -885,7 +876,7 @@ define([
             for (var i = 0; i < that._solarSystemSize; i++) {
                 that['buttonVisible_' + i] = false;
             }
-            ;
+
 
             that['buttonVisible_' + index] = !that['buttonVisible_' + index];
             cancelFunction(that);
@@ -911,8 +902,8 @@ define([
     }
 
     /**
-     * function to close the panel which contains the layers to display for a given celestial body 
-     * 
+     * function to close the panel which contains the layers to display for a given celestial body
+     *
      * @param {Object} that
      */
     function cancelFunction(that) {
@@ -925,8 +916,8 @@ define([
     }
 
     /**
-     * function to hide and show the panel which contains the layers to display for a given celestial body 
-     * 
+     * function to hide and show the panel which contains the layers to display for a given celestial body
+     *
      * @param {Object} that
      */
     function hideFunction(that) {
@@ -947,12 +938,11 @@ define([
         knockout.applyBindings(footerViewModel, that._btnShowPanel);
     }
 
-
     function homePlanetShow(configuration, xhr, xhrNomen, that) {
 
         var homePlanet = configuration.homePlanet;
 
-        // Naif code determination 
+        // Naif code determination
 
         var count = 1;
         var naifCode = [];
@@ -971,18 +961,17 @@ define([
         var planetarySystemDimension = configuration.planetarySystem.dimension[homePlanet + 'System'];
         var planetDimension = planetarySystemDimension[homePlanet];
 
+            try {
+                that._viewer.showSystems.viewModel.voData.destroyWrapperMenu;
+            } catch (e) {
+            }
 
-        try {
-            that._viewer.showSystems.viewModel.voData.destroyWrapperMenu;
-        } catch (e) {
-        }
+            try {
+                that._voData.viewModel.hidePanel;
+            } catch (e) {
+            }
 
-        try {
-            that._voData.viewModel.hidePanel;
-        } catch (e) {
-        }
-
-        /* ================================================================= 
+        /* =================================================================
          ========================= VO WIDGET CALL ==========================
          =================================================================== */
 
@@ -992,7 +981,7 @@ define([
 
         }
 
-        /* ================================================================= 
+        /* =================================================================
          ===================================================================
          =================================================================== */
 
@@ -1013,9 +1002,9 @@ define([
     /* ================================================================================================================== */
 
     /**
-     * 
-     * Main function of the modelView. 
-     * 
+     *
+     * Main function of the modelView.
+     *
      * @param {Object} viewer
      * @param {Object} scene
      * @param {Object} configContainer : HTML element
@@ -1050,7 +1039,6 @@ define([
         var that = this;
         var xhr = getRequest();
         var xhrNomen = getRequest();
-
 
         homePlanetShow(configuration, xhr, xhrNomen, that);
 
@@ -1154,7 +1142,6 @@ define([
                 viewer.scene.primitives.show = !viewer.scene.primitives.show;
                 booleanShow = viewer.scene.primitives.show;
 
-
                 if (booleanShow) {
                     btnHideVectorialData.innerHTML = 'Hide vectorial data';
                 }
@@ -1163,7 +1150,6 @@ define([
                     btnHideVectorialData.innerHTML = 'Show vectorial data';
                 }
             }
-
 
         });
 
@@ -1259,9 +1245,8 @@ define([
         for (var i = 0; i < that._solarSystemSize; i++) {
             that['buttonVisible_' + i] = false;
         }
-        ;
-        that.isShowSystemActive = false;
 
+        that.isShowSystemActive = false;
 
         try {
             that._footerToolbar.removeChild(that._btnShowPanel);
@@ -1272,7 +1257,7 @@ define([
 
     function initializeScene(that, terrainProvider) {
 
-        Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // Ad hoc WGS84 redefinition 
+        Ellipsoid.WGS84 = freezeObject(that._ellipsoid); // Ad hoc WGS84 redefinition
 
         if (that._viewer.geoJsonData) {
             that._viewer.geoJsonData = null;
@@ -1339,9 +1324,9 @@ define([
             that._viewer.markerMove.viewModel.dropDownVisible = false;
 
             if (that._viewer.markerMove.viewModel._handlerRight)
-                that._viewer.markerMove.viewModel._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);
+                {that._viewer.markerMove.viewModel._handlerRight.removeInputAction(ScreenSpaceEventType.RIGHT_CLICK);}
             if (that._viewer.markerMove.viewModel._handlerLeft)
-                that._viewer.markerMove.viewModel._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+                {that._viewer.markerMove.viewModel._handlerLeft.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);}
 
         }
     }
@@ -1351,7 +1336,7 @@ define([
         var i;
         for (i in obj) {
             if (obj.hasOwnProperty(i))
-                count++;
+                {count++;}
         }
         return count;
     }
