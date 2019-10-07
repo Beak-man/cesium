@@ -27,5 +27,6 @@ npm-debug.log
 npm-debug.log.*
 package-lock.json
 
-.idea
-.vscode
+# WebStorm user-specific
+.idea/workspace.xml
+.idea/tasks.xml
